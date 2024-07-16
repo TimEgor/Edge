@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EdgeEngine/Core/HashedType.h"
-#include "EdgeEngine/Windows/Window.h"
+#include "EdgeEngine/Windows/IWindow.h"
 
 #include "MonitorInfo.h"
 
@@ -24,7 +24,7 @@ namespace Edge
 
 		virtual void* getNativeHandle() const = 0;
 
-		virtual Window* createWindow(WindowID windowID) const = 0;
+		virtual IWindow* createWindow(WindowID windowID) const = 0;
 		virtual const WindowEventController& getWindowEventController() const = 0;
 		virtual WindowEventController& getWindowEventController() = 0;
 
@@ -35,4 +35,4 @@ namespace Edge
 	};
 }
 
-#define TS_PLATFORM_TYPE(PLATFORM_TYPE) TS_HASH_TYPE(#PLATFORM_TYPE, TS::PlatformType, Platform)
+#define EDGE_PLATFORM_TYPE(PLATFORM_TYPE) EDGE_HASH_TYPE(#PLATFORM_TYPE, Edge::PlatformType, Platform)

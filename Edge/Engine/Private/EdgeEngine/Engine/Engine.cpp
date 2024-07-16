@@ -34,3 +34,9 @@ Edge::IPluginController& Edge::Engine::getPluginController() const
 	assert(m_pluginController);
 	return *m_pluginController;
 }
+
+Edge::IWindowController& Edge::Engine::getWindowController() const
+{
+	assert(m_windowController);
+	return *m_windowController;
+}

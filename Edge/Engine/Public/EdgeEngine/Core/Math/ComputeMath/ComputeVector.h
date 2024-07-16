@@ -1,17 +1,17 @@
 #pragma once
 
 #include "ComputeMath.h"
-#include "TinySimCommon/Math/Vector.h"
+#include "EdgeEngine/Core/Math/Vector.h"
 
-#if defined(TS_MATH_DX)
+#if defined(EDGE_MATH_DX)
 #include "DirectXMath.h"
 #endif
 
-namespace TS
+namespace Edge
 {
 	namespace ComputeMath
 	{
-#if defined(TS_MATH_DX)
+#if defined(EDGE_MATH_DX)
 		using Vector = DirectX::XMVECTOR;
 		using Quaternion = Vector;
 #else

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ComputeMatrix.h"
-#include "TinySimCommon/Math/Quaternion.h"
+#include "EdgeEngine/Core/Math/Quaternion.h"
 
-namespace TS
+namespace Edge
 {
 	namespace ComputeMath
 	{

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "TinySimCommon/Math/Matrix.h"
-#include "TinySimCommon/Math/ComputeMath/ComputeVector.h"
+#include "EdgeEngine/Core/Math/Matrix.h"
+#include "EdgeEngine/Core/Math/ComputeMath/ComputeVector.h"
 
-namespace TS
+namespace Edge
 {
 	namespace ComputeMath
 	{
-#if defined(TS_MATH_DX)
+#if defined(EDGE_MATH_DX)
 		using Matrix = DirectX::XMMATRIX;
 #else
 		static_assert("Compute matrix isn't defined");

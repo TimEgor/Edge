@@ -13,6 +13,8 @@ namespace Edge
 		MessageController* m_messageController = nullptr;
 		PluginController* m_pluginController = nullptr;
 
+		IWindowController* m_windowController = nullptr;
+
 	public:
 		Engine() = default;
 
@@ -21,5 +23,6 @@ namespace Edge
 
 		virtual IMessageController& getMessageController() const override;
 		virtual IPluginController& getPluginController() const override;
+		virtual IWindowController& getWindowController() const override;
 	};
 }

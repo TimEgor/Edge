@@ -6,6 +6,7 @@
 namespace Edge
 {
 	class IPluginController;
+	class IWindowController;
 
 	class IEngine : public NonCopyable
 	{
@@ -23,5 +24,6 @@ namespace Edge
 
 		virtual IMessageController& getMessageController() const = 0;
 		virtual IPluginController& getPluginController() const = 0;
+		virtual IWindowController& getWindowController() const = 0;
 	};
 }
