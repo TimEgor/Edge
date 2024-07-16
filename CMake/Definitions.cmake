@@ -1,0 +1,7 @@
+if (NOT DEFINED EDGE_CORE_CMAKE_DEFINITIONS)
+    set(EDGE_CORE_CMAKE_DEFINITIONS)
+
+    if (WIN32)
+        set(EDGE_EXE_MODIFIER WIN32)
+    endif()
+endif()

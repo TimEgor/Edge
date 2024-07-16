@@ -1,0 +1,8 @@
+include(${EDGE_ROOT_PATH}/CMake/Definitions.cmake)
+include(${EDGE_ROOT_PATH}/CMake/Configurations.cmake)
+include(${EDGE_ROOT_PATH}/CMake/Colors.cmake)
+include(${EDGE_ROOT_PATH}/CMake/SourceFilesGroups.cmake)
+include(${EDGE_ROOT_PATH}/CMake/Module.cmake)
+include(${EDGE_ROOT_PATH}/CMake/ExternalModule.cmake)
+include(${EDGE_ROOT_PATH}/CMake/Install.cmake)
+include(${EDGE_ROOT_PATH}/CMake/Profile.cmake)

@@ -1,0 +1,44 @@
+###############################################
+######           INSTALLATION           #######
+###############################################
+
+### edge_get_install_target_path
+function(edge_get_install_target_path CURRENT_MODULE_NAME INSTALL_PATH_BASE OUT_PATH)
+	set(TARGET_LIB_INSTALL_PATH
+		$<$<NOT:$<STREQUAL:"${INSTALL_PATH_BASE}","">>:${INSTALL_PATH_BASE}/>
+	)
+	set(TARGET_LIB_INSTALL_PATH
+		"${TARGET_LIB_INSTALL_PATH}${CURRENT_MODULE_NAME}/lib/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>"
+	)
+
+	set(${OUT_PATH} ${TARGET_LIB_INSTALL_PATH} PARENT_SCOPE)
+endfunction()
+
+### edge_install_target
+function(edge_install_target TARGET_NAME CURRENT_MODULE_NAME INSTALL_PATH_BASE)
+	set(TARGET_LIB_INSTALL_PATH)
+	edge_get_install_target_path(${CURRENT_MODULE_NAME} "${INSTALL_PATH_BASE}" TARGET_LIB_INSTALL_PATH)
+
+	install(TARGETS ${TARGET_NAME} DESTINATION ${TARGET_LIB_INSTALL_PATH})
+	install(FILES "$<TARGET_FILE_DIR:${TARGET_NAME}>/$<TARGET_FILE_BASE_NAME:${TARGET_NAME}>.pdb" DESTINATION ${TARGET_LIB_INSTALL_PATH} OPTIONAL)
+endfunction()
+
+### edge_install_include
+function(edge_install_include TARGET_NAME CURRENT_MODULE_NAME INSTALL_PATH_BASE SRCS)
+	set(TARGET_INCLUDE_INSTALL_PATH
+		$<$<NOT:$<STREQUAL:"${INSTALL_PATH_BASE}","">>:${INSTALL_PATH_BASE}/>
+	)
+	set(TARGET_INCLUDE_INSTALL_PATH
+		"${TARGET_INCLUDE_INSTALL_PATH}${CURRENT_MODULE_NAME}/include"
+	)
+	
+	set(TARGET_SOURCE_INSTALL_RELATIVE_ROOT_PATH "${CMAKE_CURRENT_LIST_DIR}/Public/${CURRENT_MODULE_NAME}")
+
+	foreach(SRC ${${SRCS}})
+		string(REPLACE "${TARGET_SOURCE_INSTALL_RELATIVE_ROOT_PATH}" "" RELATIVE_SRC ${SRC})
+		get_filename_component(DESTINATION_PATH ${RELATIVE_SRC} DIRECTORY)
+		if (NOT RELATIVE_SRC MATCHES "\.cpp")
+			install(FILES ${SRC} DESTINATION ${TARGET_INCLUDE_INSTALL_PATH}/${DESTINATION_PATH})
+		endif()
+	endforeach()
+endfunction()
