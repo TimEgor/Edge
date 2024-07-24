@@ -1,6 +1,7 @@
 #include "WindowHandle.h"
 
 #include "EdgeEngine/EngineCore.h"
+#include "EdgeEngine/Engine/IEngine.h"
 
 #include "IWindowController.h"
 
@@ -8,7 +9,7 @@
 
 void Edge::WindowHandle::selfDestroy()
 {
-	EngineCore::getInstance().getEngine()->getWindowController().destroyWindow(this);
+	GetEngine().getWindowController().destroyWindow(this);
 }
 
 Edge::WindowHandle::WindowHandle(IWindow* window)

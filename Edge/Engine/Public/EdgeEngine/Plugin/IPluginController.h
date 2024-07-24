@@ -4,6 +4,7 @@
 
 #include "PluginHandle.h"
 
+#include <type_traits>
 
 namespace Edge
 {
@@ -11,16 +12,6 @@ namespace Edge
 
 	class IPluginController
 	{
-		struct ModuleInfo final
-		{
-			EDGE_PLATFORM_MODULE_HANDLE m_moduleHandle = EDGE_INVALID_PLATFORM_MODULE_HANDLE;
-			uint32_t m_counter = 0;
-
-			ModuleInfo() = default;
-			ModuleInfo(EDGE_PLATFORM_MODULE_HANDLE moduleHandle)
-				: m_moduleHandle(moduleHandle) {}
-		};
-
 	public:
 		IPluginController() = default;
 		virtual ~IPluginController() = default;
@@ -34,10 +25,10 @@ namespace Edge
 		virtual void unloadPlugin(PluginHandle* pluginHandle) = 0;
 
 		template <typename PluginType = PluginBase>
-		PluginHandleReference loadPlugin(const FileName& moduleName)
+		PluginHandleReference loadTypedPlugin(const FileName& moduleName)
 		{
 			static_assert(std::is_base_of_v<PluginBase, PluginType>);
-			return loadPlugin(moduleName, PluginType::getPluginType(), PluginType::getPluginModuleGeneratorName());
+			return loadPlugin(moduleName, PluginType::getPluginType(), PluginType::GetPluginModuleGeneratorName());
 		}
 
 		virtual FileName getNativePluginModulePath(const char* title) const = 0;

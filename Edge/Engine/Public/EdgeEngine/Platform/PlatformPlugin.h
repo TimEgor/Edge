@@ -7,14 +7,14 @@
 
 namespace Edge
 {
-	class Platform;
+	class IPlatform;
 
 	class PlatformPlugin : public PluginBase
 	{
 	public:
 		PlatformPlugin(PluginModuleID moduleID) : PluginBase(moduleID) {}
 
-		virtual Platform* createPlatform() const = 0;
+		virtual IPlatform* createPlatform() const = 0;
 
 		EDGE_PLUGIN_TYPE(EDGE_PLUGIN_TYPE_PLATFORM, EDGE_PLUGIN_TYPE_DECLARATION_PLATFORM);
 	};

@@ -11,7 +11,7 @@ namespace Edge
 	{
 	public:
 		IWindowController() = default;
-		virtual ~WindowController() = default;
+		virtual ~IWindowController() = default;
 
 		virtual WindowHandleReference createWindow(const char* title, const WindowSize& size) = 0;
 		virtual WindowHandleReference getWindow(WindowID windowID) const = 0;

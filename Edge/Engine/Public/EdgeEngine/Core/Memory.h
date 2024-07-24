@@ -11,7 +11,7 @@ namespace Edge
 	template <typename T>
 	inline T Align(T size, T alignment)
 	{
-		T adjustment = getAdjustment(size, alignment);
+		T adjustment = GetAdjustment(size, alignment);
 		if (adjustment != alignment)
 		{
 			return size + adjustment;

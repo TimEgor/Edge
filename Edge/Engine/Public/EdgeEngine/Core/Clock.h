@@ -13,7 +13,7 @@ namespace Edge
 	public:
 		Clock() = default;
 
-		inline static ClockTimePoint getCurrentTime() { return ClockCounter::now(); }
-		inline static float calcTimePointDelta(const ClockTimePoint& t1, const ClockTimePoint& t2) { return std::chrono::duration<float>(t1 - t2).count(); }
+		inline static ClockTimePoint GetCurrentTimePoint() { return ClockCounter::now(); }
+		inline static float CalcTimePointDelta(const ClockTimePoint& t1, const ClockTimePoint& t2) { return std::chrono::duration<float>(t1 - t2).count(); }
 	};
 }

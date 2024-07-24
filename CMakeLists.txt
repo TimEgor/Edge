@@ -9,7 +9,7 @@ include(${EDGE_ROOT_PATH}/CMake/Core.cmake)
 #add_compile_options(-fsanitize=address)
 
 add_subdirectory(${EDGE_ROOT_PATH}/Edge/Engine)
-#add_subdirectory(${EDGE_ROOT_PATH}/Edge/EnginePlugins)
+add_subdirectory(${EDGE_ROOT_PATH}/Edge/Plugins)
 add_subdirectory(${EDGE_ROOT_PATH}/Edge/Launcher)
 
 message("${EDGE_COLOUR_YELLOW}\n>>>>> Success <<<<<\n${EDGE_COLOUR_RESET}")

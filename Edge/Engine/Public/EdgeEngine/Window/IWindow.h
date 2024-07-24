@@ -3,7 +3,7 @@
 #include "EdgeEngine/Core/HashedType.h"
 #include "EdgeEngine/Core/Math/Vector.h"
 
-#include "EdgeEngine/Event/EventController.h"
+#include "EdgeEngine/Event/IEventController.h"
 
 namespace Edge
 {
@@ -55,7 +55,7 @@ namespace Edge
 	{
 	public:
 		IWindow() = default;
-		virtual ~Window() = default;
+		virtual ~IWindow() = default;
 
 		virtual bool init(const char* title, const WindowSize& size) = 0;
 		virtual void release() = 0;

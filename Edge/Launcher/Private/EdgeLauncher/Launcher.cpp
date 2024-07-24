@@ -12,7 +12,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	if (edgeEngine.init(Edge::IEngine::InitData{}))
 	{
-		
+		edgeEngine.run();
 		edgeEngine.release();
 	}
 

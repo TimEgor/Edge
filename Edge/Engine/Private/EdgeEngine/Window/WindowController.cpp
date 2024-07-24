@@ -1,31 +1,34 @@
 #include "WindowController.h"
 
-#include "TinySimCommon/Core/UtilsMacros.h"
-#include "TinySimCommon/Multithreading/LockGuard.h"
+#include "EdgeEngine/Core/UtilsMacros.h"
+#include "EdgeEngine/Core/Multithreading/LockGuard.h"
 
-#include "WindowEventController.h"
-#include "TinySimFramework/FrameworkCore.h"
-#include "TinySimFramework/Platform/Platform.h"
+#include "EdgeEngine/EngineCore.h"
+#include "EdgeEngine/Engine/IEngine.h"
+
+#include "EdgeEngine/Platform/IPlatform.h"
+
+#include "EdgeEngine/Window/IWindowEventController.h"
 
 #include <cassert>
 
-TS::WindowController::~WindowController()
+Edge::WindowController::~WindowController()
 {
 	LockGuard locker(m_mutex);
 
 	assert(m_windows.empty());
 }
 
-TS::WindowHandleReference TS::WindowController::createWindow(const char* title, const WindowSize& size)
+Edge::WindowHandleReference Edge::WindowController::createWindow(const char* title, const WindowSize& size)
 {
 	LockGuard locker(m_mutex);
 
 	WindowID windowID = ++m_lastWindowID;
 
-	Window* window = FrameworkCore::getInstance().getApplication().getPlatform().createWindow(windowID);
+	IWindow* window = EngineCore::getInstance().getEngine().getPlatform().createWindow(windowID);
 	if (!window->init(title, size))
 	{
-		TS_SAFE_DESTROY(window);
+		EDGE_SAFE_DESTROY(window);
 		return nullptr;
 	}
 
@@ -34,7 +37,7 @@ TS::WindowHandleReference TS::WindowController::createWindow(const char* title, 
 	return &newWindowIter.first->second;
 }
 
-TS::WindowHandleReference TS::WindowController::getWindow(WindowID windowID) const
+Edge::WindowHandleReference Edge::WindowController::getWindow(WindowID windowID) const
 {
 	SharedLockGuard locker(m_mutex);
 
@@ -47,29 +50,29 @@ TS::WindowHandleReference TS::WindowController::getWindow(WindowID windowID) con
 	return nullptr;
 }
 
-void TS::WindowController::destroyWindow(WindowHandle* windowHandle)
+void Edge::WindowController::destroyWindow(WindowHandle* windowHandle)
 {
 	assert(windowHandle);
 	assert(windowHandle->getReferenceCount() == 0);
 
-	Window* window = &windowHandle->getWindow();
+	IWindow* window = &windowHandle->getWindow();
 	assert(window);
 
 	WindowID windowID = window->getID();
 
-	TS_SAFE_DESTROY_WITH_RELEASING(window);
+	EDGE_SAFE_DESTROY_WITH_RELEASING(window);
 
 	LockGuard lock(m_mutex);
 
 	m_windows.erase(windowID);
 }
 
-void TS::WindowController::updateWindowEvents(const Window& window)
+void Edge::WindowController::updateWindowEvents(const IWindow& window)
 {
-	FrameworkCore::getInstance().getApplication().getPlatform().getWindowEventController().updateWindowEvents(window);
+	EngineCore::getInstance().getEngine().getPlatform().getWindowEventController().updateWindowEvents(window);
 }
 
-void TS::WindowController::updateAllWindowsEvents() const
+void Edge::WindowController::updateAllWindowsEvents() const
 {
 	SharedLockGuard locker(m_mutex);
 
@@ -79,7 +82,7 @@ void TS::WindowController::updateAllWindowsEvents() const
 	}
 }
 
-void TS::WindowController::updateWindowEvents(WindowHandleReference& window) const
+void Edge::WindowController::updateWindowEvents(WindowHandleReference& window) const
 {
 	SharedLockGuard locker(m_mutex);
 

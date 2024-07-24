@@ -1,17 +1,18 @@
 #pragma once
 
-#include "TinySimCommon/Multithreading/Mutex.h"
+#include "EdgeEngine/Core/Multithreading/Mutex.h"
 
-#include "Window.h"
-#include "WindowHandle.h"
+#include "EdgeEngine/Window/WindowHandle.h"
+#include "EdgeEngine/Window/IWindowController.h"
 
 #include <unordered_map>
 
-namespace TS
+
+namespace Edge
 {
 	class WindowEventController;
 
-	class WindowController final
+	class WindowController final : public IWindowController
 	{
 	private:
 		using WindowContainer = std::unordered_map<WindowID, WindowHandle>;
@@ -22,17 +23,17 @@ namespace TS
 
 		WindowID m_lastWindowID = InvalidWindowID;
 
-		static void updateWindowEvents(const Window& window);
+		static void updateWindowEvents(const IWindow& window);
 
 	public:
 		WindowController() = default;
 		~WindowController();
 
-		WindowHandleReference createWindow(const char* title, const WindowSize& size);
-		WindowHandleReference getWindow(WindowID windowID) const;
-		void destroyWindow(WindowHandle* windowHandle);
+		virtual WindowHandleReference createWindow(const char* title, const WindowSize& size) override;
+		virtual WindowHandleReference getWindow(WindowID windowID) const override;
+		virtual void destroyWindow(WindowHandle* windowHandle) override;
 
-		void updateAllWindowsEvents() const;
-		void updateWindowEvents(WindowHandleReference& window) const;
+		virtual void updateAllWindowsEvents() const override;
+		virtual void updateWindowEvents(WindowHandleReference& window) const override;
 	};
 }
