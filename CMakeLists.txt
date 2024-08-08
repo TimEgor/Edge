@@ -8,8 +8,9 @@ include(${EDGE_ROOT_PATH}/CMake/Core.cmake)
 
 #add_compile_options(-fsanitize=address)
 
-add_subdirectory(${EDGE_ROOT_PATH}/Edge/Engine)
-add_subdirectory(${EDGE_ROOT_PATH}/Edge/Plugins)
-add_subdirectory(${EDGE_ROOT_PATH}/Edge/Launcher)
+add_subdirectory(${EDGE_ROOT_PATH}/Edge/Common)
+add_subdirectory(${EDGE_ROOT_PATH}/Edge/Physics)
+add_subdirectory(${EDGE_ROOT_PATH}/Edge/Framework)
+add_subdirectory(${EDGE_ROOT_PATH}/Edge/Demo)
 
 message("${EDGE_COLOUR_YELLOW}\n>>>>> Success <<<<<\n${EDGE_COLOUR_RESET}")
