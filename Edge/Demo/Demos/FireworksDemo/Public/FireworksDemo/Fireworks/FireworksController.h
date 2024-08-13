@@ -1,20 +1,20 @@
 #pragma once
 
-
 #include "Fireworks.h"
+
+#include "EdgeCommon/ObjectPool/ObjectPool.h"
+
+#include "EdgePhysics/Physics/Scene/PhysicsScene.h"
+#include "EdgePhysics/Visualizer/DebugVisualizationDataController.h"
 
 #include <vector>
 
-#include "TinySimCommon/ObjectPool/ObjectPool.h"
-#include "TinySimPhysics/Physics/Scene/IPhysicsScene.h"
-#include "TinySimPhysics/Visualizer/IDebugVisualizationDataController.h"
-
-namespace TS_DEMO
+namespace EdgeDemo
 {
 	class FireworksParticleController final
 	{
-		using ParticleHandle = TS::ObjectPoolHandle32;
-		using ParticleCollection = TS::ObjectPool<FireworksParticle, ParticleHandle>;
+		using ParticleHandle = Edge::ObjectPoolHandle32;
+		using ParticleCollection = Edge::ObjectPool<FireworksParticle, ParticleHandle>;
 		using ParticlePtrCollection = std::vector<FireworksParticle*>;
 
 		static constexpr float minSpawningDelay = 2.0f;
@@ -37,24 +37,24 @@ namespace TS_DEMO
 		ParticleCollection m_fireworksParticles;
 		ParticlePtrCollection m_fireworksParticlePtrs;
 
-		TS::PhysicsSceneReference m_physScene;
+		Edge::PhysicsSceneReference m_physScene;
 
-		TS::FloatVector3 m_minSpawnAreaPos = TS::FloatVector3Zero;
-		TS::FloatVector3 m_maxSpawnAreaPos = TS::FloatVector3Zero;
+		Edge::FloatVector3 m_minSpawnAreaPos = Edge::FloatVector3Zero;
+		Edge::FloatVector3 m_maxSpawnAreaPos = Edge::FloatVector3Zero;
 
 		float m_spawningTimeDelay = 0.0f;
 
 		void spawn();
 
-		static TS::FloatVector3 generateColor();
-		static TS::FloatVector3 generatePosition(const TS::FloatVector3& minPos, const TS::FloatVector3& maxPos);
+		static Edge::FloatVector3 generateColor();
+		static Edge::FloatVector3 generatePosition(const Edge::FloatVector3& minPos, const Edge::FloatVector3& maxPos);
 
 	public:
-		FireworksParticleController(const TS::PhysicsSceneReference& physScene,
-			const TS::FloatVector3& minSpawnAreaPos, const TS::FloatVector3& maxSpawnAreaPos);
+		FireworksParticleController(const Edge::PhysicsSceneReference& physScene,
+			const Edge::FloatVector3& minSpawnAreaPos, const Edge::FloatVector3& maxSpawnAreaPos);
 		~FireworksParticleController();
 
 		void update(float deltaTime);
-		void fillRenderData(TS::DebugVisualizationDataControllerReference& debugVisualizationData) const;
+		void fillRenderData(Edge::DebugVisualizationDataController& debugVisualizationData) const;
 	};
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TinySimDemoFramework/Demo/PreInitedDemo.h"
+#include "EdgeDemoFramework/Demo/PreInitedDemo.h"
 
-namespace TS_DEMO
+namespace EdgeDemo
 {
 	class FireworksParticleController;
 

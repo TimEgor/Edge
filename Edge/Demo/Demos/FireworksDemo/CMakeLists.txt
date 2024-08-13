@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.8)
 
 project(FireworksDemo CXX)
 
-if (NOT DEFINED TS_ROOT_PATH)
-	set(TS_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
+if (NOT DEFINED EDGE_ROOT_PATH)
+	set(EDGE_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
 endif()
 
-include(${TS_ROOT_PATH}/CMake/Core.cmake)
+include(${EDGE_ROOT_PATH}/CMake/Core.cmake)
 
-ts_get_module_sources(FireworksDemo)
-ts_add_module(FireworksDemo SHARED "TinySim/Demo/Demos")
+edge_get_module_sources(FireworksDemo)
+edge_add_module(FireworksDemo SHARED "Edge/Demo/Demos")
 
 target_link_libraries(FireworksDemo
-	PRIVATE TinySimDemoFramework
+	PRIVATE EdgeDemoFramework
 )
 
-ts_install_target(FireworksDemo Fireworks "Demo/Demos")
+edge_install_target(FireworksDemo Fireworks "Demo/Demos")

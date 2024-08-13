@@ -1,14 +1,13 @@
 #pragma once
 
-#include "EdgePhysics/Physics/PhysicsScene.h"
 #include "EdgePhysics/Physics/PhysicsWorld.h"
+#include "EdgePhysics/Physics/Scene/PhysicsScene.h"
 #include "EdgePhysics/Physics/Utils/PhysicsTimeStepper.h"
 #include "EdgePhysics/Visualizer/DebugVisualizationDataController.h"
 
 #include "EdgeDemoFramework/CameraController/CameraController.h"
 
 #include "Demo.h"
-#include "EdgePhysics/Physics/PhysicsSceneReference.h"
 
 namespace EdgeDemo
 {

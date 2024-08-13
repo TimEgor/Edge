@@ -1,13 +1,13 @@
 #pragma once
 
-#include "TinySimDemoFramework/Demo/DemoPlugin.h"
+#include "EdgeDemoFramework/Demo/DemoPlugin.h"
 
-namespace TS_DEMO
+namespace EdgeDemo
 {
 	class FireworksDemoPlugin final : public DemoPlugin
 	{
 	public:
-		FireworksDemoPlugin(TS::PluginModuleID moduleID)
+		FireworksDemoPlugin(Edge::PluginModuleID moduleID)
 			: DemoPlugin(moduleID) {}
 
 		virtual Demo* createDemo() const override;
