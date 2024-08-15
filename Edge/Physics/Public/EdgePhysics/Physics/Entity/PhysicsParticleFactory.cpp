@@ -11,7 +11,7 @@ Edge::PhysicsParticleReference Edge::PhysicsParticleFactory::createParticleEntit
 		if (param->m_motionCreationParam && param->m_motionCreationParam->getType() == ParticleMotionCreationParam::EntityCreationParamType)
 		{
 			const ParticleMotionCreationParam* particleMotionCreationParam = static_cast<const ParticleMotionCreationParam*>(param->m_motionCreationParam);
-			entityPtr->setParticleMotion(createParticleMotion(particle, particleMotionCreationParam));
+			entityPtr->setParticleMotion(createParticleMotion(particleMotionCreationParam));
 		}
 
 		//if (param->m_collisionParam)
@@ -29,10 +29,9 @@ Edge::PhysicsParticleReference Edge::PhysicsParticleFactory::createParticleEntit
 	return particle;
 }
 
-Edge::PhysicsParticleMotionReference Edge::PhysicsParticleFactory::createParticleMotion(
-	const PhysicsParticleReference& entity, const ParticleMotionCreationParam* param)
+Edge::PhysicsParticleMotionReference Edge::PhysicsParticleFactory::createParticleMotion(const ParticleMotionCreationParam* param)
 {
-	PhysicsPositionBasedMotion* motionPtr = new PhysicsPositionBasedMotion(entity->getParticleTransform());
+	PhysicsPositionBasedMotion* motionPtr = new PhysicsPositionBasedMotion();
 
 	const ParticleMotionCreationParam* bodyMotionCreationParam = static_cast<const ParticleMotionCreationParam*>(param);
 	if (param)
@@ -57,23 +56,15 @@ Edge::PhysicsEntityReference Edge::PhysicsParticleFactory::createEntity(const En
 	return createParticleEntity(particleCreationParam);
 }
 
-Edge::PhysicsEntityMotionReference Edge::PhysicsParticleFactory::createEntityMotion(
-	const PhysicsEntityReference& entity, const EntityMotionCreationParam* param)
+Edge::PhysicsEntityMotionReference Edge::PhysicsParticleFactory::createEntityMotion(const EntityMotionCreationParam* param)
 {
-	if (!entity || entity->getType() == PhysicsParticle::PhysicsEntityType)
-	{
-		EDGE_ASSERT_FAIL_MESSAGE("Entity type is invalid.");
-		return nullptr;
-	}
-
 	if (param && param->getType() != ParticleMotionCreationParam::EntityCreationParamType)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Ñreation param type is invalid.");
 		return nullptr;
 	}
 
-	PhysicsParticleReference bodyEntity = entity.getObjectCast<PhysicsParticle>();
 	const ParticleMotionCreationParam* bodyMotionCreationParam = static_cast<const ParticleMotionCreationParam*>(param);
 
-	return createParticleMotion(bodyEntity, bodyMotionCreationParam);
+	return createParticleMotion(bodyMotionCreationParam);
 }

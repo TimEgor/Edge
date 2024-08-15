@@ -12,7 +12,7 @@ namespace Edge
 {
 	using PhysicsEntitySceneContextType = HashedType::Type;
 
-	class PhysicsEntitySceneContext : public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntitySceneContext : public HashedType, public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		PhysicsEntitySceneContext() = default;
@@ -37,14 +37,19 @@ namespace Edge
 		PhysicsEntityTransformReference m_transform;
 		PhysicsEntityMotionReference m_motion;
 
+		//PhysicsEntityCollisionReference m_collision;
+
+		void updateMotion(const PhysicsEntityMotionReference& newMotion);
+
 	public:
 		PhysicsEntity(const PhysicsEntityTransformReference& transform);
-		virtual ~PhysicsEntity() = default;
+		~PhysicsEntity();
 
-		virtual PhysicsEntityTransformReference getTransform() const { return m_transform; }
-		virtual PhysicsEntityMotionReference getMotion() const { return m_motion; }
+		PhysicsEntityTransformReference getTransform() const { return m_transform; }
+		PhysicsEntityMotionReference getMotion() const { return m_motion; }
 
-		//virtual PhysicsEntityCollisionReference getCollision() const = 0;
+		//PhysicsEntityCollisionReference getCollision() const { return m_collision; }
+
 
 		virtual void updateTransformWithMotion(float deltaTime) = 0;
 

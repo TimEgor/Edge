@@ -3,13 +3,14 @@
 #include "EdgeCommon/Math/Transform.h"
 #include "EdgeCommon/Reference/MTReference.h"
 
+#include "PhysicsEntityWeakLinkObject.h"
+
 namespace Edge
 {
-	class PhysicsEntityTransform : public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntityTransform : public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		PhysicsEntityTransform() = default;
-		virtual ~PhysicsEntityTransform() = default;
 
 		virtual FloatVector3 getPosition() const = 0;
 		virtual void getPosition(FloatVector3& position) const = 0;

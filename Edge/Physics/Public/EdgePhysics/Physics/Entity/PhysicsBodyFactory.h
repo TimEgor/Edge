@@ -29,9 +29,9 @@ namespace Edge
 		PhysicsBodyFactory() = default;
 
 		PhysicsBodyReference createBodyEntity(const BodyCreationParam* param = nullptr);
-		PhysicsBodyMotionReference createBodyMotion(const PhysicsBodyReference& entity, const BodyMotionCreationParam* param = nullptr);
+		PhysicsBodyMotionReference createBodyMotion(const BodyMotionCreationParam* param = nullptr);
 
 		virtual PhysicsEntityReference createEntity(const EntityCreationParam* param) override;
-		virtual PhysicsEntityMotionReference createEntityMotion(const PhysicsEntityReference& entity, const EntityMotionCreationParam* param) override;
+		virtual PhysicsEntityMotionReference createEntityMotion(const EntityMotionCreationParam* param) override;
 	};
 }

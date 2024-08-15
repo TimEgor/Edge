@@ -43,8 +43,7 @@ namespace Edge
 		virtual ~PhysicsEntityFactory() = default;
 
 		virtual PhysicsEntityReference createEntity(const EntityCreationParam* param = nullptr) = 0;
-		virtual PhysicsEntityMotionReference createEntityMotion(const PhysicsEntityReference& entity,
-			const EntityMotionCreationParam* param = nullptr) = 0;
+		virtual PhysicsEntityMotionReference createEntityMotion(const EntityMotionCreationParam* param = nullptr) = 0;
 	};
 
 #define EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(PHYSICS_ENTITY_CREATION_PARAM_TYPE) \

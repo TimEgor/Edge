@@ -4,21 +4,18 @@
 
 namespace Edge
 {
-	class PhysicsEntityMotion : public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntityMotion : public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
 	{
-	private:
-		const PhysicsEntityTransformReference m_transform;
-
 	protected:
 		float m_mass = 1.0f;
 		float m_invMass = 1.0f;
 
 		float m_gravityFactor = 1.0f;
 
+		PhysicsEntityTransformReference getTransform() const;
+
 	public:
-		PhysicsEntityMotion(const PhysicsEntityTransformReference& transform)
-			: m_transform(transform) {}
-		virtual ~PhysicsEntityMotion() = default;
+		PhysicsEntityMotion() = default;
 
 		virtual FloatVector3 getLinearVelocity() const = 0;
 		virtual void getLinearVelocity(FloatVector3& velocity) const = 0;
@@ -47,8 +44,6 @@ namespace Edge
 		virtual void applyTorque(const FloatVector3& torque) = 0;
 		virtual void applyAngularImpulse(const FloatVector3& impulse) = 0;
 
-		virtual PhysicsEntityTransformReference getTransform() const { return m_transform; }
-
 		float getMass() const { return m_mass; }
 		float getInverseMass() const { return m_invMass; }
 		void setMass(float mass);
@@ -70,8 +65,7 @@ namespace Edge
 		float m_linearDampingFactor = 0.05f;
 
 	public:
-		PhysicsPositionBasedMotion(const PhysicsEntityTransformReference& transform)
-			: PhysicsEntityMotion(transform) {}
+		PhysicsPositionBasedMotion() = default;
 
 		virtual FloatVector3 getLinearVelocity() const override { return m_linearVelocity; }
 		virtual void getLinearVelocity(FloatVector3& velocity) const override { velocity = m_linearVelocity; }
@@ -118,8 +112,7 @@ namespace Edge
 		float m_angularDampingFactor = 0.05f;
 
 	public:
-		PhysicsPositionAndRotationBasedMotion(const PhysicsPositionAndRotationBasedTransformReference& transform)
-			: PhysicsPositionBasedMotion(transform) {}
+		PhysicsPositionAndRotationBasedMotion() = default;
 
 		virtual FloatVector3 getAngularVelocity() const override { return m_angularVelocity; }
 		virtual void getAngularVelocity(FloatVector3& velocity) const override { velocity = m_angularVelocity; }

@@ -11,7 +11,7 @@ Edge::PhysicsBodyReference Edge::PhysicsBodyFactory::createBodyEntity(const Body
 		if (param->m_motionCreationParam && param->m_motionCreationParam->getType() == BodyMotionCreationParam::EntityCreationParamType)
 		{
 			const BodyMotionCreationParam* bodyMotionCreationParam = static_cast<const BodyMotionCreationParam*>(param->m_motionCreationParam);
-			entityPtr->setBodyMotion(createBodyMotion(body, bodyMotionCreationParam));
+			entityPtr->setBodyMotion(createBodyMotion(bodyMotionCreationParam));
 		}
 
 		//if (param->m_collisionParam)
@@ -30,9 +30,9 @@ Edge::PhysicsBodyReference Edge::PhysicsBodyFactory::createBodyEntity(const Body
 	return body;
 }
 
-Edge::PhysicsBodyMotionReference Edge::PhysicsBodyFactory::createBodyMotion(const PhysicsBodyReference& entity, const BodyMotionCreationParam* param)
+Edge::PhysicsBodyMotionReference Edge::PhysicsBodyFactory::createBodyMotion(const BodyMotionCreationParam* param)
 {
-	PhysicsPositionAndRotationBasedMotion* motionPtr = new PhysicsPositionAndRotationBasedMotion(entity->getBodyTransform());
+	PhysicsPositionAndRotationBasedMotion* motionPtr = new PhysicsPositionAndRotationBasedMotion();
 
 	const BodyMotionCreationParam* bodyMotionCreationParam = static_cast<const BodyMotionCreationParam*>(param);
 	if (param)
@@ -60,22 +60,15 @@ Edge::PhysicsEntityReference Edge::PhysicsBodyFactory::createEntity(const Entity
 	return createBodyEntity(bodyCreationParam);
 }
 
-Edge::PhysicsEntityMotionReference Edge::PhysicsBodyFactory::createEntityMotion(const PhysicsEntityReference& entity, const EntityMotionCreationParam* param)
+Edge::PhysicsEntityMotionReference Edge::PhysicsBodyFactory::createEntityMotion(const EntityMotionCreationParam* param)
 {
-	if (!entity || entity->getType() == PhysicsBody::PhysicsEntityType)
-	{
-		EDGE_ASSERT_FAIL_MESSAGE("Entity type is invalid.");
-		return nullptr;
-	}
-
 	if (param && param->getType() != BodyMotionCreationParam::EntityCreationParamType)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Ñreation param type is invalid.");
 		return nullptr;
 	}
 
-	PhysicsBodyReference bodyEntity = entity.getObjectCast<PhysicsBody>();
 	const BodyMotionCreationParam* bodyMotionCreationParam = static_cast<const BodyMotionCreationParam*>(param);
 
-	return createBodyMotion(bodyEntity, bodyMotionCreationParam);
+	return createBodyMotion(bodyMotionCreationParam);
 }

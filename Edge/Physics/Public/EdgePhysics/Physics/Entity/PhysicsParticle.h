@@ -17,7 +17,7 @@ namespace Edge
 		PhysicsParticleTransformReference getParticleTransform() const { return m_transform.getObjectCast<PhysicsParticleTransformReference::ObjectType>(); }
 
 		PhysicsParticleMotionReference getParticleMotion() const { return m_motion.getObjectCast<PhysicsParticleMotionReference::ObjectType>(); }
-		void setParticleMotion(const PhysicsParticleMotionReference& motion) { m_motion = motion; }
+		void setParticleMotion(const PhysicsParticleMotionReference& motion) { updateMotion(motion); }
 
 		virtual void updateTransformWithMotion(float deltaTime) override;
 

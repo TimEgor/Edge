@@ -24,9 +24,9 @@ namespace Edge
 		PhysicsParticleFactory() = default;
 
 		PhysicsParticleReference createParticleEntity(const ParticleCreationParam* param = nullptr);
-		PhysicsParticleMotionReference createParticleMotion(const PhysicsParticleReference& entity, const ParticleMotionCreationParam* param = nullptr);
+		PhysicsParticleMotionReference createParticleMotion(const ParticleMotionCreationParam* param = nullptr);
 
 		virtual PhysicsEntityReference createEntity(const EntityCreationParam* param) override;
-		virtual PhysicsEntityMotionReference createEntityMotion(const PhysicsEntityReference& entity, const EntityMotionCreationParam* param) override;
+		virtual PhysicsEntityMotionReference createEntityMotion(const EntityMotionCreationParam* param) override;
 	};
 }

@@ -17,7 +17,7 @@ namespace Edge
 		PhysicsBodyTransformReference getBodyTransform() const { return m_transform.getObjectCast<PhysicsBodyTransformReference::ObjectType>(); }
 
 		PhysicsBodyMotionReference getBodyMotion() const{ return m_motion.getObjectCast<PhysicsBodyMotionReference::ObjectType>(); }
-		void setBodyMotion(const PhysicsBodyMotionReference& motion) { m_motion = motion; }
+		void setBodyMotion(const PhysicsBodyMotionReference& motion) { updateMotion(motion); }
 
 		virtual void updateTransformWithMotion(float deltaTime) override;
 

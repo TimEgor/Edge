@@ -2,6 +2,31 @@
 
 #include <algorithm>
 
+#include "PhysicsEntity.h"
+
+Edge::PhysicsEntityTransformReference Edge::PhysicsEntityMotion::getTransform() const
+{
+	const PhysicsEntityReference entity = getEntity();
+	if (!entity)
+	{
+		return nullptr;
+	}
+
+	const PhysicsEntityTransformReference transform = entity->getTransform();
+	if (!transform)
+	{
+		return nullptr;
+	}
+
+	if (!transform->isEntityLinkEqual(*this))
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Entity links aren't equal.");
+		return nullptr;
+	}
+
+	return transform;
+}
+
 void Edge::PhysicsEntityMotion::setMass(float mass)
 {
 	if (mass < 0.0f)

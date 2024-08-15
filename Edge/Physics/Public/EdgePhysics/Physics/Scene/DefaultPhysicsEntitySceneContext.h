@@ -9,8 +9,6 @@ namespace Edge
 	class DefaultPhysicsEntitySceneContext final : public PhysicsEntitySceneContext
 	{
 	private:
-		PhysicsEntity& m_entity;
-
 		PhysicsSceneWeakReference m_scene;
 		PhysicsSceneEntityID m_sceneEntityID = InvalidPhysicsSceneEntityID;
 
@@ -19,7 +17,7 @@ namespace Edge
 		virtual void selfDestroy() override {}
 
 	public:
-		DefaultPhysicsEntitySceneContext(PhysicsEntity& entity);
+		DefaultPhysicsEntitySceneContext() = default;
 		~DefaultPhysicsEntitySceneContext();
 
 		virtual PhysicsSceneWeakReference getScene() const override { return m_scene; }

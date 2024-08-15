@@ -43,7 +43,7 @@ Edge::PhysicsSceneEntityID Edge::EntityManager::addEntity(const PhysicsEntityRef
 		entityID = m_entityPool.addElement(entity).m_elementHandle.getKey();
 
 		EntitySceneContextPool::NewElementInfo newContextInfo;
-		m_sceneContextPool.addElement(newContextInfo, entity.getObjectRef());
+		m_sceneContextPool.addElement(newContextInfo);
 
 		EDGE_ASSERT(entityID == newContextInfo.m_elementHandle.getKey());
 
@@ -66,16 +66,17 @@ void Edge::EntityManager::removeEntity(const PhysicsEntityReference& entity)
 		return;
 	}
 
-	PhysicsEntitySceneContextReference sceneContext = entity->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntitySceneContext::getPhysicsEntitySceneContextType())
-	{
-		EDGE_ASSERT_FAIL_MESSAGE("Entity scene context has an invalid type.");
-		return;
-	}
-
 	PhysicsSceneEntityID entityID = InvalidPhysicsSceneEntityID;
 
 	{
+		PhysicsEntitySceneContextReference sceneContext = entity->getSceneContext();
+		if (sceneContext->getType() != DefaultPhysicsEntitySceneContext::getPhysicsEntitySceneContextType())
+		{
+			EDGE_ASSERT_FAIL_MESSAGE("Entity scene context has an invalid type.");
+			return;
+		}
+
+
 		DefaultPhysicsEntitySceneContext& defaultSceneContext = sceneContext.getObjectCastRef<DefaultPhysicsEntitySceneContext>();
 		entityID = defaultSceneContext.getSceneEntityID();
 		defaultSceneContext.setScene(nullptr, InvalidPhysicsSceneEntityID);
