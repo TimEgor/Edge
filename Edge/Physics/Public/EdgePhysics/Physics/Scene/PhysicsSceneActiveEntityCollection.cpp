@@ -1,14 +1,13 @@
-#include "PhysicsSceneActiveEntityManager.h"
+#include "PhysicsSceneActiveEntityCollection.h"
 
 #include "EdgeCommon/UtilsMacros.h"
 
 #include "DefaultPhysicsEntitySceneContext.h"
+#include "PhysicsScene.h"
 
 bool Edge::PhysicsSceneActiveEntityCollection::init(PhysicsSceneActivationContextEntityIndex pageSize,
 	PhysicsSceneActivationContextEntityIndex maxFreePageCount)
 {
-	LockGuard locker(m_mutex);
-
 	EDGE_CHECK_INITIALIZATION(m_entityPages.empty());
 	EDGE_CHECK_INITIALIZATION(pageSize > 0);
 
@@ -20,8 +19,6 @@ bool Edge::PhysicsSceneActiveEntityCollection::init(PhysicsSceneActivationContex
 
 void Edge::PhysicsSceneActiveEntityCollection::release()
 {
-	LockGuard locker(m_mutex);
-
 	for (EntityPage& page : m_entityPages)
 	{
 		EDGE_SAFE_DESTROY_ARRAY(page.m_entities);
@@ -34,8 +31,6 @@ void Edge::PhysicsSceneActiveEntityCollection::release()
 
 void Edge::PhysicsSceneActiveEntityCollection::addEntity(const PhysicsEntityReference& entity)
 {
-	LockGuard locker(m_mutex);
-
 	if (!entity)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to activate an invalid entity.");
@@ -81,8 +76,6 @@ void Edge::PhysicsSceneActiveEntityCollection::addEntity(const PhysicsEntityRefe
 
 void Edge::PhysicsSceneActiveEntityCollection::removeEntity(const PhysicsEntityReference& entity)
 {
-	LockGuard locker(m_mutex);
-
 	if (!entity)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to deactivate an invalid entity.");
@@ -159,8 +152,6 @@ Edge::PhysicsEntityReference Edge::PhysicsSceneActiveEntityCollectionIterator::g
 
 bool Edge::PhysicsSceneActiveEntityCollectionIterator::next()
 {
-	SharedLockGuard locker(m_collection.m_mutex);
-
 	++m_currentEntityIndex;
 
 	if (m_currentPageIndex >= m_collection.m_entityPages.size())

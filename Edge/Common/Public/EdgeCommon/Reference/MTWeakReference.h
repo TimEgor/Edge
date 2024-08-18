@@ -7,17 +7,19 @@ namespace Edge
 	template <typename T>
 	class MTWeakReference
 	{
-		static_assert(std::is_base_of_v<MTCountableObjectBase, T>);
-
-		using HandleReference = typename T::WeakReferenceHandleReference;
-		using ObjectReference = typename T::ObjectReference;
-		using ObjectConstReference = typename T::ObjectConstReference;
-
 	public:
+		using Base = MTWeakReferencableBase<T>;
+
+		using WeakReferenceHandle = MTWeakReferenceHandle<T>;
+		using WeakReferenceHandleReference = MTReference<WeakReferenceHandle>;
+
+		using ObjectReference = MTReference<T>;
+		using ObjectConstReference = MTConstReference<T>;
+
 		using ObjectType = T;
 
 	protected:
-		HandleReference m_objectHandle;
+		WeakReferenceHandleReference m_objectHandle;
 
 		void releaseReference();
 

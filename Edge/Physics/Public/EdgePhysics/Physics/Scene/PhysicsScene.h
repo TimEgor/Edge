@@ -6,20 +6,25 @@
 #include "EdgeCommon/Math/Vector.h"
 
 #include "EdgePhysics/Physics/PhysicsWorld.h"
+#include "EdgePhysics/Physics/Collision/PhysicsSceneCollisionManager.h"
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
 #include "PhysicsSceneReference.h"
 
 namespace Edge
 {
-	class EntityManager;
+	class PhysicsSceneEntityCollection;
 	class PhysicsSceneActiveEntityCollection;
+
+	class PhysicsSceneCollisionManager;
 
 	class PhysicsScene final : public NonCopyable, public DefaultDestroyingMTCountableObjectBase, public MTWeakReferencableBase<PhysicsScene>
 	{
 	private:
-		EntityManager* m_entityManager = nullptr;
+		PhysicsSceneEntityCollection* m_entityCollection = nullptr;
 		PhysicsSceneActiveEntityCollection* m_activeEntityCollection = nullptr;
+
+		PhysicsSceneCollisionManagerReference m_collisionManager;
 
 		FloatVector3 m_gravity = FloatVector3(0.0f, -9.81f, 0.0f);
 
@@ -30,6 +35,7 @@ namespace Edge
 
 	public:
 		PhysicsScene(const PhysicsWorldReference& world);
+		~PhysicsScene() { release(); }
 
 		bool init();
 		void release();
@@ -45,6 +51,8 @@ namespace Edge
 		void activateEntity(PhysicsSceneEntityID entityID);
 		void activateEntity(PhysicsEntityReference entity);
 		void deactivateEntity(PhysicsEntityReference entity);
+
+		PhysicsSceneCollisionManagerReference getCollisionManager() const;
 
 		PhysicsWorldWeakReference getWorld();
 	};

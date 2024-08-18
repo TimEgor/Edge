@@ -7,6 +7,8 @@ void Edge::MTWeakReference<T>::releaseReference()
 template <typename T>
 Edge::MTWeakReference<T>::MTWeakReference(const ObjectConstReference& object)
 {
+	static_assert(std::is_base_of_v<MTCountableObjectBase, T>);
+
 	if (object)
 	{
 		m_objectHandle = object->getWeakReferenceHandle();
@@ -15,12 +17,17 @@ Edge::MTWeakReference<T>::MTWeakReference(const ObjectConstReference& object)
 
 template <typename T>
 Edge::MTWeakReference<T>::MTWeakReference(const MTWeakReference<T>& reference)
-	: m_objectHandle(reference.m_objectHandle) {}
+	: m_objectHandle(reference.m_objectHandle)
+{
+	static_assert(std::is_base_of_v<MTCountableObjectBase, T>);
+}
 
 template <typename T>
 Edge::MTWeakReference<T>::MTWeakReference(MTWeakReference<T>&& reference)
 	: m_objectHandle(reference.m_objectHandle)
 {
+	static_assert(std::is_base_of_v<MTCountableObjectBase, T>);
+
 	reference.m_objectHandle.reset();
 }
 

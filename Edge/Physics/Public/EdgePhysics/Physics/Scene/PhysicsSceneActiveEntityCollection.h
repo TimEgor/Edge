@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EdgeCommon/Multithreading/Mutex.h"
-
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
 #include <vector>
@@ -18,8 +16,6 @@ namespace Edge
 			PhysicsEntityReference* m_entities = nullptr;
 			PhysicsSceneActivationContextEntityIndex m_size = 0;
 		};
-
-		mutable SharedMutex m_mutex;
 
 		using EntityPageCollection = std::vector<EntityPage>;
 

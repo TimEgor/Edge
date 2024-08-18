@@ -2,19 +2,25 @@
 
 #include "EdgeCommon/Assert/AssertCore.h"
 
+#include "EdgePhysics/Physics/Collision/PhysicsSceneCollisionManager.h"
 #include "EdgePhysics/Physics/Scene/PhysicsScene.h"
+
+void Edge::PhysicsEntity::updateEntityLinks(PhysicsEntityWeakLinkObject* oldObject, PhysicsEntityWeakLinkObject* newObject)
+{
+	if (oldObject)
+	{
+		oldObject->setEntityLink(nullptr);
+	}
+
+	if (newObject)
+	{
+		newObject->setEntityLink(this);
+	}
+}
 
 void Edge::PhysicsEntity::updateMotion(const PhysicsEntityMotionReference& newMotion)
 {
-	if (m_motion)
-	{
-		m_motion->setEntityLink(nullptr);
-	}
-
-	if (newMotion)
-	{
-		newMotion->setEntityLink(this);
-	}
+	updateEntityLinks(m_motion.getObject(), newMotion.getObject());
 
 	m_motion = newMotion;
 }
@@ -32,6 +38,23 @@ Edge::PhysicsEntity::~PhysicsEntity()
 
 	m_transform->setEntityLink(nullptr);
 	updateMotion(nullptr);
+}
+
+void Edge::PhysicsEntity::setCollision(const PhysicsEntityCollisionReference& collision)
+{
+	if (m_collision && m_sceneContext)
+	{
+		m_sceneContext->getScene().getReference()->getCollisionManager()->removeCollision(m_collision);
+	}
+
+	updateEntityLinks(m_collision.getObject(), collision.getObject());
+
+	m_collision = collision;
+
+	if (m_collision && m_sceneContext)
+	{
+		m_sceneContext->getScene().getReference()->getCollisionManager()->addCollision(m_collision);
+	}
 }
 
 void Edge::PhysicsEntity::setSceneContext(const PhysicsEntitySceneContextReference& context)

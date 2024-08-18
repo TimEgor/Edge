@@ -165,7 +165,7 @@ namespace Edge
 				continue;
 			}
 
-			for (size_t elementIndex = 0; elementIndex < page.m_size; ++elementIndex)
+			for (size_t elementIndex = 0; elementIndex < page.m_capacity; ++elementIndex)
 			{
 				if (!page.m_aliveMem[elementIndex])
 				{

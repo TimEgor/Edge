@@ -17,7 +17,7 @@ EdgeDemo::FireworksParticle::FireworksParticle(FireworksParticleID id, const Edg
 	particleCreationParam.m_motionCreationParam = &particleMotionCreationParam;
 
 	particleMotionCreationParam.m_mass = particleMass;
-	particleMotionCreationParam.m_gravityFactor = 0.5f;
+	particleMotionCreationParam.m_gravityFactor = 0.2f;
 	particleMotionCreationParam.m_linearDampingFactor = 0.3f;
 
 	m_physParticleEntity = Edge::GetPhysics().createParticle(&particleCreationParam);

@@ -1,8 +1,10 @@
 #include "DefaultPhysicsEntitySceneContext.h"
 
-Edge::DefaultPhysicsEntitySceneContext::~DefaultPhysicsEntitySceneContext()
+#include "PhysicsScene.h"
+
+void Edge::DefaultPhysicsEntitySceneContext::selfDestroy()
 {
-	getEntity()->setSceneContext(nullptr); //TODO: Probably it will be better to move this resetting in 'EntityManager::removeEntity()' function
+	m_collection->destroyContext(this);
 }
 
 void Edge::DefaultPhysicsEntitySceneContext::setActivationContextIndex(PhysicsSceneActivationContextEntityIndex index)
@@ -31,4 +33,16 @@ void Edge::DefaultPhysicsEntitySceneContext::setScene(const PhysicsSceneReferenc
 
 	m_scene = scene;
 	m_sceneEntityID = id;
+}
+
+void Edge::DefaultPhysicsEntitySceneContext::setContextCollection(const PhysicsEntitySceneContextCollectionReference& collection, PhysicsSceneEntityID id)
+{
+	if (collection && id == InvalidPhysicsSceneEntityID || !collection && id != InvalidPhysicsSceneEntityID)
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Trying to set an invalid entity scene context collection.");
+		return;
+	}
+
+	m_collection = collection;
+	m_sceneContextID = id;
 }

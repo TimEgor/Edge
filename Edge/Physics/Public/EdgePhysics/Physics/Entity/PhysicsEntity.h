@@ -3,6 +3,7 @@
 #include "EdgeCommon/HashedType.h"
 #include "EdgeCommon/Reference/MTCountableObjectBase.h"
 
+#include "EdgePhysics/Physics/Collision/PhysicsEntityCollision.h"
 #include "EdgePhysics/Physics/Scene/PhysicsSceneReference.h"
 
 #include "PhysicsEntityMotion.h"
@@ -16,7 +17,6 @@ namespace Edge
 	{
 	public:
 		PhysicsEntitySceneContext() = default;
-		virtual ~PhysicsEntitySceneContext() = default;
 
 		virtual PhysicsSceneWeakReference getScene() const = 0;
 		virtual bool isActive() const = 0;
@@ -37,7 +37,9 @@ namespace Edge
 		PhysicsEntityTransformReference m_transform;
 		PhysicsEntityMotionReference m_motion;
 
-		//PhysicsEntityCollisionReference m_collision;
+		PhysicsEntityCollisionReference m_collision;
+
+		void updateEntityLinks(PhysicsEntityWeakLinkObject* oldObject, PhysicsEntityWeakLinkObject* newObject);
 
 		void updateMotion(const PhysicsEntityMotionReference& newMotion);
 
@@ -48,8 +50,8 @@ namespace Edge
 		PhysicsEntityTransformReference getTransform() const { return m_transform; }
 		PhysicsEntityMotionReference getMotion() const { return m_motion; }
 
-		//PhysicsEntityCollisionReference getCollision() const { return m_collision; }
-
+		PhysicsEntityCollisionReference getCollision() const { return m_collision; }
+		void setCollision(const PhysicsEntityCollisionReference& collision);
 
 		virtual void updateTransformWithMotion(float deltaTime) = 0;
 

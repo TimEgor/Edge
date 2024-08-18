@@ -28,8 +28,10 @@ namespace EdgeDefRender
 			float m_unusingTime = 0.0f;
 
 			BufferData() = default;
-			BufferData(Edge::GPUBuffer* buffer) : m_buffer(buffer) {}
-			~BufferData();
+			BufferData(Edge::GPUBuffer* buffer) noexcept : m_buffer(buffer) {}
+			BufferData(const BufferData&) noexcept = default;
+			BufferData(BufferData&& data) noexcept;
+			~BufferData() noexcept;
 		};
 
 		using BufferCollection = std::vector<BufferData>;

@@ -17,11 +17,11 @@ namespace EdgeDemo
 		using ParticleCollection = Edge::ObjectPool<FireworksParticle, ParticleHandle>;
 		using ParticlePtrCollection = std::vector<FireworksParticle*>;
 
-		static constexpr float minSpawningDelay = 2.0f;
-		static constexpr float maxSpawningDelay = 4.0f;
+		static constexpr float minSpawningDelay = 1.0f;
+		static constexpr float maxSpawningDelay = 3.0f;
 
-		static constexpr uint32_t minParticleCount = 50;
-		static constexpr uint32_t maxParticleCount = 150;
+		static constexpr uint32_t minParticleCount = 150;
+		static constexpr uint32_t maxParticleCount = 350;
 
 		static constexpr float minParticleLifetime = 2.0f;
 		static constexpr float maxParticleLifetime = 3.0f;

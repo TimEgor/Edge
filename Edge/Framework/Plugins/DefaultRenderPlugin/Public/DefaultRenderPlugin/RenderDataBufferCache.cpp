@@ -42,7 +42,13 @@ Edge::GPUBuffer& EdgeDefRender::RenderDataBufferCache::getBuffer(uint32_t index)
 	return *m_buffers[index].m_buffer;
 }
 
-EdgeDefRender::RenderDataBufferCache::BufferData::~BufferData()
+EdgeDefRender::RenderDataBufferCache::BufferData::BufferData(BufferData&& data) noexcept
+	: m_buffer(data.m_buffer), m_unusingTime(data.m_unusingTime)
+{
+	data.m_buffer = nullptr;
+}
+
+EdgeDefRender::RenderDataBufferCache::BufferData::~BufferData() noexcept
 {
 	EDGE_SAFE_DESTROY(m_buffer);
 }

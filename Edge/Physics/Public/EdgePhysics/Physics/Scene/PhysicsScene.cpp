@@ -5,10 +5,9 @@
 
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
-#include "EdgePhysics/Physics/Scene/PhysicsScene.h"
 
-#include "PhysicsSceneActiveEntityManager.h"
-#include "PhysicsSceneEntityManager.h"
+#include "PhysicsSceneActiveEntityCollection.h"
+#include "PhysicsSceneEntityCollection.h"
 
 Edge::JobGraphReference Edge::PhysicsScene::getUpdateJobGraph(float deltaTime)
 {
@@ -40,10 +39,13 @@ Edge::PhysicsScene::PhysicsScene(const PhysicsWorldReference& world)
 
 bool Edge::PhysicsScene::init()
 {
-	m_entityManager = new EntityManager();
-	EDGE_CHECK_INITIALIZATION(m_entityManager && m_entityManager->init(this));
+	m_entityCollection = new PhysicsSceneEntityCollection();
+	EDGE_CHECK_INITIALIZATION(m_entityCollection && m_entityCollection->init(this));
 	m_activeEntityCollection = new PhysicsSceneActiveEntityCollection();
 	EDGE_CHECK_INITIALIZATION(m_activeEntityCollection && m_activeEntityCollection->init());
+
+	m_collisionManager = new PhysicsSceneCollisionManager();
+	EDGE_CHECK_INITIALIZATION(m_collisionManager && m_collisionManager->init(this));
 
 	return true;
 }
@@ -51,7 +53,7 @@ bool Edge::PhysicsScene::init()
 void Edge::PhysicsScene::release()
 {
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_activeEntityCollection);
-	EDGE_SAFE_DESTROY_WITH_RELEASING(m_entityManager);
+	EDGE_SAFE_DESTROY_WITH_RELEASING(m_entityCollection);
 }
 
 void Edge::PhysicsScene::update(float deltaTime)
@@ -60,7 +62,7 @@ void Edge::PhysicsScene::update(float deltaTime)
 
 	JobController& jobContoller = GetPhysics().getJobController();
 
-	JobGraphReference physSceneUpdateJobGraph = getUpdateJobGraph(deltaTime);
+	const JobGraphReference physSceneUpdateJobGraph = getUpdateJobGraph(deltaTime);
 	jobContoller.addJobGraph(physSceneUpdateJobGraph);
 	jobContoller.wait(physSceneUpdateJobGraph);
 }
@@ -70,20 +72,33 @@ Edge::PhysicsSceneEntityID Edge::PhysicsScene::addEntity(const PhysicsEntityRefe
 	if (!entity)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to add an invalid entity to the scene.");
-		return false;
+		return InvalidPhysicsSceneEntityID;
 	}
 
 	if (entity->getSceneContext())
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Entity has already been added to a scene.");
-		return false;
+		return InvalidPhysicsSceneEntityID;
 	}
 
-	const bool result = m_entityManager->addEntity(entity) != InvalidPhysicsSceneEntityID;
-	if (result && activate)
+	const PhysicsSceneEntityID entityID = m_entityCollection->addEntity(entity) != InvalidPhysicsSceneEntityID;
+	if (entityID == InvalidPhysicsSceneEntityID)
+	{
+		return InvalidPhysicsSceneEntityID;
+	}
+
+	if (activate)
 	{
 		activateEntity(entity);
 	}
+
+	const PhysicsEntityCollisionReference entityCollision = entity->getCollision();
+	if (entityCollision)
+	{
+		m_collisionManager->addCollision(entityCollision);
+	}
+
+	return entityID;
 }
 
 void Edge::PhysicsScene::removeEntity(PhysicsSceneEntityID entityID)
@@ -100,14 +115,20 @@ void Edge::PhysicsScene::removeEntity(const PhysicsEntityReference& entity)
 		return;
 	}
 
+	const PhysicsEntityCollisionReference entityCollision = entity->getCollision();
+	if (entityCollision)
+	{
+		m_collisionManager->removeCollision(entityCollision);
+	}
+
 	deactivateEntity(entity);
 
-	m_entityManager->removeEntity(entity);
+	m_entityCollection->removeEntity(entity);
 }
 
 Edge::PhysicsEntityReference Edge::PhysicsScene::getEntity(PhysicsSceneEntityID entityID) const
 {
-	return m_entityManager->getEntity(entityID);
+	return m_entityCollection->getEntity(entityID);
 }
 
 void Edge::PhysicsScene::activateEntity(PhysicsSceneEntityID entityID)
@@ -133,6 +154,11 @@ void Edge::PhysicsScene::deactivateEntity(PhysicsEntityReference entity)
 	}
 
 	m_activeEntityCollection->removeEntity(entity);
+}
+
+Edge::PhysicsSceneCollisionManagerReference Edge::PhysicsScene::getCollisionManager() const
+{
+	return m_collisionManager;
 }
 
 Edge::PhysicsWorldWeakReference Edge::PhysicsScene::getWorld()
