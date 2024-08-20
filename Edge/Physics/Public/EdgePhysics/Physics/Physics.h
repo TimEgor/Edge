@@ -38,7 +38,7 @@ namespace Edge
 		PhysicsBodyReference createBody(const PhysicsBodyFactory::BodyCreationParam* params) const;
 		PhysicsParticleReference createParticle(const PhysicsParticleFactory::ParticleCreationParam* params) const;
 
-		PhysicsBoxShapeReference createBox(const FloatVector3& size) const;
+		PhysicsBoxShapeReference createBoxShape(const FloatVector3& size) const;
 
 		JobController& getJobController() const;
 	};

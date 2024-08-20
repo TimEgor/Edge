@@ -111,7 +111,6 @@ void Edge::PhysicsScene::removeEntity(const PhysicsEntityReference& entity)
 {
 	if (!entity)
 	{
-		EDGE_ASSERT_FAIL_MESSAGE("Trying to remove an invalid entity to the scene.");
 		return;
 	}
 

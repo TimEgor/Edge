@@ -30,3 +30,8 @@ void Edge::DefaultPhysicsEntityCollisionSceneContext::setContextCollection(const
 	m_collection = collection;
 	m_collisionContextID = id;
 }
+
+void Edge::DefaultPhysicsEntityCollisionSceneContext::setBroadPhaseEntityIndex(PhysicsSceneBroadPhaseEntityIndex index)
+{
+	m_broadPhaseEntityIndex = index;
+}

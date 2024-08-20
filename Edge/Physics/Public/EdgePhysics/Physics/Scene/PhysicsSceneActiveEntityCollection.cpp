@@ -105,14 +105,12 @@ void Edge::PhysicsSceneActiveEntityCollection::removeEntity(const PhysicsEntityR
 	EntityPage& lastPage = m_entityPages[m_currentPage];
 
 	PhysicsEntityReference* exchangedEntityPtr = &page.m_entities[index];
-	(*exchangedEntityPtr)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(
-		InvalidPhysicsSceneActivationContextEntityIndex);
+	defaultSceneContext.setActivationContextIndex(InvalidPhysicsSceneActivationContextEntityIndex);
 
 	if (pageIndex != m_currentPage || index < page.m_size - 1)
 	{
 		*exchangedEntityPtr = lastPage.m_entities[lastPage.m_size - 1];
-		(*exchangedEntityPtr)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(
-			currentEntityIndex);
+		(*exchangedEntityPtr)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(currentEntityIndex);
 		--lastPage.m_size;
 	}
 	else

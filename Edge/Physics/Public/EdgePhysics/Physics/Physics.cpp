@@ -40,7 +40,7 @@ Edge::PhysicsParticleReference Edge::Physics::createParticle(const PhysicsPartic
 	return m_particleFactory->createParticleEntity(params);
 }
 
-Edge::PhysicsBoxShapeReference Edge::Physics::createBox(const FloatVector3& size) const
+Edge::PhysicsBoxShapeReference Edge::Physics::createBoxShape(const FloatVector3& size) const
 {
 	EDGE_ASSERT(m_boxShapeFactory);
 	return m_boxShapeFactory->createBoxShape(size);

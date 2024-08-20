@@ -14,14 +14,13 @@ Edge::PhysicsBodyReference Edge::PhysicsBodyFactory::createBodyEntity(const Body
 			entityPtr->setBodyMotion(createBodyMotion(bodyMotionCreationParam));
 		}
 
-		//if (param->m_collisionParam)
-		//{
-		//	ManagedPhysicsEntityCollision* collision = new ManagedPhysicsEntityCollision(body->getTransform());
+		if (param->m_collisionParam)
+		{
+			PhysicsEntityCollisionReference collision = new PhysicsEntityCollision();
+			collision->setShape(param->m_collisionParam->m_shape);
 
-		//	collision->setShape(param->m_collisionParam->m_shape);
-
-		//	entityPtr->setCollision(collision);
-		//}
+			entityPtr->setCollision(collision);
+		}
 
 		transform->setPosition(param->m_position);
 		transform->setRotation(param->m_rotation);

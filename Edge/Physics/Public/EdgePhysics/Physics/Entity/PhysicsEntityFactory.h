@@ -2,6 +2,8 @@
 
 #include "EdgeCommon/HashedType.h"
 
+#include "EdgePhysics/Physics/Collision/PhysicsEntityCollisionShape.h"
+
 #include "PhysicsEntityMotion.h"
 #include "PhysicsEntityReference.h"
 
@@ -25,7 +27,7 @@ namespace Edge
 
 		struct EntityCollisionCreationParam final
 		{
-			//PhysicsEntityCollisionShapeReference m_shape;
+			PhysicsEntityCollisionShapeReference m_shape;
 		};
 
 		struct EntityCreationParam : public HashedType

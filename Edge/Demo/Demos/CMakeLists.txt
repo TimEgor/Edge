@@ -12,9 +12,11 @@ edge_add_scope_module(EdgeDemos)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DebugDrawDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FireworksDemo)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestCastDemo)
 
 target_link_libraries(EdgeDemos
 	INTERFACE
 		DebugDrawDemo
 		FireworksDemo
+		TestCastDemo
 )

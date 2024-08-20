@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BroadPhases/PhysicsBroadPhase.h"
+
 #include "PhysicsEntityCollision.h"
 #include "PhysicsEntityCollisionSceneContextCollection.h"
 
@@ -14,6 +16,8 @@ namespace Edge
 		PhysicsSceneCollisionID m_sceneCollisionID = InvalidPhysicsSceneCollisionID;
 		PhysicsSceneCollisionID m_collisionContextID = InvalidPhysicsSceneCollisionID;
 
+		PhysicsSceneBroadPhaseEntityIndex m_broadPhaseEntityIndex = InvalidPhysicsSceneBroadPhaseEntityIndex;
+
 		virtual void selfDestroy() override;
 
 	public:
@@ -25,6 +29,9 @@ namespace Edge
 
 		PhysicsSceneCollisionID getCollisionContextID() const { return m_collisionContextID; }
 		void setContextCollection(const PhysicsEntityCollisionSceneContextCollectionReference& collection, PhysicsSceneCollisionID id);
+
+		PhysicsSceneBroadPhaseEntityIndex getBroadPhaseEntityIndex() const { return m_broadPhaseEntityIndex; }
+		void setBroadPhaseEntityIndex(PhysicsSceneBroadPhaseEntityIndex index);
 
 		EDGE_PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE(DEFAULT);
 	};

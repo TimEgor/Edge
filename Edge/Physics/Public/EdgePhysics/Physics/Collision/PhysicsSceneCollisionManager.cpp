@@ -4,6 +4,7 @@
 #include "EdgePhysics/Physics/Scene/PhysicsScene.h"
 
 #include "PhysicsSceneCollisionCollection.h"
+#include "BroadPhases/BruteforcePhysicsBroadPhase.h"
 
 bool Edge::PhysicsSceneCollisionManager::checkCollisionOwning(const PhysicsEntityCollisionReference& collision) const
 {
@@ -26,11 +27,15 @@ bool Edge::PhysicsSceneCollisionManager::init(const PhysicsSceneReference& scene
 	m_collisionCollection = new PhysicsSceneCollisionCollection();
 	EDGE_CHECK_INITIALIZATION(m_collisionCollection && m_collisionCollection->init(this));
 
+	m_broadPhase = new BruteforcePhysicsBroadPhase();
+	EDGE_CHECK_INITIALIZATION(m_broadPhase && m_broadPhase->init(this));
+
 	return true;
 }
 
 void Edge::PhysicsSceneCollisionManager::release()
 {
+	EDGE_SAFE_DESTROY_WITH_RELEASING(m_broadPhase);
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_collisionCollection);
 }
 
@@ -42,6 +47,8 @@ void Edge::PhysicsSceneCollisionManager::addCollision(const PhysicsEntityCollisi
 	}
 
 	m_collisionCollection->addCollision(collision);
+
+	m_broadPhase->addCollision(collision);
 }
 
 void Edge::PhysicsSceneCollisionManager::removeCollision(const PhysicsEntityCollisionReference& collision)
@@ -51,5 +58,17 @@ void Edge::PhysicsSceneCollisionManager::removeCollision(const PhysicsEntityColl
 		return;
 	}
 
+	m_broadPhase->removeCollision(collision);
+
 	m_collisionCollection->removeCollision(collision);
+}
+
+Edge::PhysicsEntityCollisionReference Edge::PhysicsSceneCollisionManager::getCollision(PhysicsSceneCollisionID id)
+{
+	return m_collisionCollection->getCollision(id);
+}
+
+void Edge::PhysicsSceneCollisionManager::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const
+{
+	m_broadPhase->rayCast(origin, end, resultCollector);
 }
