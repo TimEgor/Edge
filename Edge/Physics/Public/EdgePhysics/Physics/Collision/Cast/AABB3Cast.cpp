@@ -6,7 +6,7 @@
 
 bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, const FloatVector3& end, PhysicsCollisionQuery::PointCastingResult& result)
 {
-	const ComputeVector direction(end - origin);
+	const ComputeVector ray = end - origin;
 
 	float tMin = 0.0f;
 	//float tMax = TS_FLT_MAX;
@@ -14,7 +14,7 @@ bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, con
 
 	for (uint32_t slabIndex = 0; slabIndex < 3; ++slabIndex)
 	{
-		const float directionElement = direction.getElement(slabIndex);
+		const float directionElement = ray.getElement(slabIndex);
 
 		const float originElement = origin.getElement(slabIndex);
 
@@ -60,8 +60,13 @@ bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, con
 
 	}
 
+	if (tMin > 1.0f)
+	{
+		return false;
+	}
+
 	ComputeVector hitPos = origin;
-	const ComputeVector delta = direction * tMin;
+	const ComputeVector delta = ray * tMin;
 	hitPos += delta;
 
 	hitPos.saveToFloatVector3(result.m_hitPosition);

@@ -4,10 +4,10 @@
 
 namespace EdgeDemo
 {
-	class TestRayCastDemoPlugin final : public DemoPlugin
+	class TestCastDemoPlugin final : public DemoPlugin
 	{
 	public:
-		TestRayCastDemoPlugin(Edge::PluginModuleID moduleID)
+		TestCastDemoPlugin(Edge::PluginModuleID moduleID)
 			: DemoPlugin(moduleID) {}
 
 		virtual Demo* createDemo() const override;

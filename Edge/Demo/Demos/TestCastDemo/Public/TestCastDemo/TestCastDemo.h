@@ -9,9 +9,11 @@ namespace EdgeDemo
 	class TestCastDemo final : public PreInitedDemo
 	{
 	private:
-		Edge::PhysicsBodyReference m_testShapeEntity1;
-		Edge::PhysicsBodyReference m_testShapeEntity2;
-		Edge::PhysicsBodyReference m_testShapeEntity3;
+		Edge::PhysicsBodyReference m_testBox1;
+		Edge::PhysicsBodyReference m_testBox2;
+
+		Edge::PhysicsBodyReference m_testSphere1;
+		Edge::PhysicsBodyReference m_testSphere2;
 
 		float m_localTime = 0.0f;
 

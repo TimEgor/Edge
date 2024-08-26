@@ -5,6 +5,8 @@
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Collision/PointCastingResultCollectors.h"
+#include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
+#include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 
 void EdgeDemo::TestCastDemo::updateLocalTime(float deltaTime)
 {
@@ -27,50 +29,64 @@ bool EdgeDemo::TestCastDemo::initDemo()
 	bodyMotionCreationParam.m_angularDamping = 0.2f;
 
 	Edge::PhysicsBodyFactory::EntityCollisionCreationParam bodyCollisionCreationParam;
-	bodyCollisionCreationParam.m_shape = Edge::GetPhysics().createBoxShape(Edge::FloatVector3(0.5f, 0.5f, 0.5f));
+	bodyCollisionCreationParam.m_shape = new Edge::PhysicsBoxShape(Edge::FloatVector3(0.5f, 0.5f, 0.5f));
 
 	bodyCreationParam.m_motionCreationParam = &bodyMotionCreationParam;
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
-	bodyCreationParam.m_position.m_x = 5.0f;
+	m_testBox1 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
-	m_testShapeEntity1 = Edge::GetPhysics().createBody(&bodyCreationParam);
+	m_physicsScene->addEntity(m_testBox1);
 
-	m_physicsScene->addEntity(m_testShapeEntity1);
+	bodyCreationParam.m_position.m_y = 2.0f;
 
-	bodyCreationParam.m_position.m_x = 0.0f;
+	m_testBox2 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
-	bodyCreationParam.m_position.m_y = 5.0f;
+	m_physicsScene->addEntity(m_testBox2);
 
-	m_testShapeEntity2 = Edge::GetPhysics().createBody(&bodyCreationParam);
+ 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(0.5f);
 
-	m_physicsScene->addEntity(m_testShapeEntity2);
+	bodyCreationParam.m_position.m_y = 4.0f;
 
-	bodyCreationParam.m_position.m_y = 10.0f;
+	m_testSphere1 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
-	m_testShapeEntity3 = Edge::GetPhysics().createBody(&bodyCreationParam);
+	m_physicsScene->addEntity(m_testSphere1);
 
-	m_physicsScene->addEntity(m_testShapeEntity3);
+	bodyCreationParam.m_position.m_y = 6.0f;
+
+	m_testSphere2 = Edge::GetPhysics().createBody(&bodyCreationParam);
+
+	m_physicsScene->addEntity(m_testSphere2);
 
 	return true;
 }
 
 void EdgeDemo::TestCastDemo::releaseDemo()
 {
-	m_physicsScene->removeEntity(m_testShapeEntity1.getObject());
-	m_physicsScene->removeEntity(m_testShapeEntity2.getObject());
-	m_physicsScene->removeEntity(m_testShapeEntity3.getObject());
+	m_physicsScene->removeEntity(m_testBox1.getObject());
+	m_physicsScene->removeEntity(m_testBox2.getObject());
 
-	m_testShapeEntity1.reset();
-	m_testShapeEntity2.reset();
-	m_testShapeEntity3.reset();
+	m_physicsScene->removeEntity(m_testSphere1.getObject());
+	m_physicsScene->removeEntity(m_testSphere2.getObject());
+
+	m_testBox1.reset();
+	m_testBox2.reset();
+
+	m_testSphere1.reset();
+	m_testSphere2.reset();
 }
 
 void EdgeDemo::TestCastDemo::updateDemoLogic(float deltaTime)
 {
 	updateLocalTime(deltaTime);
 
-	m_testShapeEntity1->getTransform()->setPosition(Edge::FloatVector3(cosf(m_localTime * 2.0f) * 2.0f, 0.0f, 0.0f));
+	const float offsetX = cosf(m_localTime) * 2.0f;
+
+	const Edge::FloatVector3& boxPosition = m_testBox1->getTransform()->getPosition();
+	m_testBox1->getTransform()->setPosition(Edge::FloatVector3(offsetX, boxPosition.m_y, boxPosition.m_z));
+
+	const Edge::FloatVector3& spherePosition = m_testSphere1->getTransform()->getPosition();
+	m_testSphere1->getTransform()->setPosition(Edge::FloatVector3(offsetX, spherePosition.m_y, spherePosition.m_z));
 
 	const Edge::Transform& cameraTransform = m_cameraController->getTransform();
 	const Edge::FloatVector3& cameraPosition = cameraTransform.getOrigin();
@@ -87,9 +103,11 @@ void EdgeDemo::TestCastDemo::updateDemoLogic(float deltaTime)
 
 	m_debugVisualizationDataController->clear();
 
-	m_debugVisualizationDataController->addBox(m_testShapeEntity1->getTransform()->getWorldTransform());
-	m_debugVisualizationDataController->addBox(m_testShapeEntity2->getTransform()->getWorldTransform());
-	m_debugVisualizationDataController->addBox(m_testShapeEntity3->getTransform()->getWorldTransform());
+	m_debugVisualizationDataController->addBox(m_testBox1->getTransform()->getWorldTransform());
+	m_debugVisualizationDataController->addBox(m_testBox2->getTransform()->getWorldTransform());
+
+	m_debugVisualizationDataController->addSphere(m_testSphere1->getTransform()->getWorldTransform().getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
+	m_debugVisualizationDataController->addSphere(m_testSphere2->getTransform()->getWorldTransform().getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
 
 	if (hitCollisionCollector.hasHit())
 	{

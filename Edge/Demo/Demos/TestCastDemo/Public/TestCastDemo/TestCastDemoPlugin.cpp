@@ -5,9 +5,9 @@
 #include "TestCastDemo.h"
 
 EDGE_MODULE_LOAD()
-EDGE_PLUGIN(EdgeDemo::TestRayCastDemoPlugin, EDGE_PLUGIN_TYPE_DECLARATION_DEMO)
+EDGE_PLUGIN(EdgeDemo::TestCastDemoPlugin, EDGE_PLUGIN_TYPE_DECLARATION_DEMO)
 
-EdgeDemo::Demo* EdgeDemo::TestRayCastDemoPlugin::createDemo() const
+EdgeDemo::Demo* EdgeDemo::TestCastDemoPlugin::createDemo() const
 {
 	return new TestCastDemo();
 }
