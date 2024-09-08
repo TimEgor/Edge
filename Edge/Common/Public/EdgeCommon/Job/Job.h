@@ -12,6 +12,8 @@
 
 namespace Edge
 {
+	class JobController;
+
 	enum class JobState
 	{
 		Undefined,
@@ -38,6 +40,8 @@ namespace Edge
 
 	private:
 		mutable std::mutex m_mutex;
+
+		JobController* m_jobController = nullptr;
 		JobEvent* m_completionEvent = nullptr;
 
 		std::atomic<JobState> m_state;
@@ -64,7 +68,8 @@ namespace Edge
 
 		bool isFinished() const;
 
-		void onJobQueueRegistration();
+		JobController* getJobController() const { return m_jobController; }
+		void setExecutionContext(JobController* jobController);
 
 		JobState getState() const { return m_state; }
 

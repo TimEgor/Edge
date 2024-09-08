@@ -5,28 +5,21 @@
 #include "DefaultPhysicsEntitySceneContext.h"
 #include "PhysicsScene.h"
 
-bool Edge::PhysicsSceneActiveEntityCollection::init(PhysicsSceneActivationContextEntityIndex pageSize,
-	PhysicsSceneActivationContextEntityIndex maxFreePageCount)
+bool Edge::PhysicsSceneActiveEntityCollection::init(const PhysicsSceneReference& scene)
 {
-	EDGE_CHECK_INITIALIZATION(m_entityPages.empty());
-	EDGE_CHECK_INITIALIZATION(pageSize > 0);
+	EDGE_CHECK_INITIALIZATION(m_ids.empty());
+	EDGE_CHECK_INITIALIZATION(scene);
 
-	m_pageSize = pageSize;
-	m_maxFreePageCount = maxFreePageCount;
+	m_ids.reserve(4096);
+
+	m_scene = scene;
 
 	return true;
 }
 
 void Edge::PhysicsSceneActiveEntityCollection::release()
 {
-	for (EntityPage& page : m_entityPages)
-	{
-		EDGE_SAFE_DESTROY_ARRAY(page.m_entities);
-	}
-
-	m_entityPages = EntityPageCollection();
-
-	m_currentPage = 0;
+	m_ids = EntityCollection();
 }
 
 void Edge::PhysicsSceneActiveEntityCollection::addEntity(const PhysicsEntityReference& entity)
@@ -52,26 +45,9 @@ void Edge::PhysicsSceneActiveEntityCollection::addEntity(const PhysicsEntityRefe
 		return;
 	}
 
-	if (m_currentPage == m_entityPages.size())
-	{
-		EntityPage newPage;
-		newPage.m_entities = new PhysicsEntityReference[m_pageSize];
+	m_ids.push_back(defaultSceneContext.getSceneEntityID());
 
-		m_entityPages.push_back(newPage);
-	}
-
-	EntityPage& page = m_entityPages[m_currentPage];
-
-	page.m_entities[page.m_size] = entity;
-
-	defaultSceneContext.setActivationContextIndex(m_currentPage * m_pageSize + page.m_size);
-
-	++page.m_size;
-
-	if (page.m_size == m_pageSize)
-	{
-		++m_currentPage;
-	}
+	defaultSceneContext.setActivationContextIndex(m_ids.size() - 1);
 }
 
 void Edge::PhysicsSceneActiveEntityCollection::removeEntity(const PhysicsEntityReference& entity)
@@ -98,78 +74,15 @@ void Edge::PhysicsSceneActiveEntityCollection::removeEntity(const PhysicsEntityR
 		return;
 	}
 
-	const PhysicsSceneActivationContextEntityIndex pageIndex = currentEntityIndex / m_pageSize;
-	const PhysicsSceneActivationContextEntityIndex index = currentEntityIndex % m_pageSize;
-
-	EntityPage& page = m_entityPages[pageIndex];
-	EntityPage& lastPage = m_entityPages[m_currentPage];
-
-	PhysicsEntityReference* exchangedEntityPtr = &page.m_entities[index];
 	defaultSceneContext.setActivationContextIndex(InvalidPhysicsSceneActivationContextEntityIndex);
 
-	if (pageIndex != m_currentPage || index < page.m_size - 1)
+	const size_t entityCount = m_ids.size();
+	if (currentEntityIndex < entityCount - 1)
 	{
-		*exchangedEntityPtr = lastPage.m_entities[lastPage.m_size - 1];
-		(*exchangedEntityPtr)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(currentEntityIndex);
-		--lastPage.m_size;
-	}
-	else
-	{
-		--page.m_size;
+		const PhysicsSceneEntityID exchangeEntityID = m_ids[entityCount - 1];
+		m_ids[currentEntityIndex] = exchangeEntityID;
+		m_scene.getReference()->getEntity(exchangeEntityID)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(currentEntityIndex);
 	}
 
-	if (lastPage.m_size == 0 && m_currentPage != 0)
-	{
-		--m_currentPage;
-
-		const size_t pageCount = m_entityPages.size();
-		if (pageCount - m_currentPage > m_maxFreePageCount)
-		{
-			EDGE_SAFE_DESTROY_ARRAY(m_entityPages[pageCount - 1].m_entities);
-			m_entityPages.pop_back();
-		}
-	}
-}
-
-Edge::PhysicsSceneActiveEntityCollectionIterator::PhysicsSceneActiveEntityCollectionIterator(
-	const PhysicsSceneActiveEntityCollection& collection)
-	: m_collection(collection)
-{
-	next();
-}
-
-Edge::PhysicsSceneActiveEntityCollectionIterator::operator bool() const
-{
-	return m_currentEntity;
-}
-
-Edge::PhysicsEntityReference Edge::PhysicsSceneActiveEntityCollectionIterator::getCurrentEntity() const
-{
-	return m_currentEntity;
-}
-
-bool Edge::PhysicsSceneActiveEntityCollectionIterator::next()
-{
-	++m_currentEntityIndex;
-
-	if (m_currentPageIndex >= m_collection.m_entityPages.size())
-	{
-		m_currentEntity = nullptr;
-		return false;
-	}
-
-	if (m_collection.m_pageSize <= m_currentEntityIndex || m_collection.m_entityPages[m_currentPageIndex].m_size <= m_currentEntityIndex)
-	{
-		m_currentEntity = nullptr;
-
-		++m_currentPageIndex;
-		m_currentEntityIndex = 0;
-	}
-
-	if (m_currentPageIndex < m_collection.m_entityPages.size() && m_collection.m_entityPages[m_currentPageIndex].m_size > m_currentEntityIndex)
-	{
-		m_currentEntity = m_collection.m_entityPages[m_currentPageIndex].m_entities[m_currentEntityIndex];
-	}
-
-	return m_currentEntity != nullptr;
+	m_ids.pop_back();
 }

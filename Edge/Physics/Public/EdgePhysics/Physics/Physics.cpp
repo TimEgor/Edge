@@ -14,9 +14,6 @@ bool Edge::Physics::init(const InitParams& params)
 	m_particleFactory = new PhysicsParticleFactory();
 	EDGE_CHECK_INITIALIZATION(m_particleFactory);
 
-	m_boxShapeFactory = new PhysicsBoxShapeFactory();
-	EDGE_CHECK_INITIALIZATION(m_boxShapeFactory);
-
 	return true;
 }
 
@@ -38,12 +35,6 @@ Edge::PhysicsParticleReference Edge::Physics::createParticle(const PhysicsPartic
 {
 	EDGE_ASSERT(m_particleFactory);
 	return m_particleFactory->createParticleEntity(params);
-}
-
-Edge::PhysicsBoxShapeReference Edge::Physics::createBoxShape(const FloatVector3& size) const
-{
-	EDGE_ASSERT(m_boxShapeFactory);
-	return m_boxShapeFactory->createBoxShape(size);
 }
 
 Edge::JobController& Edge::Physics::getJobController() const

@@ -205,7 +205,7 @@ namespace Edge
 			JobGraph::DependencyJobReference* getJob(JobGraphJobID jobID);
 			JobGraph::DependencyJobReference* getGraphJob(JobGraphJobID jobID, bool isParent);
 
-			JobGraphJobID addDependencyJob(const JobGraph::DependencyJobReference& job);
+			JobGraphJobID addDependencyJob(const JobGraph::DependencyJobReference& job, bool addToCollection = true);
 			JobGraphJobID addGraphNode(JobGraphJobID preJobID, JobGraphJobID postJobID);
 		};
 

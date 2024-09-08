@@ -38,7 +38,10 @@ Edge::JobGraphReference EdgeDemo::DemoApplication::getMainLoopJobGraph()
 	Edge::JobGraphBuilder m_graphBuilder;
 
 	Edge::JobGraphBuilder::JobGraphJobID updateLogicJobID = m_graphBuilder.addJob(
-		Edge::createLambdaJob([this]() { update(getDeltaTime()); }, "Demo application update"));
+		Edge::createLambdaJob([this]()
+			{
+				update(getDeltaTime());
+			}, "Demo application update"));
 
 	Edge::JobGraphBuilder::JobGraphJobID updatePhysJobID = m_graphBuilder.addJobAfter(
 		Edge::createLambdaJob([this]()
@@ -49,10 +52,16 @@ Edge::JobGraphReference EdgeDemo::DemoApplication::getMainLoopJobGraph()
 	);
 
 	Edge::JobGraphBuilder::JobGraphJobID renderJobID = m_graphBuilder.addJob(
-		Edge::createLambdaJob([this]() { getRenderController().render(*getWindowGraphicPresenter().getTargetTexture()); }, "Render"));
+		Edge::createLambdaJob([this]()
+			{
+				getRenderController().render(*getWindowGraphicPresenter().getTargetTexture());
+			}, "Render"));
 
 	m_graphBuilder.addJobAfter(
-		Edge::createLambdaJob([this]() { getWindowGraphicPresenter().present(); }, "Graphic presenter"),
+		Edge::createLambdaJob([this]()
+			{
+				getWindowGraphicPresenter().present();
+			}, "Graphic presenter"),
 		renderJobID);
 
 	Edge::JobGraphBuilder::JobGraphJobID renderPrepareJobID = m_graphBuilder.addJob(

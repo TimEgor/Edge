@@ -51,6 +51,8 @@ namespace Edge
 
 		PhysicsEntityCollisionSceneContextReference getSceneContext() const { return m_sceneContext; }
 		void setSceneContext(const PhysicsEntityCollisionSceneContextReference& context);
+
+		PhysicsSceneCollisionManagerReference getCollisionManager() const;
 	};
 
 	EDGE_MT_REFERENCE(PhysicsEntityCollision);

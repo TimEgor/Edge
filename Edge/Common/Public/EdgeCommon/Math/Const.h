@@ -8,6 +8,7 @@ constexpr float EDGE_DEG_TO_RAD = EDGE_PI / 180.0f;
 constexpr float EDGE_RAD_TO_DEG = 180.0f / EDGE_PI;
 
 constexpr float EDGE_EPSILON = 1.192093e-07f;
+constexpr float EDGE_EPSILON_SQR = EDGE_EPSILON * EDGE_EPSILON;
 
 constexpr float EDGE_FLT_MAX = 3.402823466e+38f;
 constexpr float EDGE_FLT_MIN = 1.175494351e-38f;

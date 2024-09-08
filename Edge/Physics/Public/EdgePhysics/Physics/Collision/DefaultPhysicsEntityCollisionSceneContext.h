@@ -23,7 +23,7 @@ namespace Edge
 	public:
 		DefaultPhysicsEntityCollisionSceneContext() = default;
 
-		virtual PhysicsSceneCollisionManagerWeakReference getCollisionManager() const override { return m_collisionManager; }
+		virtual PhysicsSceneCollisionManagerWeakReference getCollisionManager() const override;
 		PhysicsSceneCollisionID getCollisionID() const { return m_collisionContextID; }
 		void setCollisionManager(const PhysicsSceneCollisionManagerReference& manager, PhysicsSceneCollisionID id);
 
@@ -35,4 +35,12 @@ namespace Edge
 
 		EDGE_PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE(DEFAULT);
 	};
+
+	EDGE_MT_REFERENCE(DefaultPhysicsEntityCollisionSceneContext);
+
+	namespace CollisionUtil
+	{
+		DefaultPhysicsEntityCollisionSceneContextReference TryToGetDefaultCollisionSceneContext(const PhysicsEntityCollisionReference& collision);
+		DefaultPhysicsEntityCollisionSceneContextReference GetDefaultCollisionSceneContext(const PhysicsEntityCollisionReference& collision);
+	}
 }

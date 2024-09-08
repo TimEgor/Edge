@@ -63,12 +63,24 @@ namespace Edge
 		bool vector3LessOrEqual(const Vector& vec1, const Vector& vec2);
 		bool vector3NearEqual(const Vector& vec1, const Vector& vec2, const Vector& epsilon);
 
+		bool vector3AnyEqual(const Vector& vec1, const Vector& vec2);
+		bool vector3AnyGreater(const Vector& vec1, const Vector& vec2);
+		bool vector3AnyGreaterOrEqual(const Vector& vec1, const Vector& vec2);
+		bool vector3AnyLess(const Vector& vec1, const Vector& vec2);
+		bool vector3AnyLessOrEqual(const Vector& vec1, const Vector& vec2);
+
 		bool vector4Equal(const Vector& vec1, const Vector& vec2);
 		bool vector4Greater(const Vector& vec1, const Vector& vec2);
 		bool vector4GreaterOrEqual(const Vector& vec1, const Vector& vec2);
 		bool vector4Less(const Vector& vec1, const Vector& vec2);
 		bool vector4LessOrEqual(const Vector& vec1, const Vector& vec2);
 		bool vector4NearEqual(const Vector& vec1, const Vector& vec2, const Vector& epsilon);
+
+		bool vector4AnyEqual(const Vector& vec1, const Vector& vec2);
+		bool vector4AnyGreater(const Vector& vec1, const Vector& vec2);
+		bool vector4AnyGreaterOrEqual(const Vector& vec1, const Vector& vec2);
+		bool vector4AnyLess(const Vector& vec1, const Vector& vec2);
+		bool vector4AnyLessOrEqual(const Vector& vec1, const Vector& vec2);
 
 		Vector vectorIsNanV(const Vector& vec);
 		Vector vectorIsInfiniteV(const Vector& vec);

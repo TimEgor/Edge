@@ -89,22 +89,9 @@ Edge::PhysicsSceneCollisionID Edge::PhysicsSceneCollisionCollection::addCollisio
 
 void Edge::PhysicsSceneCollisionCollection::removeCollision(const PhysicsEntityCollisionReference& collision)
 {
-	if (!collision)
-	{
-		return;
-	}
-
-	PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntityCollisionSceneContext::getPhysicsEntityCollisionSceneContextType())
-	{
-		EDGE_ASSERT_FAIL_MESSAGE("Collision scene context has an invalid type.");
-		return;
-	}
-
-
-	DefaultPhysicsEntityCollisionSceneContext& defaultSceneContext = sceneContext.getObjectCastRef<DefaultPhysicsEntityCollisionSceneContext>();
-	const PhysicsSceneEntityID collisionID = defaultSceneContext.getCollisionID();
-	defaultSceneContext.setCollisionManager(nullptr, InvalidPhysicsSceneEntityID);
+	const DefaultPhysicsEntityCollisionSceneContextReference defaultSceneContext = CollisionUtil::GetDefaultCollisionSceneContext(collision);
+	const PhysicsSceneEntityID collisionID = defaultSceneContext->getCollisionID();
+	defaultSceneContext->setCollisionManager(nullptr, InvalidPhysicsSceneEntityID);
 
 	collision->setSceneContext(nullptr);
 

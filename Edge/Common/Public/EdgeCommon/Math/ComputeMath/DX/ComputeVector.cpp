@@ -199,6 +199,36 @@ bool Edge::ComputeMath::vector3NearEqual(const Vector& vec1, const Vector& vec2,
 	return DirectX::XMVector3NearEqual(vec1, vec2, epsilon);
 }
 
+bool Edge::ComputeMath::vector3AnyEqual(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector3EqualR(vec1, vec2);
+	return DirectX::XMComparisonAnyTrue(result);
+}
+
+bool Edge::ComputeMath::vector3AnyGreater(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector3GreaterR(vec1, vec2);
+	return DirectX::XMComparisonAnyTrue(result);
+}
+
+bool Edge::ComputeMath::vector3AnyGreaterOrEqual(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector3GreaterOrEqualR(vec1, vec2);
+	return DirectX::XMComparisonAnyTrue(result);
+}
+
+bool Edge::ComputeMath::vector3AnyLess(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector3GreaterOrEqualR(vec1, vec2);
+	return DirectX::XMComparisonAnyFalse(result);
+}
+
+bool Edge::ComputeMath::vector3AnyLessOrEqual(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector3GreaterR(vec1, vec2);
+	return DirectX::XMComparisonAnyFalse(result);
+}
+
 bool Edge::ComputeMath::vector4Equal(const Vector& vec1, const Vector& vec2)
 {
 	return DirectX::XMVector4Equal(vec1, vec2);
@@ -227,6 +257,36 @@ bool Edge::ComputeMath::vector4LessOrEqual(const Vector& vec1, const Vector& vec
 bool Edge::ComputeMath::vector4NearEqual(const Vector& vec1, const Vector& vec2, const Vector& epsilon)
 {
 	return DirectX::XMVector4NearEqual(vec1, vec2, epsilon);
+}
+
+bool Edge::ComputeMath::vector4AnyEqual(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector4EqualR(vec1, vec2);
+	return DirectX::XMComparisonAnyTrue(result);
+}
+
+bool Edge::ComputeMath::vector4AnyGreater(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector4GreaterR(vec1, vec2);
+	return DirectX::XMComparisonAnyTrue(result);
+}
+
+bool Edge::ComputeMath::vector4AnyGreaterOrEqual(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector4GreaterOrEqualR(vec1, vec2);
+	return DirectX::XMComparisonAnyTrue(result);
+}
+
+bool Edge::ComputeMath::vector4AnyLess(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector4GreaterOrEqualR(vec1, vec2);
+	return DirectX::XMComparisonAnyFalse(result);
+}
+
+bool Edge::ComputeMath::vector4AnyLessOrEqual(const Vector& vec1, const Vector& vec2)
+{
+	const uint32_t result = DirectX::XMVector3GreaterR(vec1, vec2);
+	return DirectX::XMComparisonAnyFalse(result);
 }
 
 Edge::ComputeMath::Vector Edge::ComputeMath::vectorIsNanV(const Vector& vec)

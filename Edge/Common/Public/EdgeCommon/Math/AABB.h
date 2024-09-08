@@ -21,6 +21,7 @@ namespace Edge
 		float getVolume() const;
 
 		bool isContained(const AABB3& volume) const;
+		bool isOverlapped(const AABB3& volume) const;
 	};
 
 	AABB3 aabbFromMerging(const AABB3& volume1, const AABB3& volume2);

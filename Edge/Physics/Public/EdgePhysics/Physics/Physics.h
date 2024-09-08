@@ -2,7 +2,6 @@
 
 #include "EdgeCommon/Patterns/NonCopyable.h"
 
-#include "Collision/Shapes/PhysicsBoxShapeFactory.h"
 #include "Entity/PhysicsBodyFactory.h"
 #include "Entity/PhysicsParticleFactory.h"
 
@@ -22,8 +21,6 @@ namespace Edge
 		PhysicsBodyFactory* m_bodyFactory = nullptr;
 		PhysicsParticleFactory* m_particleFactory = nullptr;
 
-		PhysicsBoxShapeFactory* m_boxShapeFactory = nullptr;
-
 	public:
 		struct InitParams final
 		{
@@ -37,8 +34,6 @@ namespace Edge
 
 		PhysicsBodyReference createBody(const PhysicsBodyFactory::BodyCreationParam* params) const;
 		PhysicsParticleReference createParticle(const PhysicsParticleFactory::ParticleCreationParam* params) const;
-
-		PhysicsBoxShapeReference createBoxShape(const FloatVector3& size) const;
 
 		JobController& getJobController() const;
 	};

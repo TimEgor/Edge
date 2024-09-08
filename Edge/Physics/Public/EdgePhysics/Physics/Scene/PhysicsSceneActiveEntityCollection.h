@@ -10,48 +10,24 @@ namespace Edge
 	{
 		friend class PhysicsSceneActiveEntityCollectionIterator;
 
+	public:
+		using EntityCollection = std::vector<PhysicsSceneEntityID>;
+
 	private:
-		struct EntityPage final
-		{
-			PhysicsEntityReference* m_entities = nullptr;
-			PhysicsSceneActivationContextEntityIndex m_size = 0;
-		};
+		EntityCollection m_ids;
 
-		using EntityPageCollection = std::vector<EntityPage>;
-
-		EntityPageCollection m_entityPages;
-		PhysicsSceneActivationContextEntityIndex m_currentPage = 0;
-
-		PhysicsSceneActivationContextEntityIndex m_pageSize = 0;
-		PhysicsSceneActivationContextEntityIndex m_maxFreePageCount = 0;
+		PhysicsSceneWeakReference m_scene;
 
 	public:
 		PhysicsSceneActiveEntityCollection() = default;
 		~PhysicsSceneActiveEntityCollection() { release(); }
 
-		bool init(PhysicsSceneActivationContextEntityIndex pageSize = 4096, PhysicsSceneActivationContextEntityIndex maxFreePageCount = 2);
+		bool init(const PhysicsSceneReference& scene);
 		void release();
 
 		void addEntity(const PhysicsEntityReference& entity);
 		void removeEntity(const PhysicsEntityReference& entity);
-	};
 
-	class PhysicsSceneActiveEntityCollectionIterator final
-	{
-	private:
-		const PhysicsSceneActiveEntityCollection& m_collection;
-
-		PhysicsEntityReference m_currentEntity = nullptr;
-
-		uint32_t m_currentPageIndex = 0;
-		uint32_t m_currentEntityIndex = -1;
-
-	public:
-		PhysicsSceneActiveEntityCollectionIterator(const PhysicsSceneActiveEntityCollection& collection);
-
-		operator bool() const;
-
-		PhysicsEntityReference getCurrentEntity() const;
-		bool next();
+		const EntityCollection& getEntities() const { return m_ids; }
 	};
 }

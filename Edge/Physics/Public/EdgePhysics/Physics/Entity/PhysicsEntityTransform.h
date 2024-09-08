@@ -7,8 +7,19 @@
 
 namespace Edge
 {
+	class PhysicsEntityTransformUnsafeNotificationAccessor;
+
 	class PhysicsEntityTransform : public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
 	{
+		friend PhysicsEntityTransformUnsafeNotificationAccessor;
+
+	protected:
+		void makeTransformChangingNotification() const;
+
+		virtual void setPositionRaw(const FloatVector3& position) = 0;
+		virtual void setRotationRaw(const FloatQuaternion& rotation) = 0;
+		virtual void setWorldTransformRaw(const Transform& transform) = 0;
+
 	public:
 		PhysicsEntityTransform() = default;
 
@@ -32,6 +43,10 @@ namespace Edge
 	protected:
 		FloatVector3 m_position = FloatVector3Zero;
 
+		virtual void setPositionRaw(const FloatVector3& position) override;
+		virtual void setRotationRaw(const FloatQuaternion& rotation) override {}
+		virtual void setWorldTransformRaw(const Transform& transform) override;
+
 	public:
 		PhysicsPositionBasedTransform() = default;
 
@@ -52,8 +67,11 @@ namespace Edge
 
 	class PhysicsPositionAndRotationBasedTransform : public PhysicsPositionBasedTransform
 	{
-	private:
+	protected:
 		FloatQuaternion m_rotation = FloatQuaternionIdentity;
+
+		virtual void setRotationRaw(const FloatQuaternion& rotation) override;
+		virtual void setWorldTransformRaw(const Transform& transform) override;
 
 	public:
 		PhysicsPositionAndRotationBasedTransform() = default;
@@ -68,4 +86,29 @@ namespace Edge
 	};
 
 	EDGE_MT_REFERENCE(PhysicsPositionAndRotationBasedTransform);
+
+	class PhysicsEntityTransformUnsafeNotificationAccessor final
+	{
+	private:
+		const PhysicsEntityTransformReference m_transform;
+		bool m_isChanged = false;
+
+	public:
+		PhysicsEntityTransformUnsafeNotificationAccessor(const PhysicsEntityTransformReference& transform);
+		~PhysicsEntityTransformUnsafeNotificationAccessor();
+
+		FloatVector3 getPosition() const;
+		void getPosition(FloatVector3& position) const;
+		void setPosition(const FloatVector3& position);
+
+		FloatQuaternion getRotation() const;
+		void getRotation(FloatQuaternion& rotation) const;
+		void setRotation(const FloatQuaternion& rotation);
+
+		Transform getWorldTransform() const;
+		void getWorldTransform(Transform& transform) const;
+		void setWorldTransform(const Transform& transform);
+
+		void makeTransformChangingNotification();
+	};
 }

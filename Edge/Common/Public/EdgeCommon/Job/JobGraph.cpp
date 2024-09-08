@@ -133,26 +133,18 @@ Edge::JobGraph::PreGraphDependencyJob::PreGraphDependencyJob(const GraphJobDataR
 	const PostGraphDependencyJobReference& postGraphJob, const JobGraphReference& graph)
 	: DependencyJobBase(graphData, "PreGraphJob"), m_graph(graph)
 {
-	JobController* jobController = graphData->getJobController();
-	m_graph->setExecutionContext(jobController);
-
 	GraphJobDataReference dependencyGraphData = m_graph->getGraphData();
-	dependencyGraphData->addCompletionCallback([jobController, postGraphJob]()
+	dependencyGraphData->addCompletionCallback([graphData = m_graphData, postGraphJob]()
 		{
-			jobController->addJob(postGraphJob.getObject());
+			graphData->getJobController()->addJob(postGraphJob.getObject());
 		}
 	);
 }
 
 void Edge::JobGraph::PreGraphDependencyJob::operate()
 {
-	JobController* jobController = m_graphData->getJobController();
-
-	const JobCollection& dependencyGraphJobs = m_graph->getBaseJobs();
-	for (const JobReference& dependencyJob : dependencyGraphJobs)
-	{
-		jobController->addJob(dependencyJob);
-	}
+	JobController* jobController = getJobController();
+	jobController->addJobGraph(m_graph);
 
 	DependencyJobBase::operate();
 }
@@ -175,8 +167,6 @@ Edge::JobGraph::GraphJobDataReference Edge::JobGraph::getGraphData() const
 void Edge::JobGraph::setExecutionContext(JobController* jobController)
 {
 	m_graphData->setExecutionContext(jobController);
-
-	m_baseJobs = JobCollection();
 }
 
 void Edge::JobGraph::wait()
@@ -247,13 +237,16 @@ Edge::JobGraph::DependencyJobReference* Edge::JobGraphBuilder::GraphBuildingCont
 	return job;
 }
 
-Edge::JobGraphBuilder::JobGraphJobID Edge::JobGraphBuilder::GraphBuildingContext::addDependencyJob(const JobGraph::DependencyJobReference& job)
+Edge::JobGraphBuilder::JobGraphJobID Edge::JobGraphBuilder::GraphBuildingContext::addDependencyJob(const JobGraph::DependencyJobReference& job, bool addToCollection)
 {
 	const JobGraphJobID jobId(false, m_lastJobIndex);
 
 	m_jobs.emplace_back(job);
 
-	m_dependencyCounterCollection[jobId] = 0;
+	if (addToCollection)
+	{
+		m_dependencyCounterCollection[jobId] = 0;
+	}
 
 	++m_lastJobIndex;
 	++m_graphData->m_jobCounter;
@@ -321,7 +314,7 @@ Edge::JobGraphBuilder::JobGraphJobID Edge::JobGraphBuilder::addJobGraph(const Jo
 	initContext();
 
 	const JobGraph::PostGraphDependencyJobReference postGraphJob = new JobGraph::PostGraphDependencyJob(m_buildingContext->m_graphData);
-	const JobGraphJobID postGraphJobID = m_buildingContext->addDependencyJob(postGraphJob.getObject());
+	const JobGraphJobID postGraphJobID = m_buildingContext->addDependencyJob(postGraphJob, false);
 
 	const JobGraph::DependencyJobReference preGraphJob = new JobGraph::PreGraphDependencyJob(m_buildingContext->m_graphData, postGraphJob, graph);
 	const JobGraphJobID preGraphJobID = m_buildingContext->addDependencyJob(preGraphJob);
@@ -405,7 +398,7 @@ void Edge::JobGraphBuilder::makeDependency(JobGraphJobID parentJobID, JobGraphJo
 
 	(*parentJob)->m_dependencyJobs.push_back(*childJob);
 	++(*childJob)->m_parentCounter;
-	++m_buildingContext->m_dependencyCounterCollection[childJobID];
+	++m_buildingContext->m_dependencyCounterCollection.at(childJobID);
 }
 
 Edge::JobGraphReference Edge::JobGraphBuilder::getGraph()

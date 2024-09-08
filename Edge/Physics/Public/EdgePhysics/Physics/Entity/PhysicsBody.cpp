@@ -9,8 +9,10 @@ void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 		return;
 	}
 
-	ComputeVector position(m_transform->getPosition());
-	ComputeQuaternion rotation(m_transform->getRotation());
+	PhysicsEntityTransformUnsafeNotificationAccessor transformAccessor(m_transform);
+
+	ComputeVector position(transformAccessor.getPosition());
+	ComputeQuaternion rotation(transformAccessor.getRotation());
 
 	ComputeVector linearVelocity(m_motion->getLinearVelocity());
 
@@ -19,23 +21,15 @@ void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 	ComputeVector angularVelocity(m_motion->getAngularVelocity());
 	angularVelocity *= deltaTime;
 
-	const float rotationSpeed = angularVelocity.length3();
-	const float translationSpeed = linearVelocity.length3();
+	const float rotationSpeed = angularVelocity.length3Sqr();
 
-	const bool isUpdated = translationSpeed > EDGE_EPSILON || rotationSpeed > EDGE_EPSILON;
-
-	if (rotationSpeed > EDGE_EPSILON)
+	if (rotationSpeed > EDGE_EPSILON_SQR)
 	{
 		angularVelocity /= rotationSpeed;
 		rotation *= computeQuaternionFromRotationAxis(angularVelocity, rotationSpeed);
 		rotation.normalize();
 	}
 
-	m_transform->setPosition(position.getFloatVector3());
-	m_transform->setRotation(rotation.getFloatQuaternion());
-
-	if (isUpdated)
-	{
-		//onTransformUpdate();
-	}
+	transformAccessor.setPosition(position.getFloatVector3());
+	transformAccessor.setRotation(rotation.getFloatQuaternion());
 }

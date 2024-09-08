@@ -58,6 +58,8 @@ namespace Edge
 		PhysicsEntitySceneContextReference getSceneContext() const { return m_sceneContext; }
 		void setSceneContext(const PhysicsEntitySceneContextReference& context);
 
+		void makeTransformChangingNotification();
+
 		PhysicsSceneReference getScene() const;
 		bool isActive() const;
 

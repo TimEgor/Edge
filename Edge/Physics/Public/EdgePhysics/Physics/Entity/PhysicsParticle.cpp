@@ -7,7 +7,9 @@ void Edge::PhysicsParticle::updateTransformWithMotion(float deltaTime)
 		return;
 	}
 
-	ComputeVector position(m_transform->getPosition());
+	PhysicsEntityTransformUnsafeNotificationAccessor transformAccessor(m_transform);
+
+	ComputeVector position(transformAccessor.getPosition());
 	position += ComputeVector(m_motion->getLinearVelocity()) * deltaTime;
-	m_transform->setPosition(position.getFloatVector3());
+	transformAccessor.setPosition(position.getFloatVector3());
 }

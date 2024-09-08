@@ -23,7 +23,9 @@ namespace Edge
 
 		virtual void addCollision(const PhysicsEntityCollisionReference& collision) override;
 		virtual void removeCollision(const PhysicsEntityCollisionReference& collision) override;
-		virtual void notifyCollisionBoundChanged(const PhysicsEntityCollisionReference& collision) override {}
+		virtual void updateCollisionBoundChanged(const PhysicsEntityCollisionReference& collision) override {}
+
+		virtual void findCollidingPairs(const PhysicsEntityCollisionReference& collision, PhysicsSceneCollisionPairCollection& result) override;
 
 		virtual void rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const override;
 

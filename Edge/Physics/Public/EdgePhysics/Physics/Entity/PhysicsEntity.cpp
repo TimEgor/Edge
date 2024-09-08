@@ -38,6 +38,7 @@ Edge::PhysicsEntity::~PhysicsEntity()
 
 	m_transform->setEntityLink(nullptr);
 	updateMotion(nullptr);
+	setCollision(nullptr);
 }
 
 void Edge::PhysicsEntity::setCollision(const PhysicsEntityCollisionReference& collision)
@@ -76,6 +77,15 @@ void Edge::PhysicsEntity::setSceneContext(const PhysicsEntitySceneContextReferen
 	}
 
 	m_sceneContext = context;
+}
+
+void Edge::PhysicsEntity::makeTransformChangingNotification()
+{
+	const PhysicsSceneReference scene = getScene();
+	if (scene)
+	{
+		scene->makeTransformChangingNotification(this);
+	}
 }
 
 Edge::PhysicsSceneReference Edge::PhysicsEntity::getScene() const

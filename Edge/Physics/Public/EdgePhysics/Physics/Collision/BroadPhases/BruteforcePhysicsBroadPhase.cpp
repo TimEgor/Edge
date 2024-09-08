@@ -50,6 +50,8 @@ void Edge::BruteforcePhysicsBroadPhase::addCollision(const PhysicsEntityCollisio
 	const PhysicsSceneCollisionID collisionID = defaultSceneContext.getCollisionID();
 
 	m_ids.push_back(collisionID);
+
+	defaultSceneContext.setBroadPhaseEntityIndex(m_ids.size() - 1);
 }
 
 void Edge::BruteforcePhysicsBroadPhase::removeCollision(const PhysicsEntityCollisionReference& collision)
@@ -87,6 +89,55 @@ void Edge::BruteforcePhysicsBroadPhase::removeCollision(const PhysicsEntityColli
 	}
 
 	m_ids.pop_back();
+}
+
+void Edge::BruteforcePhysicsBroadPhase::findCollidingPairs(const PhysicsEntityCollisionReference& collision, PhysicsSceneCollisionPairCollection& result)
+{
+	if (!collision)
+	{
+		return;
+	}
+
+	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
+
+	if (collision->getCollisionManager() != collisionManager)
+	{
+		return;
+	}
+
+	const PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
+	if (sceneContext->getType() != DefaultPhysicsEntityCollisionSceneContext::PhysicsEntityCollisionSceneContextType)
+	{
+		return;
+	}
+
+	const DefaultPhysicsEntityCollisionSceneContext& defaultSceneContext = sceneContext.getObjectCastRef<DefaultPhysicsEntityCollisionSceneContext>();
+
+	const PhysicsSceneActivationContextEntityIndex currentEntityIndex = defaultSceneContext.getBroadPhaseEntityIndex();
+	if (currentEntityIndex == InvalidPhysicsSceneActivationContextEntityIndex)
+	{
+		return;
+	}
+
+	const AABB3 collisionAABB = collision->getWorldShapeAABB();
+	const PhysicsSceneCollisionID collisionID = defaultSceneContext.getCollisionID();
+
+	for (const PhysicsSceneCollisionID checkedCollisionID : m_ids)
+	{
+		if (checkedCollisionID == collisionID)
+		{
+			continue;
+		}
+
+		const PhysicsEntityCollisionReference checkedCollision = collisionManager->getCollision(checkedCollisionID);
+
+		if (checkedCollision->getWorldShapeAABB().isOverlapped(collisionAABB))
+		{
+			const PhysicsSceneCollisionID pairCollisionID = checkedCollision->getSceneContext().getObjectCastRef<DefaultPhysicsEntityCollisionSceneContext>().getCollisionID();
+
+			result.emplace_back(collisionID, pairCollisionID);
+		}
+	}
 }
 
 void Edge::BruteforcePhysicsBroadPhase::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const

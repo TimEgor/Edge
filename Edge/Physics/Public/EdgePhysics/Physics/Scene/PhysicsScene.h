@@ -49,8 +49,10 @@ namespace Edge
 		PhysicsEntityReference getEntity(PhysicsSceneEntityID entityID) const;
 
 		void activateEntity(PhysicsSceneEntityID entityID);
-		void activateEntity(PhysicsEntityReference entity);
-		void deactivateEntity(PhysicsEntityReference entity);
+		void activateEntity(const PhysicsEntityReference& entity);
+		void deactivateEntity(const PhysicsEntityReference& entity);
+
+		void makeTransformChangingNotification(const PhysicsEntityReference& entity);
 
 		PhysicsSceneCollisionManagerReference getCollisionManager() const;
 

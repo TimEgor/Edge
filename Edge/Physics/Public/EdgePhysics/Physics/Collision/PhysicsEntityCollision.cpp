@@ -117,3 +117,8 @@ void Edge::PhysicsEntityCollision::setSceneContext(const PhysicsEntityCollisionS
 
 	m_sceneContext = context;
 }
+
+Edge::PhysicsSceneCollisionManagerReference Edge::PhysicsEntityCollision::getCollisionManager() const
+{
+	return m_sceneContext ? m_sceneContext->getCollisionManager().getReference() : nullptr;
+}

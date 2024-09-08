@@ -39,6 +39,8 @@ namespace Edge
 		void wait(const JobGraphReference& jobGraph);
 		void waitAndExecute(const JobGraphReference& jobGraph);
 
+		uint32_t getJobExecutorCount() const;
+
 		static uint32_t getHardwareThreadCount();
 	};
 }

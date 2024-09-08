@@ -13,24 +13,29 @@ Edge::JobGraphReference Edge::PhysicsScene::getUpdateJobGraph(float deltaTime)
 {
 	JobGraphBuilder m_graphBuilder;
 
-	JobGraphBuilder::JobGraphJobID applyingForceJobID = m_graphBuilder.addJob(
-		createLambdaJob([this, deltaTime]() { entityUpdate(deltaTime); }, "Applying forces"));
+	const JobGraphBuilder::JobGraphJobID collisionJobsID = m_graphBuilder.addJobGraph(
+		m_collisionManager->getUpdateJobGraph(deltaTime, m_activeEntityCollection->getEntities()));
+
+	const JobGraphBuilder::JobGraphJobID applyingForceJobID = m_graphBuilder.addJobAfter(
+		createLambdaJob([this, deltaTime]()
+			{
+				entityUpdate(deltaTime);
+			}, "Applying forces"),
+		collisionJobsID);
 
 	return m_graphBuilder.getGraph();
 }
 
 void Edge::PhysicsScene::entityUpdate(float deltaTime)
 {
-	PhysicsSceneActiveEntityCollectionIterator entityIter(*m_activeEntityCollection);
+	const PhysicsSceneActiveEntityCollection::EntityCollection& activeEntityIDs = m_activeEntityCollection->getEntities();
 
-	while (entityIter)
+	for (PhysicsSceneEntityID id : activeEntityIDs)
 	{
-		PhysicsEntityReference entity = entityIter.getCurrentEntity();
-		PhysicsEntityMotionReference entityMotion = entity->getMotion();
+		const PhysicsEntityReference entity = getEntity(id);
+		const PhysicsEntityMotionReference entityMotion = entity->getMotion();
 		entityMotion->applyAcceleration(deltaTime, m_gravity);
 		entity->updateTransformWithMotion(deltaTime);
-
-		entityIter.next();
 	}
 }
 
@@ -42,7 +47,7 @@ bool Edge::PhysicsScene::init()
 	m_entityCollection = new PhysicsSceneEntityCollection();
 	EDGE_CHECK_INITIALIZATION(m_entityCollection && m_entityCollection->init(this));
 	m_activeEntityCollection = new PhysicsSceneActiveEntityCollection();
-	EDGE_CHECK_INITIALIZATION(m_activeEntityCollection && m_activeEntityCollection->init());
+	EDGE_CHECK_INITIALIZATION(m_activeEntityCollection && m_activeEntityCollection->init(this));
 
 	m_collisionManager = new PhysicsSceneCollisionManager();
 	EDGE_CHECK_INITIALIZATION(m_collisionManager && m_collisionManager->init(this));
@@ -135,7 +140,7 @@ void Edge::PhysicsScene::activateEntity(PhysicsSceneEntityID entityID)
 	activateEntity(getEntity(entityID));
 }
 
-void Edge::PhysicsScene::activateEntity(PhysicsEntityReference entity)
+void Edge::PhysicsScene::activateEntity(const PhysicsEntityReference& entity)
 {
 	if (!entity || !entity->getMotion() || entity->isActive())
 	{
@@ -145,7 +150,7 @@ void Edge::PhysicsScene::activateEntity(PhysicsEntityReference entity)
 	m_activeEntityCollection->addEntity(entity);
 }
 
-void Edge::PhysicsScene::deactivateEntity(PhysicsEntityReference entity)
+void Edge::PhysicsScene::deactivateEntity(const PhysicsEntityReference& entity)
 {
 	if (!entity || !entity->getMotion() || !entity->isActive())
 	{
@@ -153,6 +158,17 @@ void Edge::PhysicsScene::deactivateEntity(PhysicsEntityReference entity)
 	}
 
 	m_activeEntityCollection->removeEntity(entity);
+}
+
+void Edge::PhysicsScene::makeTransformChangingNotification(const PhysicsEntityReference& entity)
+{
+	if (!entity)
+	{
+		return;
+	}
+
+	const PhysicsEntityCollisionReference collision = entity->getCollision();
+	m_collisionManager->updateCollisionTransform(collision);
 }
 
 Edge::PhysicsSceneCollisionManagerReference Edge::PhysicsScene::getCollisionManager() const

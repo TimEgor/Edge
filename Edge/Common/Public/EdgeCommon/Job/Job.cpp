@@ -62,8 +62,11 @@ bool Edge::Job::isFinished() const
 	return m_state == JobState::Finished;
 }
 
-void Edge::Job::onJobQueueRegistration()
+void Edge::Job::setExecutionContext(JobController* jobController)
 {
+	EDGE_ASSERT(!m_jobController);
+
+	m_jobController = jobController;
 	m_state = JobState::Pending;
 }
 

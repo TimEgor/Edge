@@ -42,6 +42,12 @@ bool Edge::AABB3::isContained(const AABB3& volume) const
 		ComputeMath::vector3GreaterOrEqual(ComputeMath::loadVector3(m_maxPosition), ComputeMath::loadVector3(volume.m_maxPosition));
 }
 
+bool Edge::AABB3::isOverlapped(const AABB3& volume) const
+{
+	return !(ComputeMath::vector3AnyLess(ComputeMath::loadVector3(m_maxPosition), ComputeMath::loadVector3(volume.m_minPosition)) ||
+		ComputeMath::vector3AnyGreater(ComputeMath::loadVector3(m_minPosition), ComputeMath::loadVector3(volume.m_maxPosition)));
+}
+
 Edge::AABB3 Edge::aabbFromMerging(const AABB3& volume1, const AABB3& volume2)
 {
 	AABB3 result(volume1);

@@ -83,7 +83,7 @@ void Edge::JobController::addJob(const JobReference& job)
 		return;
 	}
 
-	job->onJobQueueRegistration();
+	job->setExecutionContext(this);
 
 	m_jobQueue.addJob(job);
 }
@@ -96,8 +96,9 @@ void Edge::JobController::addJobGraph(const JobGraphReference& jobGraph)
 		return;
 	}
 
-	const JobGraph::JobCollection baseGraphJobs = jobGraph->getBaseJobs();
 	jobGraph->setExecutionContext(this);
+
+	const JobGraph::JobCollection baseGraphJobs = jobGraph->getBaseJobs();
 
 	for (const JobReference& job : baseGraphJobs)
 	{
@@ -151,6 +152,11 @@ void Edge::JobController::waitAndExecute(const JobGraphReference& jobGraph)
 			break;;
 		}
 	}
+}
+
+uint32_t Edge::JobController::getJobExecutorCount() const
+{
+	return m_threads.size();
 }
 
 uint32_t Edge::JobController::getHardwareThreadCount()
