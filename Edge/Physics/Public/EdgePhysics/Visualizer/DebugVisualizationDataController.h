@@ -44,6 +44,17 @@ namespace Edge
 				: m_position(position), m_direction(direction), m_color(color), m_size(size) {}
 		};
 
+		struct PolygonData final
+		{
+			FloatVector3 m_position1;
+			FloatVector3 m_position2;
+			FloatVector3 m_position3;
+			NormalizedColorRGB m_color;
+
+			PolygonData(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color)
+				: m_position1(position1), m_position2(position2), m_position3(position3), m_color(color) {}
+		};
+
 		struct PlaneData final
 		{
 			FloatVector3 m_position;
@@ -85,6 +96,7 @@ namespace Edge
 		using PointContainer = std::vector<PointData>;
 		using LineContainer = std::vector<LineData>;
 		using ArrowContainer = std::vector<ArrowData>;
+		using PolygonContainer = std::vector<PolygonData>;
 		using PlaneContainer = std::vector<PlaneData>;
 		using BoxContainer = std::vector<BoxData>;
 		using SphereContainer = std::vector<SphereData>;
@@ -92,6 +104,8 @@ namespace Edge
 		PointContainer m_points;
 		LineContainer m_lines;
 		ArrowContainer m_arrows;
+		PolygonContainer m_polygons;
+		PolygonContainer m_wireframePolygons;
 		PlaneContainer m_planes;
 		PlaneContainer m_wireframePlanes;
 		BoxContainer m_boxes;
@@ -102,6 +116,8 @@ namespace Edge
 		mutable SharedMutex m_pointMutex;
 		mutable SharedMutex m_lineMutex;
 		mutable SharedMutex m_arrowMutex;
+		mutable SharedMutex m_polygonMutex;
+		mutable SharedMutex m_wireframePolygonMutex;
 		mutable SharedMutex m_planeMutex;
 		mutable SharedMutex m_wireframePlaneMutex;
 		mutable SharedMutex m_boxMutex;
@@ -115,10 +131,16 @@ namespace Edge
 		void addPoint(const FloatVector3& position, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addLine(const FloatVector3& position1, const FloatVector3& position2, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addArrow(const FloatVector3& position, const FloatVector3& direction, float size, const NormalizedColorRGB& color = NormalizedColorWhite);
+
+		void addPolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addWireframePolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color = NormalizedColorWhite);
+
 		void addPlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframePlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color = NormalizedColorWhite);
+
 		void addBox(const Transform& transform, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeBox(const Transform& transform, const NormalizedColorRGB& color = NormalizedColorWhite);
+
 		void addSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 
@@ -132,6 +154,12 @@ namespace Edge
 
 		uint32_t getArrowCount() const;
 		const ArrowData& getArrow(uint32_t index) const;
+
+		uint32_t getPolygonCount() const;
+		const PolygonData& getPolygon(uint32_t index) const;
+
+		uint32_t getWireframePolygonCount() const;
+		const PolygonData& getWireframePolygon(uint32_t index) const;
 
 		uint32_t getPlaneCount() const;
 		const PlaneData& getPlane(uint32_t index) const;

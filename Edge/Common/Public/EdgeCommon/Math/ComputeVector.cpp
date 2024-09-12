@@ -210,6 +210,11 @@ Edge::ComputeVector Edge::reciprocalVector(const ComputeVector& vector)
 	return ComputeMath::vectorReciprocal(vector.m_vector);
 }
 
+Edge::ComputeVector Edge::multiplyVector(const ComputeVector& vector1, const ComputeVector& vector2)
+{
+	return ComputeMath::vectorMultiply(vector1.m_vector, vector2.m_vector);
+}
+
 Edge::ComputeVector Edge::vectorMin(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vectorMin(vector1.m_vector, vector2.m_vector);
@@ -273,6 +278,11 @@ float Edge::dotVector3(const ComputeVector& vector1, const ComputeVector& vector
 float Edge::dotVector4(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector4Dot(vector1.m_vector, vector2.m_vector);
+}
+
+float Edge::tripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3)
+{
+	return ComputeMath::vector3Dot(vector1.m_vector, ComputeMath::vector3Cross(vector2.m_vector, vector3.m_vector));
 }
 
 Edge::ComputeVector Edge::vector2Orthogonal(const ComputeVector& vector)

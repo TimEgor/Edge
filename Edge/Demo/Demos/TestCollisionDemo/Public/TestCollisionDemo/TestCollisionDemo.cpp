@@ -27,7 +27,8 @@ bool EdgeDemo::TestCollisionDemo::initDemo()
 	m_physicsScene->addEntity(m_dynamicBody);
 
 	bodyCreationParam.m_position.m_y = -5.0f;
-	bodyCreationParam.m_motionCreationParam = nullptr;
+	//bodyCreationParam.m_motionCreationParam = nullptr;
+	bodyCreationParam.m_motionCreationParam->m_gravityFactor = 0.0f;
 
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(5.0f);
 

@@ -133,7 +133,7 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 {
 	EDGE_PROFILE_BLOCK_EVENT("Update collision contacts")
 
-	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
+		const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
 
 	for (auto contactIter = m_contacts.begin(); contactIter != m_contacts.end();)
 	{
@@ -221,7 +221,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 {
 	EDGE_PROFILE_BLOCK_EVENT("Apply collision contacts")
 
-	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
+		const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
 
 	const size_t contactPointCount = m_contactPoints.size();
 	for (size_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
@@ -263,76 +263,39 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		const float totalInvMass = invMass1 + invMass2;
 		const float totalMass = 1.0f / totalInvMass;
 
-		//Collision impulse
+		const ComputeVector contactNormal = contactPoint.m_normal;
+
+		const ComputeVector velocityDelta = velocity1 - velocity2;
+		const float relativeSpeed = dotVector3(contactNormal, velocityDelta);
+		if (relativeSpeed > 0)
 		{
-			const ComputeVector contactNormal = contactPoint.m_normal;
+			const float impulseValue = -2.0f * relativeSpeed * totalMass;
+			const ComputeVector contactImpulse = contactNormal * impulseValue;
 
-			const ComputeVector velocityDelta = velocity1 - velocity2;
-			const float relativeSpeed = dotVector3(contactNormal, velocityDelta);
-			if (relativeSpeed > 0)
-			{
-				const float impulseValue = -2.0f * relativeSpeed * totalMass;
-				const ComputeVector contactImpulse = contactNormal * impulseValue;
-
-				if (motion1)
-				{
-					motion1->applyImpulse(contactImpulse.getFloatVector3());
-				}
-
-				if (motion2)
-				{
-					motion2->applyImpulse(negateVector(contactImpulse).getFloatVector3());
-				}
-			}
-		}
-	}
-
-	for (size_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
-	{
-		const PhysicsCollisionContactPoint contactPoint = m_contactPoints[contactPointIndex];
-
-		const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactPoint.m_contactID.m_collisionID1);
-		const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactPoint.m_contactID.m_collisionID2);
-
-		const PhysicsEntityReference entity1 = collision1->getEntity();
-		const PhysicsEntityReference entity2 = collision2->getEntity();
-
-		const PhysicsEntityTransformReference transform1 = entity1->getTransform();
-		const PhysicsEntityTransformReference transform2 = entity2->getTransform();
-
-		const PhysicsEntityMotionReference motion1 = entity1->getMotion();
-		const PhysicsEntityMotionReference motion2 = entity2->getMotion();
-
-		EDGE_ASSERT(motion1 || motion2);
-
-		float invMass1 = 0.0f;
-		float invMass2 = 0.0f;
-
-		if (motion1)
-		{
-			invMass1 = motion1->getInverseMass();
-		}
-
-		if (motion2)
-		{
-			invMass2 = motion2->getInverseMass();
-		}
-
-		const float totalInvMass = invMass1 + invMass2;
-		const float totalMass = 1.0f / totalInvMass;
-
-		//Position adjustment
-		{
 			const ComputeVector contactPosition1 = contactPoint.m_position;
 			const ComputeVector contactPosition2 = contactPosition1 + contactPoint.m_normal * contactPoint.m_depth;
 
-			const ComputeVector contactPositionDelta = contactPosition2 - contactPosition1;
+			if (motion1)
+			{
+				motion1->applyImpulse(contactImpulse.getFloatVector3(), contactPosition1.getFloatVector3());
+			}
 
-			const float adjustmentCoeff1 = invMass1 * totalMass;
-			const float adjustmentCoeff2 = invMass2 * totalMass;
+			if (motion2)
+			{
+				motion2->applyImpulse(negateVector(contactImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
+			}
 
-			transform1->setPosition((transform1->getPosition() + contactPositionDelta * adjustmentCoeff1).getFloatVector3());
-			transform2->setPosition((transform2->getPosition() + contactPositionDelta * adjustmentCoeff2).getFloatVector3());
+			//Position adjustment
+			{
+
+				const ComputeVector contactPositionDelta = contactPosition2 - contactPosition1;
+
+				const float adjustmentCoeff1 = invMass1 * totalMass;
+				const float adjustmentCoeff2 = invMass2 * totalMass;
+
+				transform1->setPosition((transform1->getPosition() + contactPositionDelta * adjustmentCoeff1).getFloatVector3());
+				transform2->setPosition((transform2->getPosition() + contactPositionDelta * adjustmentCoeff2).getFloatVector3());
+			}
 		}
 	}
 }

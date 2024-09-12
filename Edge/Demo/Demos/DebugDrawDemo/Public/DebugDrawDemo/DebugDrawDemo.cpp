@@ -70,4 +70,64 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 		Edge::FloatVector3NegativeUnitZ, Edge::FloatVector3UnitX, Edge::FloatVector2(1.0f), Edge::NormalizedColorGreen);
 	m_debugVisualizationDataController->addWireframePlane(Edge::FloatVector3(16.0f, 4.0f, 0.0f),
 		Edge::FloatVector3NegativeUnitZ, Edge::FloatVector3UnitX, Edge::FloatVector2(1.0f), Edge::NormalizedColorBlue);
+
+	{
+		const Edge::FloatVector3 polygonLocalVertex1(0.0f, 0.5f, 0.0f);
+		const Edge::FloatVector3 polygonLocalVertex2(0.5f, -0.5f, 0.0f);
+		const Edge::FloatVector3 polygonLocalVertex3(-0.5f, -0.5f, 0.0f);
+
+		{
+			const Edge::FloatVector3 polygonPos(18.0f, 0.0f, 0.0f);
+			m_debugVisualizationDataController->addPolygon(
+				(polygonLocalVertex1 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex2 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex3 + polygonPos).getFloatVector3(),
+				Edge::NormalizedColorRed);
+		}
+
+		{
+			const Edge::FloatVector3 polygonPos(18.0f, 2.0f, 0.0f);
+			m_debugVisualizationDataController->addPolygon(
+				(polygonLocalVertex1 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex2 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex3 + polygonPos).getFloatVector3(),
+				Edge::NormalizedColorGreen);
+		}
+
+		{
+			const Edge::FloatVector3 polygonPos(18.0f, 4.0f, 0.0f);
+			m_debugVisualizationDataController->addPolygon(
+				(polygonLocalVertex1 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex2 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex3 + polygonPos).getFloatVector3(),
+				Edge::NormalizedColorBlue);
+		}
+
+		{
+			const Edge::FloatVector3 polygonPos(20.0f, 0.0f, 0.0f);
+			m_debugVisualizationDataController->addWireframePolygon(
+				(polygonLocalVertex1 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex2 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex3 + polygonPos).getFloatVector3(),
+				Edge::NormalizedColorRed);
+		}
+
+		{
+			const Edge::FloatVector3 polygonPos(20.0f, 2.0f, 0.0f);
+			m_debugVisualizationDataController->addWireframePolygon(
+				(polygonLocalVertex1 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex2 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex3 + polygonPos).getFloatVector3(),
+				Edge::NormalizedColorGreen);
+		}
+
+		{
+			const Edge::FloatVector3 polygonPos(20.0f, 4.0f, 0.0f);
+			m_debugVisualizationDataController->addWireframePolygon(
+				(polygonLocalVertex1 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex2 + polygonPos).getFloatVector3(),
+				(polygonLocalVertex3 + polygonPos).getFloatVector3(),
+				Edge::NormalizedColorBlue);
+		}
+	}
 }

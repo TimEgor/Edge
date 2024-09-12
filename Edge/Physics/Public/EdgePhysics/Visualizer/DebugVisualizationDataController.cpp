@@ -20,8 +20,19 @@ void Edge::DebugVisualizationDataController::addArrow(const FloatVector3& positi
 	m_arrows.emplace_back(position, direction, size, color);
 }
 
-void Edge::DebugVisualizationDataController::addPlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir,
-	const FloatVector2& size, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addPolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color)
+{
+	LockGuard locker(m_polygonMutex);
+	m_polygons.emplace_back(position1, position2, position3, color);
+}
+
+void Edge::DebugVisualizationDataController::addWireframePolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color)
+{
+	LockGuard locker(m_wireframePolygonMutex);
+	m_wireframePolygons.emplace_back(position1, position2, position3, color);
+}
+
+void Edge::DebugVisualizationDataController::addPlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color)
 {
 	LockGuard locker(m_planeMutex);
 	m_planes.emplace_back(position, normal, dir, size, color);
@@ -132,6 +143,30 @@ const Edge::DebugVisualizationDataController::ArrowData& Edge::DebugVisualizatio
 	return m_arrows[index];
 }
 
+uint32_t Edge::DebugVisualizationDataController::getPolygonCount() const
+{
+	SharedLockGuard locker(m_polygonMutex);
+	return m_polygons.size();
+}
+
+const Edge::DebugVisualizationDataController::PolygonData& Edge::DebugVisualizationDataController::getPolygon(uint32_t index) const
+{
+	SharedLockGuard locker(m_polygonMutex);
+	return m_polygons[index];
+}
+
+uint32_t Edge::DebugVisualizationDataController::getWireframePolygonCount() const
+{
+	SharedLockGuard locker(m_wireframePolygonMutex);
+	return m_wireframePolygons.size();
+}
+
+const Edge::DebugVisualizationDataController::PolygonData& Edge::DebugVisualizationDataController::getWireframePolygon(uint32_t index) const
+{
+	SharedLockGuard locker(m_wireframePolygonMutex);
+	return m_wireframePolygons[index];
+}
+
 uint32_t Edge::DebugVisualizationDataController::getPlaneCount() const
 {
 	SharedLockGuard locker(m_planeMutex);
@@ -219,6 +254,16 @@ void Edge::DebugVisualizationDataController::clear()
 	{
 		LockGuard locker(m_arrowMutex);
 		m_arrows.clear();
+	}
+
+	{
+		LockGuard locker(m_polygonMutex);
+		m_polygons.clear();
+	}
+
+	{
+		LockGuard locker(m_wireframePolygonMutex);
+		m_wireframePolygons.clear();
 	}
 
 	{

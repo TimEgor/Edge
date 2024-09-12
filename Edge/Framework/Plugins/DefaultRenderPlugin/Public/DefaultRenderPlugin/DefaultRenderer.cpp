@@ -74,8 +74,34 @@ bool EdgeDefRender::DefaultRenderer::initLineRenderData(Edge::GraphicDevice& dev
 	return true;
 }
 
-bool EdgeDefRender::DefaultRenderer::initPlaneRenderData(Edge::GraphicDevice& device,
-	const Edge::AssetsDirectoryController& assetsDirectoryController)
+bool EdgeDefRender::DefaultRenderer::initPolygonRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
+{
+	m_polygonRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Polygon.vshader"));
+	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_vertexShader);
+
+	m_polygonRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Polygon.pshader"));
+	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_pixelShader);
+
+	Edge::InputLayoutDesc inputLayoutDesc{};
+	inputLayoutDesc.m_elements.push_back({ "POSITION", 0, 0, offsetof(PolygonRenderData::VertexData, m_position), 3, Edge::InputLayoutElementType::Float32 });
+	inputLayoutDesc.m_elements.push_back({ "COLOR", 0, 0, offsetof(PolygonRenderData::VertexData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
+	inputLayoutDesc.m_elements.push_back({ "NORMAL", 0, 0, offsetof(PolygonRenderData::VertexData, m_normal), 3, Edge::InputLayoutElementType::Float32 });
+	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(PolygonRenderData::VertexData), Edge::InputLayoutBindingType::VertexBinding });
+
+	m_polygonRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_polygonRenderData.m_vertexShader);
+	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_inputLayout);
+
+	RenderDataBufferCache::BufferDesc polygonDataBufferDesc{};
+	polygonDataBufferDesc.m_stride = sizeof(PolygonRenderData::PolygonData);
+	polygonDataBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
+	polygonDataBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
+
+	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_polygonData.init(polygonDataBufferDesc, 256));
+
+	return true;
+}
+
+bool EdgeDefRender::DefaultRenderer::initPlaneRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
 	m_planeRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Plane.vshader"));
 	EDGE_CHECK_RETURN_FALSE(m_planeRenderData.m_vertexShader);
@@ -105,8 +131,7 @@ bool EdgeDefRender::DefaultRenderer::initPlaneRenderData(Edge::GraphicDevice& de
 	return true;
 }
 
-bool EdgeDefRender::DefaultRenderer::initWireframePlaneRenderData(Edge::GraphicDevice& device,
-	const Edge::AssetsDirectoryController& assetsDirectoryController)
+bool EdgeDefRender::DefaultRenderer::initWireframePlaneRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
 	m_wireframePlaneRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframePlane.vshader"));
 	EDGE_CHECK_RETURN_FALSE(m_wireframePlaneRenderData.m_vertexShader);
@@ -396,6 +421,15 @@ void EdgeDefRender::DefaultRenderer::releaseLineRenderData()
 	m_lineRenderData.m_lineData.release();
 }
 
+void EdgeDefRender::DefaultRenderer::releasePolygonRenderData()
+{
+	EDGE_SAFE_DESTROY(m_polygonRenderData.m_vertexShader);
+	EDGE_SAFE_DESTROY(m_polygonRenderData.m_pixelShader);
+	EDGE_SAFE_DESTROY(m_polygonRenderData.m_inputLayout);
+
+	m_polygonRenderData.m_polygonData.release();
+}
+
 void EdgeDefRender::DefaultRenderer::releasePlaneRenderData()
 {
 	EDGE_SAFE_DESTROY(m_planeRenderData.m_vertexShader);
@@ -483,10 +517,15 @@ bool EdgeDefRender::DefaultRenderer::init()
 
 	EDGE_CHECK_INITIALIZATION(initPointRenderData(device, assetsDirectoryController));
 	EDGE_CHECK_INITIALIZATION(initLineRenderData(device, assetsDirectoryController));
+
+	EDGE_CHECK_INITIALIZATION(initPolygonRenderData(device, assetsDirectoryController));
+
 	EDGE_CHECK_INITIALIZATION(initPlaneRenderData(device, assetsDirectoryController));
 	EDGE_CHECK_INITIALIZATION(initWireframePlaneRenderData(device, assetsDirectoryController));
+
 	EDGE_CHECK_INITIALIZATION(initBoxRenderData(device, assetsDirectoryController));
 	EDGE_CHECK_INITIALIZATION(initWireframeBoxRenderData(device, assetsDirectoryController));
+
 	EDGE_CHECK_INITIALIZATION(initSphereRenderData(device, assetsDirectoryController));
 	EDGE_CHECK_INITIALIZATION(initWireframeSphereRenderData(device, assetsDirectoryController));
 
@@ -497,10 +536,15 @@ void EdgeDefRender::DefaultRenderer::release()
 {
 	releasePointRenderData();
 	releaseLineRenderData();
+
+	releasePolygonRenderData();
+
 	releasePlaneRenderData();
 	releaseWireframePlaneRenderData();
+
 	releaseBoxRenderData();
 	releaseWireframeBoxRenderData();
+
 	releaseSphereRenderData();
 	releaseWireframeSphereRenderData();
 
@@ -538,7 +582,8 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 {
 	const uint32_t lineCount = visualizationData.getLineCount();
 	const uint32_t arrowCount = visualizationData.getArrowCount();
-	const uint32_t totalLineCount = lineCount + arrowCount * 3;
+	const uint32_t polygonCount = visualizationData.getWireframePolygonCount(); // TMP
+	const uint32_t totalLineCount = lineCount + arrowCount * 3 * polygonCount * 3;
 
 	m_lineRenderData.m_lineCount = totalLineCount;
 
@@ -553,7 +598,7 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 			const Edge::DebugVisualizationDataController::LineData& lineDebugData = visualizationData.getLine(lineIndex);
 			LineRenderData::LineData& lineData = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
 
-			PackedColor color(lineDebugData.m_color);
+			const PackedColor color(lineDebugData.m_color);
 
 			lineData.m_point1.m_position = lineDebugData.m_position1;
 			lineData.m_point1.m_color = color;
@@ -568,7 +613,7 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 		{
 			const Edge::DebugVisualizationDataController::ArrowData& arrowDebugData = visualizationData.getArrow(arrowIndex);
 
-			PackedColor color(arrowDebugData.m_color);
+			const PackedColor color(arrowDebugData.m_color);
 
 			const Edge::ComputeVector endPoint = Edge::ComputeVector(arrowDebugData.m_position) + Edge::ComputeVector(arrowDebugData.m_direction);
 			const Edge::ComputeVector normalizeDir = Edge::ComputeVector(arrowDebugData.m_direction).normalize() * arrowDebugData.m_size;
@@ -606,6 +651,79 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 
 				lineDataIter.next();
 			}
+		}
+
+		for (uint32_t polygonIndex = 0; polygonIndex < polygonCount; ++polygonIndex)
+		{
+			const Edge::DebugVisualizationDataController::PolygonData& polygonDebugData = visualizationData.getWireframePolygon(polygonIndex);
+			const PackedColor color(polygonDebugData.m_color);
+
+
+			LineRenderData::LineData& lineData1 = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
+			lineData1.m_point1.m_position = polygonDebugData.m_position1;
+			lineData1.m_point1.m_color = color;
+
+			lineData1.m_point2.m_position = polygonDebugData.m_position2;
+			lineData1.m_point2.m_color = color;
+
+			lineDataIter.next();
+
+			LineRenderData::LineData& lineData2 = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
+			lineData2.m_point1.m_position = polygonDebugData.m_position2;
+			lineData2.m_point1.m_color = color;
+
+			lineData2.m_point2.m_position = polygonDebugData.m_position3;
+			lineData2.m_point2.m_color = color;
+
+			lineDataIter.next();
+
+			LineRenderData::LineData& lineData3 = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
+			lineData3.m_point1.m_position = polygonDebugData.m_position3;
+			lineData3.m_point1.m_color = color;
+
+			lineData3.m_point2.m_position = polygonDebugData.m_position1;
+			lineData3.m_point2.m_color = color;
+
+			lineDataIter.next();
+		}
+	}
+}
+
+void EdgeDefRender::DefaultRenderer::preparePolygonRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData)
+{
+	const uint32_t polygonCount = visualizationData.getPolygonCount();
+	m_polygonRenderData.m_polygonCount = polygonCount;
+
+	m_polygonRenderData.m_polygonData.updateBuffers(deltaTime, polygonCount);
+
+	if (polygonCount > 0)
+	{
+		RenderDataBufferCacheIterator polygonDataIter(m_polygonRenderData.m_polygonData, *m_graphicContext);
+
+		for (uint32_t polygonIndex = 0; polygonIndex < polygonCount; ++polygonIndex)
+		{
+			const Edge::DebugVisualizationDataController::PolygonData& polygonDebugData = visualizationData.getPolygon(polygonIndex);
+			PolygonRenderData::PolygonData& polygonData = *polygonDataIter.getCurrentTypedElement<PolygonRenderData::PolygonData>();
+
+			const PackedColor color(polygonDebugData.m_color);
+			const Edge::FloatVector3 normal = crossVector3(
+				polygonDebugData.m_position1 - polygonDebugData.m_position2,
+				polygonDebugData.m_position1 - polygonDebugData.m_position3
+			).getFloatVector3();
+
+			polygonData.m_point1.m_position = polygonDebugData.m_position1;
+			polygonData.m_point1.m_color = color;
+			polygonData.m_point1.m_normal = normal;
+
+			polygonData.m_point2.m_position = polygonDebugData.m_position2;
+			polygonData.m_point2.m_color = color;
+			polygonData.m_point2.m_normal = normal;
+
+			polygonData.m_point3.m_position = polygonDebugData.m_position3;
+			polygonData.m_point3.m_color = color;
+			polygonData.m_point3.m_normal = normal;
+
+			polygonDataIter.next();
 		}
 	}
 }
@@ -683,8 +801,8 @@ void EdgeDefRender::DefaultRenderer::prepareBoxRenderData(float deltaTime, const
 
 			assert(boxTransform.m_row4.m_w == 1.0f);
 
-			PackedColor color(boxDebugData.m_color);
-			boxTransform.m_row4.m_w = *reinterpret_cast<float*>(&color.m_data);
+			const PackedColor color(boxDebugData.m_color);
+			boxTransform.m_row4.m_w = *reinterpret_cast<const float*>(&color.m_data);
 
 			//m_graphicContext->prepareMatrixForShader(boxTransform, boxTransform);
 
@@ -712,8 +830,8 @@ void EdgeDefRender::DefaultRenderer::prepareWireframeBoxRenderData(float deltaTi
 
 			assert(boxTransform.m_row4.m_w == 1.0f);
 
-			PackedColor color(boxDebugData.m_color);
-			boxTransform.m_row4.m_w = *reinterpret_cast<float*>(&color.m_data);
+			const PackedColor color(boxDebugData.m_color);
+			boxTransform.m_row4.m_w = *reinterpret_cast<const float*>(&color.m_data);
 
 			//m_graphicContext->prepareMatrixForShader(boxTransform, boxTransform);
 
@@ -795,10 +913,15 @@ void EdgeDefRender::DefaultRenderer::prepareData(const CameraTransforms& cameraT
 
 	preparePointRenderData(deltaTime, visualizationData);
 	prepareLineRenderData(deltaTime, visualizationData);
+
+	preparePolygonRenderData(deltaTime, visualizationData);
+
 	preparePlaneRenderData(deltaTime, visualizationData);
 	prepareWireframePlaneRenderData(deltaTime, visualizationData);
+
 	prepareBoxRenderData(deltaTime, visualizationData);
 	prepareWireframeBoxRenderData(deltaTime, visualizationData);
+
 	prepareSphereRenderData(deltaTime, visualizationData);
 	prepareWireframeSphereRenderData(deltaTime, visualizationData);
 }
@@ -853,6 +976,33 @@ void EdgeDefRender::DefaultRenderer::drawLines()
 
 			m_graphicContext->setVertexBuffers(1, &instanceDataBuffer, m_lineRenderData.m_inputLayout->getDesc());
 			m_graphicContext->draw(drawingLineCount * 2);
+		}
+	}
+}
+
+void EdgeDefRender::DefaultRenderer::drawPolygons()
+{
+	if (m_polygonRenderData.m_polygonCount > 0)
+	{
+		m_graphicContext->setVertexShader(*m_polygonRenderData.m_vertexShader);
+		m_graphicContext->setPixelShader(*m_polygonRenderData.m_pixelShader);
+
+		m_graphicContext->setPrimitiveTopology(Edge::PrimitiveTopology::TriangleList);
+		m_graphicContext->setInputLayout(*m_polygonRenderData.m_inputLayout);
+
+		uint32_t remainedPolygonCount = m_polygonRenderData.m_polygonCount;
+		const uint32_t polygonPerBuffer = m_polygonRenderData.m_polygonData.getElementCountPerBuffer();
+
+		const uint32_t bufferCount = m_polygonRenderData.m_polygonData.getBufferCount();
+		for (uint32_t bufferIndex = 0; bufferIndex < bufferCount && remainedPolygonCount > 0; ++bufferIndex)
+		{
+			const uint32_t drawingPolygonCount = std::min(remainedPolygonCount, polygonPerBuffer);
+			remainedPolygonCount -= polygonPerBuffer;
+
+			Edge::GPUBuffer* instanceDataBuffer = &m_polygonRenderData.m_polygonData.getBuffer(bufferIndex);
+
+			m_graphicContext->setVertexBuffers(1, &instanceDataBuffer, m_polygonRenderData.m_inputLayout->getDesc());
+			m_graphicContext->draw(drawingPolygonCount * 3);
 		}
 	}
 }
@@ -1098,10 +1248,15 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 
 	drawPoints();
 	drawLines();
+
+	drawPolygons();
+
 	drawPlanes();
 	drawWireframePlanes();
+
 	drawBoxes();
 	drawWireframeBoxes();
+
 	drawSpheres();
 	drawWireframeSpheres();
 

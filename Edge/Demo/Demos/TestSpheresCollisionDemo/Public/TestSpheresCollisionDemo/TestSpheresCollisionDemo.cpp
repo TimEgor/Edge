@@ -12,7 +12,7 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
-	bodyMotionCreationParam.m_mass = 1.0f;
+	bodyMotionCreationParam.m_mass = 4.0f;
 	bodyMotionCreationParam.m_angularDamping = 0.2f;
 	bodyMotionCreationParam.m_gravityFactor = 0.0f;
 
@@ -26,7 +26,7 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 	{
 		for (uint32_t j = 0; j < 5; ++j)
 		{
-			for (uint32_t k = 0; k < 5; ++k)
+			for (uint32_t k = 0; k < 7; ++k)
 			{
 				bodyCreationParam.m_position.m_x = i * 0.5f;
 				bodyCreationParam.m_position.m_y = k * 0.5f;
@@ -42,19 +42,19 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 	}
 
 	{
-		bodyMotionCreationParam.m_mass = Edge::RandomFloat(5.0f, 15.0f);
+		bodyMotionCreationParam.m_mass = 1.0f;
 
 		bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(Edge::RandomFloat(1.5f, 2.5f));
 
 		bodyCreationParam.m_position.m_x = -10.0f;
-		bodyCreationParam.m_position.m_y = 2.0f;
-		bodyCreationParam.m_position.m_z = 1.5f;
+		bodyCreationParam.m_position.m_y = 1.75f;
+		bodyCreationParam.m_position.m_z = 1.25f;
 
 		const Edge::PhysicsBodyReference sphere = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 		m_physicsScene->addEntity(sphere);
 
-		sphere->getMotion()->setLinearVelocity((Edge::FloatVector3UnitX * Edge::RandomFloat(2.5f, 5.0f)).getFloatVector3());
+		sphere->getMotion()->setLinearVelocity((Edge::FloatVector3UnitX * 8.0f).getFloatVector3());
 
 		m_spheres.push_back(sphere);
 	}

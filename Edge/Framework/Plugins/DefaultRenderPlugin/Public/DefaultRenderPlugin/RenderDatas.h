@@ -65,6 +65,37 @@ namespace EdgeDefRender
 		uint32_t m_lineCount = 0;
 	};
 
+	struct PolygonRenderData final
+	{
+		struct VertexData final
+		{
+			Edge::FloatVector3 m_position = Edge::FloatVector3Zero;
+			PackedColor m_color;
+			Edge::FloatVector3 m_normal = Edge::FloatVector3Zero;
+
+
+			VertexData() = default;
+			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector4& color, const Edge::FloatVector3& normal)
+				: m_position(position), m_color(color), m_normal(normal) {}
+		};
+
+		struct PolygonData final
+		{
+			VertexData m_point1;
+			VertexData m_point2;
+			VertexData m_point3;
+		};
+
+		Edge::VertexShader* m_vertexShader = nullptr;
+		Edge::PixelShader* m_pixelShader = nullptr;
+
+		Edge::InputLayout* m_inputLayout = nullptr;
+
+		RenderDataBufferCache m_polygonData;
+
+		uint32_t m_polygonCount = 0;
+	};
+
 	struct PlaneRenderData final
 	{
 		struct PlaneData final

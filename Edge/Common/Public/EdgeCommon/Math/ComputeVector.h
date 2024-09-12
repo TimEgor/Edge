@@ -66,6 +66,8 @@ namespace Edge
 	ComputeVector normalizeVector(const ComputeVector& vector);
 	ComputeVector reciprocalVector(const ComputeVector& vector);
 
+	ComputeVector multiplyVector(const ComputeVector& vector1, const ComputeVector& vector2);
+
 	ComputeVector vectorMin(const ComputeVector& vector1, const ComputeVector& vector2);
 	ComputeVector vectorMax(const ComputeVector& vector1, const ComputeVector& vector2);
 
@@ -83,6 +85,8 @@ namespace Edge
 	float dotVector3(const ComputeVector& vector1, const ComputeVector& vector2);
 	float dotVector4(const ComputeVector& vector1, const ComputeVector& vector2);
 
+	float tripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3);
+	
 	ComputeVector vector2Orthogonal(const ComputeVector& vector);
 	ComputeVector crossVector2(const ComputeVector& vector1, const ComputeVector& vector2);
 	ComputeVector crossVector3(const ComputeVector& vector1, const ComputeVector& vector2);

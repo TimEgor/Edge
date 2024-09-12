@@ -44,4 +44,4 @@ namespace Edge
 		void updateContacts();
 		void applyCollision();
 	};
- }
+}
