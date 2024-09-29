@@ -32,12 +32,11 @@ Edge::PhysicsParticleMotionReference Edge::PhysicsParticleFactory::createParticl
 {
 	PhysicsPositionBasedMotion* motionPtr = new PhysicsPositionBasedMotion();
 
-	const ParticleMotionCreationParam* bodyMotionCreationParam = static_cast<const ParticleMotionCreationParam*>(param);
 	if (param)
 	{
-		motionPtr->setMass(bodyMotionCreationParam->m_mass);
-		motionPtr->setGravityFactor(bodyMotionCreationParam->m_gravityFactor);
-		motionPtr->setLinearDampingFactor(bodyMotionCreationParam->m_linearDampingFactor);
+		motionPtr->setMass(param->m_mass);
+		motionPtr->setGravityFactor(param->m_gravityFactor);
+		motionPtr->setLinearDampingFactor(param->m_linearDampingFactor);
 	}
 
 	return motionPtr;

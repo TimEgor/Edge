@@ -583,7 +583,7 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 	const uint32_t lineCount = visualizationData.getLineCount();
 	const uint32_t arrowCount = visualizationData.getArrowCount();
 	const uint32_t polygonCount = visualizationData.getWireframePolygonCount(); // TMP
-	const uint32_t totalLineCount = lineCount + arrowCount * 3 * polygonCount * 3;
+	const uint32_t totalLineCount = lineCount + arrowCount * 3 + polygonCount * 3;
 
 	m_lineRenderData.m_lineCount = totalLineCount;
 

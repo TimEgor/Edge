@@ -47,8 +47,6 @@ namespace Edge
 		void removeCollision(const PhysicsEntityCollisionReference& collision);
 		PhysicsEntityCollisionReference getCollision(PhysicsSceneCollisionID id) const;
 
-		void updateCollisions(const std::vector<PhysicsSceneEntityID>& ids);
-
 		void updateCollisionTransform(const PhysicsEntityCollisionReference& collision);
 
 		virtual void rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const override;

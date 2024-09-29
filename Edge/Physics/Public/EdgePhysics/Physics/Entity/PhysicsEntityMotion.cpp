@@ -50,6 +50,17 @@ void Edge::PhysicsEntityMotion::setGravityFactor(float factor)
 	m_gravityFactor = factor;
 }
 
+void Edge::PhysicsEntityMotion::setFriction(float friction)
+{
+	if (0.0f > friction || friction > 1.0f)
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up invalid friction value.");
+		return;
+	}
+
+	m_friction = friction;
+}
+
 void Edge::PhysicsPositionBasedMotion::setLinearDampingFactor(float factor)
 {
 	if (0.0f > factor || factor > 1.0f)
@@ -108,6 +119,17 @@ void Edge::PhysicsPositionAndRotationBasedMotion::getInverseInertiaTensor(FloatM
 	inertia.m_m33 = m_inverseInertia.m_z;
 }
 
+void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const
+{
+	FloatMatrix3x3 inverseInertiaTensor;
+	getInverseInertiaTensor(inverseInertiaTensor);
+
+	const ComputeMatrix rotation = computeMatrixFromRotationQuaternion(getTransform()->getRotation());
+	const ComputeMatrix worldInverseInertiaTensor = transposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
+
+	worldInverseInertiaTensor.saveToMatrix3x3(inertia);
+}
+
 void Edge::PhysicsPositionAndRotationBasedMotion::applyForce(const FloatVector3& force, const FloatVector3& position)
 {
 	PhysicsPositionBasedMotion::applyForce(force);
@@ -140,12 +162,10 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyTorque(const FloatVector3
 void Edge::PhysicsPositionAndRotationBasedMotion::applyAngularImpulse(const FloatVector3& impulse)
 {
 	FloatMatrix3x3 inverseInertiaTensor;
-	getInverseInertiaTensor(inverseInertiaTensor);
+	getWorldInverseInertiaTensor(inverseInertiaTensor);
+	const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
 
 	ComputeVector angularVelocity(m_angularVelocity);
-	const ComputeMatrix rotation = computeMatrixFromRotationQuaternion(getTransform()->getRotation());
-	const ComputeMatrix worldInverseInertiaTensor = transposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
-
 	angularVelocity += worldInverseInertiaTensor * ComputeVector(impulse);
 	angularVelocity.saveToFloatVector3(m_angularVelocity);
 }
@@ -153,15 +173,13 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyAngularImpulse(const Floa
 void Edge::PhysicsPositionAndRotationBasedMotion::applyAcceleration(float deltaTime, const FloatVector3& gravity)
 {
 	FloatMatrix3x3 inverseInertiaTensor;
-	getInverseInertiaTensor(inverseInertiaTensor);
+	getWorldInverseInertiaTensor(inverseInertiaTensor);
+	const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
 
 	ComputeVector linearVelocity(m_linearVelocity);
 	ComputeVector angularVelocity(m_angularVelocity);
 
 	linearVelocity += ((ComputeVector(gravity) * m_gravityFactor) + (ComputeVector(m_forceAccumulator) * m_invMass)) * deltaTime;
-
-	const ComputeMatrix rotation = computeMatrixFromRotationQuaternion(getTransform()->getRotation());
-	const ComputeMatrix worldInverseInertiaTensor = transposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
 	angularVelocity += worldInverseInertiaTensor * ComputeVector(m_torqueAccumulator) * deltaTime;
 
 	linearVelocity *= std::max(0.0f, 1.0f - m_linearDampingFactor * deltaTime);

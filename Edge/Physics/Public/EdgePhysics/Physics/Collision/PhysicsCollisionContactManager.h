@@ -7,9 +7,33 @@
 
 namespace Edge
 {
+}
+
+namespace Edge
+{
+	class PhysicsCollisionDispatcher;
+	class PhysicsCollisionDispatcherCollection;
+
 	class PhysicsCollisionContactManager final
 	{
 	private:
+		class DispatcherContext final
+		{
+		private:
+			using DispatcherContainer = std::vector<PhysicsCollisionDispatcher*>;
+
+			DispatcherContainer m_dispatchers;
+			PhysicsCollisionDispatcherCollection* m_dispatcherCollection = nullptr;
+
+		public:
+			DispatcherContext() = default;
+
+			bool init();
+			void release();
+
+			PhysicsCollisionDispatcher* getDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2) const;
+		};
+
 		using ContactCollection = std::unordered_map<PhysicsCollisionContactID, PhysicsCollisionContact, PhysicsCollisionContactID::Hasher>;
 		using ContactPartnerCollection = std::unordered_map<PhysicsSceneCollisionID, std::vector<PhysicsSceneCollisionID>>;
 
@@ -19,6 +43,8 @@ namespace Edge
 		ContactPartnerCollection m_contactPartners;
 
 		ContactPointCollection m_contactPoints;
+
+		DispatcherContext* m_dispatcherContext = nullptr;
 
 		PhysicsSceneCollisionManagerWeakReference m_collisionManager;
 

@@ -452,6 +452,11 @@ Edge::ComputeMath::Vector Edge::ComputeMath::vector3Cross(const Vector& vec1, co
 }
 #pragma endregion
 
+Edge::ComputeMath::Vector Edge::ComputeMath::vectorSwizzle(const Vector& vec, uint32_t e0, uint32_t e1, uint32_t e2, uint32_t e3)
+{
+	return DirectX::XMVectorSwizzle(vec, e0, e1, e2, e3);
+}
+
 float Edge::ComputeMath::vectorGetX(const Vector& vec)
 {
 	return DirectX::XMVectorGetX(vec);

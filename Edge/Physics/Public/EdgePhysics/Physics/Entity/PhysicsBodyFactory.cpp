@@ -33,15 +33,14 @@ Edge::PhysicsBodyMotionReference Edge::PhysicsBodyFactory::createBodyMotion(cons
 {
 	PhysicsPositionAndRotationBasedMotion* motionPtr = new PhysicsPositionAndRotationBasedMotion();
 
-	const BodyMotionCreationParam* bodyMotionCreationParam = static_cast<const BodyMotionCreationParam*>(param);
 	if (param)
 	{
-		motionPtr->setMass(bodyMotionCreationParam->m_mass);
-		motionPtr->setGravityFactor(bodyMotionCreationParam->m_gravityFactor);
-		motionPtr->setLinearDampingFactor(bodyMotionCreationParam->m_linearDampingFactor);
+		motionPtr->setMass(param->m_mass);
+		motionPtr->setGravityFactor(param->m_gravityFactor);
+		motionPtr->setLinearDampingFactor(param->m_linearDampingFactor);
 
-		motionPtr->setInertia(bodyMotionCreationParam->m_inertia);
-		motionPtr->setAngularDampingFactor(bodyMotionCreationParam->m_angularDamping);
+		motionPtr->setInertia(param->m_inertia);
+		motionPtr->setAngularDampingFactor(param->m_angularDamping);
 	}
 
 	return motionPtr;

@@ -5,6 +5,7 @@
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionContactManager.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
+#include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
 bool EdgeDemo::TestCollisionDemo::initDemo()
 {
@@ -13,6 +14,7 @@ bool EdgeDemo::TestCollisionDemo::initDemo()
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
 	bodyMotionCreationParam.m_mass = 1.0f;
 	bodyMotionCreationParam.m_angularDamping = 0.2f;
+	bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, 0.5f);
 
 	Edge::PhysicsBodyFactory::EntityCollisionCreationParam bodyCollisionCreationParam;
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(0.5f);
@@ -20,15 +22,15 @@ bool EdgeDemo::TestCollisionDemo::initDemo()
 	bodyCreationParam.m_motionCreationParam = &bodyMotionCreationParam;
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
-	bodyCreationParam.m_position.m_y = 10.0f;
+	//bodyCreationParam.m_position.m_y = 0.5f;
+	bodyCreationParam.m_position.m_y = 1.5f;
 
 	m_dynamicBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody);
 
 	bodyCreationParam.m_position.m_y = -5.0f;
-	//bodyCreationParam.m_motionCreationParam = nullptr;
-	bodyCreationParam.m_motionCreationParam->m_gravityFactor = 0.0f;
+	bodyCreationParam.m_motionCreationParam = nullptr;
 
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(5.0f);
 
@@ -52,7 +54,13 @@ void EdgeDemo::TestCollisionDemo::updateDemoLogic(float deltaTime)
 {
 	m_debugVisualizationDataController->clear();
 
-	m_debugVisualizationDataController->addSphere(m_dynamicBody->getTransform()->getPosition(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
+	const Edge::Transform& dynamicTransform = m_dynamicBody->getTransform()->getWorldTransform();
+
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisX(), 0.2f, Edge::NormalizedColorRed);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
+	m_debugVisualizationDataController->addSphere(dynamicTransform.getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
+
 	m_debugVisualizationDataController->addSphere(m_staticBody->getTransform()->getPosition(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 5.0f);
 
 	

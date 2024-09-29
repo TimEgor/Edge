@@ -124,6 +124,8 @@ namespace Edge
 		Vector vector2Cross(const Vector& vec1, const Vector& vec2);
 		Vector vector3Cross(const Vector& vec1, const Vector& vec2);
 
+		//
+		Vector vectorSwizzle(const Vector& vec, uint32_t e0, uint32_t e1, uint32_t e2, uint32_t e3);
 		float vectorGetX(const Vector& vec);
 		float vectorGetY(const Vector& vec);
 		float vectorGetZ(const Vector& vec);

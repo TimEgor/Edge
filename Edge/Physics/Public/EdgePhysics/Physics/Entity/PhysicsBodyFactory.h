@@ -18,7 +18,7 @@ namespace Edge
 
 		struct BodyMotionCreationParam final : public EntityMotionCreationParam
 		{
-			FloatVector3 m_inertia = FloatVector3One;
+			FloatVector3 m_inertia = FloatVector3Zero; //Inertial tensor diagonal
 
 			float m_linearDampingFactor = 0.05f;
 			float m_angularDamping = 0.05f;

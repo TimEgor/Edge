@@ -5,7 +5,42 @@
 
 #include "DefaultPhysicsEntityCollisionSceneContext.h"
 #include "PhysicsSceneCollisionManager.h"
+#include "Dispatchers/PhysicsCollisionDispatcherCollection.h"
+#include "Dispatchers/SphereVsSphereCollisionDispatcher.h"
 #include "Shapes/PhysicsSphereShape.h"
+
+bool Edge::PhysicsCollisionContactManager::DispatcherContext::init()
+{
+#define CREATE_AND_ADD_DISPATCHER(DISPATCHER_TYPE, SHAPE_TYPE1, SHAPE_TYPE2)			\
+	{																					\
+		PhysicsCollisionDispatcher* newDispatcher = new DISPATCHER_TYPE();				\
+		m_dispatchers.push_back(newDispatcher);											\
+		m_dispatcherCollection->addDispatcher(SHAPE_TYPE1, SHAPE_TYPE2, newDispatcher);	\
+	}
+
+	m_dispatcherCollection = new PhysicsCollisionDispatcherCollection();
+	EDGE_CHECK_INITIALIZATION(m_dispatcherCollection);
+
+	CREATE_AND_ADD_DISPATCHER(SphereVsSphereCollisionDispatcher, PhysicsSphereShape::PhysicsEntityCollisionShapeType, PhysicsSphereShape::PhysicsEntityCollisionShapeType);
+
+	return true;
+}
+
+void Edge::PhysicsCollisionContactManager::DispatcherContext::release()
+{
+	for (const auto dispatcher : m_dispatchers)
+	{
+		delete dispatcher;
+	}
+
+	EDGE_SAFE_DESTROY(m_dispatcherCollection);
+}
+
+Edge::PhysicsCollisionDispatcher* Edge::PhysicsCollisionContactManager::DispatcherContext::getDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2) const
+{
+	EDGE_ASSERT(m_dispatcherCollection);
+	return m_dispatcherCollection->getDispatcher(type1, type2);
+}
 
 void Edge::PhysicsCollisionContactManager::removeCollisionPartner(PhysicsSceneCollisionID baseCollision, PhysicsSceneCollisionID partnerCollision)
 {
@@ -37,11 +72,16 @@ bool Edge::PhysicsCollisionContactManager::init(const PhysicsSceneCollisionManag
 	m_collisionManager = collisionManager;
 	EDGE_CHECK_INITIALIZATION(m_collisionManager);
 
+	m_dispatcherContext = new DispatcherContext();
+	EDGE_CHECK_INITIALIZATION(m_dispatcherContext && m_dispatcherContext->init());
+
 	return true;
 }
 
 void Edge::PhysicsCollisionContactManager::release()
 {
+	EDGE_SAFE_DESTROY_WITH_RELEASING(m_dispatcherContext);
+
 	m_collisionManager.reset();
 }
 
@@ -131,9 +171,11 @@ void Edge::PhysicsCollisionContactManager::markContactsForChecking(PhysicsSceneC
 
 void Edge::PhysicsCollisionContactManager::updateContacts()
 {
-	EDGE_PROFILE_BLOCK_EVENT("Update collision contacts")
+	EDGE_ASSERT(m_dispatcherContext);
 
-		const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
+	EDGE_PROFILE_BLOCK_EVENT("Update collision contacts");
+
+	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
 
 	for (auto contactIter = m_contacts.begin(); contactIter != m_contacts.end();)
 	{
@@ -166,53 +208,24 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 		const PhysicsCollisionContactID contactID = contactIter->first;
 		PhysicsCollisionContact contact = contactIter->second;
 
+		const size_t initialContactIndex = m_contactPoints.size();
+
 		const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactID.m_collisionID1);
 		const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactID.m_collisionID2);
 
-		const PhysicsEntityCollisionShapeReference shape1 = collision1->getShape();
-		const PhysicsEntityCollisionShapeReference shape2 = collision2->getShape();
+		const PhysicsEntityCollisionShapeType shapeType1 = collision1->getShape()->getType();
+		const PhysicsEntityCollisionShapeType shapeType2 = collision2->getShape()->getType();
 
-		if (shape1->getType() == PhysicsSphereShape::PhysicsEntityCollisionShapeType
-			&& shape2->getType() == PhysicsSphereShape::PhysicsEntityCollisionShapeType)
+		PhysicsCollisionDispatcher* dispatcher = m_dispatcherContext->getDispatcher(shapeType1, shapeType2);
+		if (dispatcher)
 		{
-			const PhysicsSphereShape& sphere1 = shape1.getObjectCastRef<PhysicsSphereShape>();
-			const PhysicsSphereShape& sphere2 = shape2.getObjectCastRef<PhysicsSphereShape>();
-
-			const FloatVector3 position1 = collision1->getEntity()->getTransform()->getPosition();
-			const FloatVector3 position2 = collision2->getEntity()->getTransform()->getPosition();
-
-			const float radius1 = sphere1.getRadius();
-			const float radius2 = sphere2.getRadius();
-
-			ComputeVector delta = position2 - position1;
-			const float distance = delta.length3();
-
-			float depth = radius1 + radius2 - distance;
-
-			if (depth < 0.0f)
-			{
-				continue;
-			}
-
-			if (distance < EDGE_EPSILON)
-			{
-				depth = std::max(radius1, radius2);
-				delta = FloatVector3UnitY * (radius1 + radius2);
-			}
-
-			const ComputeVector normal = normalizeVector(delta);
-
-			PhysicsCollisionContactPoint contactPoint;
-			contactPoint.m_contactID = contactID;
-			(position1 + normal * radius1).saveToFloatVector3(contactPoint.m_position);
-			normal.saveToFloatVector3(contactPoint.m_normal);
-			contactPoint.m_depth = depth;
-
-			contact.setCollisionPointCount(1);
-			contact.setCollisionPointBaseIndex(m_contactPoints.size());
-
-			m_contactPoints.push_back(contactPoint);
+			dispatcher->dispatch(collision1, collision2, contactID, m_contactPoints);
 		}
+
+		const size_t postDispatchingContactIndex = m_contactPoints.size();
+
+		contact.setCollisionPointCount(postDispatchingContactIndex - initialContactIndex);
+		contact.setCollisionPointBaseIndex(initialContactIndex);
 	}
 }
 
@@ -240,6 +253,10 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		const PhysicsEntityMotionReference motion1 = entity1->getMotion();
 		const PhysicsEntityMotionReference motion2 = entity2->getMotion();
 
+		//TMP
+		const ComputeVector contactPosition1 = contactPoint.m_position;
+		const ComputeVector contactPosition2 = contactPosition1 - contactPoint.m_normal * contactPoint.m_depth;
+
 		EDGE_ASSERT(motion1 || motion2);
 
 		float invMass1 = 0.0f;
@@ -248,32 +265,63 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		FloatVector3 velocity1 = FloatVector3Zero;
 		FloatVector3 velocity2 = FloatVector3Zero;
 
+		FloatVector3 angularLinVelocity1 = FloatVector3Zero;
+		FloatVector3 angularLinVelocity2 = FloatVector3Zero;
+
+		FloatVector3 angularFactor1 = FloatVector3Zero;
+		FloatVector3 angularFactor2 = FloatVector3Zero;
+
+		FloatVector3 contactRadius1 = FloatVector3Zero;
+		FloatVector3 contactRadius2 = FloatVector3Zero;
+
+		FloatMatrix3x3 worldInverseInertiaTensor1 = FloatMatrix3x3Identity;
+		FloatMatrix3x3 worldInverseInertiaTensor2 = FloatMatrix3x3Identity;
+
 		if (motion1)
 		{
 			invMass1 = motion1->getInverseMass();
 			velocity1 = motion1->getLinearVelocity();
+
+			FloatMatrix3x3 inverseInertiaTensor;
+			motion1->getWorldInverseInertiaTensor(inverseInertiaTensor);
+			const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
+			const ComputeVector contactRadius = contactPosition1 - transform1->getPosition();
+
+			worldInverseInertiaTensor.saveToMatrix3x3(worldInverseInertiaTensor1);
+			contactRadius.saveToFloatVector3(contactRadius1);
+
+			crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, contactPoint.m_normal), contactRadius).saveToFloatVector3(angularFactor1);
+			crossVector3(motion1->getAngularVelocity(), contactRadius).saveToFloatVector3(angularLinVelocity1);
 		}
 
 		if (motion2)
 		{
 			invMass2 = motion2->getInverseMass();
 			velocity2 = motion2->getLinearVelocity();
+
+			FloatMatrix3x3 inverseInertiaTensor;
+			motion2->getWorldInverseInertiaTensor(inverseInertiaTensor);
+			const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
+			const ComputeVector contactRadius = contactPosition2 - transform2->getPosition();
+
+			worldInverseInertiaTensor.saveToMatrix3x3(worldInverseInertiaTensor2);
+			contactRadius.saveToFloatVector3(contactRadius2);
+
+			crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, contactPoint.m_normal), contactRadius).saveToFloatVector3(angularFactor2);
+			crossVector3(motion2->getAngularVelocity(), contactRadius).saveToFloatVector3(angularLinVelocity2);
 		}
 
 		const float totalInvMass = invMass1 + invMass2;
-		const float totalMass = 1.0f / totalInvMass;
 
 		const ComputeVector contactNormal = contactPoint.m_normal;
 
-		const ComputeVector velocityDelta = velocity1 - velocity2;
+		const ComputeVector velocityDelta = velocity1 + angularLinVelocity1 - velocity2 - angularLinVelocity2;
 		const float relativeSpeed = dotVector3(contactNormal, velocityDelta);
-		if (relativeSpeed > 0)
-		{
-			const float impulseValue = -2.0f * relativeSpeed * totalMass;
-			const ComputeVector contactImpulse = contactNormal * impulseValue;
 
-			const ComputeVector contactPosition1 = contactPoint.m_position;
-			const ComputeVector contactPosition2 = contactPosition1 + contactPoint.m_normal * contactPoint.m_depth;
+		{
+			const float angularFactor = dotVector3(angularFactor1 + angularFactor2, contactNormal);
+			const float impulseValue = -2.0f * relativeSpeed / (totalInvMass/* + angularFactor*/);
+			const ComputeVector contactImpulse = contactNormal * impulseValue;
 
 			if (motion1)
 			{
@@ -284,18 +332,68 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 			{
 				motion2->applyImpulse(negateVector(contactImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
 			}
+		}
 
-			//Position adjustment
+		//Friction
+		{
+
+			const ComputeVector relativeVelocity = contactNormal * relativeSpeed;
+			const ComputeVector tangent = (velocityDelta - relativeVelocity).normalize();
+
+			FloatVector3 angularFrictionFactor1 = FloatVector3Zero;
+			FloatVector3 angularFrictionFactor2 = FloatVector3Zero;
+
+			float friction1 = 0.0f;
+			float friction2 = 0.0f;
+
+			if (motion1)
 			{
+				friction1 = motion1->getFriction();
 
-				const ComputeVector contactPositionDelta = contactPosition2 - contactPosition1;
+				const ComputeMatrix worldInverseInertiaTensor = worldInverseInertiaTensor1;
+				const ComputeVector contactRadius = contactRadius1;
 
-				const float adjustmentCoeff1 = invMass1 * totalMass;
-				const float adjustmentCoeff2 = invMass2 * totalMass;
-
-				transform1->setPosition((transform1->getPosition() + contactPositionDelta * adjustmentCoeff1).getFloatVector3());
-				transform2->setPosition((transform2->getPosition() + contactPositionDelta * adjustmentCoeff2).getFloatVector3());
+				crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, tangent), contactRadius).saveToFloatVector3(angularFrictionFactor1);
 			}
+
+			if (motion2)
+			{
+				friction2 = motion2->getFriction();
+
+				const ComputeMatrix worldInverseInertiaTensor = worldInverseInertiaTensor2;
+				const ComputeVector contactRadius = contactRadius2;
+
+				crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, tangent), contactRadius).saveToFloatVector3(angularFrictionFactor2);
+			}
+
+			const float friction = friction1 * friction2;
+
+			const float angularFrictionFactor = dotVector3(angularFrictionFactor1 + angularFrictionFactor2, tangent);
+
+			const float impulseValue = -friction / (totalInvMass + angularFrictionFactor);
+			const ComputeVector frictionImpulse = contactNormal * impulseValue;
+
+			if (motion1)
+			{
+				motion1->applyImpulse(frictionImpulse.getFloatVector3(), contactPosition1.getFloatVector3());
+			}
+			
+			if (motion2)
+			{
+				motion2->applyImpulse(negateVector(frictionImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
+			}
+		}
+
+		//Position adjustment
+		{
+			const ComputeVector contactPositionDelta = contactPosition2 - contactPosition1;
+
+			const float totalMass = 1.0f / totalInvMass;
+			const float adjustmentCoeff1 = invMass1 * totalMass;
+			const float adjustmentCoeff2 = invMass2 * totalMass;
+
+			transform1->setPosition((transform1->getPosition() + contactPositionDelta * adjustmentCoeff1).getFloatVector3());
+			transform2->setPosition((transform2->getPosition() - contactPositionDelta * adjustmentCoeff2).getFloatVector3());
 		}
 	}
 }
