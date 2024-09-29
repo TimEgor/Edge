@@ -12,8 +12,6 @@ namespace Edge
 
 		float m_gravityFactor = 1.0f;
 
-		float m_friction = 0.5f;
-
 		PhysicsEntityTransformReference getTransform() const;
 
 	public:
@@ -53,9 +51,6 @@ namespace Edge
 
 		float getGravityFactor() const { return m_gravityFactor; }
 		void setGravityFactor(float factor);
-
-		float getFriction() const { return m_friction; }
-		void setFriction(float friction);
 
 		virtual void applyAcceleration(float deltaTime, const FloatVector3& gravity) = 0;
 	};

@@ -14,10 +14,13 @@ Edge::PhysicsParticleReference Edge::PhysicsParticleFactory::createParticleEntit
 			entityPtr->setParticleMotion(createParticleMotion(particleMotionCreationParam));
 		}
 
-		if (param->m_collisionParam)
+		const EntityCollisionCreationParam* collisionParam = param->m_collisionParam;
+		if (collisionParam)
 		{
 			PhysicsEntityCollisionReference collision = new PhysicsEntityCollision();
-			collision->setShape(param->m_collisionParam->m_shape);
+			collision->setShape(collisionParam->m_shape);
+			collision->setFriction(collisionParam->m_friction);
+			collision->setElasticity(collisionParam->m_elasticity);
 
 			entityPtr->setCollision(collision);
 		}

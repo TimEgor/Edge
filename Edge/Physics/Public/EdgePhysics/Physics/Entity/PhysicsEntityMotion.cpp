@@ -50,17 +50,6 @@ void Edge::PhysicsEntityMotion::setGravityFactor(float factor)
 	m_gravityFactor = factor;
 }
 
-void Edge::PhysicsEntityMotion::setFriction(float friction)
-{
-	if (0.0f > friction || friction > 1.0f)
-	{
-		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up invalid friction value.");
-		return;
-	}
-
-	m_friction = friction;
-}
-
 void Edge::PhysicsPositionBasedMotion::setLinearDampingFactor(float factor)
 {
 	if (0.0f > factor || factor > 1.0f)

@@ -10,7 +10,10 @@ namespace EdgeDemo
 	{
 	private:
 		Edge::PhysicsBodyReference m_staticBody;
-		Edge::PhysicsBodyReference m_dynamicBody;
+		Edge::PhysicsBodyReference m_dynamicBody1;
+		Edge::PhysicsBodyReference m_dynamicBody2;
+
+		void drawDynamicSphere(const Edge::PhysicsBodyReference& body) const;
 
 	public:
 		TestCollisionDemo() = default;

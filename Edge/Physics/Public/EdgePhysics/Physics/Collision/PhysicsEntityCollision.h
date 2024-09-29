@@ -37,6 +37,9 @@ namespace Edge
 
 		PhysicsEntityCollisionShapeReference m_shape;
 
+		float m_friction = 1.0f;
+		float m_elasticity = 0.5f;
+
 		PhysicsEntityTransformReference getTransform() const;
 
 	public:
@@ -53,6 +56,12 @@ namespace Edge
 		void setSceneContext(const PhysicsEntityCollisionSceneContextReference& context);
 
 		PhysicsSceneCollisionManagerReference getCollisionManager() const;
+
+		float getFriction() const { return m_friction; }
+		void setFriction(float friction);
+
+		float getElasticity() const { return m_elasticity; }
+		void setElasticity(float elasticity);
 	};
 
 	EDGE_MT_REFERENCE(PhysicsEntityCollision);

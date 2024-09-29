@@ -28,6 +28,9 @@ namespace Edge
 		struct EntityCollisionCreationParam final
 		{
 			PhysicsEntityCollisionShapeReference m_shape;
+
+			float m_friction = 1.0f;
+			float m_elasticity = 0.5f;
 		};
 
 		struct EntityCreationParam : public HashedType

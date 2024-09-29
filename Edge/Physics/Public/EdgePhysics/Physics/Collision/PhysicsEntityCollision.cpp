@@ -122,3 +122,25 @@ Edge::PhysicsSceneCollisionManagerReference Edge::PhysicsEntityCollision::getCol
 {
 	return m_sceneContext ? m_sceneContext->getCollisionManager().getReference() : nullptr;
 }
+
+void Edge::PhysicsEntityCollision::setFriction(float friction)
+{
+	if (0.0f > friction || friction > 1.0f)
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up invalid friction value.");
+		return;
+	}
+
+	m_friction = friction;
+}
+
+void Edge::PhysicsEntityCollision::setElasticity(float elasticity)
+{
+	if (0.0f > elasticity || elasticity > 1.0f)
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up invalid elasticity value.");
+		return;
+	}
+
+	m_elasticity = elasticity;
+}
