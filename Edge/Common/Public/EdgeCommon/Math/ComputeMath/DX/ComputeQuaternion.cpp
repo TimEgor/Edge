@@ -93,8 +93,7 @@ Edge::ComputeMath::Quaternion Edge::ComputeMath::quaternionSlerp(const Quaternio
 	return DirectX::XMQuaternionSlerp(quat1, quat2, t);
 }
 
-Edge::ComputeMath::Quaternion Edge::ComputeMath::quaternionSlerpV(const Quaternion& quat1, const Quaternion& quat2, const
-                                                             Vector& t)
+Edge::ComputeMath::Quaternion Edge::ComputeMath::quaternionSlerpV(const Quaternion& quat1, const Quaternion& quat2, const Vector& t)
 {
 	return DirectX::XMQuaternionSlerpV(quat1, quat2, t);
 }

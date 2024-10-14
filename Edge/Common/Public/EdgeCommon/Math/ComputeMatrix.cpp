@@ -92,6 +92,11 @@ Edge::ComputeMatrix Edge::computeMatrixFromRotationQuaternion(const ComputeQuate
 	return ComputeMath::matrixRotationQuaternion(quaternion.m_quaternion);
 }
 
+void Edge::getAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll)
+{
+	ComputeMath::anglesFromMatrixRotation(rotationMatrix.m_matrix, pitch, yaw, roll);
+}
+
 Edge::ComputeMatrix Edge::operator*(const ComputeMatrix& matrix1, const ComputeMatrix& matrix2)
 {
 	ComputeMatrix result(matrix1);

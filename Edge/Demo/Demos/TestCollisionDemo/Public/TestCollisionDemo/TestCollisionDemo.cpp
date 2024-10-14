@@ -34,7 +34,6 @@ bool EdgeDemo::TestCollisionDemo::initDemo()
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
 	bodyCreationParam.m_position.m_x = 0.0f;
-	bodyCreationParam.m_position.m_y = 0.5f;
 	bodyCreationParam.m_position.m_y = 1.5f;
 
 	m_dynamicBody1 = Edge::GetPhysics().createBody(&bodyCreationParam);

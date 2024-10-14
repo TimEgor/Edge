@@ -13,24 +13,28 @@ Edge::ComputeQuaternion& Edge::ComputeQuaternion::operator*=(const ComputeQuater
 	return *this;
 }
 
-void Edge::ComputeQuaternion::setupFromRotationAxis(const ComputeVector& axis, float angle)
+Edge::ComputeQuaternion& Edge::ComputeQuaternion::setupFromRotationAxis(const ComputeVector& axis, float angle)
 {
 	m_quaternion = ComputeMath::quaternionRotationAxis(axis.m_vector, angle);
+	return *this;
 }
 
-void Edge::ComputeQuaternion::setupFromRotationMatrix(const ComputeMatrix& rotation)
+Edge::ComputeQuaternion& Edge::ComputeQuaternion::setupFromRotationMatrix(const ComputeMatrix& rotation)
 {
 	m_quaternion = ComputeMath::quaternionRotationMatrix(rotation.m_matrix);
+	return *this;
 }
 
-void Edge::ComputeQuaternion::setupFromRollPitchYaw(const ComputeVector& angles)
+Edge::ComputeQuaternion& Edge::ComputeQuaternion::setupFromRollPitchYaw(const ComputeVector& angles)
 {
 	m_quaternion = ComputeMath::quaternionRotationRollPitchYaw(angles.m_vector);
+	return *this;
 }
 
-void Edge::ComputeQuaternion::setupFromRollPitchYaw(float pitch, float yaw, float roll)
+Edge::ComputeQuaternion& Edge::ComputeQuaternion::setupFromRollPitchYaw(float pitch, float yaw, float roll)
 {
 	m_quaternion = ComputeMath::quaternionRotationRollPitchYaw(pitch, yaw, roll);
+	return *this;
 }
 
 Edge::ComputeQuaternion& Edge::ComputeQuaternion::normalize()

@@ -98,4 +98,9 @@ namespace Edge
 	ComputeVector operator*(float val, const ComputeVector& vector);
 	ComputeVector operator*(const ComputeVector& vector, float val);
 	ComputeVector operator/(const ComputeVector& vector, float val);
+
+	bool operator==(const ComputeVector& vector1, const ComputeVector& vector2);
+	bool operator!=(const ComputeVector& vector1, const ComputeVector& vector2);
+
+	bool isVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2);
 }

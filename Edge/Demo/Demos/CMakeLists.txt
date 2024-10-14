@@ -14,6 +14,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DebugDrawDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FireworksDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestCastDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestCollisionDemo)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestBoxCollisionDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestSpheresCollisionDemo)
 
 target_link_libraries(EdgeDemos
@@ -23,4 +24,5 @@ target_link_libraries(EdgeDemos
 		TestCastDemo
 		TestCollisionDemo
 		TestSpheresCollisionDemo
+		TestBoxCollisionDemo
 )

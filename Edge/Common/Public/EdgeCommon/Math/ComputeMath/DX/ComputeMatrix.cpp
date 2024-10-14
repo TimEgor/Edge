@@ -287,5 +287,14 @@ Edge::ComputeMath::Vector Edge::ComputeMath::transformNormal(const Vector& vecto
 {
 	return DirectX::XMVector3TransformNormal(vector, transform);
 }
+
+void Edge::ComputeMath::anglesFromMatrixRotation(const Matrix& rotationMatrix, float& pitch, float& yaw, float& roll)
+{
+	DirectX::XMFLOAT4X4 XMFLOAT4X4_Values;
+	DirectX::XMStoreFloat4x4(&XMFLOAT4X4_Values, DirectX::XMMatrixTranspose(rotationMatrix));
+	pitch = (float)asin(-XMFLOAT4X4_Values._23);
+	yaw = (float)atan2(XMFLOAT4X4_Values._13, XMFLOAT4X4_Values._33);
+	roll = (float)atan2(XMFLOAT4X4_Values._21, XMFLOAT4X4_Values._22);
+}
 #pragma endregion
 #endif

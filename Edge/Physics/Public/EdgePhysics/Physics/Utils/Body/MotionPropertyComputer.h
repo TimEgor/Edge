@@ -1,13 +1,13 @@
 #pragma once
+
 #include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Patterns/NonInstanceable.h"
 
 namespace Edge
 {
-	class MotionPropertyComputer final
+	class MotionPropertyComputer final : NonInstanceable
 	{
 	public:
-		MotionPropertyComputer() = delete;
-
 		static float CalcSphereMass(float radius, float density);
 		static FloatVector3 CalcSphereInertiaTensor(float mass, float radius);
 

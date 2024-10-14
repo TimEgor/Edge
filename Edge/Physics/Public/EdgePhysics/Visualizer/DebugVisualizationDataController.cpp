@@ -50,10 +50,32 @@ void Edge::DebugVisualizationDataController::addBox(const Transform& transform, 
 	m_boxes.emplace_back(transform, color);
 }
 
+void Edge::DebugVisualizationDataController::addBox(const Transform& transform, const FloatVector3& size, const NormalizedColorRGB& color)
+{
+	Transform scaledTransform = transform;
+
+	scaledTransform.setAxisX((transform.getAxisX() * size.m_x).getFloatVector3());
+	scaledTransform.setAxisY((transform.getAxisY() * size.m_y).getFloatVector3());
+	scaledTransform.setAxisZ((transform.getAxisZ() * size.m_z).getFloatVector3());
+
+	addBox(scaledTransform, color);
+}
+
 void Edge::DebugVisualizationDataController::addWireframeBox(const Transform& transform, const NormalizedColorRGB& color)
 {
 	LockGuard locker(m_wireframeBoxMutex);
 	m_wireframeBoxes.emplace_back(transform, color);
+}
+
+void Edge::DebugVisualizationDataController::addWireframeBox(const Transform& transform, const FloatVector3& size, const NormalizedColorRGB& color)
+{
+	Transform scaledTransform = transform;
+
+	scaledTransform.setAxisX((transform.getAxisX() * size.m_x).getFloatVector3());
+	scaledTransform.setAxisY((transform.getAxisY() * size.m_y).getFloatVector3());
+	scaledTransform.setAxisZ((transform.getAxisZ() * size.m_z).getFloatVector3());
+
+	addWireframeBox(scaledTransform, color);
 }
 
 void Edge::DebugVisualizationDataController::addSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color)

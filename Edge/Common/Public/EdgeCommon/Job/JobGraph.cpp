@@ -239,6 +239,8 @@ Edge::JobGraph::DependencyJobReference* Edge::JobGraphBuilder::GraphBuildingCont
 
 Edge::JobGraphBuilder::JobGraphJobID Edge::JobGraphBuilder::GraphBuildingContext::addDependencyJob(const JobGraph::DependencyJobReference& job, bool addToCollection)
 {
+	EDGE_ASSERT(job);
+
 	const JobGraphJobID jobId(false, m_lastJobIndex);
 
 	m_jobs.emplace_back(job);

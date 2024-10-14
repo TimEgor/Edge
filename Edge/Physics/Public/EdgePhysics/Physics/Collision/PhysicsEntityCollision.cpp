@@ -81,6 +81,26 @@ Edge::AABB3 Edge::PhysicsEntityCollision::getWorldShapeAABB() const
 	return bound;
 }
 
+Edge::FloatVector3 Edge::PhysicsEntityCollision::getFurthestPoint(const FloatVector3& direction) const
+{
+	if (!m_shape)
+	{
+		return false;
+	}
+
+	const PhysicsEntityTransformReference transform = getTransform();
+
+	ComputeMatrix inverseTransform(transform->getWorldTransform().m_matrix);
+	inverseTransform.inverse();
+
+	const ComputeVector localDirection = inverseTransform * direction;
+
+	const FloatVector3 localPoint = m_shape->getFurthestKeyPoint(localDirection.getFloatVector3());
+	const ComputeVector point = transform->getWorldTransform().m_matrix * computeVectorFromPoint(localPoint);
+
+	return point.getFloatVector3();
+}
+
 bool Edge::PhysicsEntityCollision::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const
 {
 	if (!m_shape)

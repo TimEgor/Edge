@@ -1,0 +1,94 @@
+#pragma once
+
+#include "EdgeCommon/Math/ComputeVector.h"
+#include "EdgeCommon/Patterns/NonInstanceable.h"
+
+#include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
+
+#include "VoronoiSimplex.h"
+
+#include <list>
+
+namespace Edge
+{
+	class PhysicsEntityCollision;
+
+	class MinkowskiSumBaseAlgorithmUtils final : public NonInstanceable
+	{
+	public:
+		static VoronoiSimplex::Point support(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const FloatVector3& direction);
+
+		static bool hasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff);
+
+		static bool checkCodirection(const ComputeVector& direction, const ComputeVector& vector);
+	};
+
+	class GJK final
+	{
+	public:
+		struct Result final
+		{
+			enum class TestResult
+			{
+				Intersection,
+				NoIntersection,
+
+				OverIterationTesting
+			};
+
+			const VoronoiSimplex m_simplex;
+			const TestResult m_testResult = TestResult::NoIntersection;
+
+			Result(const VoronoiSimplex& simplex, TestResult result)
+				: m_simplex(simplex), m_testResult(result) {}
+		};
+
+	private:
+		bool checkAndIterateSimplex(VoronoiSimplex& simplex, FloatVector3& direction) const;
+		bool checkSimplex1D(VoronoiSimplex& simplex, FloatVector3& direction) const; //Line
+		bool checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction) const; //Triangle
+		bool checkSimplex3D(VoronoiSimplex& simplex, FloatVector3& direction) const; //Tetrahedron
+
+	public:
+		GJK() = default;
+
+		Result operator()(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, uint32_t maxIterationCount) const { return test(collision1, collision2, maxIterationCount); }
+
+		Result test(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, uint32_t maxIterationCount) const;
+	};
+
+	class EPA final
+	{
+	private:
+		struct PolytopeFace final
+		{
+			VoronoiSimplex::Point m_points[3];
+			FloatVector3 m_normal;
+
+			PolytopeFace(const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2, const VoronoiSimplex::Point& point3);
+		};
+
+		struct PolytopeEdge final
+		{
+			VoronoiSimplex::Point m_points[2];
+
+			PolytopeEdge(const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2);
+		};
+
+		void addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2) const;
+
+		void fillContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
+		FloatVector4 getBarycentricFaceProjection(const PolytopeFace& face) const; //xyz - barycentricCoords, w - distance to face
+
+	public:
+		EPA() = default;
+
+		PhysicsCollisionContactPoint operator()(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+			const VoronoiSimplex& simplex) const {
+			return getContactPoint(collision1, collision2, simplex);
+		}
+
+		PhysicsCollisionContactPoint getContactPoint(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+			const VoronoiSimplex& simplex) const;
+	};
+}

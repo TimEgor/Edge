@@ -76,5 +76,7 @@ namespace Edge
 		Vector transformPoint3(const Vector& point, const Matrix& transform);
 		Vector transformVector(const Vector& vector, const Matrix& transform);
 		Vector transformNormal(const Vector& vector, const Matrix& transform);
+
+		void anglesFromMatrixRotation(const Matrix& rotationMatrix, float& pitch, float& yaw, float& roll);
 	}
 }

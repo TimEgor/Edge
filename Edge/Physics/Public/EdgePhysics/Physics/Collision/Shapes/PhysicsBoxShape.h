@@ -16,6 +16,8 @@ namespace Edge
 		const FloatVector3& getSize() const { return m_size; }
 
 		virtual AABB3 getAABB() const override;
+		virtual FloatVector3 getFurthestKeyPoint(const FloatVector3& direction) const override;
+		virtual FloatVector3 getFurthestBoundSurfacePoint(const FloatVector3& direction) const override;
 
 		virtual bool rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const override;
 

@@ -20,6 +20,9 @@ namespace Edge
 		constexpr NormalizedColorRGB(const FloatVector3& values) : m_values(values) {}
 		constexpr NormalizedColorRGB(float r, float g, float b) : m_values(r, g, b) {}
 		constexpr NormalizedColorRGB(const NormalizedColorRGB& color) : m_values(color.m_values) {}
+
+		NormalizedColorRGB& operator=(const FloatVector3& values) { m_values = values; return *this; }
+		NormalizedColorRGB& operator=(const NormalizedColorRGB& color) { m_values = color.m_values; return *this; }
 	};
 
 	struct NormalizedColorRGBA final
@@ -39,6 +42,10 @@ namespace Edge
 		constexpr NormalizedColorRGBA(float r, float g, float b, float a) : m_values(r, g, b, a) {}
 		constexpr NormalizedColorRGBA(const NormalizedColorRGB& color) : m_values(color.m_values, 1.0f) {}
 		constexpr NormalizedColorRGBA(const NormalizedColorRGBA& color) : m_values(color.m_values) {}
+
+		NormalizedColorRGBA& operator=(const FloatVector4& values) { m_values = values; return *this; }
+		NormalizedColorRGBA& operator=(const NormalizedColorRGB& color) { m_values = color.m_values; return *this; }
+		NormalizedColorRGBA& operator=(const NormalizedColorRGBA& color) { m_values = color.m_values; return *this; }
 	};
 
 	constexpr NormalizedColorRGB NormalizedColorWhite = NormalizedColorRGB(1.0f, 1.0f, 1.0f);

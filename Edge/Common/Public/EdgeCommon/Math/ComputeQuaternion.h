@@ -19,10 +19,10 @@ namespace Edge
 
 		ComputeQuaternion& operator*=(const ComputeQuaternion& quaternion);
 
-		void setupFromRotationAxis(const ComputeVector& axis, float angle);
-		void setupFromRotationMatrix(const ComputeMatrix& rotation);
-		void setupFromRollPitchYaw(const ComputeVector& angles);
-		void setupFromRollPitchYaw(float pitch, float yaw, float roll);
+		ComputeQuaternion& setupFromRotationAxis(const ComputeVector& axis, float angle);
+		ComputeQuaternion& setupFromRotationMatrix(const ComputeMatrix& rotation);
+		ComputeQuaternion& setupFromRollPitchYaw(const ComputeVector& angles);
+		ComputeQuaternion& setupFromRollPitchYaw(float pitch, float yaw, float roll);
 
 		ComputeQuaternion& normalize();
 

@@ -334,3 +334,18 @@ Edge::ComputeVector Edge::operator/(const ComputeVector& vector, float val)
 	ComputeVector result(vector);
 	return result /= val;
 }
+
+bool Edge::operator==(const ComputeVector& vector1, const ComputeVector& vector2)
+{
+	return ComputeMath::vector3Equal(vector1.m_vector, vector2.m_vector);
+}
+
+bool Edge::operator!=(const ComputeVector& vector1, const ComputeVector& vector2)
+{
+	return !(vector1 == vector2);
+}
+
+bool Edge::isVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2)
+{
+	return vector1 == vector2;
+}

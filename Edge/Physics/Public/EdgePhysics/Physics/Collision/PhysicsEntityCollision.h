@@ -48,7 +48,8 @@ namespace Edge
 		PhysicsEntityCollisionShapeReference getShape() const { return m_shape; }
 		void setShape(const PhysicsEntityCollisionShapeReference& shape);
 
-		virtual AABB3 getWorldShapeAABB() const;
+		AABB3 getWorldShapeAABB() const;
+		FloatVector3 getFurthestPoint(const FloatVector3& direction) const;
 
 		virtual bool rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const override;
 

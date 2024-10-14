@@ -16,6 +16,8 @@ namespace Edge
 		PhysicsEntityCollisionShape() = default;
 
 		virtual AABB3 getAABB() const = 0;
+		virtual FloatVector3 getFurthestKeyPoint(const FloatVector3& direction) const = 0;
+		virtual FloatVector3 getFurthestBoundSurfacePoint(const FloatVector3& direction) const = 0;
 
 		virtual PhysicsEntityCollisionShapeType getType() const = 0;
 	};
