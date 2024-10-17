@@ -115,14 +115,15 @@ void EdgeDemo::TestBoxCollisionDemo::updateDemoLogic(float deltaTime)
 	Edge::NormalizedColorRGB color = Edge::NormalizedColorWhite;
 	const Edge::GJK::Result collisionTestResult = gjkTest(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), 100);
 
-	if (collisionTestResult.m_testResult == Edge::GJK::Result::TestResult::Intersection)
+	Edge::EPA epa;
+	Edge::PhysicsCollisionContactPoint contactPoint;
+	const bool contactResult = epa.getContactPoint(
+		m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(),
+		collisionTestResult, 100, contactPoint);
+
+	if (contactResult)
 	{
 		color = Edge::NormalizedColorRed;
-
-		Edge::EPA epa;
-		const Edge::PhysicsCollisionContactPoint contactPoint = epa.getContactPoint(
-			m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(),
-			collisionTestResult.m_simplex);
 
 		m_debugVisualizationDataController->addSphere(contactPoint.m_position,
 			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.1f, Edge::NormalizedColorOrange);

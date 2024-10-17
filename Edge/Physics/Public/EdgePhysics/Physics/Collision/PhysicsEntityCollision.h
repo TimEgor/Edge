@@ -40,11 +40,10 @@ namespace Edge
 		float m_friction = 1.0f;
 		float m_elasticity = 0.5f;
 
-		PhysicsEntityTransformReference getTransform() const;
-
 	public:
 		PhysicsEntityCollision() = default;
 
+		PhysicsEntityTransformReference getTransform() const;
 		PhysicsEntityCollisionShapeReference getShape() const { return m_shape; }
 		void setShape(const PhysicsEntityCollisionShapeReference& shape);
 

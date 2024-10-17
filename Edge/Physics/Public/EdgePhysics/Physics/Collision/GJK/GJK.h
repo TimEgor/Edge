@@ -30,14 +30,17 @@ namespace Edge
 		{
 			enum class TestResult
 			{
+				Contact,
 				Intersection,
 				NoIntersection,
+
+				FailedTesting,
 
 				OverIterationTesting
 			};
 
-			const VoronoiSimplex m_simplex;
-			const TestResult m_testResult = TestResult::NoIntersection;
+			VoronoiSimplex m_simplex;
+			TestResult m_testResult = TestResult::NoIntersection;
 
 			Result(const VoronoiSimplex& simplex, TestResult result)
 				: m_simplex(simplex), m_testResult(result) {}
@@ -77,18 +80,22 @@ namespace Edge
 
 		void addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2) const;
 
-		void fillContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
+		void fillPointContactPointData(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const GJK::Result& gjkResult, PhysicsCollisionContactPoint& contactPoint) const;
+		void fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
 		FloatVector4 getBarycentricFaceProjection(const PolytopeFace& face) const; //xyz - barycentricCoords, w - distance to face
+
+		bool calcEPAContact(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+			const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const;
 
 	public:
 		EPA() = default;
 
-		PhysicsCollisionContactPoint operator()(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
-			const VoronoiSimplex& simplex) const {
-			return getContactPoint(collision1, collision2, simplex);
+		bool operator()(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+			const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const {
+			return getContactPoint(collision1, collision2, gjkResult, maxIterationCount, contactPointData);
 		}
 
-		PhysicsCollisionContactPoint getContactPoint(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
-			const VoronoiSimplex& simplex) const;
+		bool getContactPoint(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+			const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const;
 	};
 }

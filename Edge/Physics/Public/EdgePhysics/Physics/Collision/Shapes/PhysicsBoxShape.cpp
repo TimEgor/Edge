@@ -14,15 +14,15 @@ Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const FloatVector3
 	uint32_t maxDistancePointIndex = -1;
 
 	const FloatVector3 halfSize = (m_size * 0.5f).getFloatVector3();
-	const FloatVector3 points[8] = {
-		{halfSize.m_x, halfSize.m_y, halfSize.m_z},
-		{halfSize.m_x, halfSize.m_y, -halfSize.m_z},
+	const FloatVector3 points[] = {
+		{-halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
 		{halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
+		{-halfSize.m_x, halfSize.m_y, -halfSize.m_z},
+		{halfSize.m_x, halfSize.m_y, -halfSize.m_z},
+		{-halfSize.m_x, -halfSize.m_y, halfSize.m_z},
 		{halfSize.m_x, -halfSize.m_y, halfSize.m_z},
 		{-halfSize.m_x, halfSize.m_y, halfSize.m_z},
-		{-halfSize.m_x, halfSize.m_y, -halfSize.m_z},
-		{-halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
-		{-halfSize.m_x, -halfSize.m_y, halfSize.m_z},
+		{halfSize.m_x, halfSize.m_y, halfSize.m_z},
 	};
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
@@ -43,15 +43,15 @@ Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestBoundSurfacePoint(const Flo
 	float maxDistance = -EDGE_FLT_MAX;
 
 	const FloatVector3 halfSize = (m_size * 0.5f).getFloatVector3();
-	const FloatVector3 points[8] = {
-		{halfSize.m_x, halfSize.m_y, halfSize.m_z},
-		{halfSize.m_x, halfSize.m_y, -halfSize.m_z},
+	const FloatVector3 points[] = {
+		{-halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
 		{halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
+		{-halfSize.m_x, halfSize.m_y, -halfSize.m_z},
+		{halfSize.m_x, halfSize.m_y, -halfSize.m_z},
+		{-halfSize.m_x, -halfSize.m_y, halfSize.m_z},
 		{halfSize.m_x, -halfSize.m_y, halfSize.m_z},
 		{-halfSize.m_x, halfSize.m_y, halfSize.m_z},
-		{-halfSize.m_x, halfSize.m_y, -halfSize.m_z},
-		{-halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
-		{-halfSize.m_x, -halfSize.m_y, halfSize.m_z},
+		{halfSize.m_x, halfSize.m_y, halfSize.m_z},
 	};
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)

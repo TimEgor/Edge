@@ -181,17 +181,20 @@ bool Edge::GJK::checkSimplex3D(VoronoiSimplex& simplex, FloatVector3& direction)
 
 Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, uint32_t maxIterationCount) const
 {
-	VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, FloatVector3UnitX);
-
-	if (vectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON)
-	{
-		supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, FloatVector3One);
-	}
-
 	VoronoiSimplex simplex;
+
+	FloatVector3 direction;
+	(collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition()).normalize().saveToFloatVector3(direction);
+
+	VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, direction);
 	simplex.addPoint(supportPoint);
 
-	FloatVector3 direction = (negateVector(supportPoint.m_minkowskiDiff).getFloatVector3());
+	if (vectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
+	{
+		return Result(simplex, Result::TestResult::Contact);
+	}
+
+	direction = negateVector(supportPoint.m_minkowskiDiff).getFloatVector3();
 
 	Result::TestResult testResult = Result::TestResult::NoIntersection;
 
@@ -206,7 +209,21 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 		}
 
 		normalizeVector(direction).saveToFloatVector3(direction);
+
+		if (vectorLength3Sqr(direction) <= EDGE_EPSILON_SQR)
+		{
+			testResult = Result::TestResult::FailedTesting;
+			break;
+		}
+
 		supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, direction);
+
+		if (vectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
+		{
+			testResult = Result::TestResult::Contact;
+			break;
+		}
+
 
 		if (MinkowskiSumBaseAlgorithmUtils::hasSimplexPoint(simplex, supportPoint.m_minkowskiDiff))
 		{
@@ -263,12 +280,22 @@ void Edge::EPA::addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const Vor
 	edgeCollection.emplace_back(point1, point2);
 }
 
-void Edge::EPA::fillContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const
+void Edge::EPA::fillPointContactPointData(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+	const GJK::Result& gjkResult, PhysicsCollisionContactPoint& contactPoint) const
+{
+	contactPoint.m_position = gjkResult.m_simplex.getPoint(gjkResult.m_simplex.getPointCount() - 1).m_pointCollision1;
+
+	(collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition())
+		.normalize().saveToFloatVector3(contactPoint.m_normal);
+	contactPoint.m_depth = 0.0f;
+}
+
+void Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const
 {
 	const FloatVector4 barycentricCoords = getBarycentricFaceProjection(face);
 
 	((barycentricCoords.m_x * face.m_points[0].m_pointCollision1)
-		+ (barycentricCoords.m_y* face.m_points[1].m_pointCollision1)
+		+ (barycentricCoords.m_y * face.m_points[1].m_pointCollision1)
 		+ (barycentricCoords.m_z * face.m_points[2].m_pointCollision1)
 		).saveToFloatVector3(contactPoint.m_position);
 
@@ -297,12 +324,14 @@ Edge::FloatVector4 Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& f
 	const float w = (d00 * d21 - d01 * d20) / denom;
 	const float u = 1.0f - v - w;
 
-	return FloatVector4(v, w, u, distanceFromOrigin);
+	return FloatVector4(u, v, w, distanceFromOrigin);
 }
 
-Edge::PhysicsCollisionContactPoint Edge::EPA::getContactPoint(
-	const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const VoronoiSimplex& simplex) const
+bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+	const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const
 {
+	const VoronoiSimplex& simplex = gjkResult.m_simplex;
+
 	std::list<PolytopeFace> polytopeFaces;
 	std::list<PolytopeEdge> polytopeEdges;
 
@@ -318,8 +347,15 @@ Edge::PhysicsCollisionContactPoint Edge::EPA::getContactPoint(
 		polytopeFaces.emplace_back(b, d, c);
 	}
 
+	uint32_t testIterationCount = 0;
 	while (true)
 	{
+		++testIterationCount;
+		if (testIterationCount > maxIterationCount)
+		{
+			break;
+		}
+
 		float minDistance = EDGE_FLT_MAX;
 
 		std::list<PolytopeFace>::iterator closestFace = polytopeFaces.begin();
@@ -338,10 +374,9 @@ Edge::PhysicsCollisionContactPoint Edge::EPA::getContactPoint(
 
 		if (dotVector3(closestFace->m_normal, supportPoint.m_minkowskiDiff) - minDistance < 0.0001f)
 		{
-			PhysicsCollisionContactPoint contactPoint;
-			fillContactPointData(*closestFace, contactPoint);
+			fillFaceContactPointData(*closestFace, contactPointData);
 
-			return contactPoint;
+			return true;
 		}
 
 		for (auto iterator = polytopeFaces.begin(); iterator != polytopeFaces.end();)
@@ -367,4 +402,28 @@ Edge::PhysicsCollisionContactPoint Edge::EPA::getContactPoint(
 
 		polytopeEdges.clear();
 	}
+
+	return false;
+}
+
+bool Edge::EPA::getContactPoint(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
+                                const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const
+{
+	if (gjkResult.m_simplex.getPointCount() == 0)
+	{
+		return false;
+	}
+
+	if (gjkResult.m_testResult == GJK::Result::TestResult::NoIntersection || gjkResult.m_testResult == GJK::Result::TestResult::OverIterationTesting)
+	{
+		return false;
+	}
+
+	if (gjkResult.m_testResult == GJK::Result::TestResult::Contact || gjkResult.m_testResult == GJK::Result::TestResult::FailedTesting)
+	{
+		fillPointContactPointData(collision1, collision2, gjkResult, contactPointData);
+		return true;
+	}
+
+	return calcEPAContact(collision1, collision2, gjkResult, maxIterationCount, contactPointData);
 }
