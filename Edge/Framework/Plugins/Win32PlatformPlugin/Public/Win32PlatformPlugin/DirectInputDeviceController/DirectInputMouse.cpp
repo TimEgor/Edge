@@ -30,12 +30,12 @@ void EdgeWin32::DirectInputMouse::update()
 
 	for (uint32_t keyIndex = 0; keyIndex < 8; ++keyIndex)
 	{
-		m_keyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::FIRST_BUTTON) + keyIndex] = (static_cast<float>(deviceState.rgbButtons[keyIndex] > 0)) ? 1.0f : 0.0f;
+		m_keyData.m_values[GetMouseKey(Edge::MouseKeys::FIRST_BUTTON) + keyIndex] = (static_cast<float>(deviceState.rgbButtons[keyIndex] > 0)) ? 1.0f : 0.0f;
 	}
 
-	m_keyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::X)] = static_cast<float>(deviceState.lX);
-	m_keyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::Y)] = static_cast<float>(deviceState.lY);
-	m_keyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::Z)] = static_cast<float>(deviceState.lZ);
+	m_keyData.m_values[GetMouseKey(Edge::MouseKeys::X)] = static_cast<float>(deviceState.lX);
+	m_keyData.m_values[GetMouseKey(Edge::MouseKeys::Y)] = static_cast<float>(deviceState.lY);
+	m_keyData.m_values[GetMouseKey(Edge::MouseKeys::Z)] = static_cast<float>(deviceState.lZ);
 }
 
 void EdgeWin32::DirectInputMouse::onWindowSet(const Edge::Window& window, bool exclusiveUsing)

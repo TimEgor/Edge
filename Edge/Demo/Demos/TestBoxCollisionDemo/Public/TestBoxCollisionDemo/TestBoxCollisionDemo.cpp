@@ -11,9 +11,9 @@
 #include "EdgeFramework/FrameworkCore.h"
 #include "EdgeFramework/Input/InputDeviceController/InputDeviceController.h"
 #include "EdgeFramework/Input/InputDeviceController/InputDeviceKeyCache.h"
+#include "EdgeFramework/Input/InputDeviceController/InputDeviceKeyUtils.h"
 #include "EdgeFramework/Input/InputDeviceController/Devices/InputDeviceKeyData.h"
 #include "EdgeFramework/Input/InputDeviceController/Devices/Keyboard.h"
-#include "EdgeFramework/Input/InputDeviceController/Devices/Mouse.h"
 
 void EdgeDemo::TestBoxCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 {
@@ -38,30 +38,30 @@ void EdgeDemo::TestBoxCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 	float yaw = 0.0f;
 	float roll = 0.0f;
 
-	Edge::getAnglesFromRotationMatrix(dynamicBoxTransform.getRotationComputeMatrix(), pitch, yaw, roll);
+	Edge::GetAnglesFromRotationMatrix(dynamicBoxTransform.getRotationComputeMatrix(), pitch, yaw, roll);
 
-	if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::ArrowUp)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowUp)))
 	{
 		position += Edge::FloatVector3UnitY * linearChangingSpeed * deltaTime;
 	}
-	if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::ArrowDown)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowDown)))
 	{
 		position -= Edge::FloatVector3UnitY * linearChangingSpeed * deltaTime;
 	}
-	if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::ArrowRight)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowRight)))
 	{
 		position += Edge::FloatVector3UnitX * linearChangingSpeed * deltaTime;
 	}
-	if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::ArrowLeft)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowLeft)))
 	{
 		position -= Edge::FloatVector3UnitX * linearChangingSpeed * deltaTime;
 	}
 
-	if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::ShiftRight)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ShiftRight)))
 	{
 		roll += deltaTime * angularChangingSpeed * EDGE_DEG_TO_RAD;
 	}
-	if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::ControlRight)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ControlRight)))
 	{
 		roll -= deltaTime * angularChangingSpeed * EDGE_DEG_TO_RAD;
 	}
@@ -87,7 +87,7 @@ bool EdgeDemo::TestBoxCollisionDemo::initDemo()
 	m_physicsScene->addEntity(m_staticBox);
 
 	bodyCreationParam.m_position = Edge::FloatVector3(1.0f, 0.0f, 0.0f);
-	//bodyCreationParam.m_rotation = Edge::computeQuaternionFromRollPitchYaw(45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
+	bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
 
 	m_dynamicBox = Edge::GetPhysics().createBody(&bodyCreationParam);
 

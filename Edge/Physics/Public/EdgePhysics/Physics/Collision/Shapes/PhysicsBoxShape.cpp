@@ -27,7 +27,7 @@ Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const FloatVector3
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
 	{
-		const float pointDistance = dotVector3(direction, points[pointIndex]);
+		const float pointDistance = DotVector3(direction, points[pointIndex]);
 		if (maxDistance < pointDistance)
 		{
 			maxDistance = pointDistance;
@@ -56,7 +56,7 @@ Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestBoundSurfacePoint(const Flo
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
 	{
-		const float pointDistance = dotVector3(direction, points[pointIndex]);
+		const float pointDistance = DotVector3(direction, points[pointIndex]);
 		if (maxDistance < pointDistance)
 		{
 			maxDistance = pointDistance;

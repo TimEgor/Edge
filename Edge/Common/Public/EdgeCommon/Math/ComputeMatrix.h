@@ -41,12 +41,12 @@ namespace Edge
 		FloatMatrix4x4 getToMatrix4x4() const;
 	};
 
-	ComputeMatrix computeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion);
-	void getAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll);
+	ComputeMatrix ComputeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion);
+	void GetAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll);
 
 	ComputeMatrix operator*(const ComputeMatrix& matrix1, const ComputeMatrix& matrix2);
 	ComputeVector operator*(const ComputeMatrix& matrix, const ComputeVector& vector);
 
-	ComputeMatrix transposeMatrix(const ComputeMatrix& matrix);
-	ComputeMatrix inverseMatrix(const ComputeMatrix& matrix);
+	ComputeMatrix TransposeMatrix(const ComputeMatrix& matrix);
+	ComputeMatrix InverseMatrix(const ComputeMatrix& matrix);
 }

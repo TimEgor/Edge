@@ -92,7 +92,7 @@ void Edge::DebugVisualizationDataController::addWireframeSphere(const FloatVecto
 
 void Edge::DebugVisualizationDataController::addGrid(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& directionRight, const FloatVector2& areaSize, const UInt32Vector2& gridNums, const NormalizedColorRGB& color)
 {
-	const ComputeVector directionUp = crossVector3(directionRight, normal);
+	const ComputeVector directionUp = CrossVector3(directionRight, normal);
 
 	const ComputeVector baseULinePosition = position - directionRight * areaSize.m_x * 0.5f;
 	const float gridUStep = areaSize.m_x / gridNums.m_x;

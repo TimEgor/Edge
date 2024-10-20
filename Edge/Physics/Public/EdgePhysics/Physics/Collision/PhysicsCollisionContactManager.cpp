@@ -292,8 +292,8 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 			worldInverseInertiaTensor.saveToMatrix3x3(worldInverseInertiaTensor1);
 			contactRadius.saveToFloatVector3(contactRadius1);
 
-			crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, contactNormal), contactRadius).saveToFloatVector3(angularFactor1);
-			crossVector3(motion1->getAngularVelocity(), contactRadius).saveToFloatVector3(angularLinVelocity1);
+			CrossVector3(worldInverseInertiaTensor * CrossVector3(contactRadius, contactNormal), contactRadius).saveToFloatVector3(angularFactor1);
+			CrossVector3(motion1->getAngularVelocity(), contactRadius).saveToFloatVector3(angularLinVelocity1);
 		}
 
 		if (motion2)
@@ -309,21 +309,21 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 			worldInverseInertiaTensor.saveToMatrix3x3(worldInverseInertiaTensor2);
 			contactRadius.saveToFloatVector3(contactRadius2);
 
-			crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, contactNormal), contactRadius).saveToFloatVector3(angularFactor2);
-			crossVector3(motion2->getAngularVelocity(), contactRadius).saveToFloatVector3(angularLinVelocity2);
+			CrossVector3(worldInverseInertiaTensor * CrossVector3(contactRadius, contactNormal), contactRadius).saveToFloatVector3(angularFactor2);
+			CrossVector3(motion2->getAngularVelocity(), contactRadius).saveToFloatVector3(angularLinVelocity2);
 		}
 
 		const float totalInvMass = invMass1 + invMass2;
 
 		const ComputeVector velocityDelta = velocity1 + angularLinVelocity1 - velocity2 - angularLinVelocity2;
-		const float relativeSpeed = dotVector3(contactNormal, velocityDelta);
+		const float relativeSpeed = DotVector3(contactNormal, velocityDelta);
 
 		{
 			const float elasticity1 = collision1->getElasticity();
 			const float elasticity2 = collision2->getElasticity();
 			const float elasticity = elasticity1 * elasticity2;
 
-			const float angularFactor = dotVector3(angularFactor1 + angularFactor2, contactNormal);
+			const float angularFactor = DotVector3(angularFactor1 + angularFactor2, contactNormal);
 			const float impulseValue = -(1.0f + elasticity) * relativeSpeed / (totalInvMass + angularFactor);
 			const ComputeVector contactImpulse = contactNormal * impulseValue;
 
@@ -334,7 +334,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 
 			if (motion2)
 			{
-				motion2->applyImpulse(negateVector(contactImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
+				motion2->applyImpulse(NegateVector(contactImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
 			}
 		}
 
@@ -342,7 +342,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		{
 			const ComputeVector relativeVelocity = contactNormal * relativeSpeed;
 			const ComputeVector tangent = velocityDelta - relativeVelocity;
-			const ComputeVector relativeTangent = normalizeVector(tangent);
+			const ComputeVector relativeTangent = NormalizeVector(tangent);
 
 			FloatVector3 angularFrictionFactor1 = FloatVector3Zero;
 			FloatVector3 angularFrictionFactor2 = FloatVector3Zero;
@@ -356,7 +356,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 				const ComputeMatrix worldInverseInertiaTensor = worldInverseInertiaTensor1;
 				const ComputeVector contactRadius = contactRadius1;
 
-				crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, relativeTangent), contactRadius).saveToFloatVector3(angularFrictionFactor1);
+				CrossVector3(worldInverseInertiaTensor * CrossVector3(contactRadius, relativeTangent), contactRadius).saveToFloatVector3(angularFrictionFactor1);
 			}
 
 			if (motion2)
@@ -364,10 +364,10 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 				const ComputeMatrix worldInverseInertiaTensor = worldInverseInertiaTensor2;
 				const ComputeVector contactRadius = contactRadius2;
 
-				crossVector3(worldInverseInertiaTensor * crossVector3(contactRadius, relativeTangent), contactRadius).saveToFloatVector3(angularFrictionFactor2);
+				CrossVector3(worldInverseInertiaTensor * CrossVector3(contactRadius, relativeTangent), contactRadius).saveToFloatVector3(angularFrictionFactor2);
 			}
 
-			const float angularFrictionFactor = dotVector3(angularFrictionFactor1 + angularFrictionFactor2, relativeTangent);
+			const float angularFrictionFactor = DotVector3(angularFrictionFactor1 + angularFrictionFactor2, relativeTangent);
 
 			const float frictionImpulseValue = -friction / (totalInvMass + angularFrictionFactor);
 			const ComputeVector frictionImpulse = tangent * frictionImpulseValue;
@@ -379,7 +379,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 			
 			if (motion2)
 			{
-				motion2->applyImpulse(negateVector(frictionImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
+				motion2->applyImpulse(NegateVector(frictionImpulse).getFloatVector3(), contactPosition2.getFloatVector3());
 			}
 		}
 

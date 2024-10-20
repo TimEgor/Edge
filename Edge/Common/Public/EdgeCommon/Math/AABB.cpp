@@ -4,8 +4,8 @@
 
 Edge::AABB3& Edge::AABB3::merge(const AABB3& volume)
 {
-	vectorMin(m_minPosition, volume.m_minPosition).saveToFloatVector3(m_minPosition);
-	vectorMax(m_maxPosition, volume.m_maxPosition).saveToFloatVector3(m_maxPosition);
+	VectorMin(m_minPosition, volume.m_minPosition).saveToFloatVector3(m_minPosition);
+	VectorMax(m_maxPosition, volume.m_maxPosition).saveToFloatVector3(m_maxPosition);
 
 	return *this;
 }

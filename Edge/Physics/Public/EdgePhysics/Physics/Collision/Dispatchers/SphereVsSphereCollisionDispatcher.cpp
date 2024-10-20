@@ -39,7 +39,7 @@ void Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollis
 		delta = FloatVector3UnitY * (radius1 + radius2);
 	}
 
-	const ComputeVector normal = normalizeVector(delta);
+	const ComputeVector normal = NormalizeVector(delta);
 
 	PhysicsCollisionContactPoint contactPoint;
 	contactPoint.m_contactID = contactID;

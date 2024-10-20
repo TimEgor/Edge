@@ -70,7 +70,7 @@ Edge::AABB3 Edge::PhysicsEntityCollision::getWorldShapeAABB() const
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
 	{
-		ComputeVector transformBoundPoint = worldTransform * computeVectorFromPoint(points[pointIndex]);
+		ComputeVector transformBoundPoint = worldTransform * ComputeVectorFromPoint(points[pointIndex]);
 		minBoundPoint = ComputeMath::vectorMin(transformBoundPoint.m_vector, minBoundPoint.m_vector);
 		maxBoundPoint = ComputeMath::vectorMax(transformBoundPoint.m_vector, maxBoundPoint.m_vector);
 	}
@@ -96,7 +96,7 @@ Edge::FloatVector3 Edge::PhysicsEntityCollision::getFurthestPoint(const FloatVec
 	const ComputeVector localDirection = inverseTransform * direction;
 
 	const FloatVector3 localPoint = m_shape->getFurthestKeyPoint(localDirection.getFloatVector3());
-	const ComputeVector point = transform->getWorldTransform().m_matrix * computeVectorFromPoint(localPoint);
+	const ComputeVector point = transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(localPoint);
 
 	return point.getFloatVector3();
 }
@@ -113,12 +113,12 @@ bool Edge::PhysicsEntityCollision::rayCast(const FloatVector3& origin, const Flo
 	ComputeMatrix inverseTransform(transform->getWorldTransform().m_matrix);
 	inverseTransform.inverse();
 
-	const ComputeVector localOriginPosition = inverseTransform * computeVectorFromPoint(origin);
-	const ComputeVector localEndPosition = inverseTransform * computeVectorFromPoint(end);
+	const ComputeVector localOriginPosition = inverseTransform * ComputeVectorFromPoint(origin);
+	const ComputeVector localEndPosition = inverseTransform * ComputeVectorFromPoint(end);
 
 	if (m_shape->rayCast(localOriginPosition.getFloatVector3(), localEndPosition.getFloatVector3(), result))
 	{
-		const ComputeVector hitPos = transform->getWorldTransform().m_matrix * computeVectorFromPoint(result.m_hitPosition);
+		const ComputeVector hitPos = transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(result.m_hitPosition);
 		hitPos.saveToFloatVector3(result.m_hitPosition);
 
 		return true;

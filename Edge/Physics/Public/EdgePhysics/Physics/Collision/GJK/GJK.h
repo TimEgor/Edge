@@ -13,14 +13,13 @@ namespace Edge
 {
 	class PhysicsEntityCollision;
 
-	class MinkowskiSumBaseAlgorithmUtils final : public NonInstanceable
+	namespace MinkowskiSumBaseAlgorithmUtils
 	{
-	public:
-		static VoronoiSimplex::Point support(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const FloatVector3& direction);
+		VoronoiSimplex::Point Support(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const FloatVector3& direction);
 
-		static bool hasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff);
+		bool HasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff);
 
-		static bool checkCodirection(const ComputeVector& direction, const ComputeVector& vector);
+		bool CheckCodirection(const ComputeVector& direction, const ComputeVector& vector);
 	};
 
 	class GJK final

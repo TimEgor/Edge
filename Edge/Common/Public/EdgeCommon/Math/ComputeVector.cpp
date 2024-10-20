@@ -185,122 +185,122 @@ Edge::FloatVector4 Edge::ComputeVector::getFloatVector4() const
 	return ComputeMath::saveVector4(m_vector);
 }
 
-Edge::ComputeVector Edge::computeVectorFromPoint(const FloatVector2& position)
+Edge::ComputeVector Edge::ComputeVectorFromPoint(const FloatVector2& position)
 {
 	return FloatVector4(position.m_x, position.m_y, 0.0f, 1.0f);
 }
 
-Edge::ComputeVector Edge::computeVectorFromPoint(const FloatVector3& position)
+Edge::ComputeVector Edge::ComputeVectorFromPoint(const FloatVector3& position)
 {
 	return FloatVector4(position.m_x, position.m_y, position.m_z, 1.0f);
 }
 
-Edge::ComputeVector Edge::negateVector(const ComputeVector& vector)
+Edge::ComputeVector Edge::NegateVector(const ComputeVector& vector)
 {
 	return ComputeMath::vectorNegate(vector.m_vector);
 }
 
-Edge::ComputeVector Edge::normalizeVector(const ComputeVector& vector)
+Edge::ComputeVector Edge::NormalizeVector(const ComputeVector& vector)
 {
 	return ComputeMath::vector4Normalize(vector.m_vector);
 }
 
-Edge::ComputeVector Edge::reciprocalVector(const ComputeVector& vector)
+Edge::ComputeVector Edge::ReciprocalVector(const ComputeVector& vector)
 {
 	return ComputeMath::vectorReciprocal(vector.m_vector);
 }
 
-Edge::ComputeVector Edge::multiplyVector(const ComputeVector& vector1, const ComputeVector& vector2)
+Edge::ComputeVector Edge::MultiplyVector(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vectorMultiply(vector1.m_vector, vector2.m_vector);
 }
 
-Edge::ComputeVector Edge::vectorMin(const ComputeVector& vector1, const ComputeVector& vector2)
+Edge::ComputeVector Edge::VectorMin(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vectorMin(vector1.m_vector, vector2.m_vector);
 }
 
-Edge::ComputeVector Edge::vectorMax(const ComputeVector& vector1, const ComputeVector& vector2)
+Edge::ComputeVector Edge::VectorMax(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vectorMax(vector1.m_vector, vector2.m_vector);
 }
 
-float Edge::vectorLength2(const ComputeVector& vector)
+float Edge::VectorLength2(const ComputeVector& vector)
 {
 	return ComputeMath::vector2Length(vector.m_vector);
 }
 
-float Edge::vectorLength3(const ComputeVector& vector)
+float Edge::VectorLength3(const ComputeVector& vector)
 {
 	return ComputeMath::vector3Length(vector.m_vector);
 }
 
-float Edge::vectorLength4(const ComputeVector& vector)
+float Edge::VectorLength4(const ComputeVector& vector)
 {
 	return ComputeMath::vector4Length(vector.m_vector);
 }
 
-float Edge::vectorLength2Sqr(const ComputeVector& vector)
+float Edge::VectorLength2Sqr(const ComputeVector& vector)
 {
 	return ComputeMath::vector2LengthSqr(vector.m_vector);
 }
 
-float Edge::vectorLength3Sqr(const ComputeVector& vector)
+float Edge::VectorLength3Sqr(const ComputeVector& vector)
 {
 	return ComputeMath::vector3LengthSqr(vector.m_vector);
 }
 
-float Edge::vectorLength4Sqr(const ComputeVector& vector)
+float Edge::VectorLength4Sqr(const ComputeVector& vector)
 {
 	return ComputeMath::vector4LengthSqr(vector.m_vector);
 }
 
-float Edge::vectorLength(const ComputeVector& vector)
+float Edge::VectorLength(const ComputeVector& vector)
 {
-	return vectorLength4(vector);
+	return VectorLength4(vector);
 }
 
-float Edge::vectorLengthSqr(const ComputeVector& vector)
+float Edge::VectorLengthSqr(const ComputeVector& vector)
 {
-	return vectorLength4Sqr(vector);
+	return VectorLength4Sqr(vector);
 }
 
-float Edge::dotVector2(const ComputeVector& vector1, const ComputeVector& vector2)
+float Edge::DotVector2(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector2Dot(vector1.m_vector, vector2.m_vector);
 }
 
-float Edge::dotVector3(const ComputeVector& vector1, const ComputeVector& vector2)
+float Edge::DotVector3(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector3Dot(vector1.m_vector, vector2.m_vector);
 }
 
-float Edge::dotVector4(const ComputeVector& vector1, const ComputeVector& vector2)
+float Edge::DotVector4(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector4Dot(vector1.m_vector, vector2.m_vector);
 }
 
-float Edge::tripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3)
+float Edge::TripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3)
 {
 	return ComputeMath::vector3Dot(vector1.m_vector, ComputeMath::vector3Cross(vector2.m_vector, vector3.m_vector));
 }
 
-Edge::ComputeVector Edge::vector2Orthogonal(const ComputeVector& vector)
+Edge::ComputeVector Edge::Vector2Orthogonal(const ComputeVector& vector)
 {
 	return ComputeMath::vector2Orthogonal(vector.m_vector);
 }
 
-Edge::ComputeVector Edge::crossVector2(const ComputeVector& vector1, const ComputeVector& vector2)
+Edge::ComputeVector Edge::CrossVector2(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector2Cross(vector1.m_vector, vector2.m_vector);
 }
 
-Edge::ComputeVector Edge::crossVector3(const ComputeVector& vector1, const ComputeVector& vector2)
+Edge::ComputeVector Edge::CrossVector3(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector3Cross(vector1.m_vector, vector2.m_vector);
 }
 
-Edge::ComputeVector Edge::rotateVector2(const ComputeVector& vector, float angle)
+Edge::ComputeVector Edge::RotateVector2(const ComputeVector& vector, float angle)
 {
 	return ComputeMatrix(ComputeMath::matrixRotationZ(angle)) * vector;
 }
@@ -345,7 +345,7 @@ bool Edge::operator!=(const ComputeVector& vector1, const ComputeVector& vector2
 	return !(vector1 == vector2);
 }
 
-bool Edge::isVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2)
+bool Edge::IsVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return vector1 == vector2;
 }

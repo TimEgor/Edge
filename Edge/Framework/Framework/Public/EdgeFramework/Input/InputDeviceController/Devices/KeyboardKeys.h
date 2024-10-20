@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cstdint>
+#include "InputDeviceKeyData.h"
 
 namespace Edge
 {
-	using KeyboardKey = uint8_t;
+	using KeyboardKey = InputDeviceKeyData::KeyIndex;
 
 	enum class KeyboardKeys : KeyboardKey
 	{
@@ -114,4 +114,6 @@ namespace Edge
 	};
 
 	constexpr KeyboardKey KeyboardKeyCount = static_cast<KeyboardKey>(KeyboardKeys::MAX_KEY);
+
+	inline KeyboardKey GetKeyboardKey(KeyboardKeys key) { return static_cast<KeyboardKey>(key); }
 }

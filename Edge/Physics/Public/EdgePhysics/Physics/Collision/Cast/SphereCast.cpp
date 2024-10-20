@@ -9,8 +9,8 @@ bool Edge::CastSphere::rayCast(const FloatVector3& sphereCenter, float sphereRad
 	const float rayLength = ray.length3();
 	const ComputeVector rayDirection = ray / rayLength;
 
-	const float b = dotVector3(baseDelta, normalizeVector(rayDirection));
-	const float c = dotVector3(baseDelta, baseDelta) - sphereRadius * sphereRadius;
+	const float b = DotVector3(baseDelta, NormalizeVector(rayDirection));
+	const float c = DotVector3(baseDelta, baseDelta) - sphereRadius * sphereRadius;
 
 	if (c > 0.0f && b > 0.0f)
 	{

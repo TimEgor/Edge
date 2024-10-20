@@ -7,8 +7,8 @@ namespace Edge
 	{
 		using KeyValue = float;
 
-		using KeyIndex = uint16_t;
-		static constexpr KeyIndex KeyCount = 256;
+		using KeyIndex = uint8_t;
+		static constexpr KeyIndex KeyCount = 255;
 
 		KeyValue m_values[KeyCount];
 

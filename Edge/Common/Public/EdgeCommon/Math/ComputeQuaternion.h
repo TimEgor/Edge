@@ -36,17 +36,17 @@ namespace Edge
 		FloatQuaternion getFloatQuaternion() const;
 	};
 
-	ComputeQuaternion computeQuaternionFromRotationAxis(const ComputeVector& axis, float angle);
-	ComputeQuaternion computeQuaternionFromRotationMatrix(const ComputeMatrix& rotation);
-	ComputeQuaternion computeQuaternionFromRollPitchYaw(const ComputeVector& angles);
-	ComputeQuaternion computeQuaternionFromRollPitchYaw(float pitch, float yaw, float roll);
+	ComputeQuaternion ComputeQuaternionFromRotationAxis(const ComputeVector& axis, float angle);
+	ComputeQuaternion ComputeQuaternionFromRotationMatrix(const ComputeMatrix& rotation);
+	ComputeQuaternion ComputeQuaternionFromRollPitchYaw(const ComputeVector& angles);
+	ComputeQuaternion ComputeQuaternionFromRollPitchYaw(float pitch, float yaw, float roll);
 
-	ComputeQuaternion normalizeQuaternion(const ComputeQuaternion& quaternion);
+	ComputeQuaternion NormalizeQuaternion(const ComputeQuaternion& quaternion);
 
-	float quaternionLength(const ComputeQuaternion& quaternion);
-	float quaternionLengthSqr(const ComputeQuaternion& quaternion);
+	float QuaternionLength(const ComputeQuaternion& quaternion);
+	float QuaternionLengthSqr(const ComputeQuaternion& quaternion);
 
-	float dotQuaternion(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2);
+	float DotQuaternion(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2);
 
 	ComputeQuaternion operator*(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2);
 }

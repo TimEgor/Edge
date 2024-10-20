@@ -127,7 +127,7 @@ DirectInputKeyboardKeyMapper::DirectInputKeyboardKeyMapper()
 
 uint8_t DirectInputKeyboardKeyMapper::getKeyIndex(Edge::KeyboardKeys key) const
 {
-	return m_keys[static_cast<uint8_t>(key)];
+	return m_keys[GetKeyboardKey(key)];
 }
 
 bool EdgeWin32::DirectInputKeyboard::init()
@@ -156,7 +156,7 @@ void EdgeWin32::DirectInputKeyboard::update()
 		return;
 	}
 
-	for (Edge::KeyboardKey keyIndex = 0; keyIndex < static_cast<Edge::KeyboardKey>(Edge::KeyboardKeys::MAX_KEY); ++keyIndex)
+	for (Edge::KeyboardKey keyIndex = 0; keyIndex < Edge::KeyboardKeyCount; ++keyIndex)
 	{
 		const uint8_t deviceKeyIndex = keyMapper.getKeyIndex(static_cast<Edge::KeyboardKeys>(keyIndex));
 		m_keyData.m_values[keyIndex] = (m_deviceKeys[deviceKeyIndex] & 0x80) ? 1.0f : 0.0f;

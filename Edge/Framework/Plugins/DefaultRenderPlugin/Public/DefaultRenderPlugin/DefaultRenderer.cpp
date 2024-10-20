@@ -706,7 +706,7 @@ void EdgeDefRender::DefaultRenderer::preparePolygonRenderData(float deltaTime, c
 			PolygonRenderData::PolygonData& polygonData = *polygonDataIter.getCurrentTypedElement<PolygonRenderData::PolygonData>();
 
 			const PackedColor color(polygonDebugData.m_color);
-			const Edge::FloatVector3 normal = crossVector3(
+			const Edge::FloatVector3 normal = CrossVector3(
 				polygonDebugData.m_position1 - polygonDebugData.m_position2,
 				polygonDebugData.m_position1 - polygonDebugData.m_position3
 			).getFloatVector3();

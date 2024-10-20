@@ -1,13 +1,12 @@
 #pragma once
 
 #include "InputDevice.h"
-#include "EdgeCommon/Math/Vector.h"
 
 #define EDGE_INPUT_DEVICE_TYPE_MOUSE
 
 namespace Edge
 {
-	using MouseKey = uint8_t;
+	using MouseKey = InputDeviceKeyData::KeyIndex;
 	enum class MouseKeys : MouseKey
 	{
 		Left,
@@ -31,6 +30,8 @@ namespace Edge
 
 		MAX_KEY = Z
 	};
+
+	inline MouseKey GetMouseKey(MouseKeys key) { return static_cast<MouseKey>(key); }
 
 	class MouseInputDevice : public InputDevice
 	{

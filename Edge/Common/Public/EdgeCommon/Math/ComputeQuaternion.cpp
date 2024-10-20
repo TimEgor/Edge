@@ -68,42 +68,42 @@ Edge::FloatQuaternion Edge::ComputeQuaternion::getFloatQuaternion() const
 	return ComputeMath::saveQuaternion(m_quaternion);
 }
 
-Edge::ComputeQuaternion Edge::computeQuaternionFromRotationAxis(const ComputeVector& axis, float angle)
+Edge::ComputeQuaternion Edge::ComputeQuaternionFromRotationAxis(const ComputeVector& axis, float angle)
 {
 	return ComputeMath::quaternionRotationAxis(axis.m_vector, angle);
 }
 
-Edge::ComputeQuaternion Edge::computeQuaternionFromRotationMatrix(const ComputeMatrix& rotation)
+Edge::ComputeQuaternion Edge::ComputeQuaternionFromRotationMatrix(const ComputeMatrix& rotation)
 {
 	return ComputeMath::quaternionRotationMatrix(rotation.m_matrix);
 }
 
-Edge::ComputeQuaternion Edge::computeQuaternionFromRollPitchYaw(const ComputeVector& angles)
+Edge::ComputeQuaternion Edge::ComputeQuaternionFromRollPitchYaw(const ComputeVector& angles)
 {
 	return ComputeMath::quaternionRotationRollPitchYaw(angles.m_vector);
 }
 
-Edge::ComputeQuaternion Edge::computeQuaternionFromRollPitchYaw(float pitch, float yaw, float roll)
+Edge::ComputeQuaternion Edge::ComputeQuaternionFromRollPitchYaw(float pitch, float yaw, float roll)
 {
 	return ComputeMath::quaternionRotationRollPitchYaw(pitch, yaw, roll);
 }
 
-Edge::ComputeQuaternion Edge::normalizeQuaternion(const ComputeQuaternion& quaternion)
+Edge::ComputeQuaternion Edge::NormalizeQuaternion(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::quaternionNormalize(quaternion.m_quaternion);
 }
 
-float Edge::quaternionLength(const ComputeQuaternion& quaternion)
+float Edge::QuaternionLength(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::quaternionLength(quaternion.m_quaternion);
 }
 
-float Edge::quaternionLengthSqr(const ComputeQuaternion& quaternion)
+float Edge::QuaternionLengthSqr(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::quaternionLengthSqr(quaternion.m_quaternion);
 }
 
-float Edge::dotQuaternion(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2)
+float Edge::DotQuaternion(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2)
 {
 	return ComputeMath::quaternionDot(quaternion1.m_quaternion, quaternion2.m_quaternion);
 }

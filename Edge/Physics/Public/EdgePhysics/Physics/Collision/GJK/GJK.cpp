@@ -4,13 +4,13 @@
 
 #include "VoronoiSimplex.h"
 
-Edge::VoronoiSimplex::Point Edge::MinkowskiSumBaseAlgorithmUtils::support(
+Edge::VoronoiSimplex::Point Edge::MinkowskiSumBaseAlgorithmUtils::Support(
 	const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const FloatVector3& direction)
 {
 	VoronoiSimplex::Point result;
 
 	const ComputeVector point1 = collision1.getFurthestPoint(direction);
-	const ComputeVector point2 = collision2.getFurthestPoint(negateVector(direction).getFloatVector3());
+	const ComputeVector point2 = collision2.getFurthestPoint(NegateVector(direction).getFloatVector3());
 
 	const ComputeVector delta = point1 - point2;
 
@@ -21,13 +21,13 @@ Edge::VoronoiSimplex::Point Edge::MinkowskiSumBaseAlgorithmUtils::support(
 	return result;
 }
 
-bool Edge::MinkowskiSumBaseAlgorithmUtils::hasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff)
+bool Edge::MinkowskiSumBaseAlgorithmUtils::HasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff)
 {
 	const uint32_t pointCount = simplex.getPointCount();
 	for (uint32_t pointIndex = 0; pointIndex < pointCount; ++pointIndex)
 	{
 		const FloatVector3& pointMinkowskiDiff = simplex.getPoint(pointIndex).m_minkowskiDiff;
-		if (isVectorEqual(minkowskiDiff, pointMinkowskiDiff))
+		if (IsVectorEqual(minkowskiDiff, pointMinkowskiDiff))
 		{
 			return true;
 		}
@@ -36,10 +36,10 @@ bool Edge::MinkowskiSumBaseAlgorithmUtils::hasSimplexPoint(const VoronoiSimplex&
 	return false;
 }
 
-bool Edge::MinkowskiSumBaseAlgorithmUtils::checkCodirection(const ComputeVector& direction, const ComputeVector& vector)
+bool Edge::MinkowskiSumBaseAlgorithmUtils::CheckCodirection(const ComputeVector& direction, const ComputeVector& vector)
 {
-	return dotVector3(direction, vector) > EDGE_EPSILON;
-	//return dotVector3(direction, vector) > 0.0f;
+	return DotVector3(direction, vector) > EDGE_EPSILON;
+	//return DotVector3(direction, vector) > 0.0f;
 }
 
 bool Edge::GJK::checkAndIterateSimplex(VoronoiSimplex& simplex, FloatVector3& direction) const
@@ -60,11 +60,11 @@ bool Edge::GJK::checkSimplex1D(VoronoiSimplex& simplex, FloatVector3& direction)
 	const VoronoiSimplex::Point b = simplex.getPoint(1);
 
 	const ComputeVector ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ao = negateVector(a.m_minkowskiDiff);
+	const ComputeVector ao = NegateVector(a.m_minkowskiDiff);
 
-	if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(ab, ao))
+	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ab, ao))
 	{
-		crossVector3(crossVector3(ab, ao), ab).saveToFloatVector3(direction);
+		CrossVector3(CrossVector3(ab, ao), ab).saveToFloatVector3(direction);
 	}
 	else
 	{
@@ -83,24 +83,24 @@ bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction)
 
 	const ComputeVector ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
 	const ComputeVector ac = c.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ao = negateVector(a.m_minkowskiDiff);
+	const ComputeVector ao = NegateVector(a.m_minkowskiDiff);
 
-	const ComputeVector abcNormal = crossVector3(ab, ac);
-	const ComputeVector abNormal = crossVector3(ab, abcNormal);
-	const ComputeVector acNormal = crossVector3(abcNormal, ac);
+	const ComputeVector abcNormal = CrossVector3(ab, ac);
+	const ComputeVector abNormal = CrossVector3(ab, abcNormal);
+	const ComputeVector acNormal = CrossVector3(abcNormal, ac);
 
-	if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(acNormal, ao))
+	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(acNormal, ao))
 	{
-		if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(ac, ao))
+		if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ac, ao))
 		{
-			crossVector3(crossVector3(ac, ao), ac).saveToFloatVector3(direction);
+			CrossVector3(CrossVector3(ac, ao), ac).saveToFloatVector3(direction);
 			simplex.setPoints(a, c);
 		}
 		else
 		{
-			if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(ab, ao))
+			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ab, ao))
 			{
-				crossVector3(crossVector3(ab, ao), ab).saveToFloatVector3(direction);
+				CrossVector3(CrossVector3(ab, ao), ab).saveToFloatVector3(direction);
 				simplex.setPoints(a, b);
 			}
 			else
@@ -112,11 +112,11 @@ bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction)
 	}
 	else
 	{
-		if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(abNormal, ao))
+		if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(abNormal, ao))
 		{
-			if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(ab, ao))
+			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ab, ao))
 			{
-				crossVector3(crossVector3(ab, ao), ab).saveToFloatVector3(direction);
+				CrossVector3(CrossVector3(ab, ao), ab).saveToFloatVector3(direction);
 				simplex.setPoints(a, b);
 			}
 			else
@@ -127,13 +127,13 @@ bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction)
 		}
 		else
 		{
-			if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(abcNormal, ao))
+			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(abcNormal, ao))
 			{
 				abcNormal.saveToFloatVector3(direction);
 			}
 			else
 			{
-				negateVector(abcNormal).saveToFloatVector3(direction);
+				NegateVector(abcNormal).saveToFloatVector3(direction);
 				simplex.setPoints(a, c, b);
 			}
 		}
@@ -152,25 +152,25 @@ bool Edge::GJK::checkSimplex3D(VoronoiSimplex& simplex, FloatVector3& direction)
 	const ComputeVector ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
 	const ComputeVector ac = c.m_minkowskiDiff - a.m_minkowskiDiff;
 	const ComputeVector ad = d.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ao = negateVector(a.m_minkowskiDiff);
+	const ComputeVector ao = NegateVector(a.m_minkowskiDiff);
 
-	const ComputeVector abcNormal = crossVector3(ab, ac);
-	const ComputeVector acdNormal = crossVector3(ac, ad);
-	const ComputeVector adbNormal = crossVector3(ad, ab);
+	const ComputeVector abcNormal = CrossVector3(ab, ac);
+	const ComputeVector acdNormal = CrossVector3(ac, ad);
+	const ComputeVector adbNormal = CrossVector3(ad, ab);
 
-	if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(abcNormal, ao)) {
+	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(abcNormal, ao)) {
 		simplex.setPoints(a, b, c);
 
 		return checkSimplex2D(simplex, direction);
 	}
 
-	if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(acdNormal, ao)) {
+	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(acdNormal, ao)) {
 		simplex.setPoints(a, c, d);
 
 		return checkSimplex2D(simplex, direction);
 	}
 
-	if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(adbNormal, ao)) {
+	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(adbNormal, ao)) {
 		simplex.setPoints(a, d, b);
 
 		return checkSimplex2D(simplex, direction);
@@ -186,15 +186,15 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 	FloatVector3 direction;
 	(collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition()).normalize().saveToFloatVector3(direction);
 
-	VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, direction);
+	VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, direction);
 	simplex.addPoint(supportPoint);
 
-	if (vectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
+	if (VectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
 	{
 		return Result(simplex, Result::TestResult::Contact);
 	}
 
-	direction = negateVector(supportPoint.m_minkowskiDiff).getFloatVector3();
+	direction = NegateVector(supportPoint.m_minkowskiDiff).getFloatVector3();
 
 	Result::TestResult testResult = Result::TestResult::NoIntersection;
 
@@ -208,29 +208,29 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 			break;
 		}
 
-		normalizeVector(direction).saveToFloatVector3(direction);
+		NormalizeVector(direction).saveToFloatVector3(direction);
 
-		if (vectorLength3Sqr(direction) <= EDGE_EPSILON_SQR)
+		if (VectorLength3Sqr(direction) <= EDGE_EPSILON_SQR)
 		{
 			testResult = Result::TestResult::FailedTesting;
 			break;
 		}
 
-		supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, direction);
+		supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, direction);
 
-		if (vectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
+		if (VectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
 		{
 			testResult = Result::TestResult::Contact;
 			break;
 		}
 
 
-		if (MinkowskiSumBaseAlgorithmUtils::hasSimplexPoint(simplex, supportPoint.m_minkowskiDiff))
+		if (MinkowskiSumBaseAlgorithmUtils::HasSimplexPoint(simplex, supportPoint.m_minkowskiDiff))
 		{
 			break;
 		}
 
-		if (!MinkowskiSumBaseAlgorithmUtils::checkCodirection(direction, supportPoint.m_minkowskiDiff))
+		if (!MinkowskiSumBaseAlgorithmUtils::CheckCodirection(direction, supportPoint.m_minkowskiDiff))
 		{
 			break;
 		}
@@ -253,7 +253,7 @@ Edge::EPA::PolytopeFace::PolytopeFace(const VoronoiSimplex::Point& point1, const
 	m_points[1] = point2;
 	m_points[2] = point3;
 
-	crossVector3(
+	CrossVector3(
 		point2.m_minkowskiDiff - point1.m_minkowskiDiff,
 		point3.m_minkowskiDiff - point1.m_minkowskiDiff
 	).normalize().saveToFloatVector3(m_normal);
@@ -269,8 +269,8 @@ void Edge::EPA::addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const Vor
 {
 	for (auto iterator = edgeCollection.begin(); iterator != edgeCollection.end(); ++iterator)
 	{
-		if (isVectorEqual(iterator->m_points[0].m_minkowskiDiff, point2.m_minkowskiDiff)
-			&& isVectorEqual(iterator->m_points[1].m_minkowskiDiff, point1.m_minkowskiDiff))
+		if (IsVectorEqual(iterator->m_points[0].m_minkowskiDiff, point2.m_minkowskiDiff)
+			&& IsVectorEqual(iterator->m_points[1].m_minkowskiDiff, point1.m_minkowskiDiff))
 		{
 			edgeCollection.erase(iterator);
 			return;
@@ -305,18 +305,18 @@ void Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollis
 
 Edge::FloatVector4 Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& face) const
 {
-	const float distanceFromOrigin = dotVector3(face.m_normal, face.m_points[0].m_minkowskiDiff);
+	const float distanceFromOrigin = DotVector3(face.m_normal, face.m_points[0].m_minkowskiDiff);
 	const ComputeVector point = face.m_normal * distanceFromOrigin;
 
 	const ComputeVector v0 = face.m_points[1].m_minkowskiDiff - face.m_points[0].m_minkowskiDiff;
 	const ComputeVector v1 = face.m_points[2].m_minkowskiDiff - face.m_points[0].m_minkowskiDiff;
 	const ComputeVector v2 = point - face.m_points[0].m_minkowskiDiff;
 
-	const float d00 = dotVector3(v0, v0);
-	const float d01 = dotVector3(v0, v1);
-	const float d11 = dotVector3(v1, v1);
-	const float d20 = dotVector3(v2, v0);
-	const float d21 = dotVector3(v2, v1);
+	const float d00 = DotVector3(v0, v0);
+	const float d01 = DotVector3(v0, v1);
+	const float d11 = DotVector3(v1, v1);
+	const float d20 = DotVector3(v2, v0);
+	const float d21 = DotVector3(v2, v1);
 
 	const float denom = d00 * d11 - d01 * d01;
 
@@ -362,7 +362,7 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 
 		for (auto iterator = polytopeFaces.begin(); iterator != polytopeFaces.end(); ++iterator)
 		{
-			const float distance = dotVector3(iterator->m_normal, iterator->m_points[0].m_minkowskiDiff);
+			const float distance = DotVector3(iterator->m_normal, iterator->m_points[0].m_minkowskiDiff);
 			if (distance < minDistance)
 			{
 				minDistance = distance;
@@ -370,9 +370,9 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 			}
 		}
 
-		const VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::support(collision1, collision2, closestFace->m_normal);
+		const VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, closestFace->m_normal);
 
-		if (dotVector3(closestFace->m_normal, supportPoint.m_minkowskiDiff) - minDistance < 0.0001f)
+		if (DotVector3(closestFace->m_normal, supportPoint.m_minkowskiDiff) - minDistance < 0.0001f)
 		{
 			fillFaceContactPointData(*closestFace, contactPointData);
 
@@ -381,7 +381,7 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 
 		for (auto iterator = polytopeFaces.begin(); iterator != polytopeFaces.end();)
 		{
-			if (MinkowskiSumBaseAlgorithmUtils::checkCodirection(iterator->m_normal, supportPoint.m_minkowskiDiff - iterator->m_points[0].m_minkowskiDiff))
+			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(iterator->m_normal, supportPoint.m_minkowskiDiff - iterator->m_points[0].m_minkowskiDiff))
 			{
 				addUniqueEdge(polytopeEdges, iterator->m_points[0], iterator->m_points[1]);
 				addUniqueEdge(polytopeEdges, iterator->m_points[1], iterator->m_points[2]);

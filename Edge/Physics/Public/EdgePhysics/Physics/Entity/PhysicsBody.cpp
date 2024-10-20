@@ -26,7 +26,7 @@ void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 	if (rotationSpeed > EDGE_EPSILON_SQR)
 	{
 		angularVelocity /= rotationSpeed;
-		rotation *= computeQuaternionFromRotationAxis(angularVelocity, rotationSpeed);
+		rotation *= ComputeQuaternionFromRotationAxis(angularVelocity, rotationSpeed);
 		rotation.normalize();
 	}
 

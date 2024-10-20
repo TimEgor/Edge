@@ -59,39 +59,39 @@ namespace Edge
 		FloatVector4 getFloatVector4() const;
 	};
 
-	ComputeVector computeVectorFromPoint(const FloatVector2& position);
-	ComputeVector computeVectorFromPoint(const FloatVector3& position);
+	ComputeVector ComputeVectorFromPoint(const FloatVector2& position);
+	ComputeVector ComputeVectorFromPoint(const FloatVector3& position);
 
-	ComputeVector negateVector(const ComputeVector& vector);
-	ComputeVector normalizeVector(const ComputeVector& vector);
-	ComputeVector reciprocalVector(const ComputeVector& vector);
+	ComputeVector NegateVector(const ComputeVector& vector);
+	ComputeVector NormalizeVector(const ComputeVector& vector);
+	ComputeVector ReciprocalVector(const ComputeVector& vector);
 
-	ComputeVector multiplyVector(const ComputeVector& vector1, const ComputeVector& vector2);
+	ComputeVector MultiplyVector(const ComputeVector& vector1, const ComputeVector& vector2);
 
-	ComputeVector vectorMin(const ComputeVector& vector1, const ComputeVector& vector2);
-	ComputeVector vectorMax(const ComputeVector& vector1, const ComputeVector& vector2);
+	ComputeVector VectorMin(const ComputeVector& vector1, const ComputeVector& vector2);
+	ComputeVector VectorMax(const ComputeVector& vector1, const ComputeVector& vector2);
 
-	float vectorLength2(const ComputeVector& vector);
-	float vectorLength3(const ComputeVector& vector);
-	float vectorLength4(const ComputeVector& vector);
-	float vectorLength2Sqr(const ComputeVector& vector);
-	float vectorLength3Sqr(const ComputeVector& vector);
-	float vectorLength4Sqr(const ComputeVector& vector);
+	float VectorLength2(const ComputeVector& vector);
+	float VectorLength3(const ComputeVector& vector);
+	float VectorLength4(const ComputeVector& vector);
+	float VectorLength2Sqr(const ComputeVector& vector);
+	float VectorLength3Sqr(const ComputeVector& vector);
+	float VectorLength4Sqr(const ComputeVector& vector);
 
-	float vectorLength(const ComputeVector& vector);
-	float vectorLengthSqr(const ComputeVector& vector);
+	float VectorLength(const ComputeVector& vector);
+	float VectorLengthSqr(const ComputeVector& vector);
 
-	float dotVector2(const ComputeVector& vector1, const ComputeVector& vector2);
-	float dotVector3(const ComputeVector& vector1, const ComputeVector& vector2);
-	float dotVector4(const ComputeVector& vector1, const ComputeVector& vector2);
+	float DotVector2(const ComputeVector& vector1, const ComputeVector& vector2);
+	float DotVector3(const ComputeVector& vector1, const ComputeVector& vector2);
+	float DotVector4(const ComputeVector& vector1, const ComputeVector& vector2);
 
-	float tripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3);
+	float TripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3);
 	
-	ComputeVector vector2Orthogonal(const ComputeVector& vector);
-	ComputeVector crossVector2(const ComputeVector& vector1, const ComputeVector& vector2);
-	ComputeVector crossVector3(const ComputeVector& vector1, const ComputeVector& vector2);
+	ComputeVector Vector2Orthogonal(const ComputeVector& vector);
+	ComputeVector CrossVector2(const ComputeVector& vector1, const ComputeVector& vector2);
+	ComputeVector CrossVector3(const ComputeVector& vector1, const ComputeVector& vector2);
 
-	ComputeVector rotateVector2(const ComputeVector& vector, float angle);
+	ComputeVector RotateVector2(const ComputeVector& vector, float angle);
 
 	ComputeVector operator+(const ComputeVector& vector1, const ComputeVector& vector2);
 	ComputeVector operator-(const ComputeVector& vector1, const ComputeVector& vector2);
@@ -102,5 +102,5 @@ namespace Edge
 	bool operator==(const ComputeVector& vector1, const ComputeVector& vector2);
 	bool operator!=(const ComputeVector& vector1, const ComputeVector& vector2);
 
-	bool isVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2);
+	bool IsVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2);
 }

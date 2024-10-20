@@ -7,10 +7,10 @@ namespace Edge
 {
 	namespace ThreadUtils
 	{
-		inline void SetThreadName(void* threadNandle, const char* name)
+		inline void SetThreadName(void* threadHandle, const char* name)
 		{
 #ifdef EDGE_WIN_PLATFORM
-			SetThreadDescription(threadNandle, ConvertStringToWString(name).c_str());
+			SetThreadDescription(threadHandle, ConvertStringToWString(name).c_str());
 #endif
 		}
 
@@ -20,6 +20,5 @@ namespace Edge
 			SetThreadName(GetCurrentThread(), name);
 #endif
 		}
-
 	}
 }

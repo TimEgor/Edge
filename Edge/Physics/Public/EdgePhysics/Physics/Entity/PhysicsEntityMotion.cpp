@@ -113,8 +113,8 @@ void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(F
 	FloatMatrix3x3 inverseInertiaTensor;
 	getInverseInertiaTensor(inverseInertiaTensor);
 
-	const ComputeMatrix rotation = computeMatrixFromRotationQuaternion(getTransform()->getRotation());
-	const ComputeMatrix worldInverseInertiaTensor = transposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
+	const ComputeMatrix rotation = ComputeMatrixFromRotationQuaternion(getTransform()->getRotation());
+	const ComputeMatrix worldInverseInertiaTensor = TransposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
 
 	worldInverseInertiaTensor.saveToMatrix3x3(inertia);
 }
@@ -125,7 +125,7 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyForce(const FloatVector3&
 
 	ComputeVector localApplyingPoint = position;
 	localApplyingPoint -= getTransform()->getPosition();
-	const ComputeVector torque = crossVector3(localApplyingPoint, force);
+	const ComputeVector torque = CrossVector3(localApplyingPoint, force);
 
 	applyTorque(torque.getFloatVector3());
 }
@@ -136,7 +136,7 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyImpulse(const FloatVector
 
 	ComputeVector localApplyingPoint = position;
 	localApplyingPoint -= getTransform()->getPosition();
-	const ComputeVector angularImpulse = crossVector3(localApplyingPoint, impulse);
+	const ComputeVector angularImpulse = CrossVector3(localApplyingPoint, impulse);
 
 	applyAngularImpulse(angularImpulse.getFloatVector3());
 }

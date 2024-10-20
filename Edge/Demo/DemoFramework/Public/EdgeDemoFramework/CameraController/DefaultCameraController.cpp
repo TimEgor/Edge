@@ -7,10 +7,11 @@
 #include "EdgeFramework/FrameworkCore.h"
 #include "EdgeFramework/Input/InputDeviceController/InputDeviceController.h"
 #include "EdgeFramework/Input/InputDeviceController/InputDeviceKeyCache.h"
+#include "EdgeFramework/Input/InputDeviceController/InputDeviceKeyUtils.h"
 #include "EdgeFramework/Input/InputDeviceController/Devices/Keyboard.h"
 #include "EdgeFramework/Input/InputDeviceController/Devices/Mouse.h"
 
-#include <cmath>
+#include <cmath>s
 
 void EdgeDemo::DefaultCameraController::update(float deltaTime)
 {
@@ -45,11 +46,11 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 	}
 
 	const Edge::FloatVector2 mouseDelta(
-		mouseKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::X)],
-		mouseKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::Y)]
+		mouseKeyData.m_values[GetMouseKey(Edge::MouseKeys::X)],
+		mouseKeyData.m_values[GetMouseKey(Edge::MouseKeys::Y)]
 	);
 
-	if (mouseKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::Wheel)] > EDGE_EPSILON)
+	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(mouseKeyData, GetMouseKey(Edge::MouseKeys::Wheel)))
 	{
 		cameraEntityPosition = Edge::ComputeMath::vectorAdd(
 			Edge::ComputeMath::vectorScale(rightDir, -mouseDelta.m_x * cameraMovingSpeed * deltaTime),
@@ -62,28 +63,28 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 		);
 	}
 	else {
-		if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::W)] > EDGE_EPSILON)
+		if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::W)))
 		{
 			cameraEntityPosition = Edge::ComputeMath::vectorAdd(
 				Edge::ComputeMath::vectorScale(forwardDir, cameraMovingSpeed * deltaTime),
 				cameraEntityPosition
 			);
 		}
-		if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::S)] > EDGE_EPSILON)
+		if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::S)))
 		{
 			cameraEntityPosition = Edge::ComputeMath::vectorAdd(
 				Edge::ComputeMath::vectorScale(forwardDir, -cameraMovingSpeed * deltaTime),
 				cameraEntityPosition
 			);
 		}
-		if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::D)] > EDGE_EPSILON)
+		if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::D)))
 		{
 			cameraEntityPosition = Edge::ComputeMath::vectorAdd(
 				Edge::ComputeMath::vectorScale(rightDir, cameraMovingSpeed * deltaTime),
 				cameraEntityPosition
 			);
 		}
-		if (keyboardKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::KeyboardKeys::A)] > EDGE_EPSILON)
+		if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::A)))
 		{
 			cameraEntityPosition = Edge::ComputeMath::vectorAdd(
 				Edge::ComputeMath::vectorScale(rightDir, -cameraMovingSpeed * deltaTime),
@@ -92,7 +93,7 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 		}
 
 
-		if (mouseKeyData.m_values[static_cast<Edge::InputDeviceKeyData::KeyIndex>(Edge::MouseKeys::Right)] > EDGE_EPSILON)
+		if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(mouseKeyData, GetMouseKey(Edge::MouseKeys::Right)))
 		{
 			pitchAngle += -mouseDelta.m_y * cameraRotationSpeed * deltaTime * EDGE_DEG_TO_RAD;
 

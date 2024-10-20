@@ -87,12 +87,12 @@ Edge::FloatMatrix4x4 Edge::ComputeMatrix::getToMatrix4x4() const
 	return ComputeMath::saveMatrix4x4(m_matrix);
 }
 
-Edge::ComputeMatrix Edge::computeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion)
+Edge::ComputeMatrix Edge::ComputeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::matrixRotationQuaternion(quaternion.m_quaternion);
 }
 
-void Edge::getAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll)
+void Edge::GetAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll)
 {
 	ComputeMath::anglesFromMatrixRotation(rotationMatrix.m_matrix, pitch, yaw, roll);
 }
@@ -108,12 +108,12 @@ Edge::ComputeVector Edge::operator*(const ComputeMatrix& matrix, const ComputeVe
 	return ComputeMath::transformVector(vector.m_vector, matrix.m_matrix);
 }
 
-Edge::ComputeMatrix Edge::transposeMatrix(const ComputeMatrix& matrix)
+Edge::ComputeMatrix Edge::TransposeMatrix(const ComputeMatrix& matrix)
 {
 	return ComputeMath::matrixTranspose(matrix.m_matrix);
 }
 
-Edge::ComputeMatrix Edge::inverseMatrix(const ComputeMatrix& matrix)
+Edge::ComputeMatrix Edge::InverseMatrix(const ComputeMatrix& matrix)
 {
 	return ComputeMath::matrixInverse(matrix.m_matrix);
 }
