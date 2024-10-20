@@ -1,4 +1,4 @@
-#include "TestCollisionDemo.h"
+#include "TestBounceCollisionDemo.h"
 
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
@@ -7,7 +7,7 @@
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
-void EdgeDemo::TestCollisionDemo::drawDynamicSphere(const Edge::PhysicsBodyReference& body) const
+void EdgeDemo::TestBounceCollisionDemo::drawDynamicSphere(const Edge::PhysicsBodyReference& body) const
 {
 	const Edge::Transform& dynamicTransform = body->getTransform()->getWorldTransform();
 
@@ -18,7 +18,7 @@ void EdgeDemo::TestCollisionDemo::drawDynamicSphere(const Edge::PhysicsBodyRefer
 	m_debugVisualizationDataController->addSphere(dynamicTransform.getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
 }
 
-bool EdgeDemo::TestCollisionDemo::initDemo()
+bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 {
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
@@ -60,7 +60,7 @@ bool EdgeDemo::TestCollisionDemo::initDemo()
 	return true;
 }
 
-void EdgeDemo::TestCollisionDemo::releaseDemo()
+void EdgeDemo::TestBounceCollisionDemo::releaseDemo()
 {
 	m_physicsScene->removeEntity(m_dynamicBody1.getObject());
 	m_physicsScene->removeEntity(m_dynamicBody2.getObject());
@@ -71,7 +71,7 @@ void EdgeDemo::TestCollisionDemo::releaseDemo()
 	m_staticBody.reset();
 }
 
-void EdgeDemo::TestCollisionDemo::updateDemoLogic(float deltaTime)
+void EdgeDemo::TestBounceCollisionDemo::updateDemoLogic(float deltaTime)
 {
 	m_debugVisualizationDataController->clear();
 

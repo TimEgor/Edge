@@ -4,10 +4,10 @@
 
 namespace EdgeDemo
 {
-	class TestBoxCollisionDemoPlugin final : public DemoPlugin
+	class TestBounceCollisionDemoPlugin final : public DemoPlugin
 	{
 	public:
-		TestBoxCollisionDemoPlugin(Edge::PluginModuleID moduleID)
+		TestBounceCollisionDemoPlugin(Edge::PluginModuleID moduleID)
 			: DemoPlugin(moduleID) {}
 
 		virtual Demo* createDemo() const override;

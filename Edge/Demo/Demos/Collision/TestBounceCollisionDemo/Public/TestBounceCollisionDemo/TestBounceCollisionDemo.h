@@ -6,16 +6,17 @@
 
 namespace EdgeDemo
 {
-	class TestBoxCollisionDemo final : public PreInitedDemo
+	class TestBounceCollisionDemo final : public PreInitedDemo
 	{
 	private:
-		Edge::PhysicsBodyReference m_staticBox;
-		Edge::PhysicsBodyReference m_dynamicBox;
+		Edge::PhysicsBodyReference m_staticBody;
+		Edge::PhysicsBodyReference m_dynamicBody1;
+		Edge::PhysicsBodyReference m_dynamicBody2;
 
-		void updateDynamicBoxTransform(float deltaTime);
+		void drawDynamicSphere(const Edge::PhysicsBodyReference& body) const;
 
 	public:
-		TestBoxCollisionDemo() = default;
+		TestBounceCollisionDemo() = default;
 
 		virtual bool initDemo() override;
 		virtual void releaseDemo() override;

@@ -1,4 +1,4 @@
-#include "TestBoxCollisionDemo.h"
+#include "TestGJKCollisionDemo.h"
 
 #include "EdgeCommon/Random/Random.h"
 
@@ -15,7 +15,7 @@
 #include "EdgeFramework/Input/InputDeviceController/Devices/InputDeviceKeyData.h"
 #include "EdgeFramework/Input/InputDeviceController/Devices/Keyboard.h"
 
-void EdgeDemo::TestBoxCollisionDemo::updateDynamicBoxTransform(float deltaTime)
+void EdgeDemo::TestGJKCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 {
 	constexpr float linearChangingSpeed = 3.0f;
 	constexpr float angularChangingSpeed = 45.0f;
@@ -73,7 +73,7 @@ void EdgeDemo::TestBoxCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 	m_dynamicBox->getTransform()->setWorldTransform(dynamicBoxTransform);
 }
 
-bool EdgeDemo::TestBoxCollisionDemo::initDemo()
+bool EdgeDemo::TestGJKCollisionDemo::initDemo()
 {
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
@@ -96,7 +96,7 @@ bool EdgeDemo::TestBoxCollisionDemo::initDemo()
 	return true;
 }
 
-void EdgeDemo::TestBoxCollisionDemo::releaseDemo()
+void EdgeDemo::TestGJKCollisionDemo::releaseDemo()
 {
 	m_physicsScene->removeEntity(m_staticBox.getObject());
 	m_physicsScene->removeEntity(m_dynamicBox.getObject());
@@ -105,7 +105,7 @@ void EdgeDemo::TestBoxCollisionDemo::releaseDemo()
 	m_dynamicBox.reset();
 }
 
-void EdgeDemo::TestBoxCollisionDemo::updateDemoLogic(float deltaTime)
+void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 {
 	updateDynamicBoxTransform(deltaTime);
 

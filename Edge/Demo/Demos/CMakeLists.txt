@@ -13,16 +13,12 @@ edge_add_scope_module(EdgeDemos)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DebugDrawDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FireworksDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestCastDemo)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestCollisionDemo)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestBoxCollisionDemo)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestSpheresCollisionDemo)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Collision)
 
 target_link_libraries(EdgeDemos
 	INTERFACE
 		DebugDrawDemo
 		FireworksDemo
 		TestCastDemo
-		TestCollisionDemo
-		TestSpheresCollisionDemo
-		TestBoxCollisionDemo
+		EdgeCollisionDemos
 )
