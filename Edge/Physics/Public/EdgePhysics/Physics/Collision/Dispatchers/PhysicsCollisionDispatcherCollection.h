@@ -42,11 +42,16 @@ namespace Edge
 
 		DispatcherCollection m_dispatchers;
 
+		PhysicsCollisionDispatcher* m_defaultDispatcher = nullptr;
+
 	public:
 		PhysicsCollisionDispatcherCollection() = default;
 
 		void addDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2, PhysicsCollisionDispatcher* dispatcher);
 		void removeDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2);
+
+		void setDefaultDispatcher(PhysicsCollisionDispatcher* dispatcher);
+		void resetDefaultDispatcher();
 
 		PhysicsCollisionDispatcher* getDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2) const;
 	};

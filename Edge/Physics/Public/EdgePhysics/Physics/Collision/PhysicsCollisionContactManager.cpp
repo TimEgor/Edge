@@ -5,6 +5,7 @@
 
 #include "DefaultPhysicsEntityCollisionSceneContext.h"
 #include "PhysicsSceneCollisionManager.h"
+#include "Dispatchers/GJKCollisionDispatcher.h"
 #include "Dispatchers/PhysicsCollisionDispatcherCollection.h"
 #include "Dispatchers/SphereVsSphereCollisionDispatcher.h"
 #include "Shapes/PhysicsSphereShape.h"
@@ -22,6 +23,10 @@ bool Edge::PhysicsCollisionContactManager::DispatcherContext::init()
 	EDGE_CHECK_INITIALIZATION(m_dispatcherCollection);
 
 	CREATE_AND_ADD_DISPATCHER(SphereVsSphereCollisionDispatcher, PhysicsSphereShape::PhysicsEntityCollisionShapeType, PhysicsSphereShape::PhysicsEntityCollisionShapeType);
+
+	PhysicsCollisionDispatcher* gjkDispatcher = new GJKCollisionDispatcher();
+	m_dispatchers.push_back(gjkDispatcher);
+	m_dispatcherCollection->setDefaultDispatcher(gjkDispatcher);
 
 	return true;
 }

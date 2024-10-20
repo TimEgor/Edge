@@ -50,6 +50,22 @@ void Edge::PhysicsCollisionDispatcherCollection::removeDispatcher(PhysicsEntityC
 	m_dispatchers.erase(id);
 }
 
+void Edge::PhysicsCollisionDispatcherCollection::setDefaultDispatcher(PhysicsCollisionDispatcher* dispatcher)
+{
+	if (m_defaultDispatcher)
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Default collision dispatcher has been already set.");
+		return;
+	}
+
+	m_defaultDispatcher = dispatcher;
+}
+
+void Edge::PhysicsCollisionDispatcherCollection::resetDefaultDispatcher()
+{
+	m_defaultDispatcher = nullptr;
+}
+
 Edge::PhysicsCollisionDispatcher* Edge::PhysicsCollisionDispatcherCollection::getDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2) const
 {
 	const DispatcherID id(type1, type2);
@@ -57,7 +73,7 @@ Edge::PhysicsCollisionDispatcher* Edge::PhysicsCollisionDispatcherCollection::ge
 	const auto findIter = m_dispatchers.find(id);
 	if (findIter == m_dispatchers.end())
 	{
-		return nullptr;
+		return m_defaultDispatcher;
 	}
 
 	return findIter->second;

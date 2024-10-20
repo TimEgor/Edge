@@ -4,7 +4,6 @@
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionContactManager.h"
-#include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
@@ -83,8 +82,7 @@ void EdgeDemo::TestSpheresCollisionDemo::updateDemoLogic(float deltaTime)
 
 	for (const auto& sphere : m_spheres)
 	{
-		m_debugVisualizationDataController->addSphere(sphere->getTransform()->getPosition(),
-			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY,
+		m_debugVisualizationDataController->addSphere(sphere->getTransform()->getWorldTransform(),
 			sphere->getCollision()->getShape().getObjectCastRef<Edge::PhysicsSphereShape>().getRadius());
 	}
 }
