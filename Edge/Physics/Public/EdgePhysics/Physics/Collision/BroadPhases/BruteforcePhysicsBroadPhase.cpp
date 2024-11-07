@@ -1,9 +1,9 @@
 #include "BruteforcePhysicsBroadPhase.h"
 
-#include "EdgePhysics/Physics/Collision/DefaultPhysicsEntityCollisionSceneContext.h"
-
 #include "EdgeCommon/UtilsMacros.h"
-#include "EdgePhysics/Physics/Collision/PhysicsSceneCollisionManager.h"
+
+#include "EdgePhysics/Physics/Collision/Scene/DefaultPhysicsEntityCollisionSceneContext.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManager.h"
 
 bool Edge::BruteforcePhysicsBroadPhase::init(const PhysicsSceneCollisionManagerReference& collisionManager)
 {

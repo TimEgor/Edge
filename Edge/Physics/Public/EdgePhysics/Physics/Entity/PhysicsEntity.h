@@ -8,6 +8,7 @@
 
 #include "PhysicsEntityMotion.h"
 #include "PhysicsEntityReference.h"
+#include "Scene/PhysicsSceneEntityManagerReference.h"
 
 namespace Edge
 {
@@ -18,7 +19,7 @@ namespace Edge
 	public:
 		PhysicsEntitySceneContext() = default;
 
-		virtual PhysicsSceneWeakReference getScene() const = 0;
+		virtual PhysicsSceneEntityManagerWeakReference getManager() const = 0;
 		virtual bool isActive() const = 0;
 
 		virtual PhysicsEntitySceneContextType getType() const = 0;
@@ -61,6 +62,7 @@ namespace Edge
 		void makeTransformChangingNotification();
 
 		PhysicsSceneReference getScene() const;
+		PhysicsSceneEntityManagerReference getManager() const;
 		bool isActive() const;
 
 		virtual PhysicsEntityType getType() const = 0;

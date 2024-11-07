@@ -3,16 +3,16 @@
 #include "EdgeCommon/UtilsMacros.h"
 
 #include "DefaultPhysicsEntitySceneContext.h"
-#include "PhysicsScene.h"
+#include "PhysicsSceneEntityManager.h"
 
-bool Edge::PhysicsSceneActiveEntityCollection::init(const PhysicsSceneReference& scene)
+bool Edge::PhysicsSceneActiveEntityCollection::init(const PhysicsSceneEntityManagerReference& manager)
 {
 	EDGE_CHECK_INITIALIZATION(m_ids.empty());
-	EDGE_CHECK_INITIALIZATION(scene);
+	EDGE_CHECK_INITIALIZATION(manager);
 
 	m_ids.reserve(4096);
 
-	m_scene = scene;
+	m_manager = manager;
 
 	return true;
 }
@@ -81,7 +81,7 @@ void Edge::PhysicsSceneActiveEntityCollection::removeEntity(const PhysicsEntityR
 	{
 		const PhysicsSceneEntityID exchangeEntityID = m_ids[entityCount - 1];
 		m_ids[currentEntityIndex] = exchangeEntityID;
-		m_scene.getReference()->getEntity(exchangeEntityID)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(currentEntityIndex);
+		m_manager.getReference()->getEntity(exchangeEntityID)->getSceneContext().getObjectCastRef<DefaultPhysicsEntitySceneContext>().setActivationContextIndex(currentEntityIndex);
 	}
 
 	m_ids.pop_back();

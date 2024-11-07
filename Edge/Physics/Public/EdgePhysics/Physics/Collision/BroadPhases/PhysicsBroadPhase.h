@@ -3,7 +3,8 @@
 #include "EdgeCommon/Patterns/NonCopyable.h"
 
 #include "EdgePhysics/Physics/Collision/PhysicsGlobalCollisionQuery.h"
-#include "EdgePhysics/Physics/Collision/PhysicsSceneCollisionManagerReference.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsCollisionSceneContextTypes.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManagerReference.h"
 
 #include <vector>
 

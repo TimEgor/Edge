@@ -1,5 +1,7 @@
 #include "PhysicsSceneCollisionCollection.h"
 
+#include "EdgePhysics/Physics/Entity/Scene/PhysicsEntitySceneContextTypes.h"
+
 #include "PhysicsSceneCollisionManager.h"
 
 bool Edge::DefaultPhysicsEntityCollisionSceneContextCollection::init()

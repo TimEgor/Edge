@@ -1,6 +1,6 @@
 #include "DefaultPhysicsEntitySceneContext.h"
 
-#include "PhysicsScene.h"
+#include "EdgePhysics/Physics/Scene/PhysicsScene.h"
 
 void Edge::DefaultPhysicsEntitySceneContext::selfDestroy()
 {
@@ -23,15 +23,15 @@ bool Edge::DefaultPhysicsEntitySceneContext::isActive() const
 	return m_activationContextIndex != InvalidPhysicsSceneActivationContextEntityIndex;
 }
 
-void Edge::DefaultPhysicsEntitySceneContext::setScene(const PhysicsSceneReference& scene, PhysicsSceneEntityID id)
+void Edge::DefaultPhysicsEntitySceneContext::setManager(const PhysicsSceneEntityManagerReference& manager, PhysicsSceneEntityID id)
 {
-	if (scene && id == InvalidPhysicsSceneEntityID || !scene && id != InvalidPhysicsSceneEntityID)
+	if (manager && id == InvalidPhysicsSceneEntityID || !manager && id != InvalidPhysicsSceneEntityID)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to set an invalid entity scene context data.");
 		return;
 	}
 
-	m_scene = scene;
+	m_manager = manager;
 	m_sceneEntityID = id;
 }
 

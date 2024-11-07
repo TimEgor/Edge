@@ -110,13 +110,19 @@ void Edge::PhysicsPositionAndRotationBasedMotion::getInverseInertiaTensor(FloatM
 
 void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const
 {
+	ComputeMatrix worldInverseInertiaTensor;
+	getWorldInverseInertiaTensor(worldInverseInertiaTensor);
+
+	worldInverseInertiaTensor.saveToMatrix3x3(inertia);
+}
+
+void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(ComputeMatrix& inertia) const
+{
 	FloatMatrix3x3 inverseInertiaTensor;
 	getInverseInertiaTensor(inverseInertiaTensor);
 
 	const ComputeMatrix rotation = ComputeMatrixFromRotationQuaternion(getTransform()->getRotation());
-	const ComputeMatrix worldInverseInertiaTensor = TransposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
-
-	worldInverseInertiaTensor.saveToMatrix3x3(inertia);
+	inertia = TransposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
 }
 
 void Edge::PhysicsPositionAndRotationBasedMotion::applyForce(const FloatVector3& force, const FloatVector3& position)

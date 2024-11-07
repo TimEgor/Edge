@@ -1,8 +1,9 @@
 #pragma once
 
-#include "BroadPhases/PhysicsBroadPhase.h"
+#include "EdgePhysics/Physics/Collision/BroadPhases/PhysicsBroadPhase.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManagerReference.h"
 
-#include "PhysicsEntityCollision.h"
+#include "PhysicsCollisionSceneContextTypes.h"
 #include "PhysicsEntityCollisionSceneContextCollection.h"
 
 namespace Edge

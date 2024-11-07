@@ -3,7 +3,7 @@
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
 #include "DefaultPhysicsEntitySceneContext.h"
-#include "PhysicsScene.h"
+#include "PhysicsSceneEntityManager.h"
 
 bool Edge::DefaultPhysicsEntitySceneContextCollection::init()
 {
@@ -55,10 +55,10 @@ void Edge::DefaultPhysicsEntitySceneContextCollection::destroyDefaultContext(Def
 	m_pool.removeElement(context->getSceneContextID());
 }
 
-bool Edge::PhysicsSceneEntityCollection::init(const PhysicsSceneReference& scene)
+bool Edge::PhysicsSceneEntityCollection::init(const PhysicsSceneEntityManagerReference& manager)
 {
-	m_scene = scene;
-	EDGE_CHECK_INITIALIZATION(m_scene);
+	m_manager = manager;
+	EDGE_CHECK_INITIALIZATION(m_manager);
 
 	EDGE_CHECK_INITIALIZATION(m_entityPool.init());
 
@@ -70,7 +70,7 @@ bool Edge::PhysicsSceneEntityCollection::init(const PhysicsSceneReference& scene
 
 void Edge::PhysicsSceneEntityCollection::release()
 {
-	m_scene.reset();
+	m_manager.reset();
 
 	m_sceneContextManager.reset();
 	m_entityPool.release();
@@ -90,7 +90,7 @@ Edge::PhysicsSceneEntityID Edge::PhysicsSceneEntityCollection::addEntity(const P
 	{
 		DefaultPhysicsEntitySceneContext* sceneContext = m_sceneContextManager->createDefaultContext();
 		entity->setSceneContext(sceneContext);
-		sceneContext->setScene(m_scene.getReference(), entityID);
+		sceneContext->setManager(m_manager.getReference(), entityID);
 	}
 
 	return entityID;
@@ -113,7 +113,7 @@ void Edge::PhysicsSceneEntityCollection::removeEntity(const PhysicsEntityReferen
 
 	DefaultPhysicsEntitySceneContext& defaultSceneContext = sceneContext.getObjectCastRef<DefaultPhysicsEntitySceneContext>();
 	const PhysicsSceneEntityID entityID = defaultSceneContext.getSceneEntityID();
-	defaultSceneContext.setScene(nullptr, InvalidPhysicsSceneEntityID);
+	defaultSceneContext.setManager(nullptr, InvalidPhysicsSceneEntityID);
 
 	entity->setSceneContext(nullptr);
 

@@ -2,8 +2,10 @@
 
 #include "EdgeCommon/Assert/AssertCore.h"
 
-#include "EdgePhysics/Physics/Collision/PhysicsSceneCollisionManager.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManager.h"
 #include "EdgePhysics/Physics/Scene/PhysicsScene.h"
+
+#include "Scene/PhysicsSceneEntityManager.h"
 
 void Edge::PhysicsEntity::updateEntityLinks(PhysicsEntityWeakLinkObject* oldObject, PhysicsEntityWeakLinkObject* newObject)
 {
@@ -45,7 +47,7 @@ void Edge::PhysicsEntity::setCollision(const PhysicsEntityCollisionReference& co
 {
 	if (m_collision && m_sceneContext)
 	{
-		m_sceneContext->getScene().getReference()->getCollisionManager()->removeCollision(m_collision);
+		getScene()->getCollisionManager()->removeCollision(m_collision);
 	}
 
 	updateEntityLinks(m_collision.getObject(), collision.getObject());
@@ -54,7 +56,7 @@ void Edge::PhysicsEntity::setCollision(const PhysicsEntityCollisionReference& co
 
 	if (m_collision && m_sceneContext)
 	{
-		m_sceneContext->getScene().getReference()->getCollisionManager()->addCollision(m_collision);
+		getScene()->getCollisionManager()->addCollision(m_collision);
 	}
 }
 
@@ -90,7 +92,13 @@ void Edge::PhysicsEntity::makeTransformChangingNotification()
 
 Edge::PhysicsSceneReference Edge::PhysicsEntity::getScene() const
 {
-	return m_sceneContext ? m_sceneContext->getScene().getReference() : nullptr;
+	PhysicsSceneEntityManagerReference manager = getManager();
+	return manager ? manager->getScene().getReference() : nullptr;
+}
+
+Edge::PhysicsSceneEntityManagerReference Edge::PhysicsEntity::getManager() const
+{
+	return m_sceneContext ? m_sceneContext->getManager().getReference() : nullptr;
 }
 
 bool Edge::PhysicsEntity::isActive() const

@@ -212,29 +212,31 @@ Edge::JobGraph::DependencyJobReference* Edge::JobGraphBuilder::GraphBuildingCont
 	return job;
 }
 
-Edge::JobGraph::DependencyJobReference* Edge::JobGraphBuilder::GraphBuildingContext::getGraphJob(JobGraphJobID jobID, bool isParent)
+Edge::JobGraphBuilder::GraphBuildingContext::GraphJobInfo Edge::JobGraphBuilder::GraphBuildingContext::getGraphJob(JobGraphJobID jobID, bool isParent)
 {
 	if (!jobID.m_isGraphJob)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Job isn't graph typed.");
-		return nullptr;
+		return GraphJobInfo();
 	}
 
-	JobGraph::DependencyJobReference* job = nullptr;
+
+	GraphJobInfo jobInfo;
 
 	if (m_graphNodes.size() > jobID.m_index)
 	{
 		const GraphNode& graphNode = m_graphNodes[jobID.m_index];
 
 		const JobGraphJobID graphJobID = isParent ? graphNode.m_postJobID : graphNode.m_preJobID;
-		job = getJob(graphJobID);
+		jobInfo.m_job = getJob(graphJobID);
+		jobInfo.m_jobID = graphJobID;
 	}
 	else
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Graph job index is invalid.");
 	}
 
-	return job;
+	return jobInfo;
 }
 
 Edge::JobGraphBuilder::JobGraphJobID Edge::JobGraphBuilder::GraphBuildingContext::addDependencyJob(const JobGraph::DependencyJobReference& job, bool addToCollection)
@@ -369,7 +371,7 @@ void Edge::JobGraphBuilder::makeDependency(JobGraphJobID parentJobID, JobGraphJo
 	JobGraph::DependencyJobReference* parentJob;
 	if (parentJobID.m_isGraphJob)
 	{
-		parentJob = m_buildingContext->getGraphJob(parentJobID, true);
+		parentJob = m_buildingContext->getGraphJob(parentJobID, true).m_job;
 	}
 	else
 	{
@@ -382,10 +384,13 @@ void Edge::JobGraphBuilder::makeDependency(JobGraphJobID parentJobID, JobGraphJo
 		return;
 	}
 
+	JobGraphJobID dependencyChildJobID = childJobID;
 	JobGraph::DependencyJobReference* childJob;
 	if (childJobID.m_isGraphJob)
 	{
-		childJob = m_buildingContext->getGraphJob(childJobID, false);
+		GraphBuildingContext::GraphJobInfo info = m_buildingContext->getGraphJob(childJobID, false);
+		childJob = info.m_job;
+		dependencyChildJobID = info.m_jobID;
 	}
 	else
 	{
@@ -400,7 +405,7 @@ void Edge::JobGraphBuilder::makeDependency(JobGraphJobID parentJobID, JobGraphJo
 
 	(*parentJob)->m_dependencyJobs.push_back(*childJob);
 	++(*childJob)->m_parentCounter;
-	++m_buildingContext->m_dependencyCounterCollection.at(childJobID);
+	++m_buildingContext->m_dependencyCounterCollection.at(dependencyChildJobID);
 }
 
 Edge::JobGraphReference Edge::JobGraphBuilder::getGraph()

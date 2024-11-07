@@ -3,12 +3,13 @@
 #include "EdgeCommon/UtilsMacros.h"
 #include "EdgeCommon/Profile/Profile.h"
 
-#include "DefaultPhysicsEntityCollisionSceneContext.h"
+#include "EdgePhysics/Physics/Collision/Dispatchers/GJKCollisionDispatcher.h"
+#include "EdgePhysics/Physics/Collision/Dispatchers/PhysicsCollisionDispatcherCollection.h"
+#include "EdgePhysics/Physics/Collision/Dispatchers/SphereVsSphereCollisionDispatcher.h"
+#include "EdgePhysics/Physics/Collision/Scene/DefaultPhysicsEntityCollisionSceneContext.h"
+#include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
+
 #include "PhysicsSceneCollisionManager.h"
-#include "Dispatchers/GJKCollisionDispatcher.h"
-#include "Dispatchers/PhysicsCollisionDispatcherCollection.h"
-#include "Dispatchers/SphereVsSphereCollisionDispatcher.h"
-#include "Shapes/PhysicsSphereShape.h"
 
 bool Edge::PhysicsCollisionContactManager::DispatcherContext::init()
 {
@@ -149,7 +150,7 @@ const Edge::PhysicsCollisionContactPoint* Edge::PhysicsCollisionContactManager::
 void Edge::PhysicsCollisionContactManager::markContactsForChecking(const PhysicsEntityCollisionReference& collision)
 {
 	const DefaultPhysicsEntityCollisionSceneContextReference defaultSceneContext = CollisionUtil::GetDefaultCollisionSceneContext(collision);
-	const PhysicsSceneEntityID collisionID = defaultSceneContext->getCollisionID();
+	const PhysicsSceneCollisionID collisionID = defaultSceneContext->getCollisionID();
 
 	markContactsForChecking(collisionID);
 }

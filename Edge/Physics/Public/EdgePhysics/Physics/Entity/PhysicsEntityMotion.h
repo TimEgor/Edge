@@ -12,10 +12,10 @@ namespace Edge
 
 		float m_gravityFactor = 1.0f;
 
-		PhysicsEntityTransformReference getTransform() const;
-
 	public:
 		PhysicsEntityMotion() = default;
+
+		PhysicsEntityTransformReference getTransform() const;
 
 		virtual FloatVector3 getLinearVelocity() const = 0;
 		virtual void getLinearVelocity(FloatVector3& velocity) const = 0;
@@ -31,6 +31,7 @@ namespace Edge
 
 		virtual void getInverseInertiaTensor(FloatMatrix3x3& inertia) const = 0;
 		virtual void getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const = 0;
+		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const = 0;
 
 		virtual float getLinearDampingFactor() const = 0;
 		virtual void setLinearDampingFactor(float factor) = 0;
@@ -82,6 +83,7 @@ namespace Edge
 
 		virtual void getInverseInertiaTensor(FloatMatrix3x3& inertia) const override { inertia = FloatMatrix3x3(); }
 		virtual void getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const override { inertia = FloatMatrix3x3(); }
+		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const override { inertia = FloatMatrix3x3(); }
 
 		virtual float getLinearDampingFactor() const override { return m_linearDampingFactor; }
 		virtual void setLinearDampingFactor(float factor) override;
@@ -126,6 +128,7 @@ namespace Edge
 
 		virtual void getInverseInertiaTensor(FloatMatrix3x3& inertia) const override;
 		virtual void getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const override;
+		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const override;
 
 		virtual float getAngularDampingFactor() const override { return m_angularDampingFactor; }
 		virtual void setAngularDampingFactor(float factor) override { m_angularDampingFactor = factor; }

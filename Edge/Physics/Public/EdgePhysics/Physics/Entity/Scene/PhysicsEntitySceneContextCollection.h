@@ -2,10 +2,10 @@
 
 #include "EdgeCommon/Reference/MTCountableObjectBase.h"
 
-#include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
-
 namespace Edge
 {
+	class PhysicsEntitySceneContext;
+
 	class PhysicsEntitySceneContextCollection : public DefaultDestroyingMTCountableObjectBase
 	{
 	public:

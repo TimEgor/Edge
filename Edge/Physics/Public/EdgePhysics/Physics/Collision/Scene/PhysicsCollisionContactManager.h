@@ -1,9 +1,10 @@
 #pragma once
 
-#include "PhysicsCollisionContact.h"
-#include "PhysicsEntityCollision.h"
+#include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
+#include "EdgePhysics/Physics/Collision/PhysicsEntityCollision.h"
 
 #include <unordered_map>
+
 
 namespace Edge
 {

@@ -8,7 +8,7 @@
 
 #include "PhysicsCollisionQuery.h"
 #include "PhysicsEntityCollisionShape.h"
-#include "PhysicsSceneCollisionManagerReference.h"
+#include "Scene/PhysicsSceneCollisionManagerReference.h"
 
 namespace Edge
 {

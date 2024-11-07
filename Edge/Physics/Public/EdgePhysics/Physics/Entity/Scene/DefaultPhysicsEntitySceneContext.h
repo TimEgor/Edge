@@ -3,13 +3,14 @@
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
 #include "PhysicsEntitySceneContextCollection.h"
+#include "PhysicsEntitySceneContextTypes.h"
 
 namespace Edge
 {
 	class DefaultPhysicsEntitySceneContext final : public PhysicsEntitySceneContext
 	{
 	private:
-		PhysicsSceneWeakReference m_scene;
+		PhysicsSceneEntityManagerWeakReference m_manager;
 		PhysicsEntitySceneContextCollectionReference m_collection;
 
 		PhysicsSceneEntityID m_sceneEntityID = InvalidPhysicsSceneEntityID;
@@ -22,9 +23,9 @@ namespace Edge
 	public:
 		DefaultPhysicsEntitySceneContext() = default;
 
-		virtual PhysicsSceneWeakReference getScene() const override { return m_scene; }
+		virtual PhysicsSceneEntityManagerWeakReference getManager() const override { return m_manager; }
 		PhysicsSceneEntityID getSceneEntityID() const { return m_sceneEntityID; }
-		void setScene(const PhysicsSceneReference& scene, PhysicsSceneEntityID id);
+		void setManager(const PhysicsSceneEntityManagerReference& manager, PhysicsSceneEntityID id);
 
 		PhysicsSceneEntityID getSceneContextID() const { return m_sceneContextID; }
 		void setContextCollection(const PhysicsEntitySceneContextCollectionReference& collection, PhysicsSceneEntityID id);

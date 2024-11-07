@@ -1,13 +1,14 @@
 #pragma once
 
-#include "EdgeCommon/Multithreading/Mutex.h"
 #include "EdgeCommon/ObjectPool/ObjectPool.h"
 #include "EdgeCommon/ObjectPool/ObjectPoolHandle.h"
 
 #include "EdgePhysics/Physics/Entity/PhysicsEntityReference.h"
+#include "EdgePhysics/Physics/Scene/PhysicsSceneReference.h"
 
 #include "PhysicsEntitySceneContextCollection.h"
-#include "PhysicsSceneReference.h"
+#include "PhysicsEntitySceneContextTypes.h"
+#include "PhysicsSceneEntityManagerReference.h"
 
 namespace Edge
 {
@@ -45,13 +46,13 @@ namespace Edge
 
 		DefaultPhysicsEntitySceneContextCollectionReference m_sceneContextManager;
 
-		PhysicsSceneWeakReference m_scene;
+		PhysicsSceneEntityManagerWeakReference m_manager;
 
 	public:
 		PhysicsSceneEntityCollection() = default;
 		~PhysicsSceneEntityCollection() { release(); }
 
-		bool init(const PhysicsSceneReference& scene);
+		bool init(const PhysicsSceneEntityManagerReference& manager);
 		void release();
 
 		PhysicsSceneEntityID addEntity(const PhysicsEntityReference& entity);

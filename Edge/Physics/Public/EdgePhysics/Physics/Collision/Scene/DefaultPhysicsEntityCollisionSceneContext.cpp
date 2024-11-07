@@ -1,6 +1,6 @@
 #include "DefaultPhysicsEntityCollisionSceneContext.h"
 
-#include "PhysicsSceneCollisionManager.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManager.h"
 
 void Edge::DefaultPhysicsEntityCollisionSceneContext::selfDestroy()
 {

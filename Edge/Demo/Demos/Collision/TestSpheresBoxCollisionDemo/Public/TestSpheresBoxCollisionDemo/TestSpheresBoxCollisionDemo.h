@@ -16,8 +16,8 @@ namespace EdgeDemo
 
 		void updateSphereSpawningLogic(float deltaTime);
 
-		static constexpr float SpawningDelay = 5.0f;
-		static constexpr uint32_t MaxSphereCount = 30;
+		static constexpr float SpawningDelay = 1.0f;
+		static constexpr uint32_t MaxSphereCount = 50;
 		float m_spawningDelay = 0.0f;
 
 	public:

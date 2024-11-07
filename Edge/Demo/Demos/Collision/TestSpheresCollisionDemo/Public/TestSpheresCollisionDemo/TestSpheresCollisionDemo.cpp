@@ -3,7 +3,7 @@
 #include "EdgeCommon/Random/Random.h"
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
-#include "EdgePhysics/Physics/Collision/PhysicsCollisionContactManager.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsCollisionContactManager.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 

@@ -6,24 +6,18 @@
 #include "EdgeCommon/Math/Vector.h"
 
 #include "EdgePhysics/Physics/PhysicsWorld.h"
-#include "EdgePhysics/Physics/Collision/PhysicsSceneCollisionManager.h"
-#include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManager.h"
+#include "EdgePhysics/Physics/Entity/Scene/PhysicsSceneEntityManager.h"
 
 #include "PhysicsSceneReference.h"
 
 namespace Edge
 {
-	class PhysicsSceneEntityCollection;
-	class PhysicsSceneActiveEntityCollection;
-
 	class PhysicsSceneCollisionManager;
 
 	class PhysicsScene final : public NonCopyable, public DefaultDestroyingMTCountableObjectBase, public MTWeakReferencableBase<PhysicsScene>
 	{
-	private:
-		PhysicsSceneEntityCollection* m_entityCollection = nullptr;
-		PhysicsSceneActiveEntityCollection* m_activeEntityCollection = nullptr;
-
+		PhysicsSceneEntityManagerReference m_entityManager;
 		PhysicsSceneCollisionManagerReference m_collisionManager;
 
 		FloatVector3 m_gravity = FloatVector3(0.0f, -9.81f, 0.0f);
@@ -31,11 +25,9 @@ namespace Edge
 		PhysicsWorldWeakReference m_world;
 
 		JobGraphReference getUpdateJobGraph(float deltaTime);
-		void entityUpdate(float deltaTime);
 
 	public:
 		PhysicsScene(const PhysicsWorldReference& world);
-		~PhysicsScene() { release(); }
 
 		bool init();
 		void release();
@@ -48,12 +40,9 @@ namespace Edge
 
 		PhysicsEntityReference getEntity(PhysicsSceneEntityID entityID) const;
 
-		void activateEntity(PhysicsSceneEntityID entityID);
-		void activateEntity(const PhysicsEntityReference& entity);
-		void deactivateEntity(const PhysicsEntityReference& entity);
-
 		void makeTransformChangingNotification(const PhysicsEntityReference& entity);
 
+		PhysicsSceneEntityManagerReference getEntityManager() const;
 		PhysicsSceneCollisionManagerReference getCollisionManager() const;
 
 		PhysicsWorldWeakReference getWorld();

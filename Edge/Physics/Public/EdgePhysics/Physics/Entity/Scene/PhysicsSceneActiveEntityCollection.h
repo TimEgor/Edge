@@ -2,27 +2,27 @@
 
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
+#include "PhysicsEntitySceneContextTypes.h"
+
 #include <vector>
 
 namespace Edge
 {
 	class PhysicsSceneActiveEntityCollection final
 	{
-		friend class PhysicsSceneActiveEntityCollectionIterator;
-
 	public:
 		using EntityCollection = std::vector<PhysicsSceneEntityID>;
 
 	private:
 		EntityCollection m_ids;
 
-		PhysicsSceneWeakReference m_scene;
+		PhysicsSceneEntityManagerWeakReference m_manager;
 
 	public:
 		PhysicsSceneActiveEntityCollection() = default;
 		~PhysicsSceneActiveEntityCollection() { release(); }
 
-		bool init(const PhysicsSceneReference& scene);
+		bool init(const PhysicsSceneEntityManagerReference& manager);
 		void release();
 
 		void addEntity(const PhysicsEntityReference& entity);

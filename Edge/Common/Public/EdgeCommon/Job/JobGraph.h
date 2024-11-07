@@ -188,6 +188,12 @@ namespace Edge
 				JobGraphJobID m_postJobID = JobGraphJobID(false, InvalidJobGraphJobIndex);
 			};
 
+			struct GraphJobInfo final
+			{
+				JobGraph::DependencyJobReference* m_job = nullptr;
+				JobGraphJobID m_jobID = JobGraphJobID(false, InvalidJobGraphJobIndex);
+			};
+
 			std::vector<JobGraph::DependencyJobReference> m_jobs;
 			std::vector<GraphNode> m_graphNodes;
 
@@ -203,7 +209,7 @@ namespace Edge
 			GraphBuildingContext();
 
 			JobGraph::DependencyJobReference* getJob(JobGraphJobID jobID);
-			JobGraph::DependencyJobReference* getGraphJob(JobGraphJobID jobID, bool isParent);
+			GraphJobInfo getGraphJob(JobGraphJobID jobID, bool isParent);
 
 			JobGraphJobID addDependencyJob(const JobGraph::DependencyJobReference& job, bool addToCollection = true);
 			JobGraphJobID addGraphNode(JobGraphJobID preJobID, JobGraphJobID postJobID);

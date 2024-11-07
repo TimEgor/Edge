@@ -3,7 +3,7 @@
 #include "EdgeCommon/Math/Const.h"
 #include "EdgeCommon/Math/Vector.h"
 
-#include "PhysicsSceneCollisionManagerReference.h"
+#include "Scene/PhysicsCollisionSceneContextTypes.h"
 
 namespace Edge
 {

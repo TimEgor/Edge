@@ -1,9 +1,10 @@
 #include "PhysicsEntityCollision.h"
 
-#include "PhysicsSceneCollisionManager.h"
 #include "EdgeCommon/Math/Const.h"
 
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
+
+#include "Scene/PhysicsSceneCollisionManager.h"
 
 Edge::PhysicsEntityTransformReference Edge::PhysicsEntityCollision::getTransform() const
 {

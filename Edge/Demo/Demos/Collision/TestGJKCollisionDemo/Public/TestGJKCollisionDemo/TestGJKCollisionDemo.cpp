@@ -4,7 +4,6 @@
 
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
-#include "EdgePhysics/Physics/Collision/PhysicsCollisionContactManager.h"
 #include "EdgePhysics/Physics/Collision/GJK/GJK.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
 

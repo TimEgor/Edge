@@ -11,7 +11,7 @@
 #include "EdgeFramework/Input/InputDeviceController/Devices/Keyboard.h"
 #include "EdgeFramework/Input/InputDeviceController/Devices/Mouse.h"
 
-#include <cmath>s
+#include <cmath>
 
 void EdgeDemo::DefaultCameraController::update(float deltaTime)
 {

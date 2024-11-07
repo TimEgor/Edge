@@ -2,10 +2,12 @@
 
 #include "EdgeCommon/Job/JobGraph.h"
 
-#include "PhysicsEntityCollision.h"
-#include "PhysicsGlobalCollisionQuery.h"
+#include "EdgePhysics/Physics/Collision/PhysicsGlobalCollisionQuery.h"
+#include "EdgePhysics/Physics/Collision/BroadPhases/PhysicsBroadPhase.h"
+#include "EdgePhysics/Physics/Entity/Scene/PhysicsEntitySceneContextTypes.h"
+
+#include "PhysicsCollisionSceneContextTypes.h"
 #include "PhysicsSceneCollisionManagerReference.h"
-#include "BroadPhases/PhysicsBroadPhase.h"
 
 #include <vector>
 
@@ -18,10 +20,12 @@ namespace Edge
 	class PhysicsSceneCollisionManager final : public PhysicsGlobalCollisionQuery, public DefaultDestroyingMTCountableObjectBase, public MTWeakReferencableBase<PhysicsSceneCollisionManager>
 	{
 	private:
-		struct CollisionFindingContext final
+		struct CollisionFindingContext final : public DefaultDestroyingMTCountableObjectBase
 		{
 			std::vector<PhysicsBroadPhase::PhysicsSceneCollisionPairCollection> m_collisionCollector;
 		};
+
+		EDGE_MT_REFERENCE(CollisionFindingContext)
 
 		PhysicsSceneCollisionCollection* m_collisionCollection = nullptr;
 		PhysicsCollisionContactManager* m_contactManager = nullptr;
@@ -30,8 +34,8 @@ namespace Edge
 
 		PhysicsSceneWeakReference m_scene;
 
-		JobGraphReference getCollisionFindingJobGraph(uint32_t jobCount, CollisionFindingContext* context, const std::vector<PhysicsSceneEntityID>& activeEntityIDs);
-		void prepareCollisionContacts(CollisionFindingContext* context) const;
+		JobGraphReference getCollisionFindingJobGraph(uint32_t jobCount, const CollisionFindingContextReference& context, const std::vector<PhysicsSceneEntityID>& activeEntityIDs);
+		void prepareCollisionContacts(const CollisionFindingContextReference& context) const;
 
 		bool checkCollision(const PhysicsEntityCollisionReference& collision) const;
 
@@ -41,7 +45,8 @@ namespace Edge
 		bool init(const PhysicsSceneReference& scene);
 		void release();
 
-		JobGraphReference getUpdateJobGraph(float deltaTime, const std::vector<PhysicsSceneEntityID>& activeEntityIDs);
+		JobGraphReference getPreparationJobGraph(const std::vector<PhysicsSceneEntityID>& activeEntityIDs);
+		JobGraphReference getApplyingJobGraph();
 
 		void addCollision(const PhysicsEntityCollisionReference& collision);
 		void removeCollision(const PhysicsEntityCollisionReference& collision);

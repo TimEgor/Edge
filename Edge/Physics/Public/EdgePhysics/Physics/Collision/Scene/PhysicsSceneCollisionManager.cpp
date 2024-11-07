@@ -1,19 +1,19 @@
 #include "PhysicsSceneCollisionManager.h"
 
+#include "EdgeCommon/Job/JobController.h"
 #include "EdgeCommon/Profile/Profile.h"
 
+#include "EdgePhysics/Physics/Physics.h"
+#include "EdgePhysics/Physics/PhysicsCore.h"
+#include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
+#include "EdgePhysics/Physics/Collision/BroadPhases/BruteforcePhysicsBroadPhase.h"
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 #include "EdgePhysics/Physics/Scene/PhysicsScene.h"
 
-#include "BroadPhases/BruteforcePhysicsBroadPhase.h"
-
 #include "PhysicsCollisionContactManager.h"
 #include "PhysicsSceneCollisionCollection.h"
-#include "EdgeCommon/Job/JobController.h"
-#include "EdgePhysics/Physics/Physics.h"
-#include "EdgePhysics/Physics/PhysicsCore.h"
 
-Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getCollisionFindingJobGraph(uint32_t jobCount, CollisionFindingContext* context,
+Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getCollisionFindingJobGraph(uint32_t jobCount, const CollisionFindingContextReference& context,
 	const std::vector<PhysicsSceneEntityID>& activeEntityIDs)
 {
 	context->m_collisionCollector.resize(jobCount);
@@ -54,7 +54,7 @@ Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getCollisionFindingJ
 	return m_graphBuilder.getGraph();
 }
 
-void Edge::PhysicsSceneCollisionManager::prepareCollisionContacts(CollisionFindingContext* context) const
+void Edge::PhysicsSceneCollisionManager::prepareCollisionContacts(const CollisionFindingContextReference& context) const
 {
 	for (const auto& collectedResult : context->m_collisionCollector)
 	{
@@ -107,14 +107,13 @@ void Edge::PhysicsSceneCollisionManager::release()
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_collisionCollection);
 }
 
-Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getUpdateJobGraph(float deltaTime,
-	const std::vector<PhysicsSceneEntityID>& activeEntityIDs)
+Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getPreparationJobGraph(const std::vector<PhysicsSceneEntityID>& activeEntityIDs)
 {
 	JobGraphBuilder m_graphBuilder;
 
 	const size_t jobCount = GetPhysics().getJobController().getJobExecutorCount();
 
-	CollisionFindingContext* findingCollisionContext = new CollisionFindingContext();
+	CollisionFindingContextReference findingCollisionContext = new CollisionFindingContext();
 
 	const JobGraphBuilder::JobGraphJobID collisionFindingJobsID = m_graphBuilder.addJobGraph(
 		getCollisionFindingJobGraph(jobCount, findingCollisionContext, activeEntityIDs));
@@ -123,7 +122,6 @@ Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getUpdateJobGraph(fl
 		createLambdaJob([this, findingCollisionContext]()
 			{
 				prepareCollisionContacts(findingCollisionContext);
-				delete findingCollisionContext;
 			}, "Prepare collision contacts"),
 		collisionFindingJobsID);
 
@@ -134,12 +132,19 @@ Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getUpdateJobGraph(fl
 			}, "Update collision contacts"),
 		prepareCollisionJobID);
 
-	const JobGraphBuilder::JobGraphJobID applyCollisionJobID = m_graphBuilder.addJobAfter(
+	return m_graphBuilder.getGraph();
+}
+
+Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getApplyingJobGraph()
+{
+	JobGraphBuilder m_graphBuilder;
+
+	const JobGraphBuilder::JobGraphJobID applyCollisionJobID = m_graphBuilder.addJob(
 		createLambdaJob([this]()
 			{
 				m_contactManager->applyCollision();
-			}, "Apply collision"),
-		updateCollisionJobID);
+			}, "Apply collision")
+	);
 
 	return m_graphBuilder.getGraph();
 }

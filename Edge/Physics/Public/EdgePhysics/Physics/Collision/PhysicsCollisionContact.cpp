@@ -1,5 +1,7 @@
 #include "PhysicsCollisionContact.h"
 
+#include <algorithm>
+
 Edge::PhysicsCollisionContactID::PhysicsCollisionContactID(PhysicsSceneCollisionID id1, PhysicsSceneCollisionID id2)
 {
 	m_collisionID1 = std::max(id1, id2);
