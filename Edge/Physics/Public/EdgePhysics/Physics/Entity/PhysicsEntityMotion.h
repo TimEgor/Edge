@@ -30,7 +30,9 @@ namespace Edge
 		virtual void setInertia(const FloatVector3& inertia) = 0;
 
 		virtual void getInverseInertiaTensor(FloatMatrix3x3& inertia) const = 0;
+		virtual void getInverseInertiaTensor(FloatMatrix4x4& inertia) const = 0;
 		virtual void getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const = 0;
+		virtual void getWorldInverseInertiaTensor(FloatMatrix4x4& inertia) const = 0;
 		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const = 0;
 
 		virtual float getLinearDampingFactor() const = 0;
@@ -82,8 +84,10 @@ namespace Edge
 		virtual void setInertia(const FloatVector3& inertia) override {}
 
 		virtual void getInverseInertiaTensor(FloatMatrix3x3& inertia) const override { inertia = FloatMatrix3x3(); }
+		virtual void getInverseInertiaTensor(FloatMatrix4x4& inertia) const override { inertia = FloatMatrix4x4ZeroIdentity; }
 		virtual void getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const override { inertia = FloatMatrix3x3(); }
-		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const override { inertia = FloatMatrix3x3(); }
+		virtual void getWorldInverseInertiaTensor(FloatMatrix4x4& inertia) const override { inertia = FloatMatrix4x4ZeroIdentity; }
+		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const override { inertia = FloatMatrix4x4ZeroIdentity; }
 
 		virtual float getLinearDampingFactor() const override { return m_linearDampingFactor; }
 		virtual void setLinearDampingFactor(float factor) override;
@@ -127,7 +131,9 @@ namespace Edge
 		virtual void setInertia(const FloatVector3& inertia) override;
 
 		virtual void getInverseInertiaTensor(FloatMatrix3x3& inertia) const override;
+		virtual void getInverseInertiaTensor(FloatMatrix4x4& inertia) const override;
 		virtual void getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const override;
+		virtual void getWorldInverseInertiaTensor(FloatMatrix4x4& inertia) const override;
 		virtual void getWorldInverseInertiaTensor(ComputeMatrix& inertia) const override;
 
 		virtual float getAngularDampingFactor() const override { return m_angularDampingFactor; }

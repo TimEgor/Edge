@@ -26,21 +26,35 @@ void Edge::PhysicsSceneEntityManager::release()
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_entityCollection);
 }
 
-Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getUpdateJobGraph(float deltaTime, const FloatVector3& gravity)
+Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getAccelerationApplyingJobGraph(float deltaTime, const FloatVector3& gravity)
 {
 	JobGraphBuilder m_graphBuilder;
 
-	const JobGraphBuilder::JobGraphJobID applyCollisionJobID = m_graphBuilder.addJob(
+	const JobGraphBuilder::JobGraphJobID accelerationApplyingJobID = m_graphBuilder.addJob(
 		createLambdaJob([dt = deltaTime, gravity = gravity, this]()
 			{
-				updateEntities(dt, gravity);
-			}, "Update entities")
+				applyAcceleration(dt, gravity);
+			}, "Apply acceleration")
 	);
 
 	return m_graphBuilder.getGraph();
 }
 
-void Edge::PhysicsSceneEntityManager::updateEntities(float deltaTime, const FloatVector3& gravity)
+Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getVelocityIntegrationJobGraph(float deltaTime)
+{
+	JobGraphBuilder m_graphBuilder;
+
+	const JobGraphBuilder::JobGraphJobID velocityIntegrationJobID = m_graphBuilder.addJob(
+		createLambdaJob([dt = deltaTime, this]()
+			{
+				integrateVelocity(dt);
+			}, "Integrate velocity")
+	);
+
+	return m_graphBuilder.getGraph();
+}
+
+void Edge::PhysicsSceneEntityManager::applyAcceleration(float deltaTime, const FloatVector3& gravity)
 {
 	const PhysicsSceneActiveEntityCollection::EntityCollection& activeEntityIDs = m_activeEntityCollection->getEntities();
 
@@ -49,6 +63,17 @@ void Edge::PhysicsSceneEntityManager::updateEntities(float deltaTime, const Floa
 		const PhysicsEntityReference entity = getEntity(id);
 		const PhysicsEntityMotionReference entityMotion = entity->getMotion();
 		entityMotion->applyAcceleration(deltaTime, gravity);
+	}
+}
+
+void Edge::PhysicsSceneEntityManager::integrateVelocity(float deltaTime)
+{
+	const PhysicsSceneActiveEntityCollection::EntityCollection& activeEntityIDs = m_activeEntityCollection->getEntities();
+
+	for (PhysicsSceneEntityID id : activeEntityIDs)
+	{
+		const PhysicsEntityReference entity = getEntity(id);
+		const PhysicsEntityMotionReference entityMotion = entity->getMotion();
 		entity->updateTransformWithMotion(deltaTime);
 	}
 }

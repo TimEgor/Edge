@@ -7,6 +7,7 @@
 
 #include "EdgePhysics/Physics/PhysicsWorld.h"
 #include "EdgePhysics/Physics/Collision/Scene/PhysicsSceneCollisionManager.h"
+#include "EdgePhysics/Physics/Constraint/Scene/PhysicsSceneConstraintManager.h"
 #include "EdgePhysics/Physics/Entity/Scene/PhysicsSceneEntityManager.h"
 
 #include "PhysicsSceneReference.h"
@@ -19,6 +20,7 @@ namespace Edge
 	{
 		PhysicsSceneEntityManagerReference m_entityManager;
 		PhysicsSceneCollisionManagerReference m_collisionManager;
+		PhysicsSceneConstraintManagerReference m_constraintManager;
 
 		FloatVector3 m_gravity = FloatVector3(0.0f, -9.81f, 0.0f);
 
@@ -39,6 +41,12 @@ namespace Edge
 		void removeEntity(const PhysicsEntityReference& entity);
 
 		PhysicsEntityReference getEntity(PhysicsSceneEntityID entityID) const;
+
+		PhysicsSceneConstraintID addConstraint(const PhysicsConstraintReference& constraint, bool activate = true);
+		void removeConstraint(PhysicsSceneConstraintID constraintID);
+		void removeConstraint(const PhysicsConstraintReference& constraint);
+
+		PhysicsConstraintReference getConstraint(PhysicsSceneConstraintID constraintID) const;
 
 		void makeTransformChangingNotification(const PhysicsEntityReference& entity);
 

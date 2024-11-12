@@ -43,6 +43,8 @@ namespace Edge
 
 	ComputeQuaternion NormalizeQuaternion(const ComputeQuaternion& quaternion);
 
+	ComputeVector RotateVector(const ComputeQuaternion& quaternion, const ComputeVector& vector);
+
 	float QuaternionLength(const ComputeQuaternion& quaternion);
 	float QuaternionLengthSqr(const ComputeQuaternion& quaternion);
 

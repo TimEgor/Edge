@@ -39,6 +39,7 @@ namespace Edge
 		bool matrixIsInfinite(const Matrix& matrix);
 		bool matrixIsNaN(const Matrix& matrix);
 		Matrix matrixMultiply(const Matrix& matrix1, const Matrix& matrix2);
+		Matrix matrixSum(const Matrix& matrix1, const Matrix& matrix2);
 		Matrix matrixTranspose(const Matrix& matrix);
 
 		//Transformation
@@ -78,5 +79,8 @@ namespace Edge
 		Vector transformNormal(const Vector& vector, const Matrix& transform);
 
 		void anglesFromMatrixRotation(const Matrix& rotationMatrix, float& pitch, float& yaw, float& roll);
+
+		//
+		void matrixSetElement(Matrix& matrix, uint32_t i, uint32_t j, float val);
 	}
 }

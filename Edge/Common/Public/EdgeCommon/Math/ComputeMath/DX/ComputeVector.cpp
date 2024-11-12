@@ -450,6 +450,12 @@ Edge::ComputeMath::Vector Edge::ComputeMath::vector3Cross(const Vector& vec1, co
 {
 	return DirectX::XMVector3Cross(vec1, vec2);
 }
+
+Edge::ComputeMath::Vector Edge::ComputeMath::vector3Rotate(const Vector& vec, const Quaternion& quat)
+{
+	return DirectX::XMVector3Rotate(vec, quat);
+}
+
 #pragma endregion
 
 Edge::ComputeMath::Vector Edge::ComputeMath::vectorSwizzle(const Vector& vec, uint32_t e0, uint32_t e1, uint32_t e2, uint32_t e3)
@@ -475,5 +481,25 @@ float Edge::ComputeMath::vectorGetZ(const Vector& vec)
 float Edge::ComputeMath::vectorGetW(const Vector& vec)
 {
 	return DirectX::XMVectorGetZ(vec);
+}
+
+void Edge::ComputeMath::vectorSetX(Vector& vec, float val)
+{
+	vec = DirectX::XMVectorSetX(vec, val);
+}
+
+void Edge::ComputeMath::vectorSetY(Vector& vec, float val)
+{
+	vec = DirectX::XMVectorSetY(vec, val);
+}
+
+void Edge::ComputeMath::vectorSetZ(Vector& vec, float val)
+{
+	vec = DirectX::XMVectorSetZ(vec, val);
+}
+
+void Edge::ComputeMath::vectorSetW(Vector& vec, float val)
+{
+	vec = DirectX::XMVectorSetW(vec, val);
 }
 #endif

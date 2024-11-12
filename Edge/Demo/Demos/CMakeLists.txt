@@ -14,6 +14,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DebugDrawDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FireworksDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TestCastDemo)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Collision)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Constraints)
 
 target_link_libraries(EdgeDemos
 	INTERFACE
@@ -21,4 +22,5 @@ target_link_libraries(EdgeDemos
 		FireworksDemo
 		TestCastDemo
 		EdgeCollisionDemos
+		EdgeConstraintsDemos
 )

@@ -34,6 +34,11 @@ namespace Edge
 		float getZ() const;
 		float getW() const;
 
+		void setX(float x);
+		void setY(float y);
+		void setZ(float z);
+		void setW(float w);
+
 		float getElement(uint32_t index) const;
 
 		float length2() const;

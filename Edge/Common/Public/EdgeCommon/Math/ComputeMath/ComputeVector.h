@@ -124,11 +124,18 @@ namespace Edge
 		Vector vector2Cross(const Vector& vec1, const Vector& vec2);
 		Vector vector3Cross(const Vector& vec1, const Vector& vec2);
 
+		Vector vector3Rotate(const Vector& vec, const Quaternion& quat);
+
 		//
 		Vector vectorSwizzle(const Vector& vec, uint32_t e0, uint32_t e1, uint32_t e2, uint32_t e3);
 		float vectorGetX(const Vector& vec);
 		float vectorGetY(const Vector& vec);
 		float vectorGetZ(const Vector& vec);
 		float vectorGetW(const Vector& vec);
+
+		void vectorSetX(Vector& vec, float val);
+		void vectorSetY(Vector& vec, float val);
+		void vectorSetZ(Vector& vec, float val);
+		void vectorSetW(Vector& vec, float val);
 	}
 }

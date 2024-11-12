@@ -108,6 +108,14 @@ void Edge::PhysicsPositionAndRotationBasedMotion::getInverseInertiaTensor(FloatM
 	inertia.m_m33 = m_inverseInertia.m_z;
 }
 
+void Edge::PhysicsPositionAndRotationBasedMotion::getInverseInertiaTensor(FloatMatrix4x4& inertia) const
+{
+	inertia = FloatMatrix4x4ZeroIdentity;
+	inertia.m_m11 = m_inverseInertia.m_x;
+	inertia.m_m22 = m_inverseInertia.m_y;
+	inertia.m_m33 = m_inverseInertia.m_z;
+}
+
 void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const
 {
 	ComputeMatrix worldInverseInertiaTensor;
@@ -116,9 +124,17 @@ void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(F
 	worldInverseInertiaTensor.saveToMatrix3x3(inertia);
 }
 
+void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(FloatMatrix4x4& inertia) const
+{
+	ComputeMatrix worldInverseInertiaTensor;
+	getWorldInverseInertiaTensor(worldInverseInertiaTensor);
+
+	worldInverseInertiaTensor.saveToMatrix4x4(inertia);
+}
+
 void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(ComputeMatrix& inertia) const
 {
-	FloatMatrix3x3 inverseInertiaTensor;
+	FloatMatrix4x4 inverseInertiaTensor;
 	getInverseInertiaTensor(inverseInertiaTensor);
 
 	const ComputeMatrix rotation = ComputeMatrixFromRotationQuaternion(getTransform()->getRotation());

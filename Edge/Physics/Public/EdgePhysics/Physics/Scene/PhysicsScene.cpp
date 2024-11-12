@@ -11,15 +11,31 @@ Edge::JobGraphReference Edge::PhysicsScene::getUpdateJobGraph(float deltaTime)
 {
 	JobGraphBuilder m_graphBuilder;
 
-	const JobGraphBuilder::JobGraphJobID collisionPreparationJobsID = m_graphBuilder.addJobGraph(
-		m_collisionManager->getPreparationJobGraph(m_entityManager->getActiveEntities()));
+	const JobGraphBuilder::JobGraphJobID accelerationApplyingJobID = m_graphBuilder.addJobGraph(
+		m_entityManager->getAccelerationApplyingJobGraph(deltaTime, m_gravity));
+
+	const JobGraphBuilder::JobGraphJobID collisionPreparationJobsID = m_graphBuilder.addJobGraphAfter(
+		m_collisionManager->getPreparationJobGraph(m_entityManager->getActiveEntities()),
+		accelerationApplyingJobID);
+
+	const JobGraphBuilder::JobGraphJobID constraintPreSolvingJobsID = m_graphBuilder.addJobGraphAfter(
+		m_constraintManager->getPreSolvingJobGraph(deltaTime),
+		collisionPreparationJobsID);
+
+	const JobGraphBuilder::JobGraphJobID constraintVelocitySolvingJobsID = m_graphBuilder.addJobGraphAfter(
+		m_constraintManager->getVelocitySolvingJobGraph(),
+		constraintPreSolvingJobsID);
+
+	const JobGraphBuilder::JobGraphJobID velocityIntegrationJobsID = m_graphBuilder.addJobGraphAfter(
+		m_entityManager->getVelocityIntegrationJobGraph(deltaTime),
+		constraintVelocitySolvingJobsID);
 
 	const JobGraphBuilder::JobGraphJobID collisionApplyingJobsID = m_graphBuilder.addJobGraphAfter(
 		m_collisionManager->getApplyingJobGraph(),
-		collisionPreparationJobsID);
+		velocityIntegrationJobsID);
 
-	const JobGraphBuilder::JobGraphJobID applyingForceJobID = m_graphBuilder.addJobGraphAfter(
-		m_entityManager->getUpdateJobGraph(deltaTime, m_gravity),
+	const JobGraphBuilder::JobGraphJobID constraintPositionSolvingJobsID = m_graphBuilder.addJobGraphAfter(
+		m_constraintManager->getPositionSolvingJobGraph(),
 		collisionApplyingJobsID);
 
 	return m_graphBuilder.getGraph();
@@ -36,6 +52,9 @@ bool Edge::PhysicsScene::init()
 	m_collisionManager = new PhysicsSceneCollisionManager();
 	EDGE_CHECK_INITIALIZATION(m_collisionManager && m_collisionManager->init(this));
 
+	m_constraintManager = new PhysicsSceneConstraintManager();
+	EDGE_CHECK_INITIALIZATION(m_constraintManager && m_constraintManager->init(this));
+
 	return true;
 }
 
@@ -43,6 +62,7 @@ void Edge::PhysicsScene::release()
 {
 	m_entityManager.reset();
 	m_collisionManager.reset();
+	m_constraintManager.reset();
 }
 
 void Edge::PhysicsScene::update(float deltaTime)
@@ -96,6 +116,26 @@ void Edge::PhysicsScene::removeEntity(const PhysicsEntityReference& entity)
 Edge::PhysicsEntityReference Edge::PhysicsScene::getEntity(PhysicsSceneEntityID entityID) const
 {
 	return m_entityManager->getEntity(entityID);
+}
+
+Edge::PhysicsSceneConstraintID Edge::PhysicsScene::addConstraint(const PhysicsConstraintReference& constraint, bool activate)
+{
+	return m_constraintManager->addConstraint(constraint, activate);
+}
+
+void Edge::PhysicsScene::removeConstraint(PhysicsSceneConstraintID constraintID)
+{
+	m_constraintManager->removeConstraint(constraintID);
+}
+
+void Edge::PhysicsScene::removeConstraint(const PhysicsConstraintReference& constraint)
+{
+	m_constraintManager->removeConstraint(constraint);
+}
+
+Edge::PhysicsConstraintReference Edge::PhysicsScene::getConstraint(PhysicsSceneConstraintID constraintID) const
+{
+	return m_constraintManager->getConstraint(constraintID);
 }
 
 void Edge::PhysicsScene::makeTransformChangingNotification(const PhysicsEntityReference& entity)

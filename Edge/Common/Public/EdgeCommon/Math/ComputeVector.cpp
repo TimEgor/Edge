@@ -88,6 +88,26 @@ float Edge::ComputeVector::getW() const
 	return ComputeMath::vectorGetW(m_vector);
 }
 
+void Edge::ComputeVector::setX(float x)
+{
+	ComputeMath::vectorSetX(m_vector, x);
+}
+
+void Edge::ComputeVector::setY(float y)
+{
+	ComputeMath::vectorSetY(m_vector, y);
+}
+
+void Edge::ComputeVector::setZ(float z)
+{
+	ComputeMath::vectorSetZ(m_vector, z);
+}
+
+void Edge::ComputeVector::setW(float w)
+{
+	ComputeMath::vectorSetW(m_vector, w);
+}
+
 float Edge::ComputeVector::getElement(uint32_t index) const
 {
 	switch (index)

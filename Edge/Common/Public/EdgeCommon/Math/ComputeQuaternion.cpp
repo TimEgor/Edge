@@ -93,6 +93,11 @@ Edge::ComputeQuaternion Edge::NormalizeQuaternion(const ComputeQuaternion& quate
 	return ComputeMath::quaternionNormalize(quaternion.m_quaternion);
 }
 
+Edge::ComputeVector Edge::RotateVector(const ComputeQuaternion& quaternion, const ComputeVector& vector)
+{
+	return ComputeMath::vector3Rotate(vector.m_vector, quaternion.m_quaternion);
+}
+
 float Edge::QuaternionLength(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::quaternionLength(quaternion.m_quaternion);

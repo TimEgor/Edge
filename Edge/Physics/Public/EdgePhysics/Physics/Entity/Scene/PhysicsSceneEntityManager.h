@@ -20,7 +20,8 @@ namespace Edge
 
 		PhysicsSceneWeakReference m_scene;
 
-		void updateEntities(float deltaTime, const FloatVector3& gravity);
+		void applyAcceleration(float deltaTime, const FloatVector3& gravity);
+		void integrateVelocity(float deltaTime);
 
 	public:
 		PhysicsSceneEntityManager() = default;
@@ -28,7 +29,8 @@ namespace Edge
 		bool init(const PhysicsSceneReference& scene);
 		void release();
 
-		JobGraphReference getUpdateJobGraph(float deltaTime, const FloatVector3& gravity);
+		JobGraphReference getAccelerationApplyingJobGraph(float deltaTime, const FloatVector3& gravity);
+		JobGraphReference getVelocityIntegrationJobGraph(float deltaTime);
 
 		PhysicsSceneEntityID addEntity(const PhysicsEntityReference& entity, bool activate = true);
 		void removeEntity(PhysicsSceneEntityID entityID);

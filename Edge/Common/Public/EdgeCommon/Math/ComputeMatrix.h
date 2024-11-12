@@ -24,9 +24,12 @@ namespace Edge
 		ComputeMatrix& operator=(const ComputeMatrix& matrix) = default;
 
 		ComputeMatrix& operator*=(const ComputeMatrix& matrix);
+		ComputeMatrix& operator+=(const ComputeMatrix& matrix);
 
 		ComputeMatrix& transpose();
 		ComputeMatrix& inverse();
+
+		void setElement(uint32_t i, uint32_t j, float val);
 
 		void loadFromMatrix2x2(const FloatMatrix2x2& matrix);
 		void loadFromMatrix3x3(const FloatMatrix3x3& matrix);
@@ -41,11 +44,20 @@ namespace Edge
 		FloatMatrix4x4 getToMatrix4x4() const;
 	};
 
+	FloatMatrix3x3 ComputeSkewSymmetricMatrix3x3ForCrossProduct(const FloatVector3& vector);
+	FloatMatrix4x4 ComputeSkewSymmetricMatrix4x4ForCrossProduct(const FloatVector3& vector);
+
 	ComputeMatrix ComputeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion);
+	ComputeMatrix ComputeMatrixFromScale(float scale);
+	ComputeMatrix ComputeMatrixFromScale(const FloatVector3& scale);
 	void GetAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll);
+
+	ComputeVector TransformVector(const ComputeMatrix& matrix, const ComputeVector& vector);
 
 	ComputeMatrix operator*(const ComputeMatrix& matrix1, const ComputeMatrix& matrix2);
 	ComputeVector operator*(const ComputeMatrix& matrix, const ComputeVector& vector);
+
+	ComputeMatrix operator+(const ComputeMatrix& matrix1, const ComputeMatrix& matrix2);
 
 	ComputeMatrix TransposeMatrix(const ComputeMatrix& matrix);
 	ComputeMatrix InverseMatrix(const ComputeMatrix& matrix);

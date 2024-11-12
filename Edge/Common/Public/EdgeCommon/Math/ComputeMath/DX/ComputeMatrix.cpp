@@ -120,6 +120,17 @@ Edge::ComputeMath::Matrix Edge::ComputeMath::matrixMultiply(const Matrix& matrix
 	return DirectX::XMMatrixMultiply(matrix1, matrix2);
 }
 
+Edge::ComputeMath::Matrix Edge::ComputeMath::matrixSum(const Matrix& matrix1, const Matrix& matrix2)
+{
+	Matrix result;
+	result.r[0] = vectorAdd(matrix1.r[0], matrix2.r[0]);
+	result.r[1] = vectorAdd(matrix1.r[1], matrix2.r[1]);
+	result.r[2] = vectorAdd(matrix1.r[2], matrix2.r[2]);
+	result.r[3] = vectorAdd(matrix1.r[3], matrix2.r[3]);
+
+	return result;
+}
+
 Edge::ComputeMath::Matrix Edge::ComputeMath::matrixTranspose(const Matrix& matrix)
 {
 	return DirectX::XMMatrixTranspose(matrix);
@@ -244,7 +255,7 @@ Edge::ComputeMath::Matrix Edge::ComputeMath::matrixRotationZ(float angle)
 
 Edge::ComputeMath::Matrix Edge::ComputeMath::matrixScaling(float scaleX, float scaleY, float scaleZ)
 {
-	return DirectX::XMMatrixScaling(scaleX, scaleY, scaleY);
+	return DirectX::XMMatrixScaling(scaleX, scaleY, scaleZ);
 }
 
 Edge::ComputeMath::Matrix Edge::ComputeMath::matrixScaling(const FloatVector3& scale)
@@ -295,6 +306,12 @@ void Edge::ComputeMath::anglesFromMatrixRotation(const Matrix& rotationMatrix, f
 	pitch = (float)asin(-XMFLOAT4X4_Values._23);
 	yaw = (float)atan2(XMFLOAT4X4_Values._13, XMFLOAT4X4_Values._33);
 	roll = (float)atan2(XMFLOAT4X4_Values._21, XMFLOAT4X4_Values._22);
+}
+
+//
+void Edge::ComputeMath::matrixSetElement(Matrix& matrix, uint32_t i, uint32_t j, float val)
+{
+	matrix.r[i].m128_f32[j] = val;
 }
 #pragma endregion
 #endif

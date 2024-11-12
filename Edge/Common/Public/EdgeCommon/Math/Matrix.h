@@ -204,10 +204,22 @@ namespace Edge
 		0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 1.0f);
 
+	constexpr FloatMatrix4x4 FloatMatrix4x4Zero = FloatMatrix4x4(
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f);
+
 	constexpr FloatMatrix4x4 FloatMatrix4x4Identity = FloatMatrix4x4(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	constexpr FloatMatrix4x4 FloatMatrix4x4ZeroIdentity = FloatMatrix4x4(
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
