@@ -4,63 +4,63 @@
 #include "EdgeCommon/Math/ComputeMath/ComputeVector.h"
 
 #pragma region Loading
-Edge::ComputeMath::Vector Edge::ComputeMath::loadVector2(const FloatVector2& vec)
+Edge::ComputeMath::Vector Edge::ComputeMath::vector2Load(const FloatVector2& vec)
 {
 	return DirectX::XMLoadFloat2(reinterpret_cast<const DirectX::XMFLOAT2*>(&vec));
 }
 
-Edge::ComputeMath::Vector Edge::ComputeMath::loadVector3(const FloatVector3& vec)
+Edge::ComputeMath::Vector Edge::ComputeMath::vector3Load(const FloatVector3& vec)
 {
 	return DirectX::XMLoadFloat3(reinterpret_cast<const DirectX::XMFLOAT3*>(&vec));
 }
 
-Edge::ComputeMath::Vector Edge::ComputeMath::loadVector4(const FloatVector4& vec)
+Edge::ComputeMath::Vector Edge::ComputeMath::vector4Load(const FloatVector4& vec)
 {
 	return DirectX::XMLoadFloat4(reinterpret_cast<const DirectX::XMFLOAT4*>(&vec));
 }
 
-Edge::ComputeMath::Vector Edge::ComputeMath::loadVector4(float x, float y, float z, float w)
+Edge::ComputeMath::Vector Edge::ComputeMath::vector4Load(float x, float y, float z, float w)
 {
 	return DirectX::XMVectorSet(x, y, z, w);
 }
 #pragma endregion
 
 #pragma region Saving
-Edge::FloatVector2 Edge::ComputeMath::saveVector2(const Vector& vec)
+Edge::FloatVector2 Edge::ComputeMath::vector2Save(const Vector& vec)
 {
 	FloatVector2 result;
-	saveVector2(vec, result);
+	vector2Save(vec, result);
 
 	return result;
 }
 
-Edge::FloatVector3 Edge::ComputeMath::saveVector3(const Vector& vec)
+Edge::FloatVector3 Edge::ComputeMath::vector3Save(const Vector& vec)
 {
 	FloatVector3 result;
-	saveVector3(vec, result);
+	vector3Save(vec, result);
 
 	return result;
 }
 
-Edge::FloatVector4 Edge::ComputeMath::saveVector4(const Vector& vec)
+Edge::FloatVector4 Edge::ComputeMath::vector4Save(const Vector& vec)
 {
 	FloatVector4 result;
-	saveVector4(vec, result);
+	vector4Save(vec, result);
 
 	return result;
 }
 
-void Edge::ComputeMath::saveVector2(const Vector& vec, FloatVector2& result)
+void Edge::ComputeMath::vector2Save(const Vector& vec, FloatVector2& result)
 {
 	DirectX::XMStoreFloat2(reinterpret_cast<DirectX::XMFLOAT2*>(&result), vec);
 }
 
-void Edge::ComputeMath::saveVector3(const Vector& vec, FloatVector3& result)
+void Edge::ComputeMath::vector3Save(const Vector& vec, FloatVector3& result)
 {
 	DirectX::XMStoreFloat3(reinterpret_cast<DirectX::XMFLOAT3*>(&result), vec);
 }
 
-void Edge::ComputeMath::saveVector4(const Vector& vec, FloatVector4& result)
+void Edge::ComputeMath::vector4Save(const Vector& vec, FloatVector4& result)
 {
 	DirectX::XMStoreFloat4(reinterpret_cast<DirectX::XMFLOAT4*>(&result), vec);
 }

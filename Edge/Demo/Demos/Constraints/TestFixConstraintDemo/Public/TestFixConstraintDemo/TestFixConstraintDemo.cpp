@@ -1,12 +1,12 @@
-#include "TestKeepDistanceConstraintDemo.h"
+#include "TestFixConstraintDemo.h"
 
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
-#include "EdgePhysics/Physics/Constraint/Constraints/KeepDistanceConstraint.h"
+#include "EdgePhysics/Physics/Constraint/Constraints/FixedConstraint.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
-void EdgeDemo::TestKeepDistanceConstraintDemo::drawSphere(const Edge::PhysicsBodyReference& body) const
+void EdgeDemo::TestFixConstraintDemo::drawSphere(const Edge::PhysicsBodyReference& body) const
 {
 	const Edge::Transform& transform = body->getTransform()->getWorldTransform();
 
@@ -17,7 +17,7 @@ void EdgeDemo::TestKeepDistanceConstraintDemo::drawSphere(const Edge::PhysicsBod
 	m_debugVisualizationDataController->addSphere(transform.getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
 }
 
-bool EdgeDemo::TestKeepDistanceConstraintDemo::initDemo()
+bool EdgeDemo::TestFixConstraintDemo::initDemo()
 {
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
@@ -52,7 +52,7 @@ bool EdgeDemo::TestKeepDistanceConstraintDemo::initDemo()
 
 		m_physicsScene->addEntity(dynamicBody);
 
-		const Edge::PhysicsConstraintReference constraint = new Edge::KeepDistanceConstraint(m_bodies[m_bodies.size() - 1], dynamicBody, Edge::FloatVector3Zero, Edge::FloatVector3(-1.5f, 0.0f, 0.0f));
+		const Edge::PhysicsConstraintReference constraint = new Edge::FixedConstraint(m_bodies[m_bodies.size() - 1], dynamicBody, Edge::FloatVector3Zero, Edge::FloatVector3(-1.5f, 0.0f, 0.0f));
 
 
 		m_physicsScene->addConstraint(constraint);
@@ -64,7 +64,7 @@ bool EdgeDemo::TestKeepDistanceConstraintDemo::initDemo()
 	return true;
 }
 
-void EdgeDemo::TestKeepDistanceConstraintDemo::releaseDemo()
+void EdgeDemo::TestFixConstraintDemo::releaseDemo()
 {
 	for (const auto& constraint : m_constraints)
 	{
@@ -77,7 +77,7 @@ void EdgeDemo::TestKeepDistanceConstraintDemo::releaseDemo()
 	}
 }
 
-void EdgeDemo::TestKeepDistanceConstraintDemo::updateDemoLogic(float deltaTime)
+void EdgeDemo::TestFixConstraintDemo::updateDemoLogic(float deltaTime)
 {
 	m_debugVisualizationDataController->clear();
 

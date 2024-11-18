@@ -1,8 +1,8 @@
 #include "PhysicsEntityMotion.h"
 
-#include <algorithm>
-
 #include "PhysicsEntity.h"
+
+#include <algorithm>
 
 Edge::PhysicsEntityTransformReference Edge::PhysicsEntityMotion::getTransform() const
 {

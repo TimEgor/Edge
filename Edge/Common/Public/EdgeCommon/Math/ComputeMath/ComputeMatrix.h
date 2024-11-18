@@ -14,22 +14,22 @@ namespace Edge
 #endif
 
 		//Loading
-		Matrix loadMatrix2x2(const FloatMatrix2x2& matrix);
-		Matrix loadMatrix3x3(const FloatMatrix3x3& matrix);
-		Matrix loadMatrix4x4(const FloatMatrix4x4& matrix);
-		Matrix loadMatrix4x4(
+		Matrix matrix2x2Load(const FloatMatrix2x2& matrix);
+		Matrix matrix3x3Load(const FloatMatrix3x3& matrix);
+		Matrix matrix4x4Load(const FloatMatrix4x4& matrix);
+		Matrix matrix4x4Load(
 			float m11, float m12, float m13, float m14,
 			float m21, float m22, float m23, float m24,
 			float m31, float m32, float m33, float m34,
 			float m41, float m42, float m43, float m44);
 
 		//Saving
-		FloatMatrix2x2 saveMatrix2x2(const Matrix& matrix);
-		FloatMatrix3x3 saveMatrix3x3(const Matrix& matrix);
-		FloatMatrix4x4 saveMatrix4x4(const Matrix& matrix);
-		void saveMatrix2x2(const Matrix& matrix, FloatMatrix2x2& result);
-		void saveMatrix3x3(const Matrix& matrix, FloatMatrix3x3& result);
-		void saveMatrix4x4(const Matrix& matrix, FloatMatrix4x4& result);
+		FloatMatrix2x2 matrix2x2Save(const Matrix& matrix);
+		FloatMatrix3x3 matrix3x3Save(const Matrix& matrix);
+		FloatMatrix4x4 matrix4x4Save(const Matrix& matrix);
+		void matrix2x2Save(const Matrix& matrix, FloatMatrix2x2& result);
+		void matrix3x3Save(const Matrix& matrix, FloatMatrix3x3& result);
+		void matrix4x4Save(const Matrix& matrix, FloatMatrix4x4& result);
 
 		//Arithmetic
 		Vector matrixDeterminantV(const Matrix& matrix);

@@ -34,6 +34,7 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPreSolvingJobGra
 		createLambdaJob([dt = deltaTime, this]()
 			{
 				preSolve(dt);
+				warmUp();
 			}, "Pre solve")
 	);
 
@@ -79,6 +80,17 @@ void Edge::PhysicsSceneConstraintManager::preSolve(float deltaTime)
 	}
 }
 
+void Edge::PhysicsSceneConstraintManager::warmUp()
+{
+	const PhysicsSceneActiveConstraintCollection::ConstraintCollection& constraints = m_activeConstraintCollection->getConstraints();
+
+	for (const PhysicsSceneConstraintID constraintID : constraints)
+	{
+		PhysicsConstraintReference constraint = getConstraint(constraintID);
+		constraint->warmUp();
+	}
+}
+
 void Edge::PhysicsSceneConstraintManager::solveVelocity()
 {
 	const PhysicsSceneActiveConstraintCollection::ConstraintCollection& constraints = m_activeConstraintCollection->getConstraints();
@@ -101,6 +113,21 @@ void Edge::PhysicsSceneConstraintManager::solvePosition()
 	}
 }
 
+void Edge::PhysicsSceneConstraintManager::initialSetupIterationCount(PhysicsConstraint& constraint) const
+{
+	const uint32_t velocityIterationCount = constraint.getVelocitySolvingIterationCount();
+	if (velocityIterationCount == 0)
+	{
+		constraint.setVelocitySolvingIterationCount(8);
+	}
+
+	const uint32_t positionIterationCount = constraint.getPositionSolvingIterationCount();
+	if (positionIterationCount == 0)
+	{
+		constraint.setPositionSolvingIterationCount(2);
+	}
+}
+
 Edge::PhysicsSceneConstraintID Edge::PhysicsSceneConstraintManager::addConstraint(const PhysicsConstraintReference& constraint, bool activate)
 {
 	if (!constraint)
@@ -116,6 +143,8 @@ Edge::PhysicsSceneConstraintID Edge::PhysicsSceneConstraintManager::addConstrain
 	}
 
 	const PhysicsSceneConstraintID constraintID = m_constraintCollection->addConstraint(constraint);
+
+	initialSetupIterationCount(constraint.getObjectRef());
 
 	if (activate)
 	{

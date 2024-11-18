@@ -25,6 +25,10 @@ namespace Edge
 		ComputeQuaternion& setupFromRollPitchYaw(float pitch, float yaw, float roll);
 
 		ComputeQuaternion& normalize();
+		ComputeQuaternion& conjugate();
+		ComputeQuaternion& inverse();
+
+		ComputeVector getVector() const;
 
 		float length() const;
 		float lengthSqr() const;
@@ -42,6 +46,8 @@ namespace Edge
 	ComputeQuaternion ComputeQuaternionFromRollPitchYaw(float pitch, float yaw, float roll);
 
 	ComputeQuaternion NormalizeQuaternion(const ComputeQuaternion& quaternion);
+	ComputeQuaternion ConjugateQuaternion(const ComputeQuaternion& quaternion);
+	ComputeQuaternion InverseQuaternion(const ComputeQuaternion& quaternion);
 
 	ComputeVector RotateVector(const ComputeQuaternion& quaternion, const ComputeVector& vector);
 

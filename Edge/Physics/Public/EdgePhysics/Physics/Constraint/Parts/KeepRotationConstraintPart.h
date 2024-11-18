@@ -7,14 +7,14 @@
 
 namespace Edge
 {
-	class PositionConstraintPart
+	class KeepRotationConstraintPart
 	{
 	private:
+		FloatMatrix4x4 m_invIner1 = FloatMatrix4x4Zero;
+		FloatMatrix4x4 m_invIner2 = FloatMatrix4x4Zero;
+
 		FloatMatrix4x4 m_invEffectiveMass = FloatMatrix4x4Identity;
 		FloatVector3 m_totalLambda = FloatVector3Zero;
-
-		FloatVector3 m_r1 = FloatVector3Zero;
-		FloatVector3 m_r2 = FloatVector3Zero;
 
 		PhysicsEntityReference m_entity1;
 		PhysicsEntityReference m_entity2;
@@ -25,12 +25,13 @@ namespace Edge
 		void applyPosition(const FloatVector3& lambda) const;
 
 	public:
-		PositionConstraintPart(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2)
+		KeepRotationConstraintPart(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2)
 			: m_entity1(entity1), m_entity2(entity2) {}
 
-		void preSolve(const FloatVector3& anchor1, const FloatVector3& anchor2);
+		void preSolve();
+		void warmUp();
 		void solveVelocity();
-		void solvePosition() const;
+		void solvePosition(const FloatQuaternion& invInitialDeltaOrientation);
 
 		bool isActive() const;
 	};

@@ -4,26 +4,26 @@
 #include "EdgeCommon/Math/ComputeMath/ComputeMatrix.h"
 
 #pragma region Loading
-Edge::ComputeMath::Matrix Edge::ComputeMath::loadMatrix2x2(const FloatMatrix2x2& matrix)
+Edge::ComputeMath::Matrix Edge::ComputeMath::matrix2x2Load(const FloatMatrix2x2& matrix)
 {
-	return loadMatrix4x4(
+	return matrix4x4Load(
 		matrix.m_m11, matrix.m_m12, 0.0f, 0.0f,
 		matrix.m_m21, matrix.m_m22, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-Edge::ComputeMath::Matrix Edge::ComputeMath::loadMatrix3x3(const FloatMatrix3x3& matrix)
+Edge::ComputeMath::Matrix Edge::ComputeMath::matrix3x3Load(const FloatMatrix3x3& matrix)
 {
 	return XMLoadFloat3x3(reinterpret_cast<const DirectX::XMFLOAT3X3*>(&matrix));
 }
 
-Edge::ComputeMath::Matrix Edge::ComputeMath::loadMatrix4x4(const FloatMatrix4x4& matrix)
+Edge::ComputeMath::Matrix Edge::ComputeMath::matrix4x4Load(const FloatMatrix4x4& matrix)
 {
 	return XMLoadFloat4x4(reinterpret_cast<const DirectX::XMFLOAT4X4*>(&matrix));
 }
 
-Edge::ComputeMath::Matrix Edge::ComputeMath::loadMatrix4x4(
+Edge::ComputeMath::Matrix Edge::ComputeMath::matrix4x4Load(
 	float m11, float m12, float m13, float m14,
 	float m21, float m22, float m23, float m24,
 	float m31, float m32, float m33, float m34,
@@ -39,31 +39,31 @@ Edge::ComputeMath::Matrix Edge::ComputeMath::loadMatrix4x4(
 #pragma endregion
 
 #pragma region Saving
-Edge::FloatMatrix2x2 Edge::ComputeMath::saveMatrix2x2(const Matrix& matrix)
+Edge::FloatMatrix2x2 Edge::ComputeMath::matrix2x2Save(const Matrix& matrix)
 {
 	FloatMatrix2x2 result;
-	saveMatrix2x2(matrix, result);
+	matrix2x2Save(matrix, result);
 
 	return result;
 }
 
-Edge::FloatMatrix3x3 Edge::ComputeMath::saveMatrix3x3(const Matrix& matrix)
+Edge::FloatMatrix3x3 Edge::ComputeMath::matrix3x3Save(const Matrix& matrix)
 {
 	FloatMatrix3x3 result;
-	saveMatrix3x3(matrix, result);
+	matrix3x3Save(matrix, result);
 
 	return result;
 }
 
-Edge::FloatMatrix4x4 Edge::ComputeMath::saveMatrix4x4(const Matrix& matrix)
+Edge::FloatMatrix4x4 Edge::ComputeMath::matrix4x4Save(const Matrix& matrix)
 {
 	FloatMatrix4x4 result;
-	saveMatrix4x4(matrix, result);
+	matrix4x4Save(matrix, result);
 
 	return result;
 }
 
-void Edge::ComputeMath::saveMatrix2x2(const Matrix& matrix, FloatMatrix2x2& result)
+void Edge::ComputeMath::matrix2x2Save(const Matrix& matrix, FloatMatrix2x2& result)
 {
 	//TODO: need to rework this method
 
@@ -73,12 +73,12 @@ void Edge::ComputeMath::saveMatrix2x2(const Matrix& matrix, FloatMatrix2x2& resu
 	result = FloatMatrix2x2(tmp.m_m11, tmp.m_m12, tmp.m_m21, tmp.m_m22);
 }
 
-void Edge::ComputeMath::saveMatrix3x3(const Matrix& matrix, FloatMatrix3x3& result)
+void Edge::ComputeMath::matrix3x3Save(const Matrix& matrix, FloatMatrix3x3& result)
 {
 	XMStoreFloat3x3(reinterpret_cast<DirectX::XMFLOAT3X3*>(&result), matrix);
 }
 
-void Edge::ComputeMath::saveMatrix4x4(const Matrix& matrix, FloatMatrix4x4& result)
+void Edge::ComputeMath::matrix4x4Save(const Matrix& matrix, FloatMatrix4x4& result)
 {
 	XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&result), matrix);
 }

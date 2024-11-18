@@ -43,6 +43,23 @@ Edge::ComputeQuaternion& Edge::ComputeQuaternion::normalize()
 	return *this;
 }
 
+Edge::ComputeQuaternion& Edge::ComputeQuaternion::conjugate()
+{
+	m_quaternion = ComputeMath::quaternionConjugate(m_quaternion);
+	return *this;
+}
+
+Edge::ComputeQuaternion& Edge::ComputeQuaternion::inverse()
+{
+	m_quaternion = ComputeMath::quaternionInverse(m_quaternion);
+	return *this;
+}
+
+Edge::ComputeVector Edge::ComputeQuaternion::getVector() const
+{
+	return ComputeMath::quaternionGetVector(m_quaternion);
+}
+
 float Edge::ComputeQuaternion::length() const
 {
 	return ComputeMath::quaternionLength(m_quaternion);
@@ -55,17 +72,17 @@ float Edge::ComputeQuaternion::lengthSqr() const
 
 void Edge::ComputeQuaternion::loadFromFloatQuaternion(const FloatQuaternion& quaternion)
 {
-	m_quaternion = ComputeMath::loadQuaternion(quaternion);
+	m_quaternion = ComputeMath::quaternionLoad(quaternion);
 }
 
 void Edge::ComputeQuaternion::saveToFloatQuaternion(FloatQuaternion& quaternion) const
 {
-	ComputeMath::saveQuaternion(m_quaternion, quaternion);
+	ComputeMath::quaternionSave(m_quaternion, quaternion);
 }
 
 Edge::FloatQuaternion Edge::ComputeQuaternion::getFloatQuaternion() const
 {
-	return ComputeMath::saveQuaternion(m_quaternion);
+	return ComputeMath::quaternionSave(m_quaternion);
 }
 
 Edge::ComputeQuaternion Edge::ComputeQuaternionFromRotationAxis(const ComputeVector& axis, float angle)
@@ -91,6 +108,16 @@ Edge::ComputeQuaternion Edge::ComputeQuaternionFromRollPitchYaw(float pitch, flo
 Edge::ComputeQuaternion Edge::NormalizeQuaternion(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::quaternionNormalize(quaternion.m_quaternion);
+}
+
+Edge::ComputeQuaternion Edge::ConjugateQuaternion(const ComputeQuaternion& quaternion)
+{
+	return ComputeMath::quaternionConjugate(quaternion.m_quaternion);
+}
+
+Edge::ComputeQuaternion Edge::InverseQuaternion(const ComputeQuaternion& quaternion)
+{
+	return ComputeMath::quaternionInverse(quaternion.m_quaternion);
 }
 
 Edge::ComputeVector Edge::RotateVector(const ComputeQuaternion& quaternion, const ComputeVector& vector)

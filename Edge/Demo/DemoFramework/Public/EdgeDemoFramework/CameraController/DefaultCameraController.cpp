@@ -30,12 +30,12 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 	const Edge::InputDeviceKeyData& keyboardKeyData = keyboardKeyCache->m_currentKeyData;
 	const Edge::InputDeviceKeyData& mouseKeyData = mouseKeyCache->m_currentKeyData;
 
-	Edge::ComputeMath::Vector cameraEntityPosition = Edge::ComputeMath::loadVector3(m_cameraTransform.getOrigin());
-	Edge::ComputeMath::Vector rightDir = Edge::ComputeMath::loadVector3(m_cameraTransform.getAxisX());
-	Edge::ComputeMath::Vector upDir = Edge::ComputeMath::loadVector3(m_cameraTransform.getAxisY());
-	Edge::ComputeMath::Vector forwardDir = Edge::ComputeMath::loadVector3(m_cameraTransform.getAxisZ());
+	Edge::ComputeMath::Vector cameraEntityPosition = Edge::ComputeMath::vector3Load(m_cameraTransform.getOrigin());
+	Edge::ComputeMath::Vector rightDir = Edge::ComputeMath::vector3Load(m_cameraTransform.getAxisX());
+	Edge::ComputeMath::Vector upDir = Edge::ComputeMath::vector3Load(m_cameraTransform.getAxisY());
+	Edge::ComputeMath::Vector forwardDir = Edge::ComputeMath::vector3Load(m_cameraTransform.getAxisZ());
 
-	Edge::ComputeMath::Matrix cameraTransform = Edge::ComputeMath::loadMatrix4x4(Edge::FloatMatrix4x4Identity);
+	Edge::ComputeMath::Matrix cameraTransform = Edge::ComputeMath::matrix4x4Load(Edge::FloatMatrix4x4Identity);
 
 	float pitchAngle = asin(-m_cameraTransform.m_matrix.m_m32);
 	float yawAngle = 0.0f;
@@ -116,5 +116,5 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 
 	cameraTransform = Edge::ComputeMath::matrixMultiply(cameraTransform, Edge::ComputeMath::matrixRotationRollPitchYaw(pitchAngle, yawAngle, 0.0f));
 	cameraTransform = Edge::ComputeMath::matrixMultiply(cameraTransform, Edge::ComputeMath::matrixTranslation(cameraEntityPosition));
-	m_cameraTransform.m_matrix = Edge::ComputeMath::saveMatrix4x4(cameraTransform);
+	m_cameraTransform.m_matrix = Edge::ComputeMath::matrix4x4Save(cameraTransform);
 }

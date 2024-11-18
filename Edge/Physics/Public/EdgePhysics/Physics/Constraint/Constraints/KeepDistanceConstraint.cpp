@@ -13,6 +13,14 @@ void Edge::KeepDistanceConstraint::preSolve(float deltaTime)
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
 }
 
+void Edge::KeepDistanceConstraint::warmUp()
+{
+	if (m_positionPart.isActive())
+	{
+		m_positionPart.warmUp();
+	}
+}
+
 void Edge::KeepDistanceConstraint::solveVelocity()
 {
 	if (m_positionPart.isActive())

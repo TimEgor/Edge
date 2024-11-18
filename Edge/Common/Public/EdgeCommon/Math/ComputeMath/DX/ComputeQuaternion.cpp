@@ -3,24 +3,24 @@
 #ifdef EDGE_MATH_DX
 #include "EdgeCommon/Math/ComputeMath/ComputeQuaternion.h"
 
-Edge::ComputeMath::Quaternion Edge::ComputeMath::loadQuaternion(const FloatQuaternion& quat)
+Edge::ComputeMath::Quaternion Edge::ComputeMath::quaternionLoad(const FloatQuaternion& quat)
 {
-	return loadVector4(quat.m_elements);
+	return vector4Load(quat.m_elements);
 }
 
-Edge::ComputeMath::Quaternion Edge::ComputeMath::loadQuaternion(float x, float y, float z, float w)
+Edge::ComputeMath::Quaternion Edge::ComputeMath::quaternionLoad(float x, float y, float z, float w)
 {
-	return loadVector4(x, y, z, w);
+	return vector4Load(x, y, z, w);
 }
 
-Edge::FloatQuaternion Edge::ComputeMath::saveQuaternion(const Quaternion& quat)
+Edge::FloatQuaternion Edge::ComputeMath::quaternionSave(const Quaternion& quat)
 {
-	return saveVector4(quat);
+	return vector4Save(quat);
 }
 
-void Edge::ComputeMath::saveQuaternion(const Quaternion& quat, FloatQuaternion& result)
+void Edge::ComputeMath::quaternionSave(const Quaternion& quat, FloatQuaternion& result)
 {
-	saveVector4(quat, result.m_elements);
+	vector4Save(quat, result.m_elements);
 }
 
 Edge::ComputeMath::Quaternion Edge::ComputeMath::quaternionConjugate(const Quaternion& quat)
@@ -116,5 +116,10 @@ float Edge::ComputeMath::quaternionLength(const Quaternion& quat)
 float Edge::ComputeMath::quaternionLengthSqr(const Quaternion& quat)
 {
 	return vectorGetX(DirectX::XMQuaternionLengthSq(quat));
+}
+
+Edge::ComputeMath::Vector Edge::ComputeMath::quaternionGetVector(const Quaternion& quat)
+{
+	return vector3Load(vector3Save(quat));
 }
 #endif

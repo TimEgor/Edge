@@ -21,8 +21,11 @@ namespace Edge
 		PhysicsSceneWeakReference m_scene;
 
 		void preSolve(float deltaTime);
+		void warmUp();
 		void solveVelocity();
 		void solvePosition();
+
+		void initialSetupIterationCount(PhysicsConstraint& constraint) const;
 
 	public:
 		PhysicsSceneConstraintManager() = default;

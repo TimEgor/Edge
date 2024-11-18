@@ -55,47 +55,47 @@ void Edge::ComputeMatrix::setElement(uint32_t i, uint32_t j, float val)
 
 void Edge::ComputeMatrix::loadFromMatrix2x2(const FloatMatrix2x2& matrix)
 {
-	m_matrix = ComputeMath::loadMatrix2x2(matrix);
+	m_matrix = ComputeMath::matrix2x2Load(matrix);
 }
 
 void Edge::ComputeMatrix::loadFromMatrix3x3(const FloatMatrix3x3& matrix)
 {
-	m_matrix = ComputeMath::loadMatrix3x3(matrix);
+	m_matrix = ComputeMath::matrix3x3Load(matrix);
 }
 
 void Edge::ComputeMatrix::loadFromMatrix4x4(const FloatMatrix4x4& matrix)
 {
-	m_matrix = ComputeMath::loadMatrix4x4(matrix);
+	m_matrix = ComputeMath::matrix4x4Load(matrix);
 }
 
 void Edge::ComputeMatrix::saveToMatrix2x2(FloatMatrix2x2& matrix) const
 {
-	ComputeMath::saveMatrix2x2(m_matrix, matrix);
+	ComputeMath::matrix2x2Save(m_matrix, matrix);
 }
 
 void Edge::ComputeMatrix::saveToMatrix3x3(FloatMatrix3x3& matrix) const
 {
-	ComputeMath::saveMatrix3x3(m_matrix, matrix);
+	ComputeMath::matrix3x3Save(m_matrix, matrix);
 }
 
 void Edge::ComputeMatrix::saveToMatrix4x4(FloatMatrix4x4& matrix) const
 {
-	ComputeMath::saveMatrix4x4(m_matrix, matrix);
+	ComputeMath::matrix4x4Save(m_matrix, matrix);
 }
 
 Edge::FloatMatrix2x2 Edge::ComputeMatrix::getToMatrix2x2() const
 {
-	return ComputeMath::saveMatrix2x2(m_matrix);;
+	return ComputeMath::matrix2x2Save(m_matrix);;
 }
 
 Edge::FloatMatrix3x3 Edge::ComputeMatrix::getToMatrix3x3() const
 {
-	return ComputeMath::saveMatrix3x3(m_matrix);
+	return ComputeMath::matrix3x3Save(m_matrix);
 }
 
 Edge::FloatMatrix4x4 Edge::ComputeMatrix::getToMatrix4x4() const
 {
-	return ComputeMath::saveMatrix4x4(m_matrix);
+	return ComputeMath::matrix4x4Save(m_matrix);
 }
 
 Edge::FloatMatrix3x3 Edge::ComputeSkewSymmetricMatrix3x3ForCrossProduct(const FloatVector3& vector)

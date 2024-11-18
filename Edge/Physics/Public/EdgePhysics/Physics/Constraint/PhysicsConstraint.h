@@ -32,12 +32,21 @@ namespace Edge
 	private:
 		PhysicsConstraintSceneContextReference m_sceneContext;
 
+		uint32_t m_velocitySolvingIterationCount = 0;
+		uint32_t m_positionSolvingIterationCount = 0;
+
 	public:
 		PhysicsConstraint() = default;
 
 		virtual void preSolve(float deltaTime) = 0;
+		virtual void warmUp() = 0;
 		virtual void solveVelocity() = 0;
 		virtual void solvePosition() = 0;
+
+		uint32_t getVelocitySolvingIterationCount() const { return m_velocitySolvingIterationCount; }
+		void setVelocitySolvingIterationCount(uint32_t iterationCount) { m_velocitySolvingIterationCount = iterationCount; }
+		uint32_t getPositionSolvingIterationCount() const { return m_positionSolvingIterationCount; }
+		void setPositionSolvingIterationCount(uint32_t iterationCount) { m_positionSolvingIterationCount = iterationCount; }
 
 		PhysicsConstraintSceneContextReference getSceneContext() const { return m_sceneContext; }
 		void setSceneContext(const PhysicsConstraintSceneContextReference& context);

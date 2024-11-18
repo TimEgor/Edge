@@ -8,12 +8,12 @@ namespace Edge
 	namespace ComputeMath
 	{
 		//Loading
-		Quaternion loadQuaternion(const FloatQuaternion& quat);
-		Quaternion loadQuaternion(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f);
+		Quaternion quaternionLoad(const FloatQuaternion& quat);
+		Quaternion quaternionLoad(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f);
 
 		//Saving
-		FloatQuaternion saveQuaternion(const Quaternion& quat);
-		void saveQuaternion(const Quaternion& quat, FloatQuaternion& result);
+		FloatQuaternion quaternionSave(const Quaternion& quat);
+		void quaternionSave(const Quaternion& quat, FloatQuaternion& result);
 
 		Quaternion quaternionConjugate(const Quaternion& quat);
 		Quaternion quaternionInverse(const Quaternion& quat);
@@ -42,5 +42,7 @@ namespace Edge
 
 		float quaternionLength(const Quaternion& quat);
 		float quaternionLengthSqr(const Quaternion& quat);
+
+		Vector quaternionGetVector(const Quaternion& quat);
 	}
 }

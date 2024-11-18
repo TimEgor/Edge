@@ -19,18 +19,18 @@ namespace Edge
 #endif
 
 		//Loading
-		Vector loadVector2(const FloatVector2& vec);
-		Vector loadVector3(const FloatVector3& vec);
-		Vector loadVector4(const FloatVector4& vec);
-		Vector loadVector4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f);
+		Vector vector2Load(const FloatVector2& vec);
+		Vector vector3Load(const FloatVector3& vec);
+		Vector vector4Load(const FloatVector4& vec);
+		Vector vector4Load(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f);
 
 		//Saving
-		FloatVector2 saveVector2(const Vector& vec);
-		FloatVector3 saveVector3(const Vector& vec);
-		FloatVector4 saveVector4(const Vector& vec);
-		void saveVector2(const Vector& vec, FloatVector2& result);
-		void saveVector3(const Vector& vec, FloatVector3& result);
-		void saveVector4(const Vector& vec, FloatVector4& result);
+		FloatVector2 vector2Save(const Vector& vec);
+		FloatVector3 vector3Save(const Vector& vec);
+		FloatVector4 vector4Save(const Vector& vec);
+		void vector2Save(const Vector& vec, FloatVector2& result);
+		void vector3Save(const Vector& vec, FloatVector3& result);
+		void vector4Save(const Vector& vec, FloatVector4& result);
 
 		//Arithmetic
 		Vector vectorAbs(const Vector& vec);

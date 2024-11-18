@@ -6,7 +6,7 @@
 
 namespace EdgeDemo
 {
-	class TestKeepDistanceConstraintDemo final : public PreInitedDemo
+	class TestFixConstraintDemo final : public PreInitedDemo
 	{
 	private:
 		std::vector<Edge::PhysicsBodyReference> m_bodies;
@@ -15,7 +15,7 @@ namespace EdgeDemo
 		void drawSphere(const Edge::PhysicsBodyReference& body) const;
 
 	public:
-		TestKeepDistanceConstraintDemo() = default;
+		TestFixConstraintDemo() = default;
 
 		virtual bool initDemo() override;
 		virtual void releaseDemo() override;

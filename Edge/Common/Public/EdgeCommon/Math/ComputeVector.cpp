@@ -162,47 +162,47 @@ float Edge::ComputeVector::lengthSqr() const
 
 void Edge::ComputeVector::loadFromFloatVector2(const FloatVector2& vector)
 {
-	m_vector = ComputeMath::loadVector2(vector);
+	m_vector = ComputeMath::vector2Load(vector);
 }
 
 void Edge::ComputeVector::loadFromFloatVector3(const FloatVector3& vector)
 {
-	m_vector = ComputeMath::loadVector3(vector);
+	m_vector = ComputeMath::vector3Load(vector);
 }
 
 void Edge::ComputeVector::loadFromFloatVector4(const FloatVector4& vector)
 {
-	m_vector = ComputeMath::loadVector4(vector);
+	m_vector = ComputeMath::vector4Load(vector);
 }
 
 void Edge::ComputeVector::saveToFloatVector2(FloatVector2& vector) const
 {
-	ComputeMath::saveVector2(m_vector, vector);
+	ComputeMath::vector2Save(m_vector, vector);
 }
 
 void Edge::ComputeVector::saveToFloatVector3(FloatVector3& vector) const
 {
-	ComputeMath::saveVector3(m_vector, vector);
+	ComputeMath::vector3Save(m_vector, vector);
 }
 
 void Edge::ComputeVector::saveToFloatVector4(FloatVector4& vector) const
 {
-	ComputeMath::saveVector4(m_vector, vector);
+	ComputeMath::vector4Save(m_vector, vector);
 }
 
 Edge::FloatVector2 Edge::ComputeVector::getFloatVector2() const
 {
-	return ComputeMath::saveVector2(m_vector);
+	return ComputeMath::vector2Save(m_vector);
 }
 
 Edge::FloatVector3 Edge::ComputeVector::getFloatVector3() const
 {
-	return ComputeMath::saveVector3(m_vector);
+	return ComputeMath::vector3Save(m_vector);
 }
 
 Edge::FloatVector4 Edge::ComputeVector::getFloatVector4() const
 {
-	return ComputeMath::saveVector4(m_vector);
+	return ComputeMath::vector4Save(m_vector);
 }
 
 Edge::ComputeVector Edge::ComputeVectorFromPoint(const FloatVector2& position)
