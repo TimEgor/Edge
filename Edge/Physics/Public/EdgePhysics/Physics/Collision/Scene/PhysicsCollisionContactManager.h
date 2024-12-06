@@ -38,7 +38,7 @@ namespace Edge
 		using ContactCollection = std::unordered_map<PhysicsCollisionContactID, PhysicsCollisionContact, PhysicsCollisionContactID::Hasher>;
 		using ContactPartnerCollection = std::unordered_map<PhysicsSceneCollisionID, std::vector<PhysicsSceneCollisionID>>;
 
-		using ContactPointCollection = std::vector<PhysicsCollisionContactPoint>;
+		using ContactPointCollection = std::vector<PhysicsInstancedCollisionContactPoint>;
 
 		ContactCollection m_contacts;
 		ContactPartnerCollection m_contactPartners;
@@ -52,6 +52,8 @@ namespace Edge
 		void removeCollisionPartner(PhysicsSceneCollisionID baseCollision, PhysicsSceneCollisionID partnerCollision);
 		ContactCollection::iterator removeContactFromCollections(ContactCollection::iterator removedIter, PhysicsCollisionContactID contactID);
 
+		PhysicsCollisionContact* getContactInternal(PhysicsCollisionContactID contactID);
+
 	public:
 		PhysicsCollisionContactManager() = default;
 
@@ -63,7 +65,7 @@ namespace Edge
 
 		const PhysicsCollisionContact* getContact(PhysicsCollisionContactID contactID) const;
 		const PhysicsCollisionContact* getContact(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2) const;
-		const PhysicsCollisionContactPoint* getContactPoint(PhysicsCollisionContactPointID pointID) const;
+		const PhysicsInstancedCollisionContactPoint* getContactPoint(PhysicsCollisionContactPointID pointID) const;
 
 		void markContactsForChecking(const PhysicsEntityCollisionReference& collision);
 		void markContactsForChecking(PhysicsSceneCollisionID changedCollision);

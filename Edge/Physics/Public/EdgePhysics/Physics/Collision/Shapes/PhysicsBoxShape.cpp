@@ -38,32 +38,65 @@ Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const FloatVector3
 	return points[maxDistancePointIndex];
 }
 
-Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestBoundSurfacePoint(const FloatVector3& direction) const
+void Edge::PhysicsBoxShape::getSupportingFace(const FloatVector3& direction, SupportingFaceVertexCollection& vertices) const
 {
-	float maxDistance = -EDGE_FLT_MAX;
+	vertices.resize(4);
 
+	const uint32_t axis = AbsVector(direction).getHighestComponentIndex();
 	const FloatVector3 halfSize = (m_size * 0.5f).getFloatVector3();
-	const FloatVector3 points[] = {
-		{-halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
-		{halfSize.m_x, -halfSize.m_y, -halfSize.m_z},
-		{-halfSize.m_x, halfSize.m_y, -halfSize.m_z},
-		{halfSize.m_x, halfSize.m_y, -halfSize.m_z},
-		{-halfSize.m_x, -halfSize.m_y, halfSize.m_z},
-		{halfSize.m_x, -halfSize.m_y, halfSize.m_z},
-		{-halfSize.m_x, halfSize.m_y, halfSize.m_z},
-		{halfSize.m_x, halfSize.m_y, halfSize.m_z},
-	};
 
-	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
+	if (direction[axis] < 0.0f)
 	{
-		const float pointDistance = DotVector3(direction, points[pointIndex]);
-		if (maxDistance < pointDistance)
+		switch (axis)
 		{
-			maxDistance = pointDistance;
+		case 0:
+			vertices[0] = FloatVector3(halfSize.m_x, -halfSize.m_y, -halfSize.m_z);
+			vertices[1] = FloatVector3(halfSize.m_x, halfSize.m_y, -halfSize.m_z);
+			vertices[2] = FloatVector3(halfSize.m_x, halfSize.m_y, halfSize.m_z);
+			vertices[3] = FloatVector3(halfSize.m_x, -halfSize.m_y, halfSize.m_z);
+			break;
+
+		case 1:
+			vertices[0] = FloatVector3(-halfSize.m_x, halfSize.m_y, -halfSize.m_z);
+			vertices[1] = FloatVector3(-halfSize.m_x, halfSize.m_y, halfSize.m_z);
+			vertices[2] = FloatVector3(halfSize.m_x, halfSize.m_y, halfSize.m_z);
+			vertices[3] = FloatVector3(halfSize.m_x, halfSize.m_y, -halfSize.m_z);
+			break;
+
+		case 2:
+			vertices[0] = FloatVector3(-halfSize.m_x, -halfSize.m_y, halfSize.m_z);
+			vertices[1] = FloatVector3(halfSize.m_x, -halfSize.m_y, halfSize.m_z);
+			vertices[2] = FloatVector3(halfSize.m_x, halfSize.m_y, halfSize.m_z);
+			vertices[3] = FloatVector3(-halfSize.m_x, halfSize.m_y, halfSize.m_z);
+			break;
 		}
 	}
+	else
+	{
+		switch (axis)
+		{
+		case 0:
+			vertices[0] = FloatVector3(-halfSize.m_x, -halfSize.m_y, -halfSize.m_z);
+			vertices[1] = FloatVector3(-halfSize.m_x, -halfSize.m_y, halfSize.m_z);
+			vertices[2] = FloatVector3(-halfSize.m_x, halfSize.m_y, halfSize.m_z);
+			vertices[3] = FloatVector3(-halfSize.m_x, halfSize.m_y, -halfSize.m_z);
+			break;
 
-	return (direction * maxDistance).getFloatVector3();
+		case 1:
+			vertices[0] = FloatVector3(-halfSize.m_x, -halfSize.m_y, -halfSize.m_z);
+			vertices[1] = FloatVector3(halfSize.m_x, -halfSize.m_y, -halfSize.m_z);
+			vertices[2] = FloatVector3(halfSize.m_x, -halfSize.m_y, halfSize.m_z);
+			vertices[3] = FloatVector3(-halfSize.m_x, -halfSize.m_y, halfSize.m_z);
+			break;
+
+		case 2:
+			vertices[0] = FloatVector3(-halfSize.m_x, -halfSize.m_y, -halfSize.m_z);
+			vertices[1] = FloatVector3(-halfSize.m_x, halfSize.m_y, -halfSize.m_z);
+			vertices[2] = FloatVector3(halfSize.m_x, halfSize.m_y, -halfSize.m_z);
+			vertices[3] = FloatVector3(halfSize.m_x, -halfSize.m_y, -halfSize.m_z);
+			break;
+		}
+	}
 }
 
 bool Edge::PhysicsBoxShape::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const

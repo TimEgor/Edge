@@ -9,6 +9,6 @@ namespace Edge
 	public:
 		SphereVsSphereCollisionDispatcher() = default;
 
-		virtual void dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID, ContactDispatchingResultCollection& results) override;
+		virtual void dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results) override;
 	};
 }

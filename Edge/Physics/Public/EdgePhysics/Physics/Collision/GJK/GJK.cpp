@@ -9,8 +9,8 @@ Edge::VoronoiSimplex::Point Edge::MinkowskiSumBaseAlgorithmUtils::Support(
 {
 	VoronoiSimplex::Point result;
 
-	const ComputeVector point1 = collision1.getFurthestPoint(direction);
-	const ComputeVector point2 = collision2.getFurthestPoint(NegateVector(direction).getFloatVector3());
+	const ComputeVector point1 = collision1.getFurthestKeyPoint(direction);
+	const ComputeVector point2 = collision2.getFurthestKeyPoint(NegateVector(direction).getFloatVector3());
 
 	const ComputeVector delta = point1 - point2;
 

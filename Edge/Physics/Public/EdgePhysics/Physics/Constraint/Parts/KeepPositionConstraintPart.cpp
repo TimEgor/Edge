@@ -61,7 +61,7 @@ void Edge::KeepPositionConstraintPart::applyPosition(const FloatVector3& lambda)
 		transform1->setPosition(newPosition);
 
 		const ComputeVector angularVelocityDelta = m_invInerR1 * lambda;
-		const float angularVelocityDeltaLength = angularVelocityDelta.length3();
+		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
 		if (angularVelocityDeltaLength > EDGE_EPSILON)
 		{
 			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transform1->getRotation()).normalize();
@@ -75,7 +75,7 @@ void Edge::KeepPositionConstraintPart::applyPosition(const FloatVector3& lambda)
 		transform2->setPosition(newPosition);
 
 		const ComputeVector angularVelocityDelta = m_invInerR2 * lambda;
-		const float angularVelocityDeltaLength = angularVelocityDelta.length3();
+		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
 		if (angularVelocityDeltaLength > EDGE_EPSILON)
 		{
 			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transform2->getRotation()).normalize();

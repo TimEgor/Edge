@@ -29,6 +29,8 @@ namespace Edge
 		ComputeVector& normalize();
 		ComputeVector& reciprocal();
 
+		ComputeVector& abs();
+
 		float getX() const;
 		float getY() const;
 		float getZ() const;
@@ -41,15 +43,18 @@ namespace Edge
 
 		float getElement(uint32_t index) const;
 
-		float length2() const;
-		float length3() const;
-		float length4() const;
-		float length2Sqr() const;
-		float length3Sqr() const;
-		float length4Sqr() const;
+		uint32_t getLowestComponentIndex() const;
+		uint32_t getHighestComponentIndex() const;
 
-		float length() const;
-		float lengthSqr() const;
+		float getLength2() const;
+		float getLength3() const;
+		float getLength4() const;
+		float getLength2Sqr() const;
+		float getLength3Sqr() const;
+		float getLength4Sqr() const;
+
+		float getLength() const;
+		float getLengthSqr() const;
 		
 		void loadFromFloatVector2(const FloatVector2& vector);
 		void loadFromFloatVector3(const FloatVector3& vector);
@@ -71,10 +76,15 @@ namespace Edge
 	ComputeVector NormalizeVector(const ComputeVector& vector);
 	ComputeVector ReciprocalVector(const ComputeVector& vector);
 
+	ComputeVector AbsVector(const ComputeVector& vector);
+
 	ComputeVector MultiplyVector(const ComputeVector& vector1, const ComputeVector& vector2);
 
 	ComputeVector VectorMin(const ComputeVector& vector1, const ComputeVector& vector2);
 	ComputeVector VectorMax(const ComputeVector& vector1, const ComputeVector& vector2);
+
+	uint32_t VectorLowestComponentIndex(const ComputeVector& vector);
+	uint32_t VectorHighestComponentIndex(const ComputeVector& vector);
 
 	float VectorLength2(const ComputeVector& vector);
 	float VectorLength3(const ComputeVector& vector);

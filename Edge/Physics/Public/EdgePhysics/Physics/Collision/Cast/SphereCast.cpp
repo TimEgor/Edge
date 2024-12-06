@@ -6,7 +6,7 @@ bool Edge::CastSphere::rayCast(const FloatVector3& sphereCenter, float sphereRad
 {
 	const ComputeVector baseDelta = origin - sphereCenter;
 	const ComputeVector ray = end - origin;
-	const float rayLength = ray.length3();
+	const float rayLength = ray.getLength3();
 	const ComputeVector rayDirection = ray / rayLength;
 
 	const float b = DotVector3(baseDelta, NormalizeVector(rayDirection));
@@ -40,7 +40,7 @@ bool Edge::CastSphere::rayCast(const FloatVector3& sphereCenter, float sphereRad
 	hitPos += delta;
 
 	hitPos.saveToFloatVector3(result.m_hitPosition);
-	result.m_distance = delta.length3();
+	result.m_distance = delta.getLength3();
 
 	return true;
 }

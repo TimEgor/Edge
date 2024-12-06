@@ -21,7 +21,7 @@ void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 	ComputeVector angularVelocity(m_motion->getAngularVelocity());
 	angularVelocity *= deltaTime;
 
-	const float rotationSpeed = angularVelocity.length3Sqr();
+	const float rotationSpeed = angularVelocity.getLength3Sqr();
 
 	if (rotationSpeed > EDGE_EPSILON_SQR)
 	{

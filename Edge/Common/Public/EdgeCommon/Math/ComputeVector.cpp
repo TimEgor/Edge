@@ -68,6 +68,12 @@ Edge::ComputeVector& Edge::ComputeVector::reciprocal()
 	return *this;
 }
 
+Edge::ComputeVector& Edge::ComputeVector::abs()
+{
+	m_vector = ComputeMath::vectorAbs(m_vector);
+	return *this;
+}
+
 float Edge::ComputeVector::getX() const
 {
 	return ComputeMath::vectorGetX(m_vector);
@@ -120,44 +126,58 @@ float Edge::ComputeVector::getElement(uint32_t index) const
 	}
 }
 
-float Edge::ComputeVector::length2() const
+uint32_t Edge::ComputeVector::getLowestComponentIndex() const
+{
+	return getX() < getY() ?
+		getX() < getZ() ? 0 : 2 :
+		getY() < getZ() ? 1 : 2;
+}
+
+uint32_t Edge::ComputeVector::getHighestComponentIndex() const
+{
+	return getX() > getY() ?
+		getX() > getZ() ? 0 : 2 :
+		getY() > getZ() ? 1 : 2;
+}
+
+float Edge::ComputeVector::getLength2() const
 {
 	return ComputeMath::vector2Length(m_vector);
 }
 
-float Edge::ComputeVector::length3() const
+float Edge::ComputeVector::getLength3() const
 {
 	return ComputeMath::vector3Length(m_vector);
 }
 
-float Edge::ComputeVector::length4() const
+float Edge::ComputeVector::getLength4() const
 {
 	return ComputeMath::vector4Length(m_vector);
 }
 
-float Edge::ComputeVector::length2Sqr() const
+float Edge::ComputeVector::getLength2Sqr() const
 {
 	return ComputeMath::vector2LengthSqr(m_vector);
 }
 
-float Edge::ComputeVector::length3Sqr() const
+float Edge::ComputeVector::getLength3Sqr() const
 {
 	return ComputeMath::vector3LengthSqr(m_vector);
 }
 
-float Edge::ComputeVector::length4Sqr() const
+float Edge::ComputeVector::getLength4Sqr() const
 {
 	return ComputeMath::vector4LengthSqr(m_vector);
 }
 
-float Edge::ComputeVector::length() const
+float Edge::ComputeVector::getLength() const
 {
-	return length4();
+	return getLength4();
 }
 
-float Edge::ComputeVector::lengthSqr() const
+float Edge::ComputeVector::getLengthSqr() const
 {
-	return length4Sqr();
+	return getLength4Sqr();
 }
 
 void Edge::ComputeVector::loadFromFloatVector2(const FloatVector2& vector)
@@ -230,6 +250,11 @@ Edge::ComputeVector Edge::ReciprocalVector(const ComputeVector& vector)
 	return ComputeMath::vectorReciprocal(vector.m_vector);
 }
 
+Edge::ComputeVector Edge::AbsVector(const ComputeVector& vector)
+{
+	return ComputeMath::vectorAbs(vector.m_vector);
+}
+
 Edge::ComputeVector Edge::MultiplyVector(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vectorMultiply(vector1.m_vector, vector2.m_vector);
@@ -243,6 +268,16 @@ Edge::ComputeVector Edge::VectorMin(const ComputeVector& vector1, const ComputeV
 Edge::ComputeVector Edge::VectorMax(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vectorMax(vector1.m_vector, vector2.m_vector);
+}
+
+uint32_t Edge::VectorLowestComponentIndex(const ComputeVector& vector)
+{
+	return vector.getLowestComponentIndex();
+}
+
+uint32_t Edge::VectorHighestComponentIndex(const ComputeVector& vector)
+{
+	return vector.getHighestComponentIndex();
 }
 
 float Edge::VectorLength2(const ComputeVector& vector)

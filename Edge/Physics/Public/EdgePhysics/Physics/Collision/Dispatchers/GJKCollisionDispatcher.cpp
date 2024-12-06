@@ -1,10 +1,11 @@
 #include "GJKCollisionDispatcher.h"
 
 #include "EdgePhysics/Physics/Collision/GJK/GJK.h"
+#include "EdgePhysics/Physics/Collision/Manifold/PhysicsManifoldContactGenerator.h"
 
 void Edge::GJKCollisionDispatcher::dispatch(const PhysicsEntityCollisionReference& collision1,
-	const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID,
-	ContactDispatchingResultCollection& results)
+                                            const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID,
+                                            ContactManifoldDispatchingResultCollection& results)
 {
 	GJK gjkTest;
 	const GJK::Result gjkTestResult = gjkTest(collision1.getObjectRef(), collision2.getObjectRef(), 100);
@@ -15,7 +16,13 @@ void Edge::GJKCollisionDispatcher::dispatch(const PhysicsEntityCollisionReferenc
 	const bool epaResult = epa(collision1.getObjectRef(), collision2.getObjectRef(), gjkTestResult, 100, contactPoint);
 
 	if (epaResult) {
-		contactPoint.m_contactID = contactID;
-		results.push_back(contactPoint);
+		PhysicsInstanceContactManifold manifold;
+
+		manifold.m_contactID = contactID;
+
+		ManifoldContactGenerator manifoldContactGenerator;
+		manifoldContactGenerator.generate(collision1.getObjectRef(), collision2.getObjectRef(), contactPoint, manifold.m_manifoldData);
+
+		results.push_back(manifold);
 	}
 }

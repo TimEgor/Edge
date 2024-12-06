@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EdgeCommon/Math/ComputeVector.h"
-#include "EdgeCommon/Patterns/NonInstanceable.h"
 
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
 

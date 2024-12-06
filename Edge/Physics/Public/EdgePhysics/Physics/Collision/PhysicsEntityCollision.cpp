@@ -82,11 +82,11 @@ Edge::AABB3 Edge::PhysicsEntityCollision::getWorldShapeAABB() const
 	return bound;
 }
 
-Edge::FloatVector3 Edge::PhysicsEntityCollision::getFurthestPoint(const FloatVector3& direction) const
+Edge::FloatVector3 Edge::PhysicsEntityCollision::getFurthestKeyPoint(const FloatVector3& direction) const
 {
 	if (!m_shape)
 	{
-		return false;
+		return FloatVector3Zero;
 	}
 
 	const PhysicsEntityTransformReference transform = getTransform();
@@ -100,6 +100,31 @@ Edge::FloatVector3 Edge::PhysicsEntityCollision::getFurthestPoint(const FloatVec
 	const ComputeVector point = transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(localPoint);
 
 	return point.getFloatVector3();
+}
+
+void Edge::PhysicsEntityCollision::getSupportingFace(const FloatVector3& direction,
+	PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const
+{
+	vertices.clear();
+
+	if (!m_shape)
+	{
+		return;
+	}
+
+	const PhysicsEntityTransformReference transform = getTransform();
+
+	ComputeMatrix inverseTransform(transform->getWorldTransform().m_matrix);
+	inverseTransform.inverse();
+
+	const ComputeVector localDirection = inverseTransform * direction;
+
+	m_shape->getSupportingFace(localDirection.getFloatVector3(), vertices);
+
+	for (FloatVector3& vertex : vertices)
+	{
+		(transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(vertex)).saveToFloatVector3(vertex);
+	}
 }
 
 bool Edge::PhysicsEntityCollision::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const

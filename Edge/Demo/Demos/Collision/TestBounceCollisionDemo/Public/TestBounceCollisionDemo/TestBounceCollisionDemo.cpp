@@ -86,11 +86,11 @@ void EdgeDemo::TestBounceCollisionDemo::updateDemoLogic(float deltaTime)
 	const Edge::PhysicsCollisionContact* contact = contactManager.getContact(m_dynamicBody1->getCollision(), m_staticBody->getCollision());
 	if (contact)
 	{
-		const Edge::PhysicsCollisionContactPoint* contactPoint = contactManager.getContactPoint(contact->getCollisionPointBaseIndex());
+		const Edge::PhysicsInstancedCollisionContactPoint* contactPoint = contactManager.getContactPoint(contact->getCollisionPointBaseIndex());
 		if (contactPoint)
 		{
-			m_debugVisualizationDataController->addArrow(contactPoint->m_position, contactPoint->m_normal, 0.5f, Edge::NormalizedColorBlue);
-			m_debugVisualizationDataController->addPoint(contactPoint->m_position, Edge::NormalizedColorCyan);
+			m_debugVisualizationDataController->addArrow(contactPoint->m_pointData.m_position, contactPoint->m_pointData.m_normal, 0.5f, Edge::NormalizedColorBlue);
+			m_debugVisualizationDataController->addPoint(contactPoint->m_pointData.m_position, Edge::NormalizedColorCyan);
 		}
 	}
 }

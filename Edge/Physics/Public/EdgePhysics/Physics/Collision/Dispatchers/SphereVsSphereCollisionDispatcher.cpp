@@ -3,7 +3,7 @@
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
-void Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID, ContactDispatchingResultCollection& results)
+void Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results)
 {
 	const PhysicsEntityCollisionShapeReference shape1 = collision1->getShape();
 	const PhysicsEntityCollisionShapeReference shape2 = collision2->getShape();
@@ -24,7 +24,7 @@ void Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollis
 	const float radius2 = sphere2.getRadius();
 
 	ComputeVector delta = position2 - position1;
-	const float distance = delta.length3();
+	const float distance = delta.getLength3();
 
 	float depth = radius1 + radius2 - distance;
 
@@ -42,10 +42,16 @@ void Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollis
 	const ComputeVector normal = NormalizeVector(delta);
 
 	PhysicsCollisionContactPoint contactPoint;
-	contactPoint.m_contactID = contactID;
 	(position1 + normal * radius1).saveToFloatVector3(contactPoint.m_position);
 	normal.saveToFloatVector3(contactPoint.m_normal);
 	contactPoint.m_depth = depth;
 
-	results.push_back(contactPoint);
+	PhysicsInstanceContactManifold manifold;
+	manifold.m_contactID = contactID;
+
+	manifold.m_manifoldData.m_positions.push_back(contactPoint.m_position);
+	manifold.m_manifoldData.m_normal = contactPoint.m_normal;
+	manifold.m_manifoldData.m_depth = contactPoint.m_depth;
+
+	results.push_back(manifold);
 }

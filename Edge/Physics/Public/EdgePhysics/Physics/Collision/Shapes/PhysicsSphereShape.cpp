@@ -9,11 +9,6 @@ Edge::AABB3 Edge::PhysicsSphereShape::getAABB() const
 
 Edge::FloatVector3 Edge::PhysicsSphereShape::getFurthestKeyPoint(const FloatVector3& direction) const
 {
-	return getFurthestBoundSurfacePoint(direction);
-}
-
-Edge::FloatVector3 Edge::PhysicsSphereShape::getFurthestBoundSurfacePoint(const FloatVector3& direction) const
-{
 	return (direction * m_radius).getFloatVector3();
 }
 

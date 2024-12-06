@@ -6,6 +6,7 @@
 #include "EdgePhysics/Physics/Collision/Dispatchers/GJKCollisionDispatcher.h"
 #include "EdgePhysics/Physics/Collision/Dispatchers/PhysicsCollisionDispatcherCollection.h"
 #include "EdgePhysics/Physics/Collision/Dispatchers/SphereVsSphereCollisionDispatcher.h"
+#include "EdgePhysics/Physics/Collision/Manifold/PhysicsContactManifold.h"
 #include "EdgePhysics/Physics/Collision/Scene/DefaultPhysicsEntityCollisionSceneContext.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 
@@ -73,6 +74,17 @@ Edge::PhysicsCollisionContactManager::ContactCollection::iterator Edge::PhysicsC
 	return m_contacts.erase(removedIter);
 }
 
+Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContactInternal(PhysicsCollisionContactID contactID)
+{
+	const auto findIter = m_contacts.find(contactID);
+	if (findIter != m_contacts.end())
+	{
+		return &findIter->second;
+	}
+
+	return nullptr;
+}
+
 bool Edge::PhysicsCollisionContactManager::init(const PhysicsSceneCollisionManagerReference& collisionManager)
 {
 	m_collisionManager = collisionManager;
@@ -118,13 +130,7 @@ void Edge::PhysicsCollisionContactManager::removeContact(PhysicsCollisionContact
 
 const Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContact(PhysicsCollisionContactID contactID) const
 {
-	const auto findIter = m_contacts.find(contactID);
-	if (findIter != m_contacts.end())
-	{
-		return &findIter->second;
-	}
-
-	return nullptr;
+	return const_cast<PhysicsCollisionContactManager*>(this)->getContactInternal(contactID);
 }
 
 const Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContact(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2) const
@@ -137,7 +143,7 @@ const Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getCo
 	return getContact(contactID);
 }
 
-const Edge::PhysicsCollisionContactPoint* Edge::PhysicsCollisionContactManager::getContactPoint(PhysicsCollisionContactPointID contactPointID) const
+const Edge::PhysicsInstancedCollisionContactPoint* Edge::PhysicsCollisionContactManager::getContactPoint(PhysicsCollisionContactPointID contactPointID) const
 {
 	if (contactPointID < m_contactPoints.size())
 	{
@@ -209,12 +215,11 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 
 	m_contactPoints.clear();
 
+	std::vector<PhysicsInstanceContactManifold> manifolds;
+
 	for (auto contactIter = m_contacts.begin(); contactIter != m_contacts.end(); ++contactIter)
 	{
 		const PhysicsCollisionContactID contactID = contactIter->first;
-		PhysicsCollisionContact contact = contactIter->second;
-
-		const size_t initialContactIndex = m_contactPoints.size();
 
 		const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactID.m_collisionID1);
 		const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactID.m_collisionID2);
@@ -225,27 +230,44 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 		PhysicsCollisionDispatcher* dispatcher = m_dispatcherContext->getDispatcher(shapeType1, shapeType2);
 		if (dispatcher)
 		{
-			dispatcher->dispatch(collision1, collision2, contactID, m_contactPoints);
+			dispatcher->dispatch(collision1, collision2, contactID, manifolds);
+		}
+	}
+
+	for (const PhysicsInstanceContactManifold& manifold : manifolds)
+	{
+		const size_t initialContactIndex = m_contactPoints.size();
+
+		for (const FloatVector3& position : manifold.m_manifoldData.m_positions)
+		{
+			PhysicsInstancedCollisionContactPoint point;
+			point.m_contactID = manifold.m_contactID;
+			point.m_pointData.m_position = position;
+			point.m_pointData.m_normal = manifold.m_manifoldData.m_normal;
+			point.m_pointData.m_depth = manifold.m_manifoldData.m_depth;
+
+			m_contactPoints.push_back(point);
 		}
 
 		const size_t postDispatchingContactIndex = m_contactPoints.size();
 
-		contact.setCollisionPointCount(postDispatchingContactIndex - initialContactIndex);
-		contact.setCollisionPointBaseIndex(initialContactIndex);
+		PhysicsCollisionContact* contact = getContactInternal(manifold.m_contactID);
+		contact->setCollisionPointCount(postDispatchingContactIndex - initialContactIndex);
+		contact->setCollisionPointBaseIndex(initialContactIndex);
 	}
 }
 
 
 void Edge::PhysicsCollisionContactManager::applyCollision()
 {
-	EDGE_PROFILE_BLOCK_EVENT("Apply collision contacts")
+	EDGE_PROFILE_BLOCK_EVENT("Apply collision contacts");
 
-		const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
+	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
 
 	const size_t contactPointCount = m_contactPoints.size();
 	for (size_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
 	{
-		const PhysicsCollisionContactPoint contactPoint = m_contactPoints[contactPointIndex];
+		const PhysicsInstancedCollisionContactPoint contactPoint = m_contactPoints[contactPointIndex];
 
 		const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactPoint.m_contactID.m_collisionID1);
 		const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactPoint.m_contactID.m_collisionID2);
@@ -260,8 +282,8 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		const PhysicsEntityMotionReference motion2 = entity2->getMotion();
 
 		//TMP
-		const ComputeVector contactPosition1 = contactPoint.m_position;
-		const ComputeVector contactPosition2 = contactPosition1 - contactPoint.m_normal * contactPoint.m_depth;
+		const ComputeVector contactPosition1 = contactPoint.m_pointData.m_position;
+		const ComputeVector contactPosition2 = contactPosition1 - contactPoint.m_pointData.m_normal * contactPoint.m_pointData.m_depth;
 
 		EDGE_ASSERT(motion1 || motion2);
 
@@ -283,7 +305,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		FloatMatrix3x3 worldInverseInertiaTensor1 = FloatMatrix3x3Identity;
 		FloatMatrix3x3 worldInverseInertiaTensor2 = FloatMatrix3x3Identity;
 
-		const ComputeVector contactNormal = contactPoint.m_normal;
+		const ComputeVector contactNormal = contactPoint.m_pointData.m_normal;
 
 		if (motion1)
 		{
@@ -382,7 +404,7 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 			{
 				motion1->applyImpulse(frictionImpulse.getFloatVector3(), contactPosition1.getFloatVector3());
 			}
-			
+
 			if (motion2)
 			{
 				motion2->applyImpulse(NegateVector(frictionImpulse).getFloatVector3(), contactPosition2.getFloatVector3());

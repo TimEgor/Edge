@@ -5,6 +5,8 @@
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Collision/GJK/GJK.h"
+#include "EdgePhysics/Physics/Collision/Manifold/PhysicsContactManifold.h"
+#include "EdgePhysics/Physics/Collision/Manifold/PhysicsManifoldContactGenerator.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
 
 #include "EdgeFramework/FrameworkCore.h"
@@ -86,7 +88,7 @@ bool EdgeDemo::TestGJKCollisionDemo::initDemo()
 	m_physicsScene->addEntity(m_staticBox);
 
 	bodyCreationParam.m_position = Edge::FloatVector3(1.0f, 0.0f, 0.0f);
-	bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
+	//bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
 
 	m_dynamicBox = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -126,16 +128,27 @@ void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 
 		m_debugVisualizationDataController->addSphere(contactPoint.m_position,
 			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.1f, Edge::NormalizedColorOrange);
-		m_debugVisualizationDataController->addArrow(contactPoint.m_position, contactPoint.m_normal, 0.1f, Edge::NormalizedColorBlue);
+
+		Edge::PhysicsContactManifold manifold;
+		Edge::ManifoldContactGenerator manifoldContactGenerator;
+		manifoldContactGenerator.generate(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), contactPoint, manifold);
+
+		for (const Edge::FloatVector3& position : manifold.m_positions)
+		{
+			m_debugVisualizationDataController->addSphere(position,
+				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorViolet);
+
+			m_debugVisualizationDataController->addArrow(position, manifold.m_normal, 0.1f, Edge::NormalizedColorBlue);
+		}
 	}
 	else if (collisionTestResult.m_testResult == Edge::GJK::Result::TestResult::OverIterationTesting)
 	{
 		color = Edge::NormalizedColorBrown;
 	}
 
-	m_debugVisualizationDataController->addBox(m_staticBox->getTransform()->getWorldTransform(),
+	m_debugVisualizationDataController->addWireframeBox(m_staticBox->getTransform()->getWorldTransform(),
 		m_staticBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize(), color);
 
-	m_debugVisualizationDataController->addBox(m_dynamicBox->getTransform()->getWorldTransform(),
+	m_debugVisualizationDataController->addWireframeBox(m_dynamicBox->getTransform()->getWorldTransform(),
 		m_dynamicBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize(), color);
 }

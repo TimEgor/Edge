@@ -70,7 +70,7 @@ bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, con
 	hitPos += delta;
 
 	hitPos.saveToFloatVector3(result.m_hitPosition);
-	result.m_distance = delta.length3();
+	result.m_distance = delta.getLength3();
 
 	return true;
 }

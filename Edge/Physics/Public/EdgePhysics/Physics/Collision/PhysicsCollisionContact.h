@@ -58,10 +58,14 @@ namespace Edge
 
 	struct PhysicsCollisionContactPoint final
 	{
-		PhysicsCollisionContactID m_contactID;
-
 		FloatVector3 m_position = FloatVector3Zero;
 		FloatVector3 m_normal = FloatVector3Zero;
 		float m_depth = -EDGE_FLT_MAX;
+	};
+
+	struct PhysicsInstancedCollisionContactPoint final
+	{
+		PhysicsCollisionContactPoint m_pointData;
+		PhysicsCollisionContactID m_contactID;
 	};
 }
