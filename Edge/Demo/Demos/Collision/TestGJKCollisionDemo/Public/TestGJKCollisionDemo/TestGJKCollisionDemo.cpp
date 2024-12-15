@@ -90,6 +90,7 @@ bool EdgeDemo::TestGJKCollisionDemo::initDemo()
 	bodyCreationParam.m_position = Edge::FloatVector3(1.0f, 0.0f, 0.0f);
 	//bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
 
+
 	m_dynamicBox = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBox);
@@ -126,19 +127,28 @@ void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 	{
 		color = Edge::NormalizedColorRed;
 
-		m_debugVisualizationDataController->addSphere(contactPoint.m_position,
-			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.1f, Edge::NormalizedColorOrange);
+		m_debugVisualizationDataController->addSphere(contactPoint.m_position1,
+			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.07f, Edge::NormalizedColorOrange);
+		m_debugVisualizationDataController->addSphere(contactPoint.m_position2,
+			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.07f, Edge::NormalizedColorMagneta);
 
 		Edge::PhysicsContactManifold manifold;
 		Edge::ManifoldContactGenerator manifoldContactGenerator;
 		manifoldContactGenerator.generate(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), contactPoint, manifold);
 
-		for (const Edge::FloatVector3& position : manifold.m_positions)
-		{
-			m_debugVisualizationDataController->addSphere(position,
-				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorViolet);
+		const uint32_t contactPointCount = manifold.m_positions1.size();
 
-			m_debugVisualizationDataController->addArrow(position, manifold.m_normal, 0.1f, Edge::NormalizedColorBlue);
+		for (uint32_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
+		{
+			const Edge::FloatVector3& position1 = manifold.m_positions1[contactPointIndex];
+			const Edge::FloatVector3& position2 = manifold.m_positions2[contactPointIndex];
+
+			m_debugVisualizationDataController->addSphere(position1,
+				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorViolet);
+			m_debugVisualizationDataController->addSphere(position2,
+				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorForestGreen);
+
+			m_debugVisualizationDataController->addArrow(position1, manifold.m_normal, 0.1f, Edge::NormalizedColorBlue);
 		}
 	}
 	else if (collisionTestResult.m_testResult == Edge::GJK::Result::TestResult::OverIterationTesting)

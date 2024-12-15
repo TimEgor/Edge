@@ -3,7 +3,6 @@
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
-#include "EdgePhysics/Physics/Collision/Scene/PhysicsCollisionContactManager.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
@@ -16,7 +15,7 @@ void EdgeDemo::TestBounceCollisionDemo::drawDynamicSphere(const Edge::PhysicsBod
 	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
 	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
 
-	m_debugVisualizationDataController->addSphere(dynamicTransform.getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
+	m_debugVisualizationDataController->addWireframeSphere(dynamicTransform.getOrigin(), dynamicTransform.getAxisZ(), dynamicTransform.getAxisY(), 0.5f);
 }
 
 bool EdgeDemo::TestBounceCollisionDemo::initDemo()
@@ -27,6 +26,7 @@ bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 	bodyMotionCreationParam.m_mass = 1.0f;
 	bodyMotionCreationParam.m_angularDamping = 0.2f;
 	bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, 0.5f);
+	bodyMotionCreationParam.m_gravityFactor = 0.0f;
 
 	Edge::PhysicsBodyFactory::EntityCollisionCreationParam bodyCollisionCreationParam;
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(0.5f);
@@ -34,20 +34,36 @@ bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 	bodyCreationParam.m_motionCreationParam = &bodyMotionCreationParam;
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
-	bodyCreationParam.m_position.m_x = 0.0f;
+	//
+	bodyCreationParam.m_position.m_x = -3.0f;
 	bodyCreationParam.m_position.m_y = 1.5f;
 
 	m_dynamicBody1 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody1);
 
-	bodyCreationParam.m_position.m_x = 1.1f;
+	bodyCreationParam.m_position.m_x = 3.0f;
 	bodyCreationParam.m_position.m_y = 1.5f;
 
 	m_dynamicBody2 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody2);
 
+	bodyCreationParam.m_position.m_x = -3.0f;
+	bodyCreationParam.m_position.m_y = 3.5f;
+
+	m_dynamicBody3 = Edge::GetPhysics().createBody(&bodyCreationParam);
+
+	m_physicsScene->addEntity(m_dynamicBody3);
+
+	bodyCreationParam.m_position.m_x = 3.0f;
+	bodyCreationParam.m_position.m_y = 3.5f;
+
+	m_dynamicBody4 = Edge::GetPhysics().createBody(&bodyCreationParam);
+
+	m_physicsScene->addEntity(m_dynamicBody4);
+
+	//
 	bodyCreationParam.m_position.m_x = 0.0f;
 	bodyCreationParam.m_position.m_y = -5.0f;
 	bodyCreationParam.m_motionCreationParam = nullptr;
@@ -56,7 +72,14 @@ bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 
 	m_staticBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 
-	m_physicsScene->addEntity(m_staticBody);
+	//m_physicsScene->addEntity(m_staticBody);
+
+	//initial impulse
+	m_dynamicBody1->getMotion()->applyImpulse(Edge::FloatVector3(0.5f, 0.0f, 0.0f));
+	m_dynamicBody2->getMotion()->applyImpulse(Edge::FloatVector3(-0.5f, 0.0f, 0.0f));
+
+	m_dynamicBody3->getMotion()->applyImpulse(Edge::FloatVector3(0.8f, 0.0f, 0.0f));
+	m_dynamicBody4->getMotion()->applyImpulse(Edge::FloatVector3(-0.2f, 0.0f, 0.0f));
 
 	return true;
 }
@@ -65,10 +88,14 @@ void EdgeDemo::TestBounceCollisionDemo::releaseDemo()
 {
 	m_physicsScene->removeEntity(m_dynamicBody1.getObject());
 	m_physicsScene->removeEntity(m_dynamicBody2.getObject());
+	m_physicsScene->removeEntity(m_dynamicBody3.getObject());
+	m_physicsScene->removeEntity(m_dynamicBody4.getObject());
 	m_physicsScene->removeEntity(m_staticBody.getObject());
 
 	m_dynamicBody1.reset();
 	m_dynamicBody2.reset();
+	m_dynamicBody3.reset();
+	m_dynamicBody4.reset();
 	m_staticBody.reset();
 }
 
@@ -78,19 +105,6 @@ void EdgeDemo::TestBounceCollisionDemo::updateDemoLogic(float deltaTime)
 
 	drawDynamicSphere(m_dynamicBody1);
 	drawDynamicSphere(m_dynamicBody2);
-		
-	m_debugVisualizationDataController->addSphere(m_staticBody->getTransform()->getPosition(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 5.0f);
-
-	
-	const Edge::PhysicsCollisionContactManager& contactManager = m_physicsScene->getCollisionManager()->getContactManager();
-	const Edge::PhysicsCollisionContact* contact = contactManager.getContact(m_dynamicBody1->getCollision(), m_staticBody->getCollision());
-	if (contact)
-	{
-		const Edge::PhysicsInstancedCollisionContactPoint* contactPoint = contactManager.getContactPoint(contact->getCollisionPointBaseIndex());
-		if (contactPoint)
-		{
-			m_debugVisualizationDataController->addArrow(contactPoint->m_pointData.m_position, contactPoint->m_pointData.m_normal, 0.5f, Edge::NormalizedColorBlue);
-			m_debugVisualizationDataController->addPoint(contactPoint->m_pointData.m_position, Edge::NormalizedColorCyan);
-		}
-	}
+	drawDynamicSphere(m_dynamicBody3);
+	drawDynamicSphere(m_dynamicBody4);
 }

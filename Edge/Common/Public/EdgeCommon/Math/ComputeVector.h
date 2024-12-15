@@ -9,7 +9,7 @@ namespace Edge
 	public:
 		ComputeMath::Vector m_vector;
 
-		ComputeVector() = default;
+		ComputeVector() : ComputeVector(FloatVector4Zero) {}
 		ComputeVector(const ComputeMath::Vector& vector);
 		ComputeVector(const FloatVector2& vector);
 		ComputeVector(const FloatVector3& vector);

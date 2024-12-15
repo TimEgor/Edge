@@ -12,7 +12,7 @@ namespace Edge
 	public:
 		ComputeMath::Matrix m_matrix;
 
-		ComputeMatrix() = default;
+		ComputeMatrix() : ComputeMatrix(FloatMatrix4x4Zero) {}
 		ComputeMatrix(const ComputeMath::Matrix& matrix);
 		ComputeMatrix(const FloatMatrix2x2& matrix);
 		ComputeMatrix(const FloatMatrix3x3& matrix);

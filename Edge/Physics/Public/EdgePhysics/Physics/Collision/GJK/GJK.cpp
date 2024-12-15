@@ -283,7 +283,8 @@ void Edge::EPA::addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const Vor
 void Edge::EPA::fillPointContactPointData(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
 	const GJK::Result& gjkResult, PhysicsCollisionContactPoint& contactPoint) const
 {
-	contactPoint.m_position = gjkResult.m_simplex.getPoint(gjkResult.m_simplex.getPointCount() - 1).m_pointCollision1;
+	contactPoint.m_position1 = gjkResult.m_simplex.getPoint(gjkResult.m_simplex.getPointCount() - 1).m_pointCollision1;
+	contactPoint.m_position2 = gjkResult.m_simplex.getPoint(gjkResult.m_simplex.getPointCount() - 1).m_pointCollision2;
 
 	(collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition())
 		.normalize().saveToFloatVector3(contactPoint.m_normal);
@@ -297,7 +298,12 @@ void Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollis
 	((barycentricCoords.m_x * face.m_points[0].m_pointCollision1)
 		+ (barycentricCoords.m_y * face.m_points[1].m_pointCollision1)
 		+ (barycentricCoords.m_z * face.m_points[2].m_pointCollision1)
-		).saveToFloatVector3(contactPoint.m_position);
+		).saveToFloatVector3(contactPoint.m_position1);
+
+	((barycentricCoords.m_x * face.m_points[0].m_pointCollision2)
+		+ (barycentricCoords.m_y * face.m_points[1].m_pointCollision2)
+		+ (barycentricCoords.m_z * face.m_points[2].m_pointCollision2)
+		).saveToFloatVector3(contactPoint.m_position2);
 
 	contactPoint.m_normal = face.m_normal;
 	contactPoint.m_depth = barycentricCoords.m_w;

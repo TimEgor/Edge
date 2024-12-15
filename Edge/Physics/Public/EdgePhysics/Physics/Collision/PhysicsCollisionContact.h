@@ -58,7 +58,8 @@ namespace Edge
 
 	struct PhysicsCollisionContactPoint final
 	{
-		FloatVector3 m_position = FloatVector3Zero;
+		FloatVector3 m_position1 = FloatVector3Zero;
+		FloatVector3 m_position2 = FloatVector3Zero;
 		FloatVector3 m_normal = FloatVector3Zero;
 		float m_depth = -EDGE_FLT_MAX;
 	};

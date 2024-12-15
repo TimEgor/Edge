@@ -10,6 +10,7 @@
 #include "EdgePhysics/Physics/Collision/Scene/DefaultPhysicsEntityCollisionSceneContext.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 
+#include "PhysicsCollisionConstraintManager.h"
 #include "PhysicsSceneCollisionManager.h"
 
 bool Edge::PhysicsCollisionContactManager::DispatcherContext::init()
@@ -83,6 +84,12 @@ Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContactI
 	}
 
 	return nullptr;
+}
+
+void Edge::PhysicsCollisionContactManager::prepareContactPointCollection(uint32_t contactPointCount)
+{
+	m_contactPoints.clear();
+	m_contactPoints.reserve(contactPointCount);
 }
 
 bool Edge::PhysicsCollisionContactManager::init(const PhysicsSceneCollisionManagerReference& collisionManager)
@@ -213,7 +220,7 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 		++contactIter;
 	}
 
-	m_contactPoints.clear();
+	uint32_t contactPointCount = 0;
 
 	std::vector<PhysicsInstanceContactManifold> manifolds;
 
@@ -230,23 +237,36 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 		PhysicsCollisionDispatcher* dispatcher = m_dispatcherContext->getDispatcher(shapeType1, shapeType2);
 		if (dispatcher)
 		{
-			dispatcher->dispatch(collision1, collision2, contactID, manifolds);
+			const uint32_t collisionContactPointCount = dispatcher->dispatch(collision1, collision2, contactID, manifolds);
+			contactPointCount += collisionContactPointCount;
 		}
 	}
+
+	prepareContactPointCollection(contactPointCount);
+
+	PhysicsCollisionConstraintManager& constraintManager = m_collisionManager.getReference()->getCollisionConstraintManager();
+	constraintManager.prepareCollection(contactPointCount);
 
 	for (const PhysicsInstanceContactManifold& manifold : manifolds)
 	{
 		const size_t initialContactIndex = m_contactPoints.size();
 
-		for (const FloatVector3& position : manifold.m_manifoldData.m_positions)
+		EDGE_ASSERT(manifold.m_manifoldData.m_positions1.size() == manifold.m_manifoldData.m_positions2.size());
+
+		for (uint32_t contactIndex = 0; contactIndex < manifold.m_manifoldData.m_positions1.size(); ++contactIndex)
 		{
-			PhysicsInstancedCollisionContactPoint point;
+			PhysicsInstancedCollisionContactPoint& point = m_contactPoints.emplace_back();
+
 			point.m_contactID = manifold.m_contactID;
-			point.m_pointData.m_position = position;
+			point.m_pointData.m_position1 = manifold.m_manifoldData.m_positions1[contactIndex];
+			point.m_pointData.m_position2 = manifold.m_manifoldData.m_positions2[contactIndex];
 			point.m_pointData.m_normal = manifold.m_manifoldData.m_normal;
 			point.m_pointData.m_depth = manifold.m_manifoldData.m_depth;
 
-			m_contactPoints.push_back(point);
+			const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(point.m_contactID.m_collisionID1);
+			const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(point.m_contactID.m_collisionID2);
+
+			constraintManager.addContact(collision1->getEntity(), collision2->getEntity(), point.m_pointData);
 		}
 
 		const size_t postDispatchingContactIndex = m_contactPoints.size();
@@ -260,6 +280,8 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 
 void Edge::PhysicsCollisionContactManager::applyCollision()
 {
+	return;
+
 	EDGE_PROFILE_BLOCK_EVENT("Apply collision contacts");
 
 	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
@@ -282,8 +304,9 @@ void Edge::PhysicsCollisionContactManager::applyCollision()
 		const PhysicsEntityMotionReference motion2 = entity2->getMotion();
 
 		//TMP
-		const ComputeVector contactPosition1 = contactPoint.m_pointData.m_position;
-		const ComputeVector contactPosition2 = contactPosition1 - contactPoint.m_pointData.m_normal * contactPoint.m_pointData.m_depth;
+		const ComputeVector contactPosition1 = contactPoint.m_pointData.m_position1;
+		const ComputeVector contactPosition2 = contactPoint.m_pointData.m_position2;
+		//const ComputeVector contactPosition2 = contactPosition1 - contactPoint.m_pointData.m_normal * contactPoint.m_pointData.m_depth;
 
 		EDGE_ASSERT(motion1 || motion2);
 

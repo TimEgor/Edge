@@ -28,6 +28,10 @@ namespace Edge
 
 		JobGraphReference getUpdateJobGraph(float deltaTime);
 
+		JobGraphReference getConstraintPreparationJobGraph(float deltaTime);
+		JobGraphReference getConstraintVelocitySolvingJobGraph();
+		JobGraphReference getConstraintPositionSolvingJobGraph();
+
 	public:
 		PhysicsScene(const PhysicsWorldReference& world);
 

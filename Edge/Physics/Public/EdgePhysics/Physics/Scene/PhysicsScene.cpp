@@ -6,6 +6,7 @@
 
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsCollisionConstraintManager.h"
 
 Edge::JobGraphReference Edge::PhysicsScene::getUpdateJobGraph(float deltaTime)
 {
@@ -19,24 +20,62 @@ Edge::JobGraphReference Edge::PhysicsScene::getUpdateJobGraph(float deltaTime)
 		accelerationApplyingJobID);
 
 	const JobGraphBuilder::JobGraphJobID constraintPreSolvingJobsID = m_graphBuilder.addJobGraphAfter(
-		m_constraintManager->getPreSolvingJobGraph(deltaTime),
+		getConstraintPreparationJobGraph(deltaTime),
 		collisionPreparationJobsID);
 
 	const JobGraphBuilder::JobGraphJobID constraintVelocitySolvingJobsID = m_graphBuilder.addJobGraphAfter(
-		m_constraintManager->getVelocitySolvingJobGraph(),
+		getConstraintVelocitySolvingJobGraph(),
 		constraintPreSolvingJobsID);
 
 	const JobGraphBuilder::JobGraphJobID velocityIntegrationJobsID = m_graphBuilder.addJobGraphAfter(
 		m_entityManager->getVelocityIntegrationJobGraph(deltaTime),
 		constraintVelocitySolvingJobsID);
 
-	const JobGraphBuilder::JobGraphJobID collisionApplyingJobsID = m_graphBuilder.addJobGraphAfter(
-		m_collisionManager->getApplyingJobGraph(),
+	const JobGraphBuilder::JobGraphJobID constraintPositionSolvingJobsID = m_graphBuilder.addJobGraphAfter(
+		getConstraintPositionSolvingJobGraph(),
 		velocityIntegrationJobsID);
 
-	const JobGraphBuilder::JobGraphJobID constraintPositionSolvingJobsID = m_graphBuilder.addJobGraphAfter(
+	return m_graphBuilder.getGraph();
+}
+
+Edge::JobGraphReference Edge::PhysicsScene::getConstraintPreparationJobGraph(float deltaTime)
+{
+	JobGraphBuilder m_graphBuilder;
+
+	const JobGraphBuilder::JobGraphJobID collisionConstraintJobID = m_graphBuilder.addJobGraph(
+		m_collisionManager->getCollisionConstraintManager().getPreSolvingJobGraph(deltaTime));
+
+	const JobGraphBuilder::JobGraphJobID generalConstraintJobsID = m_graphBuilder.addJobGraphAfter(
+		m_constraintManager->getPreSolvingJobGraph(deltaTime),
+		collisionConstraintJobID);
+
+	return m_graphBuilder.getGraph();
+}
+
+Edge::JobGraphReference Edge::PhysicsScene::getConstraintVelocitySolvingJobGraph()
+{
+	JobGraphBuilder m_graphBuilder;
+
+	const JobGraphBuilder::JobGraphJobID collisionConstraintJobID = m_graphBuilder.addJobGraph(
+		m_collisionManager->getCollisionConstraintManager().getVelocitySolvingJobGraph());
+
+	const JobGraphBuilder::JobGraphJobID generalConstraintJobsID = m_graphBuilder.addJobGraphAfter(
+		m_constraintManager->getVelocitySolvingJobGraph(),
+		collisionConstraintJobID);
+
+	return m_graphBuilder.getGraph();
+}
+
+Edge::JobGraphReference Edge::PhysicsScene::getConstraintPositionSolvingJobGraph()
+{
+	JobGraphBuilder m_graphBuilder;
+
+	const JobGraphBuilder::JobGraphJobID collisionConstraintJobID = m_graphBuilder.addJobGraph(
+		m_collisionManager->getCollisionConstraintManager().getPositionSolvingJobGraph());
+
+	const JobGraphBuilder::JobGraphJobID generalConstraintJobsID = m_graphBuilder.addJobGraphAfter(
 		m_constraintManager->getPositionSolvingJobGraph(),
-		collisionApplyingJobsID);
+		collisionConstraintJobID);
 
 	return m_graphBuilder.getGraph();
 }

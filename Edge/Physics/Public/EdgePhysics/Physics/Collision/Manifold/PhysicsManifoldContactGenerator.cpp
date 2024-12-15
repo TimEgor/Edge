@@ -53,16 +53,19 @@ void Edge::ManifoldContactGenerator::generate(const PhysicsEntityCollision& coll
 				{
 					FloatVector3 p1 = (p2 - (distance / faceNormalLength) * faceNormal).getFloatVector3();
 
-					manifold.m_positions.push_back(p1);
-					//manifold.m_positions.push_back(p2);
+					manifold.m_positions1.push_back(p1);
+					manifold.m_positions2.push_back(p2);
 				}
 			}
 		}
 	}
 
-	if (manifold.m_positions.empty())
+	EDGE_ASSERT(manifold.m_positions1.size() == manifold.m_positions2.size());
+
+	if (manifold.m_positions1.empty())
 	{
-		manifold.m_positions.push_back(contactPoint.m_position);
+		manifold.m_positions1.push_back(contactPoint.m_position1);
+		manifold.m_positions2.push_back(contactPoint.m_position2);
 	}
 
 	manifold.m_normal = contactPoint.m_normal;

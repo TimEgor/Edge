@@ -10,8 +10,12 @@ namespace EdgeDemo
 	{
 	private:
 		Edge::PhysicsBodyReference m_staticBody;
+
 		Edge::PhysicsBodyReference m_dynamicBody1;
 		Edge::PhysicsBodyReference m_dynamicBody2;
+
+		Edge::PhysicsBodyReference m_dynamicBody3;
+		Edge::PhysicsBodyReference m_dynamicBody4;
 
 		void drawDynamicSphere(const Edge::PhysicsBodyReference& body) const;
 

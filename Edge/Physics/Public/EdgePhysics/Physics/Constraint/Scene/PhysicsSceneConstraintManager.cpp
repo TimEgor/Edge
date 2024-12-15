@@ -35,7 +35,7 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPreSolvingJobGra
 			{
 				preSolve(dt);
 				warmUp();
-			}, "Pre solve")
+			}, "Pre solve constraints")
 	);
 
 	return m_graphBuilder.getGraph();
@@ -49,7 +49,7 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getVelocitySolvingJ
 		createLambdaJob([this]()
 			{
 				solveVelocity();
-			}, "Velocity solve")
+			}, "Solve constraints velocities")
 	);
 
 	return m_graphBuilder.getGraph();
@@ -63,7 +63,7 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPositionSolvingJ
 		createLambdaJob([this]()
 			{
 				solvePosition();
-			}, "Position solve")
+			}, "Solve constraints positions")
 	);
 
 	return m_graphBuilder.getGraph();

@@ -21,6 +21,12 @@ namespace Edge
 		virtual void getLinearVelocity(FloatVector3& velocity) const = 0;
 		virtual void setLinearVelocity(const FloatVector3& velocity) = 0;
 
+		virtual FloatVector3 getPointLinearVelocity(const FloatVector3& position) const = 0;
+		virtual void getPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const = 0;
+
+		virtual FloatVector3 getLocalPointLinearVelocity(const FloatVector3& position) const = 0;
+		virtual void getLocalPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const = 0;
+
 		virtual FloatVector3 getAngularVelocity() const = 0;
 		virtual void getAngularVelocity(FloatVector3& velocity) const = 0;
 		virtual void setAngularVelocity(const FloatVector3& velocity) = 0;
@@ -55,6 +61,9 @@ namespace Edge
 		float getGravityFactor() const { return m_gravityFactor; }
 		void setGravityFactor(float factor);
 
+		FloatVector3 getMassCenter() const;
+		void getMassCenter(FloatVector3& center) const;
+
 		virtual void applyAcceleration(float deltaTime, const FloatVector3& gravity) = 0;
 	};
 
@@ -74,6 +83,12 @@ namespace Edge
 		virtual FloatVector3 getLinearVelocity() const override { return m_linearVelocity; }
 		virtual void getLinearVelocity(FloatVector3& velocity) const override { velocity = m_linearVelocity; }
 		virtual void setLinearVelocity(const FloatVector3& velocity) override { m_linearVelocity = velocity; }
+
+		virtual FloatVector3 getPointLinearVelocity(const FloatVector3& position) const override { return getLinearVelocity(); }
+		virtual void getPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const override { getLinearVelocity(velocity); }
+
+		virtual FloatVector3 getLocalPointLinearVelocity(const FloatVector3& position) const override { return getLinearVelocity(); }
+		virtual void getLocalPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const override { getLinearVelocity(velocity); }
 
 		virtual FloatVector3 getAngularVelocity() const override { return FloatVector3Zero; }
 		virtual void getAngularVelocity(FloatVector3& velocity) const override { velocity = FloatVector3Zero; }
@@ -121,6 +136,12 @@ namespace Edge
 
 	public:
 		PhysicsPositionAndRotationBasedMotion() = default;
+
+		virtual FloatVector3 getPointLinearVelocity(const FloatVector3& position) const override;
+		virtual void getPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const override;
+
+		virtual FloatVector3 getLocalPointLinearVelocity(const FloatVector3& position) const override;
+		virtual void getLocalPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const override;
 
 		virtual FloatVector3 getAngularVelocity() const override { return m_angularVelocity; }
 		virtual void getAngularVelocity(FloatVector3& velocity) const override { velocity = m_angularVelocity; }

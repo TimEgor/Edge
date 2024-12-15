@@ -1,5 +1,6 @@
 #include "PhysicsSceneCollisionManager.h"
 
+#include "PhysicsCollisionConstraintManager.h"
 #include "EdgeCommon/Job/JobController.h"
 #include "EdgeCommon/Profile/Profile.h"
 
@@ -93,6 +94,9 @@ bool Edge::PhysicsSceneCollisionManager::init(const PhysicsSceneReference& scene
 	m_contactManager = new PhysicsCollisionContactManager();
 	EDGE_CHECK_INITIALIZATION(m_contactManager && m_contactManager->init(this));
 
+	m_contactConstraintManager = new PhysicsCollisionConstraintManager();
+	EDGE_CHECK_INITIALIZATION(m_contactConstraintManager);
+
 	m_broadPhase = new BruteforcePhysicsBroadPhase();
 	EDGE_CHECK_INITIALIZATION(m_broadPhase && m_broadPhase->init(this));
 
@@ -103,6 +107,7 @@ void Edge::PhysicsSceneCollisionManager::release()
 {
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_broadPhase);
 
+	EDGE_SAFE_DESTROY(m_contactConstraintManager);
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_contactManager);
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_collisionCollection);
 }
@@ -131,20 +136,6 @@ Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getPreparationJobGra
 				m_contactManager->updateContacts();
 			}, "Update collision contacts"),
 		prepareCollisionJobID);
-
-	return m_graphBuilder.getGraph();
-}
-
-Edge::JobGraphReference Edge::PhysicsSceneCollisionManager::getApplyingJobGraph()
-{
-	JobGraphBuilder m_graphBuilder;
-
-	const JobGraphBuilder::JobGraphJobID applyCollisionJobID = m_graphBuilder.addJob(
-		createLambdaJob([this]()
-			{
-				m_contactManager->applyCollision();
-			}, "Apply collision")
-	);
 
 	return m_graphBuilder.getGraph();
 }
@@ -198,6 +189,12 @@ const Edge::PhysicsCollisionContactManager& Edge::PhysicsSceneCollisionManager::
 {
 	EDGE_ASSERT(m_contactManager);
 	return *m_contactManager;
+}
+
+Edge::PhysicsCollisionConstraintManager& Edge::PhysicsSceneCollisionManager::getCollisionConstraintManager() const
+{
+	EDGE_ASSERT(m_contactConstraintManager);
+	return *m_contactConstraintManager;
 }
 
 Edge::PhysicsSceneWeakReference Edge::PhysicsSceneCollisionManager::getScene() const

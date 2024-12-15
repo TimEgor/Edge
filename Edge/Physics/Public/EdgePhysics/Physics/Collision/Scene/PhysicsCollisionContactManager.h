@@ -54,6 +54,8 @@ namespace Edge
 
 		PhysicsCollisionContact* getContactInternal(PhysicsCollisionContactID contactID);
 
+		void prepareContactPointCollection(uint32_t contactPointCount);
+
 	public:
 		PhysicsCollisionContactManager() = default;
 

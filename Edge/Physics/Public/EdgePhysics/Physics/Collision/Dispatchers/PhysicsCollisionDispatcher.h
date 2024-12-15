@@ -16,7 +16,7 @@ namespace Edge
 		PhysicsCollisionDispatcher() = default;
 		virtual ~PhysicsCollisionDispatcher() = default;
 
-		virtual void dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2,
-			PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results) = 0;
+		virtual uint32_t dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2,
+			PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results) = 0; // return contact point count
 	};
 }

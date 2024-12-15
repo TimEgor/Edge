@@ -13,6 +13,7 @@
 
 namespace Edge
 {
+	class PhysicsCollisionConstraintManager;
 	class PhysicsSceneCollisionCollection;
 	class PhysicsCollisionContactManager;
 	class PhysicsBroadPhase;
@@ -29,6 +30,7 @@ namespace Edge
 
 		PhysicsSceneCollisionCollection* m_collisionCollection = nullptr;
 		PhysicsCollisionContactManager* m_contactManager = nullptr;
+		PhysicsCollisionConstraintManager* m_contactConstraintManager = nullptr;
 
 		PhysicsBroadPhase* m_broadPhase = nullptr;
 
@@ -46,7 +48,6 @@ namespace Edge
 		void release();
 
 		JobGraphReference getPreparationJobGraph(const std::vector<PhysicsSceneEntityID>& activeEntityIDs);
-		JobGraphReference getApplyingJobGraph();
 
 		void addCollision(const PhysicsEntityCollisionReference& collision);
 		void removeCollision(const PhysicsEntityCollisionReference& collision);
@@ -57,6 +58,7 @@ namespace Edge
 		virtual void rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const override;
 
 		const PhysicsCollisionContactManager& getContactManager() const;
+		PhysicsCollisionConstraintManager& getCollisionConstraintManager() const;
 
 		PhysicsSceneWeakReference getScene() const;
 	};
