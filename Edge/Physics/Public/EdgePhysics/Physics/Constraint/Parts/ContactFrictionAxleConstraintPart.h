@@ -6,7 +6,7 @@
 
 namespace Edge
 {
-	class ContactPenetrationAxleConstraintPart final
+	class ContactFrictionAxleConstraintPart final
 	{
 	private:
 		FloatVector3 m_radiusNorm1 = FloatVector3Zero;
@@ -17,26 +17,21 @@ namespace Edge
 
 		float m_totalLambda = 0.0f;
 		float m_invEffectiveMass = 0.0f;
-		float m_restitution = 0.0f;
+		float m_friction = 0.0f;
 
 		PhysicsEntityReference m_entity1;
 		PhysicsEntityReference m_entity2;
 
 		void deactivate();
 
-		void applyVelocity(const FloatVector3& normal, float lambda) const;
-		void applyPosition(const FloatVector3& normal, float lambda) const;
-
 	public:
-		ContactPenetrationAxleConstraintPart(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2)
+		ContactFrictionAxleConstraintPart(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2)
 			: m_entity1(entity1), m_entity2(entity2) {}
 
 		void preSolve(const FloatVector3& contactPosition, const FloatVector3& normal);
 		void warmUp(const FloatVector3& normal);
-		void solveVelocity(const FloatVector3& normal);
-		void solvePosition(const FloatVector3& normal, float depth);
-
-		float getTotalLambda() const { return m_totalLambda; }
+		float solveVelocity(const FloatVector3& normal);
+		void applyVelocity(const FloatVector3& normal, float lambda);
 
 		bool isActive() const;
 	};

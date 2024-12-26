@@ -41,6 +41,9 @@ void Edge::KeepRotationConstraintPart::applyPosition(const FloatVector3& lambda)
 	const PhysicsEntityTransformReference transform1 = m_entity1->getTransform();
 	const PhysicsEntityTransformReference transform2 = m_entity2->getTransform();
 
+	PhysicsEntityTransformNotificationFreeAccessor transformAccessor1(transform1);
+	PhysicsEntityTransformNotificationFreeAccessor transformAccessor2(transform2);
+
 	const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
 	const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
 
@@ -50,8 +53,8 @@ void Edge::KeepRotationConstraintPart::applyPosition(const FloatVector3& lambda)
 		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
 		if (angularVelocityDeltaLength > EDGE_EPSILON)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transform1->getRotation()).normalize();
-			transform1->setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
+			transformAccessor1.setRotation(newRotation.getFloatQuaternion());
 		}
 	}
 
@@ -61,8 +64,8 @@ void Edge::KeepRotationConstraintPart::applyPosition(const FloatVector3& lambda)
 		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
 		if (angularVelocityDeltaLength > EDGE_EPSILON)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transform2->getRotation()).normalize();
-			transform2->setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
+			transformAccessor2.setRotation(newRotation.getFloatQuaternion());
 		}
 	}
 }

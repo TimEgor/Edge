@@ -86,13 +86,63 @@ void Edge::PhysicsPositionAndRotationBasedTransform::setWorldTransform(const Tra
 	makeTransformChangingNotification();
 }
 
-Edge::PhysicsEntityTransformUnsafeNotificationAccessor::PhysicsEntityTransformUnsafeNotificationAccessor(const PhysicsEntityTransformReference& transform)
+Edge::PhysicsEntityTransformNotificationFreeAccessor::PhysicsEntityTransformNotificationFreeAccessor(const PhysicsEntityTransformReference& transform)
 	: m_transform(transform)
 {
 	EDGE_ASSERT(transform);
 }
 
-Edge::PhysicsEntityTransformUnsafeNotificationAccessor::~PhysicsEntityTransformUnsafeNotificationAccessor()
+Edge::FloatVector3 Edge::PhysicsEntityTransformNotificationFreeAccessor::getPosition() const
+{
+	return m_transform->getPosition();
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::getPosition(FloatVector3& position) const
+{
+	m_transform->getPosition(position);
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::setPosition(const FloatVector3& position)
+{
+	m_transform->setPositionRaw(position);
+}
+
+Edge::FloatQuaternion Edge::PhysicsEntityTransformNotificationFreeAccessor::getRotation() const
+{
+	return m_transform->getRotation();
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::getRotation(FloatQuaternion& rotation) const
+{
+	m_transform->getRotation(rotation);
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::setRotation(const FloatQuaternion& rotation)
+{
+	m_transform->setRotationRaw(rotation);
+}
+
+Edge::Transform Edge::PhysicsEntityTransformNotificationFreeAccessor::getWorldTransform() const
+{
+	return m_transform->getWorldTransform();
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::getWorldTransform(Transform& transform) const
+{
+	m_transform->getWorldTransform(transform);
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::setWorldTransform(const Transform& transform)
+{
+	m_transform->setWorldTransformRaw(transform);
+}
+
+void Edge::PhysicsEntityTransformNotificationFreeAccessor::makeTransformChangingNotification()
+{
+	m_transform->makeTransformChangingNotification();
+}
+
+Edge::PhysicsEntityTransformAccessor::~PhysicsEntityTransformAccessor()
 {
 	if (m_isChanged)
 	{
@@ -100,56 +150,26 @@ Edge::PhysicsEntityTransformUnsafeNotificationAccessor::~PhysicsEntityTransformU
 	}
 }
 
-Edge::FloatVector3 Edge::PhysicsEntityTransformUnsafeNotificationAccessor::getPosition() const
+void Edge::PhysicsEntityTransformAccessor::setPosition(const FloatVector3& position)
 {
-	return m_transform->getPosition();
-}
-
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::getPosition(FloatVector3& position) const
-{
-	return m_transform->getPosition(position);
-}
-
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::setPosition(const FloatVector3& position)
-{
-	m_transform->setPositionRaw(position);
+	PhysicsEntityTransformNotificationFreeAccessor::setPosition(position);
 	m_isChanged = true;
 }
 
-Edge::FloatQuaternion Edge::PhysicsEntityTransformUnsafeNotificationAccessor::getRotation() const
+void Edge::PhysicsEntityTransformAccessor::setRotation(const FloatQuaternion& rotation)
 {
-	return m_transform->getRotation();
-}
-
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::getRotation(FloatQuaternion& rotation) const
-{
-	return m_transform->getRotation(rotation);
-}
-
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::setRotation(const FloatQuaternion& rotation)
-{
-	m_transform->setRotationRaw(rotation);
+	PhysicsEntityTransformNotificationFreeAccessor::setRotation(rotation);
 	m_isChanged = true;
 }
 
-Edge::Transform Edge::PhysicsEntityTransformUnsafeNotificationAccessor::getWorldTransform() const
+void Edge::PhysicsEntityTransformAccessor::setWorldTransform(const Transform& transform)
 {
-	return m_transform->getWorldTransform();
-}
-
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::getWorldTransform(Transform& transform) const
-{
-	return m_transform->getWorldTransform(transform);
-}
-
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::setWorldTransform(const Transform& transform)
-{
-	m_transform->setWorldTransformRaw(transform);
+	PhysicsEntityTransformNotificationFreeAccessor::setWorldTransform(transform);
 	m_isChanged = true;
 }
 
-void Edge::PhysicsEntityTransformUnsafeNotificationAccessor::makeTransformChangingNotification()
+void Edge::PhysicsEntityTransformAccessor::makeTransformChangingNotification()
 {
-	m_transform->makeTransformChangingNotification();
+	PhysicsEntityTransformNotificationFreeAccessor::makeTransformChangingNotification();
 	m_isChanged = false;
 }

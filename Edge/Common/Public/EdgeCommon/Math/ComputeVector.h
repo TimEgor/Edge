@@ -103,6 +103,9 @@ namespace Edge
 	float TripleVector3(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& vector3);
 	
 	ComputeVector Vector2Orthogonal(const ComputeVector& vector);
+	ComputeVector Vector3Orthogonal(const ComputeVector& vector);
+	ComputeVector Vector4Orthogonal(const ComputeVector& vector);
+
 	ComputeVector CrossVector2(const ComputeVector& vector1, const ComputeVector& vector2);
 	ComputeVector CrossVector3(const ComputeVector& vector1, const ComputeVector& vector2);
 

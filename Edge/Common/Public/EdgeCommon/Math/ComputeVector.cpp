@@ -345,6 +345,16 @@ Edge::ComputeVector Edge::Vector2Orthogonal(const ComputeVector& vector)
 	return ComputeMath::vector2Orthogonal(vector.m_vector);
 }
 
+Edge::ComputeVector Edge::Vector3Orthogonal(const ComputeVector& vector)
+{
+	return ComputeMath::vector3Orthogonal(vector.m_vector);
+}
+
+Edge::ComputeVector Edge::Vector4Orthogonal(const ComputeVector& vector)
+{
+	return ComputeMath::vector4Orthogonal(vector.m_vector);
+}
+
 Edge::ComputeVector Edge::CrossVector2(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return ComputeMath::vector2Cross(vector1.m_vector, vector2.m_vector);

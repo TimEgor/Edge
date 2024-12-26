@@ -120,6 +120,8 @@ namespace Edge
 		Vector vector4Normalize(const Vector& vec);
 
 		Vector vector2Orthogonal(const Vector& vec);
+		Vector vector3Orthogonal(const Vector& vec);
+		Vector vector4Orthogonal(const Vector& vec);
 
 		Vector vector2Cross(const Vector& vec1, const Vector& vec2);
 		Vector vector3Cross(const Vector& vec1, const Vector& vec2);

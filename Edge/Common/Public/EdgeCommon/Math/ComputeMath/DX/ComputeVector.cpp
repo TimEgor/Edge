@@ -441,6 +441,16 @@ Edge::ComputeMath::Vector Edge::ComputeMath::vector2Orthogonal(const Vector& vec
 	return DirectX::XMVector2Orthogonal(vec);
 }
 
+Edge::ComputeMath::Vector Edge::ComputeMath::vector3Orthogonal(const Vector& vec)
+{
+	return DirectX::XMVector3Orthogonal(vec);
+}
+
+Edge::ComputeMath::Vector Edge::ComputeMath::vector4Orthogonal(const Vector& vec)
+{
+	return DirectX::XMVector4Orthogonal(vec);
+}
+
 Edge::ComputeMath::Vector Edge::ComputeMath::vector2Cross(const Vector& vec1, const Vector& vec2)
 {
 	return DirectX::XMVector2Cross(vec1, vec2);

@@ -160,7 +160,9 @@ namespace Edge
 		virtual float getAngularDampingFactor() const override { return m_angularDampingFactor; }
 		virtual void setAngularDampingFactor(float factor) override { m_angularDampingFactor = factor; }
 
+		virtual void applyForce(const FloatVector3& force) override { PhysicsPositionBasedMotion::applyForce(force); }
 		virtual void applyForce(const FloatVector3& force, const FloatVector3& position) override;
+		virtual void applyImpulse(const FloatVector3& impulse) override { PhysicsPositionBasedMotion::applyImpulse(impulse); }
 		virtual void applyImpulse(const FloatVector3& impulse, const FloatVector3& position) override;
 		virtual void applyTorque(const FloatVector3& torque) override;
 		virtual void applyAngularImpulse(const FloatVector3& impulse) override;

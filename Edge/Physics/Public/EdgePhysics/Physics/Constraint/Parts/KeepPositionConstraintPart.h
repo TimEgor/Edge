@@ -7,7 +7,7 @@
 
 namespace Edge
 {
-	class KeepPositionConstraintPart
+	class KeepPositionConstraintPart final
 	{
 	private:
 		FloatMatrix4x4 m_invInerR1 = FloatMatrix4x4Zero;

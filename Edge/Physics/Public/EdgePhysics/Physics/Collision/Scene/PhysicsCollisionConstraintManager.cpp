@@ -51,31 +51,72 @@ void Edge::PhysicsCollisionConstraintManager::prepareCollection(uint32_t contact
 	m_constraintCollection.reserve(contactPointCount);
 }
 
+Edge::PhysicsCollisionConstraintManager::ContactConstraints::ContactConstraints(const PhysicsEntityReference& entity1,
+	const PhysicsEntityReference& entity2, const PhysicsCollisionContactPoint& contactPoint)
+	: m_entity1(entity1), m_entity2(entity2),
+	m_frictionPart1(entity1, entity2), m_frictionPart2(entity1, entity2),
+	m_penetrationPart(entity1, entity2), m_contactPoint(contactPoint) {}
+
 void Edge::PhysicsCollisionConstraintManager::ContactConstraints::preSolve(float deltaTime)
 {
+	{
+		const ComputeVector normal = m_contactPoint.m_normal;
+		const ComputeVector tangent1 = Vector3Orthogonal(normal);
+		const ComputeVector tangent2 = CrossVector3(tangent1, normal);
+
+		tangent1.saveToFloatVector3(m_frictionTangent1);
+		tangent2.saveToFloatVector3(m_frictionTangent2);
+
+		((m_contactPoint.m_position1 + m_contactPoint.m_position2) * 0.5f).saveToFloatVector3(m_contactPosition);
+	}
+
+	preSolveFrictionParts();
 	preSolvePenetrationPart();
 }
 
 void Edge::PhysicsCollisionConstraintManager::ContactConstraints::warmUp()
 {
 	m_penetrationPart.warmUp(m_contactPoint.m_normal);
+
+	m_frictionPart1.warmUp(m_frictionTangent1);
+	m_frictionPart2.warmUp(m_frictionTangent2);
 }
 
-void Edge::PhysicsCollisionConstraintManager::ContactConstraints::solveVelocity()
+void Edge::PhysicsCollisionConstraintManager::ContactConstraints::solvePenetrationPartVelocity()
 {
 	m_penetrationPart.solveVelocity(m_contactPoint.m_normal);
 }
 
-void Edge::PhysicsCollisionConstraintManager::ContactConstraints::solvePosition()
+void Edge::PhysicsCollisionConstraintManager::ContactConstraints::solveFrictionPartsVelocity()
+{
+	const PhysicsEntityCollisionReference collision1 = m_entity1->getCollision();
+	const PhysicsEntityCollisionReference collision2 = m_entity2->getCollision();
+	const float friction = collision1->getFriction() * collision2->getFriction();
+
+	const float limit = m_penetrationPart.getTotalLambda() * friction;
+
+	const float lambda1 = m_frictionPart1.solveVelocity(m_frictionTangent1);
+	const float lambda2 = m_frictionPart2.solveVelocity(m_frictionTangent2);
+
+	m_frictionPart1.applyVelocity(m_frictionTangent1, lambda1 * friction);
+	m_frictionPart2.applyVelocity(m_frictionTangent2, lambda2 * friction);
+}
+
+void Edge::PhysicsCollisionConstraintManager::ContactConstraints::solvePenetrationPartPosition()
 {
 	preSolvePenetrationPart();
 	m_penetrationPart.solvePosition(m_contactPoint.m_normal, m_contactPoint.m_depth);
 }
 
+void Edge::PhysicsCollisionConstraintManager::ContactConstraints::preSolveFrictionParts()
+{
+	m_frictionPart1.preSolve(m_contactPosition, m_frictionTangent1);
+	m_frictionPart2.preSolve(m_contactPosition, m_frictionTangent2);
+}
+
 void Edge::PhysicsCollisionConstraintManager::ContactConstraints::preSolvePenetrationPart()
 {
-	const ComputeVector contactPosition = (m_contactPoint.m_position1 + m_contactPoint.m_position2) * 0.5f;
-	m_penetrationPart.preSolve(contactPosition.getFloatVector3(), m_contactPoint.m_normal);
+	m_penetrationPart.preSolve(m_contactPosition, m_contactPoint.m_normal);
 }
 
 void Edge::PhysicsCollisionConstraintManager::preSolve(float deltaTime)
@@ -98,7 +139,12 @@ void Edge::PhysicsCollisionConstraintManager::solveVelocity()
 {
 	for (ContactConstraints& contactContstains : m_constraintCollection)
 	{
-		contactContstains.solveVelocity();
+		contactContstains.solveFrictionPartsVelocity();
+	}
+
+	for (ContactConstraints& contactContstains : m_constraintCollection)
+	{
+		contactContstains.solvePenetrationPartVelocity();
 	}
 }
 
@@ -106,7 +152,7 @@ void Edge::PhysicsCollisionConstraintManager::solvePosition()
 {
 	for (ContactConstraints& contactContstains : m_constraintCollection)
 	{
-		contactContstains.solvePosition();
+		contactContstains.solvePenetrationPartPosition();
 	}
 }
 

@@ -1,12 +1,12 @@
 #include "ContactPenetrationAxleConstraintPart.h"
 
-void Edge::ContactPenetrationConstraintPart::deactivate()
+void Edge::ContactPenetrationAxleConstraintPart::deactivate()
 {
 	m_totalLambda = 0.0f;
 	m_invEffectiveMass = 0.0f;
 }
 
-void Edge::ContactPenetrationConstraintPart::applyVelocity(const FloatVector3& normal, float lambda) const
+void Edge::ContactPenetrationAxleConstraintPart::applyVelocity(const FloatVector3& normal, float lambda) const
 {
 	if (fabsf(lambda) <= EDGE_EPSILON)
 	{
@@ -23,7 +23,7 @@ void Edge::ContactPenetrationConstraintPart::applyVelocity(const FloatVector3& n
 		motion1->setLinearVelocity(newLinVelocity);
 
 		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
-		const FloatVector3 newAngularVelocity = (motion1->getAngularVelocity() + angularVelocityDelta).getFloatVector3();
+		const FloatVector3 newAngularVelocity = (motion1->getAngularVelocity() - angularVelocityDelta).getFloatVector3();
 		motion1->setAngularVelocity(newAngularVelocity);
 	}
 
@@ -34,12 +34,12 @@ void Edge::ContactPenetrationConstraintPart::applyVelocity(const FloatVector3& n
 		motion2->setLinearVelocity(newLinVelocity);
 
 		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
-		const FloatVector3 newAngularVelocity = (motion2->getAngularVelocity() - angularVelocityDelta).getFloatVector3();
+		const FloatVector3 newAngularVelocity = (motion2->getAngularVelocity() + angularVelocityDelta).getFloatVector3();
 		motion2->setAngularVelocity(newAngularVelocity);
 	}
 }
 
-void Edge::ContactPenetrationConstraintPart::applyPosition(const FloatVector3& normal, float lambda) const
+void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const FloatVector3& normal, float lambda) const
 {
 	if (fabsf(lambda) <= EDGE_EPSILON)
 	{
@@ -49,41 +49,44 @@ void Edge::ContactPenetrationConstraintPart::applyPosition(const FloatVector3& n
 	const PhysicsEntityTransformReference transform1 = m_entity1->getTransform();
 	const PhysicsEntityTransformReference transform2 = m_entity2->getTransform();
 
+	PhysicsEntityTransformNotificationFreeAccessor transformAccessor1(transform1);
+	PhysicsEntityTransformNotificationFreeAccessor transformAccessor2(transform2);
+
 	const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
 	const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
 
 	if (motion1)
 	{
 		const ComputeVector positionDelta = (motion1->getInverseMass() * lambda) * normal;
-		const FloatVector3 newPosition = (transform1->getPosition() - positionDelta).getFloatVector3();
-		transform1->setPosition(newPosition);
+		const FloatVector3 newPosition = (transformAccessor1.getPosition() - positionDelta).getFloatVector3();
+		transformAccessor1.setPosition(newPosition);
 
 		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
 		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
 		if (angularVelocityDeltaLength > EDGE_EPSILON)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transform1->getRotation()).normalize();
-			transform1->setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
+			transformAccessor1.setRotation(newRotation.getFloatQuaternion());
 		}
 	}
 
 	if (motion2)
 	{
 		const ComputeVector positionDelta = (motion1->getInverseMass() * lambda) * normal;
-		const FloatVector3 newPosition = (transform2->getPosition() + positionDelta).getFloatVector3();
-		transform2->setPosition(newPosition);
+		const FloatVector3 newPosition = (transformAccessor2.getPosition() + positionDelta).getFloatVector3();
+		transformAccessor2.setPosition(newPosition);
 
 		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
 		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
 		if (angularVelocityDeltaLength > EDGE_EPSILON)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transform2->getRotation()).normalize();
-			transform2->setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
+			transformAccessor2.setRotation(newRotation.getFloatQuaternion());
 		}
 	}
 }
 
-void Edge::ContactPenetrationConstraintPart::preSolve(const FloatVector3& contactPosition, const FloatVector3& normal)
+void Edge::ContactPenetrationAxleConstraintPart::preSolve(const FloatVector3& contactPosition, const FloatVector3& normal)
 {
 	const PhysicsEntityTransformReference transform1 = m_entity1->getTransform();
 	const PhysicsEntityTransformReference transform2 = m_entity2->getTransform();
@@ -152,12 +155,12 @@ void Edge::ContactPenetrationConstraintPart::preSolve(const FloatVector3& contac
 	m_invEffectiveMass = 1.0f / effectiveMass;
 }
 
-void Edge::ContactPenetrationConstraintPart::warmUp(const FloatVector3& normal)
+void Edge::ContactPenetrationAxleConstraintPart::warmUp(const FloatVector3& normal)
 {
 	applyVelocity(normal, m_totalLambda);
 }
 
-void Edge::ContactPenetrationConstraintPart::solveVelocity(const FloatVector3& normal)
+void Edge::ContactPenetrationAxleConstraintPart::solveVelocity(const FloatVector3& normal)
 {
 	float lambda = 0.0f;
 
@@ -184,7 +187,7 @@ void Edge::ContactPenetrationConstraintPart::solveVelocity(const FloatVector3& n
 	applyVelocity(normal, lambda);
 }
 
-void Edge::ContactPenetrationConstraintPart::solvePosition(const FloatVector3& normal, float depth)
+void Edge::ContactPenetrationAxleConstraintPart::solvePosition(const FloatVector3& normal, float depth)
 {
 	static constexpr float baumgarteCoeff = 1.0f;
 	const float lambda = m_invEffectiveMass * depth * baumgarteCoeff;
@@ -192,7 +195,7 @@ void Edge::ContactPenetrationConstraintPart::solvePosition(const FloatVector3& n
 	applyPosition(normal, lambda);
 }
 
-bool Edge::ContactPenetrationConstraintPart::isActive() const
+bool Edge::ContactPenetrationAxleConstraintPart::isActive() const
 {
 	return fabsf(m_invEffectiveMass) > EDGE_EPSILON;
 }

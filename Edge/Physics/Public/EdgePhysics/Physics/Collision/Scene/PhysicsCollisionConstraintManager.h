@@ -2,6 +2,7 @@
 
 #include "EdgeCommon/Job/JobGraph.h"
 
+#include "EdgePhysics/Physics/Constraint/Parts/ContactFrictionAxleConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/ContactPenetrationAxleConstraintPart.h"
 
 namespace Edge
@@ -13,19 +14,29 @@ namespace Edge
 	private:
 		struct ContactConstraints final
 		{
-			ContactPenetrationConstraintPart m_penetrationPart;
+			PhysicsEntityReference m_entity1;
+			PhysicsEntityReference m_entity2;
+
+			ContactFrictionAxleConstraintPart m_frictionPart1;
+			ContactFrictionAxleConstraintPart m_frictionPart2;
+			ContactPenetrationAxleConstraintPart m_penetrationPart;
+
+			FloatVector3 m_frictionTangent1 = FloatVector3Zero;
+			FloatVector3 m_frictionTangent2 = FloatVector3Zero;
+			FloatVector3 m_contactPosition = FloatVector3Zero;
 
 			const PhysicsCollisionContactPoint& m_contactPoint;
 
 			ContactConstraints(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-				const PhysicsCollisionContactPoint& contactPoint)
-				: m_penetrationPart(entity1, entity2), m_contactPoint(contactPoint) {}
+				const PhysicsCollisionContactPoint& contactPoint);
 
 			void preSolve(float deltaTime);
 			void warmUp();
-			void solveVelocity();
-			void solvePosition();
+			void solvePenetrationPartVelocity();
+			void solveFrictionPartsVelocity();
+			void solvePenetrationPartPosition();
 
+			void preSolveFrictionParts();
 			void preSolvePenetrationPart();
 		};
 

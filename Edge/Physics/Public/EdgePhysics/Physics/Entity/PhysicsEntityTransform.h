@@ -7,11 +7,11 @@
 
 namespace Edge
 {
-	class PhysicsEntityTransformUnsafeNotificationAccessor;
+	class PhysicsEntityTransformNotificationFreeAccessor;
 
 	class PhysicsEntityTransform : public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
 	{
-		friend PhysicsEntityTransformUnsafeNotificationAccessor;
+		friend PhysicsEntityTransformNotificationFreeAccessor;
 
 	protected:
 		void makeTransformChangingNotification() const;
@@ -87,28 +87,44 @@ namespace Edge
 
 	EDGE_MT_REFERENCE(PhysicsPositionAndRotationBasedTransform);
 
-	class PhysicsEntityTransformUnsafeNotificationAccessor final
+	class PhysicsEntityTransformNotificationFreeAccessor
 	{
 	private:
 		const PhysicsEntityTransformReference m_transform;
+
+	public:
+		PhysicsEntityTransformNotificationFreeAccessor(const PhysicsEntityTransformReference& transform);
+		virtual ~PhysicsEntityTransformNotificationFreeAccessor() = default;
+
+		virtual FloatVector3 getPosition() const;
+		virtual void getPosition(FloatVector3& position) const;
+		virtual void setPosition(const FloatVector3& position);
+
+		virtual FloatQuaternion getRotation() const;
+		virtual void getRotation(FloatQuaternion& rotation) const;
+		virtual void setRotation(const FloatQuaternion& rotation);
+
+		virtual Transform getWorldTransform() const;
+		virtual void getWorldTransform(Transform& transform) const;
+		virtual void setWorldTransform(const Transform& transform);
+
+		virtual void makeTransformChangingNotification();
+	};
+
+	class PhysicsEntityTransformAccessor final : public NonCopyable, public PhysicsEntityTransformNotificationFreeAccessor
+	{
+	private:
 		bool m_isChanged = false;
 
 	public:
-		PhysicsEntityTransformUnsafeNotificationAccessor(const PhysicsEntityTransformReference& transform);
-		~PhysicsEntityTransformUnsafeNotificationAccessor();
+		PhysicsEntityTransformAccessor(const PhysicsEntityTransformReference& transform)
+			: PhysicsEntityTransformNotificationFreeAccessor(transform) {}
+		~PhysicsEntityTransformAccessor();
 
-		FloatVector3 getPosition() const;
-		void getPosition(FloatVector3& position) const;
-		void setPosition(const FloatVector3& position);
+		virtual void setPosition(const FloatVector3& position) override;
+		virtual void setRotation(const FloatQuaternion& rotation) override;
+		virtual void setWorldTransform(const Transform& transform) override;
 
-		FloatQuaternion getRotation() const;
-		void getRotation(FloatQuaternion& rotation) const;
-		void setRotation(const FloatQuaternion& rotation);
-
-		Transform getWorldTransform() const;
-		void getWorldTransform(Transform& transform) const;
-		void setWorldTransform(const Transform& transform);
-
-		void makeTransformChangingNotification();
+		virtual void makeTransformChangingNotification() override;
 	};
 }
