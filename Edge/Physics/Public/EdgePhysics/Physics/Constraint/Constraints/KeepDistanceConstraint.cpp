@@ -2,10 +2,11 @@
 
 Edge::KeepDistanceConstraint::KeepDistanceConstraint(const PhysicsEntityReference& entity1,
 	const PhysicsEntityReference& entity2, const FloatVector3& anchor1, const FloatVector3& anchor2)
-	: TwoPhysicsEntityConstraint(entity1, entity2), m_positionPart(entity1, entity2),
+	: TwoPhysicsEntityConstraint(entity1, entity2),
+	m_positionPart(entity1, entity2),
 	m_anchor1(anchor1), m_anchor2(anchor2)
 {
-	
+
 }
 
 void Edge::KeepDistanceConstraint::preSolve(float deltaTime)

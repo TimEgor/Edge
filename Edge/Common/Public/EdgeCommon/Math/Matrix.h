@@ -199,6 +199,19 @@ namespace Edge
 	using FloatMatrix3x3 = Matrix3x3Base<float>;
 	using FloatMatrix4x4 = Matrix4x4Base<float>;
 
+	constexpr FloatMatrix2x2 FloatMatrix2x2Zero = FloatMatrix2x2(
+		0.0f, 0.0f,
+		0.0f, 0.0f);
+
+	constexpr FloatMatrix2x2 FloatMatrix2x2Identity = FloatMatrix2x2(
+		1.0f, 0.0f,
+		0.0f, 1.0f);
+
+	constexpr FloatMatrix3x3 FloatMatrix3x3Zero = FloatMatrix3x3(
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f);
+
 	constexpr FloatMatrix3x3 FloatMatrix3x3Identity = FloatMatrix3x3(
 		1.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,

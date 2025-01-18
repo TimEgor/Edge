@@ -15,8 +15,8 @@
 
 void EdgeDemo::DefaultCameraController::update(float deltaTime)
 {
-	static constexpr float cameraMovingSpeed = 5.0f;
-	static constexpr float cameraRotationSpeed = 10.0f;
+	static constexpr float cameraMovingSpeed = 15.0f;
+	static constexpr float cameraRotationSpeed = 30.0f;
 
 	const Edge::InputDeviceController& inputController = Edge::FrameworkCore::getInstance().getApplication().getInputDeviceController();
 

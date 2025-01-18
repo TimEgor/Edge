@@ -148,7 +148,8 @@ void Edge::KeepPositionConstraintPart::solveVelocity()
 
 		const ComputeVector velocity1 = motion1 ? motion1->getLinearVelocity() - CrossVector3(m_r1, motion1->getAngularVelocity()) : FloatVector3Zero;
 		const ComputeVector velocity2 = motion2 ? motion2->getLinearVelocity() - CrossVector3(m_r2, motion2->getAngularVelocity()) : FloatVector3Zero;
-		const ComputeVector computeLambda = m_invEffectiveMass * (velocity1 - velocity2);
+		const ComputeVector velocityDelta = velocity1 - velocity2;
+		const ComputeVector computeLambda = m_invEffectiveMass * velocityDelta;
 
 		computeLambda.saveToFloatVector3(lambda);
 		(m_totalLambda + computeLambda).saveToFloatVector3(m_totalLambda);
@@ -164,8 +165,8 @@ void Edge::KeepPositionConstraintPart::solvePosition()
 	{
 		static constexpr float baumgarteCoeff = 1.0f;
 
-		const ComputeVector error = ((m_entity1->getTransform()->getPosition() + m_r1) - (m_entity2->getTransform()->getPosition() + m_r2));
-		const ComputeVector computeLambda = m_invEffectiveMass * error * baumgarteCoeff;
+		const ComputeVector error = (m_entity2->getTransform()->getPosition() + m_r2) - (m_entity1->getTransform()->getPosition() + m_r1);
+		const ComputeVector computeLambda = m_invEffectiveMass * error * -baumgarteCoeff;
 		computeLambda.saveToFloatVector3(lambda);
 	}
 
@@ -174,5 +175,5 @@ void Edge::KeepPositionConstraintPart::solvePosition()
 
 bool Edge::KeepPositionConstraintPart::isActive() const
 {
-	return m_invEffectiveMass[3][3] > EDGE_EPSILON;
+	return m_invEffectiveMass.m_m44 > EDGE_EPSILON;
 }

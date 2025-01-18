@@ -47,7 +47,7 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 	{
 		const float radius2 = Edge::RandomFloat(1.5f, 2.5f);
 
-		bodyMotionCreationParam.m_mass = Edge::RandomFloat(1.0f, 15.0f);
+		bodyMotionCreationParam.m_mass = Edge::RandomFloat(10.0f, 15.0f);
 		bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, radius2);
 
 		bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(radius2);

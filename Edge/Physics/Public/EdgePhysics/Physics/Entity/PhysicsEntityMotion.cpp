@@ -89,7 +89,7 @@ void Edge::PhysicsPositionBasedMotion::applyAcceleration(float deltaTime, const 
 {
 	ComputeVector linearVelocity(m_linearVelocity);
 
-	linearVelocity += (gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass) * deltaTime;
+	linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
 
 	linearVelocity *= std::max(0.0f, 1.0f - m_linearDampingFactor * deltaTime);
 
@@ -175,7 +175,7 @@ void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(C
 	getInverseInertiaTensor(inverseInertiaTensor);
 
 	const ComputeMatrix rotation = ComputeMatrixFromRotationQuaternion(getTransform()->getRotation());
-	inertia = TransposeMatrix(rotation) * ComputeMatrix(inverseInertiaTensor) * rotation;
+	inertia = TransposeMatrix(rotation) * inverseInertiaTensor * rotation;
 }
 
 void Edge::PhysicsPositionAndRotationBasedMotion::applyForce(const FloatVector3& force, const FloatVector3& position)
@@ -214,7 +214,7 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyAngularImpulse(const Floa
 	const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
 
 	ComputeVector angularVelocity(m_angularVelocity);
-	angularVelocity += worldInverseInertiaTensor * ComputeVector(impulse);
+	angularVelocity += worldInverseInertiaTensor * impulse;
 	angularVelocity.saveToFloatVector3(m_angularVelocity);
 }
 
@@ -227,8 +227,8 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyAcceleration(float deltaT
 	ComputeVector linearVelocity(m_linearVelocity);
 	ComputeVector angularVelocity(m_angularVelocity);
 
-	linearVelocity += ((ComputeVector(gravity) * m_gravityFactor) + (ComputeVector(m_forceAccumulator) * m_invMass)) * deltaTime;
-	angularVelocity += worldInverseInertiaTensor * ComputeVector(m_torqueAccumulator) * deltaTime;
+	linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
+	angularVelocity += worldInverseInertiaTensor * m_torqueAccumulator * deltaTime;
 
 	linearVelocity *= std::max(0.0f, 1.0f - m_linearDampingFactor * deltaTime);
 	angularVelocity *= std::max(0.0f, 1.0f - m_angularDampingFactor * deltaTime);

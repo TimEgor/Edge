@@ -24,7 +24,7 @@ float Edge::MotionPropertyComputer::CalcBoxMass(const FloatVector3& size, float 
 Edge::FloatVector3 Edge::MotionPropertyComputer::CalcBoxInertiaTensor(float mass, const FloatVector3& size)
 {
 	const ComputeVector sizeSqr = MultiplyVector(size, size);
-	const ComputeVector axisDistanceCoeff = ComputeVector(ComputeMath::vectorSwizzle(sizeSqr.m_vector, 1, 0, 0, 4)) + ComputeVector(ComputeMath::vectorSwizzle(sizeSqr.m_vector, 2, 2, 1, 4));
+	const ComputeVector axisDistanceCoeff = ComputeVector(ComputeMath::vectorSwizzle(sizeSqr.m_vector, 1, 0, 0, 3)) + ComputeVector(ComputeMath::vectorSwizzle(sizeSqr.m_vector, 2, 2, 1, 3));
 	const ComputeVector inertia = axisDistanceCoeff * (mass / 12.0f);
 
 	return inertia.getFloatVector3();
