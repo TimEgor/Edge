@@ -160,6 +160,11 @@ const Edge::PhysicsInstancedCollisionContactPoint* Edge::PhysicsCollisionContact
 	return nullptr;
 }
 
+const Edge::PhysicsCollisionContactManager::ContactPointCollection& Edge::PhysicsCollisionContactManager::getContactPoints() const
+{
+	return m_contactPoints;
+}
+
 void Edge::PhysicsCollisionContactManager::markContactsForChecking(const PhysicsEntityCollisionReference& collision)
 {
 	const DefaultPhysicsEntityCollisionSceneContextReference defaultSceneContext = CollisionUtil::GetDefaultCollisionSceneContext(collision);

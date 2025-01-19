@@ -13,7 +13,7 @@ namespace EdgeDemo
 		Edge::PhysicsBodyReference m_dynamicBody;
 		Edge::PhysicsConstraintReference m_constraint;
 
-		void drawBox(const Edge::Transform& transform, const Edge::FloatVector3& size, bool isDynamic) const;
+		void drawBox(const Edge::PhysicsBodyReference& body, bool isDynamic) const;
 
 	public:
 		TestHingeConstraintDemo() = default;

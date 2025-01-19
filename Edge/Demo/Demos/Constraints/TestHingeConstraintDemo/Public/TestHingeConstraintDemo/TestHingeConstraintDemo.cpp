@@ -2,18 +2,26 @@
 
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
+#include "EdgePhysics/Physics/Collision/Scene/PhysicsCollisionContactManager.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
-#include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Constraint/Constraints/HingeConstraint.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
-void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::Transform& transform, const Edge::FloatVector3& size, bool isDynamic) const
+void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::PhysicsBodyReference& body, bool isDynamic) const
 {
+	const Edge::Transform& transform = body->getBodyTransform().getObjectRef().getWorldTransform();
+	const Edge::PhysicsBodyMotionReference motion = body->getBodyMotion();
+
+	const Edge::FloatVector3& size = body->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize();
+
 	if (isDynamic)
 	{
-		m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisX(), 0.2f, Edge::NormalizedColorRed);
-		m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
-		m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
+		//m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisX(), 0.2f, Edge::NormalizedColorRed);
+		//m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
+		//m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
+
+		m_debugVisualizationDataController->addLine(transform.getOrigin(), (transform.getOrigin() + motion->getLinearVelocity()).getFloatVector3(), Edge::NormalizedColorYellow);
+		m_debugVisualizationDataController->addLine(transform.getOrigin(), (transform.getOrigin() + motion->getAngularVelocity()).getFloatVector3(), Edge::NormalizedColorGreen);
 
 		m_debugVisualizationDataController->addWireframeBox(transform, size);
 	}
@@ -25,6 +33,9 @@ void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::Transform& transform
 
 bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 {
+	m_cameraController->getTransform().setOrigin(Edge::FloatVector3(0.0f, 0.0f, -3.0f));
+
+	//
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
@@ -60,10 +71,6 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 		Edge::FloatVector3UnitZ, Edge::FloatVector3UnitZ);
 	m_physicsScene->addConstraint(m_constraint);
 
-	//
-	//m_dynamicBody->getMotion()->applyImpulse(Edge::FloatVector3(15.0f, 0.0f, 0.0f), Edge::FloatVector3(0.0f, 0.0f, 0.0f));
-	//m_dynamicBody->getMotion()->applyAngularImpulse(Edge::FloatVector3(0.0f, 0.0f, 0.5f));
-
 	return true;
 }
 
@@ -79,6 +86,18 @@ void EdgeDemo::TestHingeConstraintDemo::updateDemoLogic(float deltaTime)
 {
 	m_debugVisualizationDataController->clear();
 
-	drawBox(m_staticBody->getBodyTransform()->getWorldTransform(), 1.0f, false);
-	drawBox(m_dynamicBody->getBodyTransform()->getWorldTransform(), 1.0f, true);
+	drawBox(m_staticBody, false);
+	drawBox(m_dynamicBody, true);
+
+	const Edge::PhysicsCollisionContactManager::ContactPointCollection& contactPoints =
+		m_physicsScene->getCollisionManager()->getContactManager().getContactPoints();
+
+	for (const Edge::PhysicsInstancedCollisionContactPoint& contactPoint : contactPoints)
+	{
+		m_debugVisualizationDataController->addWireframeSphere(contactPoint.m_pointData.m_position1, Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f);
+		m_debugVisualizationDataController->addLine(
+			contactPoint.m_pointData.m_position1,
+			(contactPoint.m_pointData.m_position1 + contactPoint.m_pointData.m_normal).getFloatVector3()
+		);
+	}
 }

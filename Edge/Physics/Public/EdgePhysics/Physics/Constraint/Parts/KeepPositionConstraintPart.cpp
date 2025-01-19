@@ -142,18 +142,16 @@ void Edge::KeepPositionConstraintPart::solveVelocity()
 {
 	FloatVector3 lambda = FloatVector3Zero;
 
-	{
-		const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
-		const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
+	const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
+	const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
 
-		const ComputeVector velocity1 = motion1 ? motion1->getLinearVelocity() - CrossVector3(m_r1, motion1->getAngularVelocity()) : FloatVector3Zero;
-		const ComputeVector velocity2 = motion2 ? motion2->getLinearVelocity() - CrossVector3(m_r2, motion2->getAngularVelocity()) : FloatVector3Zero;
-		const ComputeVector velocityDelta = velocity1 - velocity2;
-		const ComputeVector computeLambda = m_invEffectiveMass * velocityDelta;
+	const ComputeVector velocity1 = motion1 ? motion1->getLinearVelocity() - CrossVector3(m_r1, motion1->getAngularVelocity()) : FloatVector3Zero;
+	const ComputeVector velocity2 = motion2 ? motion2->getLinearVelocity() - CrossVector3(m_r2, motion2->getAngularVelocity()) : FloatVector3Zero;
+	const ComputeVector velocityDelta = velocity1 - velocity2;
+	const ComputeVector computeLambda = m_invEffectiveMass * velocityDelta;
 
-		computeLambda.saveToFloatVector3(lambda);
-		(m_totalLambda + computeLambda).saveToFloatVector3(m_totalLambda);
-	}
+	computeLambda.saveToFloatVector3(lambda);
+	(m_totalLambda + computeLambda).saveToFloatVector3(m_totalLambda);
 
 	applyVelocity(lambda);
 }

@@ -17,6 +17,9 @@ namespace Edge
 
 	class PhysicsCollisionContactManager final
 	{
+	public:
+		using ContactPointCollection = std::vector<PhysicsInstancedCollisionContactPoint>;
+
 	private:
 		class DispatcherContext final
 		{
@@ -37,8 +40,6 @@ namespace Edge
 
 		using ContactCollection = std::unordered_map<PhysicsCollisionContactID, PhysicsCollisionContact, PhysicsCollisionContactID::Hasher>;
 		using ContactPartnerCollection = std::unordered_map<PhysicsSceneCollisionID, std::vector<PhysicsSceneCollisionID>>;
-
-		using ContactPointCollection = std::vector<PhysicsInstancedCollisionContactPoint>;
 
 		ContactCollection m_contacts;
 		ContactPartnerCollection m_contactPartners;
@@ -68,6 +69,7 @@ namespace Edge
 		const PhysicsCollisionContact* getContact(PhysicsCollisionContactID contactID) const;
 		const PhysicsCollisionContact* getContact(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2) const;
 		const PhysicsInstancedCollisionContactPoint* getContactPoint(PhysicsCollisionContactPointID pointID) const;
+		const ContactPointCollection& getContactPoints() const;
 
 		void markContactsForChecking(const PhysicsEntityCollisionReference& collision);
 		void markContactsForChecking(PhysicsSceneCollisionID changedCollision);
