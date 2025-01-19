@@ -291,9 +291,14 @@ void Edge::EPA::fillPointContactPointData(const PhysicsEntityCollision& collisio
 	contactPoint.m_depth = 0.0f;
 }
 
-void Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const
+bool Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const
 {
-	const FloatVector4 barycentricCoords = getBarycentricFaceProjection(face);
+	FloatVector4 barycentricCoords;
+	const bool isValid = getBarycentricFaceProjection(face, barycentricCoords);
+	if (!isValid)
+	{
+		return false;
+	}
 
 	((barycentricCoords.m_x * face.m_points[0].m_pointCollision1)
 		+ (barycentricCoords.m_y * face.m_points[1].m_pointCollision1)
@@ -307,9 +312,11 @@ void Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollis
 
 	contactPoint.m_normal = face.m_normal;
 	contactPoint.m_depth = barycentricCoords.m_w;
+
+	return true;
 }
 
-Edge::FloatVector4 Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& face) const
+bool Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& face, Edge::FloatVector4& outProjection) const
 {
 	const float distanceFromOrigin = DotVector3(face.m_normal, face.m_points[0].m_minkowskiDiff);
 	const ComputeVector point = face.m_normal * distanceFromOrigin;
@@ -325,12 +332,18 @@ Edge::FloatVector4 Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& f
 	const float d21 = DotVector3(v2, v1);
 
 	const float denom = d00 * d11 - d01 * d01;
+	if (denom <= 0.0f)
+	{
+		return false;
+	}
 
 	const float v = (d11 * d20 - d01 * d21) / denom;
 	const float w = (d00 * d21 - d01 * d20) / denom;
 	const float u = 1.0f - v - w;
 
-	return FloatVector4(u, v, w, distanceFromOrigin);
+	outProjection = FloatVector4(u, v, w, distanceFromOrigin);
+
+	return true;
 }
 
 bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
@@ -380,9 +393,7 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 
 		if (DotVector3(closestFace->m_normal, supportPoint.m_minkowskiDiff) - minDistance < 0.0001f)
 		{
-			fillFaceContactPointData(*closestFace, contactPointData);
-
-			return true;
+			return fillFaceContactPointData(*closestFace, contactPointData);
 		}
 
 		for (auto iterator = polytopeFaces.begin(); iterator != polytopeFaces.end();)

@@ -79,8 +79,8 @@ namespace Edge
 		void addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2) const;
 
 		void fillPointContactPointData(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const GJK::Result& gjkResult, PhysicsCollisionContactPoint& contactPoint) const;
-		void fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
-		FloatVector4 getBarycentricFaceProjection(const PolytopeFace& face) const; //xyz - barycentricCoords, w - distance to face
+		bool fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
+		bool getBarycentricFaceProjection(const PolytopeFace& face, Edge::FloatVector4& outProjection) const; //xyz - barycentricCoords, w - distance to face
 
 		bool calcEPAContact(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
 			const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const;
