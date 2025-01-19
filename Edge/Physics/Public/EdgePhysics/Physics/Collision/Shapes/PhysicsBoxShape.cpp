@@ -10,7 +10,7 @@ Edge::AABB3 Edge::PhysicsBoxShape::getAABB() const
 
 Edge::FloatVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const FloatVector3& direction) const
 {
-	float maxDistance = -EDGE_FLT_MAX;
+	float maxDistance = -Math::FltMax;
 	uint32_t maxDistancePointIndex = -1;
 
 	const FloatVector3 halfSize = (m_size * 0.5f).getFloatVector3();

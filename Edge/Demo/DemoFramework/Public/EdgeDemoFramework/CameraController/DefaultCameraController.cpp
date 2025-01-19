@@ -40,7 +40,7 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 	float pitchAngle = asin(-m_cameraTransform.m_matrix.m_m32);
 	float yawAngle = 0.0f;
 
-	if (cosf(pitchAngle) > EDGE_EPSILON)
+	if (cosf(pitchAngle) > Edge::Math::Epsilon)
 	{
 		yawAngle = atan2f(m_cameraTransform.m_matrix.m_m31, m_cameraTransform.m_matrix.m_m33);
 	}
@@ -95,20 +95,20 @@ void EdgeDemo::DefaultCameraController::update(float deltaTime)
 
 		if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(mouseKeyData, GetMouseKey(Edge::MouseKeys::Right)))
 		{
-			pitchAngle += -mouseDelta.m_y * cameraRotationSpeed * deltaTime * EDGE_DEG_TO_RAD;
+			pitchAngle += -mouseDelta.m_y * cameraRotationSpeed * deltaTime * Edge::Math::DegToRad;
 
-			pitchAngle = std::min(pitchAngle, EDGE_HALF_PI - EDGE_EPSILON);
-			pitchAngle = std::max(pitchAngle, -EDGE_HALF_PI + EDGE_EPSILON);
+			pitchAngle = std::min(pitchAngle, Edge::Math::HalfPi - Edge::Math::Epsilon);
+			pitchAngle = std::max(pitchAngle, -Edge::Math::HalfPi + Edge::Math::Epsilon);
 
-			yawAngle += mouseDelta.m_x * cameraRotationSpeed * deltaTime * EDGE_DEG_TO_RAD;
+			yawAngle += mouseDelta.m_x * cameraRotationSpeed * deltaTime * Edge::Math::DegToRad;
 
-			if (yawAngle >= EDGE_2_PI)
+			if (yawAngle >= Edge::Math::Pi2)
 			{
-				yawAngle -= EDGE_2_PI;
+				yawAngle -= Edge::Math::Pi2;
 			}
-			else if (yawAngle <= -EDGE_2_PI)
+			else if (yawAngle <= -Edge::Math::Pi2)
 			{
-				yawAngle += EDGE_2_PI;
+				yawAngle += Edge::Math::Pi2;
 			}
 		}
 

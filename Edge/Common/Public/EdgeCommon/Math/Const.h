@@ -1,14 +1,22 @@
 #pragma once
 
-constexpr float EDGE_PI = 3.1415927f;
-constexpr float EDGE_2_PI = 3.1415927f * 2.0f;
-constexpr float EDGE_HALF_PI = 3.1415927f * 0.5f;
+#include <cstdint>
 
-constexpr float EDGE_DEG_TO_RAD = EDGE_PI / 180.0f;
-constexpr float EDGE_RAD_TO_DEG = 180.0f / EDGE_PI;
+namespace Edge::Math
+{
+	constexpr float Pi = 3.1415927f;
+	constexpr float Pi2 = Pi * 2.0f;
+	constexpr float HalfPi = 3.1415927f * 0.5f;
 
-constexpr float EDGE_EPSILON = 1.192093e-07f;
-constexpr float EDGE_EPSILON_SQR = EDGE_EPSILON * EDGE_EPSILON;
+	constexpr float DegToRad = Pi / 180.0f;
+	constexpr float RadToDeg = 180.0f / Pi;
 
-constexpr float EDGE_FLT_MAX = 3.402823466e+38f;
-constexpr float EDGE_FLT_MIN = 1.175494351e-38f;
+	constexpr float Epsilon = 1.192093e-07f;
+	constexpr float EpsilonSqr = Epsilon * Epsilon;
+
+	constexpr float FltMax = 3.402823466e+38f;
+	constexpr float FltMin = 1.175494351e-38f;
+
+	inline bool IsNan(float val) { return (*(const uint32_t*)&(val) & 0x7F800000) == 0x7F800000 && (*(const uint32_t*)&(val) & 0x7FFFFF) != 0; }
+	inline bool IsInf(float val) { return (*(const uint32_t*)&(val) & 0x7FFFFFFF) == 0x7F800000; }
+}

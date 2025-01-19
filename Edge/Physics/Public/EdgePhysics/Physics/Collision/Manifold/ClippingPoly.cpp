@@ -91,13 +91,13 @@ void Edge::ClippingPoly::ClipPolyVsEdge(const std::vector<FloatVector3>& inPolyg
 	const ComputeVector edgeNormal = CrossVector3(inClippingEdgeNormal, edge);
 
 	const ComputeVector polygonNormal = CrossVector3(inPolygonToClip[2] - inPolygonToClip[0], inPolygonToClip[1] - inPolygonToClip[0]);
-	const float polygonNormalLenSq = polygonNormal.getLength3Sqr();
+	const float polygonNormalLenSq = polygonNormal.getLengthSqr3();
 
 	const ComputeVector v1 = DotVector3(inEdgeVertex1 + polygonNormal, inPolygonToClip[0] - inEdgeVertex1) * polygonNormal / polygonNormalLenSq;
 	const ComputeVector v2 = DotVector3(inEdgeVertex2 + polygonNormal, inPolygonToClip[0] - inEdgeVertex2) * polygonNormal / polygonNormalLenSq;
 
 	const ComputeVector v12 = v2 - v1;
-	const float v12_len_sq = v12.getLength3Sqr();
+	const float v12_len_sq = v12.getLengthSqr3();
 
 	ComputeVector e1 = inPolygonToClip[inPolygonSize - 1];
 

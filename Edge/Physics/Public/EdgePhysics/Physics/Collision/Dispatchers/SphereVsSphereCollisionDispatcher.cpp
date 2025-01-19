@@ -33,7 +33,7 @@ uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCo
 		return 0;
 	}
 
-	if (distance < EDGE_EPSILON)
+	if (distance < Math::Epsilon)
 	{
 		depth = std::max(radius1, radius2);
 		delta = FloatVector3UnitY * (radius1 + radius2);

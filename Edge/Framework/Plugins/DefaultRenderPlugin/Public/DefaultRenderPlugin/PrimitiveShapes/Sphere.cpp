@@ -58,8 +58,8 @@ void EdgeDefRender::SphereShapeGenerator::generateVertices(float radius, uint32_
 
 	m_vertices.push_back(topVertex);
 
-	const float phiStep = EDGE_PI / stacks;
-	const float thetaStep = 2.0f * EDGE_PI / slices;
+	const float phiStep = Edge::Math::Pi / stacks;
+	const float thetaStep = 2.0f * Edge::Math::Pi / slices;
 
 	for (uint32_t i = 1; i <= stacks - 1; ++i)
 	{
@@ -149,8 +149,8 @@ void EdgeDefRender::LineSphereShapeGenerator::generateVertices(float radius, uin
 
 	m_vertices.push_back(topVertex);
 
-	const float phiStep = EDGE_PI / stacks;
-	const float thetaStep = 2.0f * EDGE_PI / slices;
+	const float phiStep = Edge::Math::Pi / stacks;
+	const float thetaStep = 2.0f * Edge::Math::Pi / slices;
 
 	for (uint32_t i = 1; i <= stacks - 1; ++i)
 	{

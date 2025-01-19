@@ -106,7 +106,7 @@ void EdgeDemo::DemoApplication::prepareCameraTransforms(Edge::Renderer::CameraTr
 		Edge::ComputeVector(demoCameraTransform.getAxisZ()).m_vector, Edge::ComputeVector(demoCameraTransform.getAxisY()).m_vector));
 	cameraTransform.saveToMatrix4x4(cameraTransforms.m_viewTransform);
 
-	cameraTransform = Edge::ComputeMatrix(Edge::ComputeMath::matrixPerspectiveFovLH(90.0f * EDGE_DEG_TO_RAD, 1.0f, 0.05f, 1000.0f));
+	cameraTransform = Edge::ComputeMatrix(Edge::ComputeMath::matrixPerspectiveFovLH(90.0f * Edge::Math::DegToRad, 1.0f, 0.05f, 1000.0f));
 	cameraTransform.saveToMatrix4x4(cameraTransforms.m_projTransform);
 }
 

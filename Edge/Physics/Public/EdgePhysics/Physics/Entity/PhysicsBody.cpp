@@ -23,7 +23,7 @@ void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 
 	const float rotationSpeed = angularVelocity.getLength3();
 
-	if (rotationSpeed > EDGE_EPSILON)
+	if (rotationSpeed > Math::Epsilon)
 	{
 		angularVelocity /= rotationSpeed;
 		rotation *= ComputeQuaternionFromRotationAxis(angularVelocity, rotationSpeed);

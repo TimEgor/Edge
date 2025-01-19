@@ -13,11 +13,11 @@ void Edge::ClosestPointCastingResultCollector::addHit(const PointInstanceCasting
 
 void Edge::ClosestPointCastingResultCollector::reset()
 {
-	m_hitResult.m_result.m_distance = EDGE_FLT_MAX;
+	m_hitResult.m_result.m_distance = Math::FltMax;
 	m_hasHit = false;
 }
 
 bool Edge::ClosestPointCastingResultCollector::shouldStopCollecting() const
 {
-	return m_hasHit && m_hitResult.m_result.m_distance <= EDGE_EPSILON;
+	return m_hasHit && m_hitResult.m_result.m_distance <= Math::Epsilon;
 }

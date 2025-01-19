@@ -31,7 +31,7 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	//right
 	{
 		bodyCreationParam.m_position = Edge::FloatVector3(5.5f, 0.0f, 0.0f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(0.0f, 0.0f, 90.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(0.0f, 0.0f, 90.0f * Edge::Math::DegToRad).getFloatQuaternion();
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -43,7 +43,7 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	//left
 	{
 		bodyCreationParam.m_position = Edge::FloatVector3(-5.5f, 0.0f, 0.0f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(0.0f, 0.0f, 90.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(0.0f, 0.0f, 90.0f * Edge::Math::DegToRad).getFloatQuaternion();
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -55,7 +55,7 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	//forward
 	{
 		bodyCreationParam.m_position = Edge::FloatVector3(0.0f, 0.0f, 5.5f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(90.0f * EDGE_DEG_TO_RAD, 0.0f, 0.0f).getFloatQuaternion();
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(90.0f * Edge::Math::DegToRad, 0.0f, 0.0f).getFloatQuaternion();
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -67,7 +67,7 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	//backward
 	{
 		bodyCreationParam.m_position = Edge::FloatVector3(0.0f, 0.0f, -5.5f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(90.0f * EDGE_DEG_TO_RAD, 0.0f, 0.0f).getFloatQuaternion();
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(90.0f * Edge::Math::DegToRad, 0.0f, 0.0f).getFloatQuaternion();
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 

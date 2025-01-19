@@ -4,5 +4,5 @@
 
 bool Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(const InputDeviceKeyData& data, InputDeviceKeyData::KeyIndex key)
 {
-	return data.m_values[key] > EDGE_EPSILON;
+	return data.m_values[key] > Math::Epsilon;
 }

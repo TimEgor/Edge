@@ -21,7 +21,7 @@ bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, con
 		const float minBoundPositionElement = aabb.m_minPosition.getElement(slabIndex);
 		const float maxBoundPositionElement = aabb.m_maxPosition.getElement(slabIndex);
 
-		if (fabs(directionElement) < EDGE_EPSILON)
+		if (fabs(directionElement) < Math::Epsilon)
 		{
 			if (originElement < minBoundPositionElement ||
 				originElement > maxBoundPositionElement)

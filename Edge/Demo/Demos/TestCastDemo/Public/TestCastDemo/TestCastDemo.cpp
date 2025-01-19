@@ -12,7 +12,7 @@ void EdgeDemo::TestCastDemo::updateLocalTime(float deltaTime)
 {
 	m_localTime += deltaTime;
 
-	const float maxLocalTime = EDGE_2_PI;
+	const float maxLocalTime = Edge::Math::Pi2;
 	while (m_localTime >= maxLocalTime)
 	{
 		m_localTime -= maxLocalTime;

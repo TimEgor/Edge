@@ -299,6 +299,16 @@ Edge::ComputeMath::Vector Edge::ComputeMath::vectorIsInfiniteV(const Vector& vec
 	return DirectX::XMVectorIsInfinite(vec);
 }
 
+bool Edge::ComputeMath::vector2IsNan(const Vector& vec)
+{
+	return DirectX::XMVector2IsNaN(vec);
+}
+
+bool Edge::ComputeMath::vector2IsInfinite(const Vector& vec)
+{
+	return DirectX::XMVector2IsInfinite(vec);
+}
+
 bool Edge::ComputeMath::vector3IsNan(const Vector& vec)
 {
 	return DirectX::XMVector3IsNaN(vec);

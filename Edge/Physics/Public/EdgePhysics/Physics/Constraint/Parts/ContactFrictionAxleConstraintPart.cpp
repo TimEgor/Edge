@@ -8,7 +8,7 @@ void Edge::ContactFrictionAxleConstraintPart::deactivate()
 
 void Edge::ContactFrictionAxleConstraintPart::applyVelocity(const FloatVector3& normal, float lambda)
 {
-	if (fabsf(lambda) <= EDGE_EPSILON)
+	if (fabsf(lambda) <= Math::Epsilon)
 	{
 		return;
 	}
@@ -127,5 +127,5 @@ float Edge::ContactFrictionAxleConstraintPart::solveVelocity(const FloatVector3&
 
 bool Edge::ContactFrictionAxleConstraintPart::isActive() const
 {
-	return fabsf(m_invEffectiveMass) > EDGE_EPSILON;
+	return fabsf(m_invEffectiveMass) > Math::Epsilon;
 }

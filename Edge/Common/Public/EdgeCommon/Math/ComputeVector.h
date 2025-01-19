@@ -49,13 +49,21 @@ namespace Edge
 		float getLength2() const;
 		float getLength3() const;
 		float getLength4() const;
-		float getLength2Sqr() const;
-		float getLength3Sqr() const;
-		float getLength4Sqr() const;
+		float getLengthSqr2() const;
+		float getLengthSqr3() const;
+		float getLengthSqr4() const;
 
 		float getLength() const;
 		float getLengthSqr() const;
-		
+
+		bool isNan2() const;
+		bool isNan3() const;
+		bool isNan4() const;
+
+		bool isAnyNan2() const;
+		bool isAnyNan3() const;
+		bool isAnyNan4() const;
+
 		void loadFromFloatVector2(const FloatVector2& vector);
 		void loadFromFloatVector3(const FloatVector3& vector);
 		void loadFromFloatVector4(const FloatVector4& vector);
@@ -86,12 +94,12 @@ namespace Edge
 	uint32_t VectorLowestComponentIndex(const ComputeVector& vector);
 	uint32_t VectorHighestComponentIndex(const ComputeVector& vector);
 
-	float VectorLength2(const ComputeVector& vector);
-	float VectorLength3(const ComputeVector& vector);
-	float VectorLength4(const ComputeVector& vector);
-	float VectorLength2Sqr(const ComputeVector& vector);
-	float VectorLength3Sqr(const ComputeVector& vector);
-	float VectorLength4Sqr(const ComputeVector& vector);
+	float Vector2Length(const ComputeVector& vector);
+	float Vector3Length(const ComputeVector& vector);
+	float Vector4Length(const ComputeVector& vector);
+	float Vector2LengthSqr(const ComputeVector& vector);
+	float Vector3LengthSqr(const ComputeVector& vector);
+	float Vector4LengthSqr(const ComputeVector& vector);
 
 	float VectorLength(const ComputeVector& vector);
 	float VectorLengthSqr(const ComputeVector& vector);
@@ -121,4 +129,12 @@ namespace Edge
 	bool operator!=(const ComputeVector& vector1, const ComputeVector& vector2);
 
 	bool IsVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2);
+
+	bool IsVector2Nan(const ComputeVector& vector);
+	bool IsVector3Nan(const ComputeVector& vector);
+	bool IsVector4Nan(const ComputeVector& vector);
+
+	bool IsVector2AnyNan(const ComputeVector& vector);
+	bool IsVector3AnyNan(const ComputeVector& vector);
+	bool IsVector4AnyNan(const ComputeVector& vector);
 }

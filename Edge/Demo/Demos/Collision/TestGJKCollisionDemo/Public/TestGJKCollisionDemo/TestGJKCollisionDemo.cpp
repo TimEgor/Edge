@@ -60,11 +60,11 @@ void EdgeDemo::TestGJKCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ShiftRight)))
 	{
-		roll += deltaTime * angularChangingSpeed * EDGE_DEG_TO_RAD;
+		roll += deltaTime * angularChangingSpeed * Edge::Math::DegToRad;
 	}
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ControlRight)))
 	{
-		roll -= deltaTime * angularChangingSpeed * EDGE_DEG_TO_RAD;
+		roll -= deltaTime * angularChangingSpeed * Edge::Math::DegToRad;
 	}
 
 	dynamicBoxTransform.setOrigin(position.getFloatVector3());

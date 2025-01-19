@@ -42,7 +42,7 @@ void Edge::ManifoldContactGenerator::generate(const PhysicsEntityCollision& coll
 			faceNormal = CrossVector3(CrossVector3(edge, contactPoint.m_normal), edge);
 		}
 
-		const float faceNormalLength = faceNormal.getLength3Sqr();
+		const float faceNormalLength = faceNormal.getLengthSqr3();
 		if (faceNormalLength > 0.0f)
 		{
 			for (const FloatVector3& p2 : clippedFace)

@@ -85,6 +85,8 @@ namespace Edge
 		Vector vectorIsNanV(const Vector& vec);
 		Vector vectorIsInfiniteV(const Vector& vec);
 
+		bool vector2IsNan(const Vector& vec);
+		bool vector2IsInfinite(const Vector& vec);
 		bool vector3IsNan(const Vector& vec);
 		bool vector3IsInfinite(const Vector& vec);
 		bool vector4IsNan(const Vector& vec);

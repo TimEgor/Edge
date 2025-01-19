@@ -66,8 +66,8 @@ Edge::AABB3 Edge::PhysicsEntityCollision::getWorldShapeAABB() const
 		bound.m_maxPosition
 	};
 
-	ComputeVector minBoundPoint = FloatVector3(EDGE_FLT_MAX);
-	ComputeVector maxBoundPoint = FloatVector3(-EDGE_FLT_MAX);
+	ComputeVector minBoundPoint = FloatVector3(Math::FltMax);
+	ComputeVector maxBoundPoint = FloatVector3(-Math::FltMax);
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
 	{

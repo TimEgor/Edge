@@ -11,7 +11,7 @@ namespace Edge
 		struct PointCastingResult final
 		{
 			FloatVector3 m_hitPosition = FloatVector3Zero;
-			float m_distance = EDGE_FLT_MAX;
+			float m_distance = Math::FltMax;
 		};
 
 		PhysicsCollisionQuery() = default;

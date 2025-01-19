@@ -5,7 +5,7 @@
 
 float Edge::MotionPropertyComputer::CalcSphereMass(float radius, float density)
 {
-	const float volume = radius * radius * radius * EDGE_PI * (4.0f / 3.0f);
+	const float volume = radius * radius * radius * Math::Pi * (4.0f / 3.0f);
 	return volume * density;
 }
 

@@ -38,7 +38,7 @@ bool Edge::MinkowskiSumBaseAlgorithmUtils::HasSimplexPoint(const VoronoiSimplex&
 
 bool Edge::MinkowskiSumBaseAlgorithmUtils::CheckCodirection(const ComputeVector& direction, const ComputeVector& vector)
 {
-	return DotVector3(direction, vector) > EDGE_EPSILON;
+	return DotVector3(direction, vector) > Math::Epsilon;
 	//return DotVector3(direction, vector) > 0.0f;
 }
 
@@ -189,7 +189,7 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 	VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, direction);
 	simplex.addPoint(supportPoint);
 
-	if (VectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
+	if (Vector3LengthSqr(supportPoint.m_minkowskiDiff) <= Math::EpsilonSqr)
 	{
 		return Result(simplex, Result::TestResult::Contact);
 	}
@@ -210,7 +210,7 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 
 		NormalizeVector(direction).saveToFloatVector3(direction);
 
-		if (VectorLength3Sqr(direction) <= EDGE_EPSILON_SQR)
+		if (Vector3LengthSqr(direction) <= Math::EpsilonSqr)
 		{
 			testResult = Result::TestResult::FailedTesting;
 			break;
@@ -218,7 +218,7 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 
 		supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, direction);
 
-		if (VectorLength3Sqr(supportPoint.m_minkowskiDiff) <= EDGE_EPSILON_SQR)
+		if (Vector3LengthSqr(supportPoint.m_minkowskiDiff) <= Math::EpsilonSqr)
 		{
 			testResult = Result::TestResult::Contact;
 			break;
@@ -362,7 +362,7 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 			break;
 		}
 
-		float minDistance = EDGE_FLT_MAX;
+		float minDistance = Math::FltMax;
 
 		std::list<PolytopeFace>::iterator closestFace = polytopeFaces.begin();
 

@@ -8,7 +8,7 @@ void Edge::ContactPenetrationAxleConstraintPart::deactivate()
 
 void Edge::ContactPenetrationAxleConstraintPart::applyVelocity(const FloatVector3& normal, float lambda) const
 {
-	if (fabsf(lambda) <= EDGE_EPSILON)
+	if (fabsf(lambda) <= Math::Epsilon)
 	{
 		return;
 	}
@@ -41,7 +41,7 @@ void Edge::ContactPenetrationAxleConstraintPart::applyVelocity(const FloatVector
 
 void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const FloatVector3& normal, float lambda) const
 {
-	if (fabsf(lambda) <= EDGE_EPSILON)
+	if (fabsf(lambda) <= Math::Epsilon)
 	{
 		return;
 	}
@@ -63,7 +63,7 @@ void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const FloatVector
 
 		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
 		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
-		if (angularVelocityDeltaLength > EDGE_EPSILON)
+		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
 			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
 			transformAccessor1.setRotation(newRotation.getFloatQuaternion());
@@ -78,7 +78,7 @@ void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const FloatVector
 
 		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
 		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
-		if (angularVelocityDeltaLength > EDGE_EPSILON)
+		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
 			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
 			transformAccessor2.setRotation(newRotation.getFloatQuaternion());
@@ -197,5 +197,5 @@ void Edge::ContactPenetrationAxleConstraintPart::solvePosition(const FloatVector
 
 bool Edge::ContactPenetrationAxleConstraintPart::isActive() const
 {
-	return fabsf(m_invEffectiveMass) > EDGE_EPSILON;
+	return fabsf(m_invEffectiveMass) > Math::Epsilon;
 }

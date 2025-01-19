@@ -1,6 +1,7 @@
 #include "ComputeVector.h"
 
 #include "ComputeMatrix.h"
+#include "Const.h"
 #include "ComputeMath/ComputeMatrix.h"
 
 Edge::ComputeVector::ComputeVector(const ComputeMath::Vector& vector)
@@ -155,17 +156,17 @@ float Edge::ComputeVector::getLength4() const
 	return ComputeMath::vector4Length(m_vector);
 }
 
-float Edge::ComputeVector::getLength2Sqr() const
+float Edge::ComputeVector::getLengthSqr2() const
 {
 	return ComputeMath::vector2LengthSqr(m_vector);
 }
 
-float Edge::ComputeVector::getLength3Sqr() const
+float Edge::ComputeVector::getLengthSqr3() const
 {
 	return ComputeMath::vector3LengthSqr(m_vector);
 }
 
-float Edge::ComputeVector::getLength4Sqr() const
+float Edge::ComputeVector::getLengthSqr4() const
 {
 	return ComputeMath::vector4LengthSqr(m_vector);
 }
@@ -177,7 +178,37 @@ float Edge::ComputeVector::getLength() const
 
 float Edge::ComputeVector::getLengthSqr() const
 {
-	return getLength4Sqr();
+	return getLengthSqr4();
+}
+
+bool Edge::ComputeVector::isNan2() const
+{
+	return ComputeMath::vector2IsNan(m_vector);
+}
+
+bool Edge::ComputeVector::isNan3() const
+{
+	return ComputeMath::vector3IsNan(m_vector);
+}
+
+bool Edge::ComputeVector::isNan4() const
+{
+	return ComputeMath::vector4IsNan(m_vector);
+}
+
+bool Edge::ComputeVector::isAnyNan2() const
+{
+	return Math::IsNan(getX()) || Math::IsNan(getY());
+}
+
+bool Edge::ComputeVector::isAnyNan3() const
+{
+	return Math::IsNan(getX()) || Math::IsNan(getY()) || Math::IsNan(getZ());
+}
+
+bool Edge::ComputeVector::isAnyNan4() const
+{
+	return Math::IsNan(getX()) || Math::IsNan(getY()) || Math::IsNan(getZ()) || Math::IsNan(getZ());
 }
 
 void Edge::ComputeVector::loadFromFloatVector2(const FloatVector2& vector)
@@ -280,44 +311,44 @@ uint32_t Edge::VectorHighestComponentIndex(const ComputeVector& vector)
 	return vector.getHighestComponentIndex();
 }
 
-float Edge::VectorLength2(const ComputeVector& vector)
+float Edge::Vector2Length(const ComputeVector& vector)
 {
 	return ComputeMath::vector2Length(vector.m_vector);
 }
 
-float Edge::VectorLength3(const ComputeVector& vector)
+float Edge::Vector3Length(const ComputeVector& vector)
 {
 	return ComputeMath::vector3Length(vector.m_vector);
 }
 
-float Edge::VectorLength4(const ComputeVector& vector)
+float Edge::Vector4Length(const ComputeVector& vector)
 {
 	return ComputeMath::vector4Length(vector.m_vector);
 }
 
-float Edge::VectorLength2Sqr(const ComputeVector& vector)
+float Edge::Vector2LengthSqr(const ComputeVector& vector)
 {
 	return ComputeMath::vector2LengthSqr(vector.m_vector);
 }
 
-float Edge::VectorLength3Sqr(const ComputeVector& vector)
+float Edge::Vector3LengthSqr(const ComputeVector& vector)
 {
 	return ComputeMath::vector3LengthSqr(vector.m_vector);
 }
 
-float Edge::VectorLength4Sqr(const ComputeVector& vector)
+float Edge::Vector4LengthSqr(const ComputeVector& vector)
 {
 	return ComputeMath::vector4LengthSqr(vector.m_vector);
 }
 
 float Edge::VectorLength(const ComputeVector& vector)
 {
-	return VectorLength4(vector);
+	return Vector4Length(vector);
 }
 
 float Edge::VectorLengthSqr(const ComputeVector& vector)
 {
-	return VectorLength4Sqr(vector);
+	return Vector4LengthSqr(vector);
 }
 
 float Edge::DotVector2(const ComputeVector& vector1, const ComputeVector& vector2)
@@ -413,4 +444,34 @@ bool Edge::operator!=(const ComputeVector& vector1, const ComputeVector& vector2
 bool Edge::IsVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2)
 {
 	return vector1 == vector2;
+}
+
+bool Edge::IsVector2Nan(const ComputeVector& vector)
+{
+	return vector.isNan2();
+}
+
+bool Edge::IsVector3Nan(const ComputeVector& vector)
+{
+	return vector.isNan3();
+}
+
+bool Edge::IsVector4Nan(const ComputeVector& vector)
+{
+	return vector.isNan4();
+}
+
+bool Edge::IsVector2AnyNan(const ComputeVector& vector)
+{
+	return vector.isAnyNan2();
+}
+
+bool Edge::IsVector3AnyNan(const ComputeVector& vector)
+{
+	return vector.isAnyNan3();
+}
+
+bool Edge::IsVector4AnyNan(const ComputeVector& vector)
+{
+	return vector.isAnyNan4();
 }
