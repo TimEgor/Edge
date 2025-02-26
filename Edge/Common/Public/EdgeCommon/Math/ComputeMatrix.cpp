@@ -83,17 +83,17 @@ void Edge::ComputeMatrix::saveToMatrix4x4(FloatMatrix4x4& matrix) const
 	ComputeMath::matrix4x4Save(m_matrix, matrix);
 }
 
-Edge::FloatMatrix2x2 Edge::ComputeMatrix::getToMatrix2x2() const
+Edge::FloatMatrix2x2 Edge::ComputeMatrix::getMatrix2x2() const
 {
 	return ComputeMath::matrix2x2Save(m_matrix);;
 }
 
-Edge::FloatMatrix3x3 Edge::ComputeMatrix::getToMatrix3x3() const
+Edge::FloatMatrix3x3 Edge::ComputeMatrix::getMatrix3x3() const
 {
 	return ComputeMath::matrix3x3Save(m_matrix);
 }
 
-Edge::FloatMatrix4x4 Edge::ComputeMatrix::getToMatrix4x4() const
+Edge::FloatMatrix4x4 Edge::ComputeMatrix::getMatrix4x4() const
 {
 	return ComputeMath::matrix4x4Save(m_matrix);
 }
@@ -118,6 +118,11 @@ Edge::FloatMatrix4x4 Edge::ComputeSkewSymmetricMatrix4x4ForCrossProduct(const Fl
 Edge::ComputeMatrix Edge::ComputeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion)
 {
 	return ComputeMath::matrixRotationQuaternion(quaternion.m_quaternion);
+}
+
+Edge::ComputeMatrix Edge::ComputeMatrixFromTranslation(const FloatVector3& translation)
+{
+	return ComputeMath::matrixTranslation(translation);
 }
 
 Edge::ComputeMatrix Edge::ComputeMatrixFromScale(float scale)

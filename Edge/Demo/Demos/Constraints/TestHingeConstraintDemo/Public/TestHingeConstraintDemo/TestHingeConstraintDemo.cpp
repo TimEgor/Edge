@@ -38,8 +38,10 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 	//
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
+	constexpr Edge::FloatVector3 size(2.0f);
+
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
-	bodyMotionCreationParam.m_mass = 1.0f;
+	bodyMotionCreationParam.m_mass = Edge::MotionPropertyComputer::CalcBoxMass(size, 1.0f);
 	bodyMotionCreationParam.m_angularDamping = 0.2f;
 
 	Edge::PhysicsBodyFactory::EntityCollisionCreationParam bodyCollisionCreationParam;
@@ -47,19 +49,19 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
 	{
-		bodyCollisionCreationParam.m_shape = new Edge::PhysicsBoxShape(Edge::FloatVector3(1.0f));
+		bodyCollisionCreationParam.m_shape = new Edge::PhysicsBoxShape(size);
 
 		m_staticBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 		m_physicsScene->addEntity(m_staticBody);
 	}
 
 	{
-		bodyCollisionCreationParam.m_shape = new Edge::PhysicsBoxShape(Edge::FloatVector3(1.0f));
+		bodyCollisionCreationParam.m_shape = new Edge::PhysicsBoxShape(size);
 
-		bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcBoxInertiaTensor(bodyMotionCreationParam.m_mass, 1.0f);
+		bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcBoxInertiaTensor(bodyMotionCreationParam.m_mass, size);
 		bodyCreationParam.m_motionCreationParam = &bodyMotionCreationParam;
 
-		bodyCreationParam.m_position.m_x = 1.0f;
+		bodyCreationParam.m_position.m_z = -2.5f;
 
 		m_dynamicBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 		m_physicsScene->addEntity(m_dynamicBody);
@@ -67,9 +69,11 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 
 	m_constraint = new Edge::HingeConstraint(
 		m_staticBody, m_dynamicBody,
-		Edge::FloatVector3(0.5f, -0.5f, 0.0f), Edge::FloatVector3(-0.5f, 0.5f, 0.0f),
+		Edge::FloatVector3Zero, Edge::FloatVector3(0.0f, 0.0f, 2.5f),
 		Edge::FloatVector3UnitZ, Edge::FloatVector3UnitZ);
 	m_physicsScene->addConstraint(m_constraint);
+
+	m_dynamicBody->getBodyMotion()->applyAngularImpulse(Edge::FloatVector3(0.0f, 0.0f, 1.5f));
 
 	return true;
 }

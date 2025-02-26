@@ -27,7 +27,7 @@ namespace Edge
 #if defined(EDGE_CONFIG_DEBUG) || defined(EDGE_CONFIG_RELEASE)
 #define EDGE_ASSERT(condition)															\
 	if (!(condition)) {																	\
-		Edge::AssertGenerator* generator = GetAssertGenerator();						\
+		Edge::AssertGenerator* generator = Edge::GetAssertGenerator();					\
 		if (generator)																	\
 		{																				\
 			generator->generateError(EDGE_TO_STRING(condition), __FILE__, __LINE__);	\
@@ -41,7 +41,7 @@ namespace Edge
 
 #define EDGE_ASSERT_MESSAGE(condition, message)											\
 	if (!(condition)) {																	\
-		Edge::AssertGenerator* generator = GetAssertGenerator();						\
+		Edge::AssertGenerator* generator = Edge::GetAssertGenerator();					\
 		if (generator)																	\
 		{																				\
 			generator->generateError(message, __FILE__, __LINE__);						\
@@ -53,7 +53,7 @@ namespace Edge
 	}
 
 #define EDGE_ASSERT_FAIL()																\
-	Edge::AssertGenerator* generator = GetAssertGenerator();							\
+	Edge::AssertGenerator* generator = Edge::GetAssertGenerator();						\
 	if (generator)																		\
 	{																					\
 		generator->generateError("FAIL", __FILE__, __LINE__);							\
@@ -64,7 +64,7 @@ namespace Edge
 	}	
 
 #define EDGE_ASSERT_FAIL_MESSAGE(message)												\
-	Edge::AssertGenerator* generator = GetAssertGenerator();							\
+	Edge::AssertGenerator* generator = Edge::GetAssertGenerator();						\
 	if (generator)																		\
 	{																					\
 		generator->generateError(message, __FILE__, __LINE__);							\

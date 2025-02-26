@@ -11,6 +11,7 @@ namespace Edge
 		TransformMatrix m_matrix = FloatMatrix4x4Identity;
 
 		Transform() = default;
+		Transform(const TransformMatrix& matrix) : m_matrix(matrix) {}
 
 		const FloatVector3& getAxisX() const { return m_matrix.m_row1.m_xyz; }
 		void setAxisX(const FloatVector3& axis) { m_matrix.m_row1.m_xyz = axis; }

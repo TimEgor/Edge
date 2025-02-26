@@ -25,8 +25,6 @@ namespace Edge
 		void solveVelocity();
 		void solvePosition();
 
-		void initialSetupIterationCount(PhysicsConstraint& constraint) const;
-
 	public:
 		PhysicsSceneConstraintManager() = default;
 

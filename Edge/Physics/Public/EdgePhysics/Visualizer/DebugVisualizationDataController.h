@@ -144,8 +144,10 @@ namespace Edge
 		void addWireframeBox(const Transform& transform, const FloatVector3& size, const NormalizedColorRGB& color = NormalizedColorWhite);
 
 		void addSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addSphere(const FloatVector3& position, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addSphere(const Transform& transform, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addWireframeSphere(const FloatVector3& position, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeSphere(const Transform& transform, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 
 		void addGrid(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& directionRight, const FloatVector2& areaSize, const UInt32Vector2& gridNums, const NormalizedColorRGB& color = NormalizedColorWhite);

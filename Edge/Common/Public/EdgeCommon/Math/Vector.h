@@ -1,6 +1,9 @@
 #pragma once
 
 #include <type_traits>
+#include <vector>
+
+#include "Const.h"
 
 namespace Edge
 {
@@ -71,7 +74,7 @@ namespace Edge
 		Vector3Base& operator=(const Vector3Base& vector);
 		ValueType operator[](size_t index) const;
 		ValueType& operator[](size_t index);
-		
+
 		ValueType getElement(size_t index) const;
 		ValueType& getElement(size_t index);
 
@@ -164,6 +167,10 @@ namespace Edge
 	constexpr FloatVector2 FloatVector2One = FloatVector2(1.0f);
 	constexpr FloatVector3 FloatVector3One = FloatVector3(1.0f);
 	constexpr FloatVector4 FloatVector4One = FloatVector4(1.0f);
+
+	constexpr FloatVector2 FloatVector2Epsilon = FloatVector2(Math::Epsilon);
+	constexpr FloatVector3 FloatVector3Epsilon = FloatVector3(Math::Epsilon);
+	constexpr FloatVector4 FloatVector4Epsilon = FloatVector4(Math::Epsilon);
 
 	constexpr FloatVector2 FloatVector2NegativeOne = FloatVector2(-1.0f);
 	constexpr FloatVector3 FloatVector3NegativeOne = FloatVector3(-1.0f);

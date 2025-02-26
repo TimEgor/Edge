@@ -228,6 +228,7 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyAcceleration(float deltaT
 	ComputeVector angularVelocity(m_angularVelocity);
 
 	linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
+
 	angularVelocity += worldInverseInertiaTensor * m_torqueAccumulator * deltaTime;
 
 	linearVelocity *= std::max(0.0f, 1.0f - m_linearDampingFactor * deltaTime);

@@ -47,14 +47,14 @@ namespace Edge
 			: m_row1(matrix.m_row1), m_row2(matrix.m_row2) {}
 
 		Matrix2x2Base& operator=(const Matrix2x2Base& matrix);
-		RowVectorType operator[](size_t index) const;
+		const RowVectorType& operator[](size_t index) const;
 		RowVectorType& operator[](size_t index);
 
-		RowVectorType getRow(size_t index) const;
+		const RowVectorType& getRow(size_t index) const;
 		RowVectorType& getRow(size_t index);
 
-		RowVectorType getElement(size_t row, size_t column) const;
-		RowVectorType& getElement(size_t row, size_t column);
+		ValueType getElement(size_t row, size_t column) const;
+		ValueType& getElement(size_t row, size_t column);
 
 		void setElement(size_t row, size_t column, ValueType value);
 	};
@@ -111,14 +111,14 @@ namespace Edge
 
 		Matrix3x3Base& operator=(const Matrix2x2Base<ValueType>& matrix);
 		Matrix3x3Base& operator=(const Matrix3x3Base& matrix);
-		RowVectorType operator[](size_t index) const;
+		const RowVectorType& operator[](size_t index) const;
 		RowVectorType& operator[](size_t index);
 
-		RowVectorType getRow(size_t index) const;
+		const RowVectorType& getRow(size_t index) const;
 		RowVectorType& getRow(size_t index);
 
-		RowVectorType getElement(size_t row, size_t column) const;
-		RowVectorType& getElement(size_t row, size_t column);
+		ValueType getElement(size_t row, size_t column) const;
+		ValueType& getElement(size_t row, size_t column);
 
 		void setElement(size_t row, size_t column, ValueType value);
 	};
@@ -183,14 +183,14 @@ namespace Edge
 		Matrix4x4Base& operator=(const Matrix2x2Base<ValueType>& matrix);
 		Matrix4x4Base& operator=(const Matrix3x3Base<ValueType>& matrix);
 		Matrix4x4Base& operator=(const Matrix4x4Base& matrix);
-		RowVectorType operator[](size_t index) const;
+		const RowVectorType& operator[](size_t index) const;
 		RowVectorType& operator[](size_t index);
 
-		RowVectorType getRow(size_t index) const;
+		const RowVectorType& getRow(size_t index) const;
 		RowVectorType& getRow(size_t index);
 
-		RowVectorType getElement(size_t row, size_t column) const;
-		RowVectorType& getElement(size_t row, size_t column);
+		ValueType getElement(size_t row, size_t column) const;
+		ValueType& getElement(size_t row, size_t column);
 
 		void setElement(size_t row, size_t column, ValueType value);
 	};

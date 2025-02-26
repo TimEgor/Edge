@@ -129,6 +129,7 @@ namespace Edge
 	bool operator!=(const ComputeVector& vector1, const ComputeVector& vector2);
 
 	bool IsVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2);
+	bool IsVectorNearEqual(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& epsilon);
 
 	bool IsVector2Nan(const ComputeVector& vector);
 	bool IsVector3Nan(const ComputeVector& vector);

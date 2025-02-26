@@ -1,4 +1,5 @@
 #pragma once
+
 #include "EdgeCommon/CommonMacros.h"
 #include "EdgeCommon/Assert/AssertCore.h"
 
@@ -15,40 +16,40 @@ namespace Edge
 	}
 
 	template <typename T>
-	typename Matrix2x2Base<T>::RowVectorType Matrix2x2Base<T>::operator[](size_t index) const
+	const typename Matrix2x2Base<T>::RowVectorType& Matrix2x2Base<T>::operator[](size_t index) const
 	{
-		EDGE_ASSERT(index < 2);
-		return m_rows[index];
+		return getRow(index);
 	}
 
 	template <typename T>
 	typename Matrix2x2Base<T>::RowVectorType& Matrix2x2Base<T>::operator[](size_t index)
 	{
+		return getRow(index);
+	}
+
+	template <typename T>
+	const typename Matrix2x2Base<T>::RowVectorType& Matrix2x2Base<T>::getRow(size_t index) const
+	{
 		EDGE_ASSERT(index < 2);
 		return m_rows[index];
 	}
 
 	template <typename T>
-	typename Matrix2x2Base<T>::RowVectorType Matrix2x2Base<T>::getRow(size_t index) const
-	{
-		return operator[](index);
-	}
-
-	template <typename T>
 	typename Matrix2x2Base<T>::RowVectorType& Matrix2x2Base<T>::getRow(size_t index)
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 2);
+		return m_rows[index];
 	}
 
 	template <typename T>
-	typename Matrix2x2Base<T>::RowVectorType Matrix2x2Base<T>::getElement(size_t row, size_t column) const
+	typename Matrix2x2Base<T>::ValueType Matrix2x2Base<T>::getElement(size_t row, size_t column) const
 	{
 		EDGE_ASSERT(row < 2 && column < 2);
 		return m_values[row * 2 + column];
 	}
 
 	template <typename T>
-	typename Matrix2x2Base<T>::RowVectorType& Matrix2x2Base<T>::getElement(size_t row, size_t column)
+	typename Matrix2x2Base<T>::ValueType& Matrix2x2Base<T>::getElement(size_t row, size_t column)
 	{
 		EDGE_ASSERT(row < 2 && column < 2);
 		return m_values[row * 2 + column];
@@ -84,40 +85,40 @@ namespace Edge
 	}
 
 	template <typename T>
-	typename Matrix3x3Base<T>::RowVectorType Matrix3x3Base<T>::operator[](size_t index) const
+	const typename Matrix3x3Base<T>::RowVectorType& Matrix3x3Base<T>::operator[](size_t index) const
 	{
-		EDGE_ASSERT(index < 3);
-		return m_rows[index];
+		return getRow(index);
 	}
 
 	template <typename T>
 	typename Matrix3x3Base<T>::RowVectorType& Matrix3x3Base<T>::operator[](size_t index)
 	{
+		return getRow(index);
+	}
+
+	template <typename T>
+	const typename Matrix3x3Base<T>::RowVectorType& Matrix3x3Base<T>::getRow(size_t index) const
+	{
 		EDGE_ASSERT(index < 3);
 		return m_rows[index];
 	}
 
 	template <typename T>
-	typename Matrix3x3Base<T>::RowVectorType Matrix3x3Base<T>::getRow(size_t index) const
-	{
-		return operator[](index);
-	}
-
-	template <typename T>
 	typename Matrix3x3Base<T>::RowVectorType& Matrix3x3Base<T>::getRow(size_t index)
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 3);
+		return m_rows[index];
 	}
 
 	template <typename T>
-	typename Matrix3x3Base<T>::RowVectorType Matrix3x3Base<T>::getElement(size_t row, size_t column) const
+	typename Matrix3x3Base<T>::ValueType Matrix3x3Base<T>::getElement(size_t row, size_t column) const
 	{
 		EDGE_ASSERT(row < 3 && column < 3);
 		return m_values[row * 3 + column];
 	}
 
 	template <typename T>
-	typename Matrix3x3Base<T>::RowVectorType& Matrix3x3Base<T>::getElement(size_t row, size_t column)
+	typename Matrix3x3Base<T>::ValueType& Matrix3x3Base<T>::getElement(size_t row, size_t column)
 	{
 		EDGE_ASSERT(row < 3 && column < 3);
 		return m_values[row * 3 + column];
@@ -165,40 +166,40 @@ namespace Edge
 	}
 
 	template <typename T>
-	typename Matrix4x4Base<T>::RowVectorType Matrix4x4Base<T>::operator[](size_t index) const
+	const typename Matrix4x4Base<T>::RowVectorType& Matrix4x4Base<T>::operator[](size_t index) const
 	{
-		EDGE_ASSERT(index < 4);
-		return m_rows[index];
+		return getRow(index);
 	}
 
 	template <typename T>
 	typename Matrix4x4Base<T>::RowVectorType& Matrix4x4Base<T>::operator[](size_t index)
 	{
+		return getRow(index);
+	}
+
+	template <typename T>
+	const typename Matrix4x4Base<T>::RowVectorType& Matrix4x4Base<T>::getRow(size_t index) const
+	{
 		EDGE_ASSERT(index < 4);
 		return m_rows[index];
 	}
 
 	template <typename T>
-	typename Matrix4x4Base<T>::RowVectorType Matrix4x4Base<T>::getRow(size_t index) const
-	{
-		return operator[](index);
-	}
-
-	template <typename T>
 	typename Matrix4x4Base<T>::RowVectorType& Matrix4x4Base<T>::getRow(size_t index)
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 4);
+		return m_rows[index];
 	}
 
 	template <typename T>
-	typename Matrix4x4Base<T>::RowVectorType Matrix4x4Base<T>::getElement(size_t row, size_t column) const
+	typename Matrix4x4Base<T>::ValueType Matrix4x4Base<T>::getElement(size_t row, size_t column) const
 	{
 		EDGE_ASSERT(row < 4 && column < 4);
 		return m_values[row * 4 + column];
 	}
 
 	template <typename T>
-	typename Matrix4x4Base<T>::RowVectorType& Matrix4x4Base<T>::getElement(size_t row, size_t column)
+	typename Matrix4x4Base<T>::ValueType& Matrix4x4Base<T>::getElement(size_t row, size_t column)
 	{
 		EDGE_ASSERT(row < 4 && column < 4);
 		return m_values[row * 4 + column];

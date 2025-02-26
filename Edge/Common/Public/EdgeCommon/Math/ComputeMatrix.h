@@ -39,15 +39,16 @@ namespace Edge
 		void saveToMatrix3x3(FloatMatrix3x3& matrix) const;
 		void saveToMatrix4x4(FloatMatrix4x4& matrix) const;
 
-		FloatMatrix2x2 getToMatrix2x2() const;
-		FloatMatrix3x3 getToMatrix3x3() const;
-		FloatMatrix4x4 getToMatrix4x4() const;
+		FloatMatrix2x2 getMatrix2x2() const;
+		FloatMatrix3x3 getMatrix3x3() const;
+		FloatMatrix4x4 getMatrix4x4() const;
 	};
 
 	FloatMatrix3x3 ComputeSkewSymmetricMatrix3x3ForCrossProduct(const FloatVector3& vector);
 	FloatMatrix4x4 ComputeSkewSymmetricMatrix4x4ForCrossProduct(const FloatVector3& vector);
 
 	ComputeMatrix ComputeMatrixFromRotationQuaternion(const ComputeQuaternion& quaternion);
+	ComputeMatrix ComputeMatrixFromTranslation(const FloatVector3& translation);
 	ComputeMatrix ComputeMatrixFromScale(float scale);
 	ComputeMatrix ComputeMatrixFromScale(const FloatVector3& scale);
 	void GetAnglesFromRotationMatrix(const ComputeMatrix& rotationMatrix, float& pitch, float& yaw, float& roll);

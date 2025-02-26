@@ -433,7 +433,7 @@ Edge::ComputeVector Edge::operator/(const ComputeVector& vector, float val)
 
 bool Edge::operator==(const ComputeVector& vector1, const ComputeVector& vector2)
 {
-	return ComputeMath::vector3Equal(vector1.m_vector, vector2.m_vector);
+	return IsVectorEqual(vector1, vector2);
 }
 
 bool Edge::operator!=(const ComputeVector& vector1, const ComputeVector& vector2)
@@ -443,7 +443,12 @@ bool Edge::operator!=(const ComputeVector& vector1, const ComputeVector& vector2
 
 bool Edge::IsVectorEqual(const ComputeVector& vector1, const ComputeVector& vector2)
 {
-	return vector1 == vector2;
+	return ComputeMath::vector3Equal(vector1.m_vector, vector2.m_vector);
+}
+
+bool Edge::IsVectorNearEqual(const ComputeVector& vector1, const ComputeVector& vector2, const ComputeVector& epsilon)
+{
+	return ComputeMath::vector3NearEqual(vector1.m_vector, vector2.m_vector, epsilon.m_vector);
 }
 
 bool Edge::IsVector2Nan(const ComputeVector& vector)

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "EdgeCommon/Assert/AssertCore.h"
 
 namespace Edge
@@ -15,33 +17,34 @@ namespace Edge
 	template <typename T>
 	typename Vector2Base<T>::ValueType Vector2Base<T>::operator[](size_t index) const
 	{
-		EDGE_ASSERT(index < 2);
-		return m_values[index];
+		return getElement(index);
 	}
 
 	template <typename T>
 	typename Vector2Base<T>::ValueType& Vector2Base<T>::operator[](size_t index)
 	{
-		EDGE_ASSERT(index < 2);
-		return m_values[index];
+		return getElement(index);
 	}
 
 	template <typename T>
 	typename Vector2Base<T>::ValueType Vector2Base<T>::getElement(size_t index) const
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 2);
+		return m_values[index];
 	}
 
 	template <typename T>
 	typename Vector2Base<T>::ValueType& Vector2Base<T>::getElement(size_t index)
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 2);
+		return m_values[index];
 	}
 
 	template <typename T>
 	void Vector2Base<T>::setElement(size_t index, ValueType value)
 	{
-		return operator[](index) = value;
+		ValueType& element = getElement(index);
+		element = value;
 	}
 #pragma endregion
 
@@ -69,33 +72,34 @@ namespace Edge
 	template <typename T>
 	typename Vector3Base<T>::ValueType Vector3Base<T>::operator[](size_t index) const
 	{
-		EDGE_ASSERT(index < 3);
-		return m_values[index];
+		return getElement(index);
 	}
 
 	template <typename T>
 	typename Vector3Base<T>::ValueType& Vector3Base<T>::operator[](size_t index)
 	{
-		EDGE_ASSERT(index < 3);
-		return m_values[index];
+		return getElement(index);
 	}
 
 	template <typename T>
 	typename Vector3Base<T>::ValueType Vector3Base<T>::getElement(size_t index) const
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 3);
+		return m_values[index];
 	}
 
 	template <typename T>
 	typename Vector3Base<T>::ValueType& Vector3Base<T>::getElement(size_t index)
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 3);
+		return m_values[index];
 	}
 
 	template <typename T>
 	void Vector3Base<T>::setElement(size_t index, ValueType value)
 	{
-		return operator[](index) = value;
+		ValueType& element = getElement(index);
+		element = value;
 	}
 #pragma endregion
 
@@ -136,33 +140,34 @@ namespace Edge
 	template <typename T>
 	typename Vector4Base<T>::ValueType Vector4Base<T>::operator[](size_t index) const
 	{
-		EDGE_ASSERT(index < 4);
-		return m_values[index];
+		return getElement(index);
 	}
 
 	template <typename T>
 	typename Vector4Base<T>::ValueType& Vector4Base<T>::operator[](size_t index)
 	{
-		EDGE_ASSERT(index < 4);
-		return m_values[index];
+		return getElement(index);
 	}
 
 	template <typename T>
 	typename Vector4Base<T>::ValueType Vector4Base<T>::getElement(size_t index) const
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 4);
+		return m_values[index];
 	}
 
 	template <typename T>
 	typename Vector4Base<T>::ValueType& Vector4Base<T>::getElement(size_t index)
 	{
-		return operator[](index);
+		EDGE_ASSERT(index < 4);
+		return m_values[index];
 	}
 
 	template <typename T>
 	void Vector4Base<T>::setElement(size_t index, ValueType value)
 	{
-		return operator[](index) = value;
+		ValueType& element = getElement(index);
+		element = value;
 	}
 #pragma endregion
 }

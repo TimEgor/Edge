@@ -16,7 +16,7 @@ namespace EdgeDemo
 	class PreInitedDemo : public Demo
 	{
 	protected:
-		Edge::PhysicsSemiFixedTimeStepper m_timeStepper;
+		Edge::PhysicsFixedTimeStepper m_timeStepper;
 
 		Edge::PhysicsWorldReference m_physicsWorld;
 		Edge::PhysicsSceneReference m_physicsScene;

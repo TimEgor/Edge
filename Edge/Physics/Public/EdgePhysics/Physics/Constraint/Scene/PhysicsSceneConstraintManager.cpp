@@ -95,10 +95,13 @@ void Edge::PhysicsSceneConstraintManager::solveVelocity()
 {
 	const PhysicsSceneActiveConstraintCollection::ConstraintCollection& constraints = m_activeConstraintCollection->getConstraints();
 
-	for (const PhysicsSceneConstraintID constraintID : constraints)
+	for (size_t iter = 0; iter < 10; ++iter)
 	{
-		PhysicsConstraintReference constraint = getConstraint(constraintID);
-		constraint->solveVelocity();
+		for (const PhysicsSceneConstraintID constraintID : constraints)
+		{
+			PhysicsConstraintReference constraint = getConstraint(constraintID);
+			constraint->solveVelocity();
+		}
 	}
 }
 
@@ -106,25 +109,13 @@ void Edge::PhysicsSceneConstraintManager::solvePosition()
 {
 	const PhysicsSceneActiveConstraintCollection::ConstraintCollection& constraints = m_activeConstraintCollection->getConstraints();
 
-	for (const PhysicsSceneConstraintID constraintID : constraints)
+	for (size_t iter = 0; iter < 2; ++iter)
 	{
-		PhysicsConstraintReference constraint = getConstraint(constraintID);
-		constraint->solvePosition();
-	}
-}
-
-void Edge::PhysicsSceneConstraintManager::initialSetupIterationCount(PhysicsConstraint& constraint) const
-{
-	const uint32_t velocityIterationCount = constraint.getVelocitySolvingIterationCount();
-	if (velocityIterationCount == 0)
-	{
-		constraint.setVelocitySolvingIterationCount(8);
-	}
-
-	const uint32_t positionIterationCount = constraint.getPositionSolvingIterationCount();
-	if (positionIterationCount == 0)
-	{
-		constraint.setPositionSolvingIterationCount(2);
+		for (const PhysicsSceneConstraintID constraintID : constraints)
+		{
+			PhysicsConstraintReference constraint = getConstraint(constraintID);
+			constraint->solvePosition();
+		}
 	}
 }
 
@@ -143,8 +134,6 @@ Edge::PhysicsSceneConstraintID Edge::PhysicsSceneConstraintManager::addConstrain
 	}
 
 	const PhysicsSceneConstraintID constraintID = m_constraintCollection->addConstraint(constraint);
-
-	initialSetupIterationCount(constraint.getObjectRef());
 
 	if (activate)
 	{

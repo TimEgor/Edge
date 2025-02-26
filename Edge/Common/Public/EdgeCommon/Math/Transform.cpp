@@ -70,5 +70,5 @@ void Edge::Transform::getRotationComputeQuaternion(ComputeQuaternion& rotation) 
 
 void Edge::Transform::setRotationQuaternion(const FloatQuaternion& rotation)
 {
-	setRotationMatrix(ComputeMatrixFromRotationQuaternion(rotation).getToMatrix3x3());
+	setRotationMatrix(ComputeMatrixFromRotationQuaternion(rotation).getMatrix3x3());
 }
