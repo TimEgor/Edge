@@ -9,7 +9,7 @@ void Edge::PhysicsParticle::updateTransformWithMotion(float deltaTime)
 
 	PhysicsEntityTransformAccessor transformAccessor(m_transform);
 
-	ComputeVector position(transformAccessor.getPosition());
-	position += ComputeVector(m_motion->getLinearVelocity()) * deltaTime;
-	transformAccessor.setPosition(position.getFloatVector3());
+	ComputeVector3 position(transformAccessor.getPosition());
+	position += m_motion->getLinearVelocity() * deltaTime;
+	transformAccessor.setPosition(position);
 }

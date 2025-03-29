@@ -1,15 +1,34 @@
 #pragma once
 
-#include <cstdint>
+#include <random>
 
 namespace Edge
 {
-	float RandomFloat(float max);
-	float RandomFloat(float min, float max);
+	template <typename T>
+	T TypedRandom(T min, T max)
+	{
+		std::random_device rd;
 
-	int RandomInt(int max);
-	int RandomInt(int min, int max);
+		if constexpr (std::is_integral_v<T>)
+		{
+			std::uniform_int_distribution<T> range(min, max);
+			return range(std::mt19937(rd()));
+		}
+		if constexpr (std::is_floating_point_v<T>) {
+			std::uniform_real_distribution<T> range(min, max);
+			return range(std::mt19937(rd()));
+		}
 
-	uint32_t RandomUInt32(uint32_t max);
-	uint32_t RandomUInt32(uint32_t min, uint32_t max);
+		static_assert("Invalid randomization type");
+		return T();
+	}
+
+	template <typename T>
+	T TypedRandom(T max)
+	{
+		return TypedRandom<T>(T(0), max);
+	}
+
+	inline ComputeValueType Random(ComputeValueType max) { return TypedRandom<ComputeValueType>(max); }
+	inline ComputeValueType Random(ComputeValueType min, ComputeValueType max) { return TypedRandom<ComputeValueType>(min, max); }
 }

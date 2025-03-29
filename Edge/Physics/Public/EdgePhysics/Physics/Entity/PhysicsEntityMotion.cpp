@@ -27,21 +27,21 @@ Edge::PhysicsEntityTransformReference Edge::PhysicsEntityMotion::getTransform() 
 	return transform;
 }
 
-void Edge::PhysicsEntityMotion::setMass(float mass)
+void Edge::PhysicsEntityMotion::setMass(ComputeValueType mass)
 {
-	if (mass < 0.0f)
+	if (ComputeValueType(mass) < 0.0)
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up negative mass value.");
 		return;
 	}
 
 	m_mass = mass;
-	m_invMass = 1.0f / mass;
+	m_invMass = ComputeValueType(1.0) / mass;
 }
 
-void Edge::PhysicsEntityMotion::setGravityFactor(float factor)
+void Edge::PhysicsEntityMotion::setGravityFactor(ComputeValueType factor)
 {
-	if (0.0f > factor || factor > 1.0f)
+	if (ComputeValueType(0.0) > factor || factor > ComputeValueType(1.0))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up invalid gravity factor value.");
 		return;
@@ -50,19 +50,19 @@ void Edge::PhysicsEntityMotion::setGravityFactor(float factor)
 	m_gravityFactor = factor;
 }
 
-Edge::FloatVector3 Edge::PhysicsEntityMotion::getMassCenter() const
+Edge::ComputeVector3 Edge::PhysicsEntityMotion::getMassCenter() const
 {
 	return getTransform()->getPosition();
 }
 
-void Edge::PhysicsEntityMotion::getMassCenter(FloatVector3& center) const
+void Edge::PhysicsEntityMotion::getMassCenter(ComputeVector3& center) const
 {
 	return getTransform()->getPosition(center);
 }
 
-void Edge::PhysicsPositionBasedMotion::setLinearDampingFactor(float factor)
+void Edge::PhysicsPositionBasedMotion::setLinearDampingFactor(ComputeValueType factor)
 {
-	if (0.0f > factor || factor > 1.0f)
+	if (ComputeValueType(0.0) > factor || factor > ComputeValueType(1.0))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to set up invalid linear damping factor value.");
 		return;
@@ -71,171 +71,148 @@ void Edge::PhysicsPositionBasedMotion::setLinearDampingFactor(float factor)
 	m_linearDampingFactor = factor;
 }
 
-void Edge::PhysicsPositionBasedMotion::applyForce(const FloatVector3& force)
+void Edge::PhysicsPositionBasedMotion::applyForce(const ComputeVector3& force)
 {
-	ComputeVector forceAccumulator(m_forceAccumulator);
-	forceAccumulator += force;
-	forceAccumulator.saveToFloatVector3(m_forceAccumulator);
+	m_forceAccumulator += force;
 }
 
-void Edge::PhysicsPositionBasedMotion::applyImpulse(const FloatVector3& impulse)
+void Edge::PhysicsPositionBasedMotion::applyImpulse(const ComputeVector3& impulse)
 {
-	ComputeVector linearVelocity(m_linearVelocity);
-	linearVelocity += impulse * m_invMass;
-	linearVelocity.saveToFloatVector3(m_linearVelocity);
+	m_linearVelocity += impulse * m_invMass;
 }
 
-void Edge::PhysicsPositionBasedMotion::applyAcceleration(float deltaTime, const FloatVector3& gravity)
+void Edge::PhysicsPositionBasedMotion::applyAcceleration(float deltaTime, const ComputeVector3& gravity)
 {
-	ComputeVector linearVelocity(m_linearVelocity);
-
-	linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
-
-	linearVelocity *= std::max(0.0f, 1.0f - m_linearDampingFactor * deltaTime);
-
-	linearVelocity.saveToFloatVector3(m_linearVelocity);
+	m_linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
+	m_linearVelocity *= std::max(ComputeValueType(0.0), ComputeValueType(1.0) - m_linearDampingFactor * deltaTime);
 
 	clearForceAccumulator();
 }
 
 void Edge::PhysicsPositionBasedMotion::clearForceAccumulator()
 {
-	m_forceAccumulator = FloatVector3Zero;
+	m_forceAccumulator = ComputeVector3Zero;
 }
 
-Edge::FloatVector3 Edge::PhysicsPositionAndRotationBasedMotion::getPointLinearVelocity(const FloatVector3& position) const
+Edge::ComputeVector3 Edge::PhysicsPositionAndRotationBasedMotion::getPointLinearVelocity(const ComputeVector3& position) const
 {
-	FloatVector3 velocity;
+	ComputeVector3 velocity;
 	getPointLinearVelocity(position, velocity);
 	return velocity;
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const
+void Edge::PhysicsPositionAndRotationBasedMotion::getPointLinearVelocity(const ComputeVector3& position, ComputeVector3& velocity) const
 {
-	ComputeVector localPoint = position;
+	ComputeVector3 localPoint = position;
 	localPoint -= getMassCenter();
-	getLocalPointLinearVelocity(localPoint.getFloatVector3(), velocity);
+	getLocalPointLinearVelocity(localPoint, velocity);
 }
 
-Edge::FloatVector3 Edge::PhysicsPositionAndRotationBasedMotion::getLocalPointLinearVelocity(
-	const FloatVector3& position) const
+Edge::ComputeVector3 Edge::PhysicsPositionAndRotationBasedMotion::getLocalPointLinearVelocity(
+	const ComputeVector3& position) const
 {
-	FloatVector3 velocity;
+	ComputeVector3 velocity;
 	getLocalPointLinearVelocity(position, velocity);
 	return velocity;
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getLocalPointLinearVelocity(const FloatVector3& position, FloatVector3& velocity) const
+void Edge::PhysicsPositionAndRotationBasedMotion::getLocalPointLinearVelocity(const ComputeVector3& position, ComputeVector3& velocity) const
 {
-	(m_linearVelocity + CrossVector3(m_angularVelocity, position)).saveToFloatVector3(velocity);
+	velocity = m_linearVelocity + CrossComputeVector3(m_angularVelocity, position);
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::setInertia(const FloatVector3& inertia)
+void Edge::PhysicsPositionAndRotationBasedMotion::setInertia(const ComputeVector3& inertia)
 {
-	ComputeVector computeInertia(inertia);
-	computeInertia.reciprocal();
-	computeInertia.saveToFloatVector3(m_inverseInertia);
+	m_inverseInertia = ComputeReciprocalComputeVector3(inertia);
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getInverseInertiaTensor(FloatMatrix3x3& inertia) const
+void Edge::PhysicsPositionAndRotationBasedMotion::getLocalInverseInertiaTensor(ComputeMatrix3x3& inertia) const
 {
-	inertia = FloatMatrix3x3();
-	inertia.m_m11 = m_inverseInertia.m_x;
-	inertia.m_m22 = m_inverseInertia.m_y;
-	inertia.m_m33 = m_inverseInertia.m_z;
+	inertia = ComputeMatrix3x3Zero;
+	inertia.setElement(0, 0, m_inverseInertia.getX());
+	inertia.setElement(1, 1, m_inverseInertia.getY());
+	inertia.setElement(2, 2, m_inverseInertia.getZ());
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getInverseInertiaTensor(FloatMatrix4x4& inertia) const
+void Edge::PhysicsPositionAndRotationBasedMotion::getLocalInverseInertiaTensor(ComputeMatrix4x4& inertia) const
 {
-	inertia = FloatMatrix4x4ZeroIdentity;
-	inertia.m_m11 = m_inverseInertia.m_x;
-	inertia.m_m22 = m_inverseInertia.m_y;
-	inertia.m_m33 = m_inverseInertia.m_z;
+	inertia = ComputeMatrix4x4Identity;
+	inertia.setElement(0, 0, m_inverseInertia.getX());
+	inertia.setElement(1, 1, m_inverseInertia.getY());
+	inertia.setElement(2, 2, m_inverseInertia.getZ());
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(FloatMatrix3x3& inertia) const
+void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(ComputeMatrix3x3& inertia) const
 {
-	ComputeMatrix worldInverseInertiaTensor;
-	getWorldInverseInertiaTensor(worldInverseInertiaTensor);
+	const ComputeMatrix3x3 rotation = getTransform()->getRotation().getRotationMatrix3x3();
 
-	worldInverseInertiaTensor.saveToMatrix3x3(inertia);
+	//ComputeMatrix3x3 localInverseInertiaTensor;
+	//getLocalInverseInertiaTensor(localInverseInertiaTensor);
+
+	//inertia = rotation * localInverseInertiaTensor * TransposeComputeMatrix3x3(rotation);
+
+	const ComputeMatrix3x3 rotatedLocalInverseInertiaTensor(
+		MultiplyComputeVector3Elements(ComputeVector3(m_inverseInertia.getX()), rotation.getColumn(0)),
+		MultiplyComputeVector3Elements(ComputeVector3(m_inverseInertia.getY()), rotation.getColumn(1)),
+		MultiplyComputeVector3Elements(ComputeVector3(m_inverseInertia.getZ()), rotation.getColumn(2))
+	);
+
+	inertia = rotation * TransposeComputeMatrix3x3(rotatedLocalInverseInertiaTensor);
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(FloatMatrix4x4& inertia) const
+void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(ComputeMatrix4x4& inertia) const
 {
-	ComputeMatrix worldInverseInertiaTensor;
-	getWorldInverseInertiaTensor(worldInverseInertiaTensor);
+	ComputeMatrix3x3 inertia3x3;
+	getWorldInverseInertiaTensor(inertia3x3);
 
-	worldInverseInertiaTensor.saveToMatrix4x4(inertia);
+	inertia = inertia3x3;
+	inertia.setElement(3, 3, ComputeValueType(1.0));
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::getWorldInverseInertiaTensor(ComputeMatrix& inertia) const
-{
-	FloatMatrix4x4 inverseInertiaTensor;
-	getInverseInertiaTensor(inverseInertiaTensor);
-
-	const ComputeMatrix rotation = ComputeMatrixFromRotationQuaternion(getTransform()->getRotation());
-	inertia = TransposeMatrix(rotation) * inverseInertiaTensor * rotation;
-}
-
-void Edge::PhysicsPositionAndRotationBasedMotion::applyForce(const FloatVector3& force, const FloatVector3& position)
+void Edge::PhysicsPositionAndRotationBasedMotion::applyForce(const ComputeVector3& force, const ComputeVector3& position)
 {
 	PhysicsPositionBasedMotion::applyForce(force);
 
-	ComputeVector localApplyingPoint = position;
-	localApplyingPoint -= getMassCenter();
-	const ComputeVector torque = CrossVector3(localApplyingPoint, force);
+	const ComputeVector3 localApplyingPoint = position - getMassCenter();
+	const ComputeVector3 torque = CrossComputeVector3(localApplyingPoint, force);
 
-	applyTorque(torque.getFloatVector3());
+	applyTorque(torque);
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::applyImpulse(const FloatVector3& impulse, const FloatVector3& position)
+void Edge::PhysicsPositionAndRotationBasedMotion::applyImpulse(const ComputeVector3& impulse, const ComputeVector3& position)
 {
 	PhysicsPositionBasedMotion::applyImpulse(impulse);
 
-	ComputeVector localApplyingPoint = position;
-	localApplyingPoint -= getMassCenter();
-	const ComputeVector angularImpulse = CrossVector3(localApplyingPoint, impulse);
+	const ComputeVector3 localApplyingPoint = position - getMassCenter();
+	const ComputeVector3 angularImpulse = CrossComputeVector3(localApplyingPoint, impulse);
 
-	applyAngularImpulse(angularImpulse.getFloatVector3());
+	applyAngularImpulse(angularImpulse);
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::applyTorque(const FloatVector3& torque)
+void Edge::PhysicsPositionAndRotationBasedMotion::applyTorque(const ComputeVector3& torque)
 {
-	ComputeVector torqueAccumulator(m_torqueAccumulator);
-	torqueAccumulator += torque;
-	torqueAccumulator.saveToFloatVector3(m_torqueAccumulator);
+	m_torqueAccumulator += torque;
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::applyAngularImpulse(const FloatVector3& impulse)
+void Edge::PhysicsPositionAndRotationBasedMotion::applyAngularImpulse(const ComputeVector3& impulse)
 {
-	FloatMatrix3x3 inverseInertiaTensor;
-	getWorldInverseInertiaTensor(inverseInertiaTensor);
-	const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
+	ComputeMatrix3x3 worldInverseInertiaTensor;
+	getWorldInverseInertiaTensor(worldInverseInertiaTensor);
 
-	ComputeVector angularVelocity(m_angularVelocity);
-	angularVelocity += worldInverseInertiaTensor * impulse;
-	angularVelocity.saveToFloatVector3(m_angularVelocity);
+	m_angularVelocity += worldInverseInertiaTensor * impulse;
 }
 
-void Edge::PhysicsPositionAndRotationBasedMotion::applyAcceleration(float deltaTime, const FloatVector3& gravity)
+void Edge::PhysicsPositionAndRotationBasedMotion::applyAcceleration(float deltaTime, const ComputeVector3& gravity)
 {
-	FloatMatrix3x3 inverseInertiaTensor;
-	getWorldInverseInertiaTensor(inverseInertiaTensor);
-	const ComputeMatrix worldInverseInertiaTensor = inverseInertiaTensor;
+	ComputeMatrix3x3 worldInverseInertiaTensor;
+	getWorldInverseInertiaTensor(worldInverseInertiaTensor);
 
-	ComputeVector linearVelocity(m_linearVelocity);
-	ComputeVector angularVelocity(m_angularVelocity);
+	m_linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
 
-	linearVelocity += ((gravity * m_gravityFactor) + (m_forceAccumulator * m_invMass)) * deltaTime;
+	m_angularVelocity += worldInverseInertiaTensor * (m_torqueAccumulator * deltaTime);
 
-	angularVelocity += worldInverseInertiaTensor * m_torqueAccumulator * deltaTime;
-
-	linearVelocity *= std::max(0.0f, 1.0f - m_linearDampingFactor * deltaTime);
-	angularVelocity *= std::max(0.0f, 1.0f - m_angularDampingFactor * deltaTime);
-
-	linearVelocity.saveToFloatVector3(m_linearVelocity);
-	angularVelocity.saveToFloatVector3(m_angularVelocity);
+	m_linearVelocity *= std::max(ComputeValueType(0.0), ComputeValueType(1.0) - m_linearDampingFactor * deltaTime);
+	m_angularVelocity *= std::max(ComputeValueType(0.0), ComputeValueType(1.0) - m_angularDampingFactor * deltaTime);
 
 	clearForceAccumulator();
 	clearTorqueAccumulator();
@@ -243,5 +220,5 @@ void Edge::PhysicsPositionAndRotationBasedMotion::applyAcceleration(float deltaT
 
 void Edge::PhysicsPositionAndRotationBasedMotion::clearTorqueAccumulator()
 {
-	m_torqueAccumulator = FloatVector3Zero;
+	m_torqueAccumulator = ComputeVector3Zero;
 }

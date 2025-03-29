@@ -31,12 +31,12 @@ namespace Edge
 
 			virtual bool shouldStopCollecting() const = 0;
 
-			virtual float getMaxHitDistance() const = 0;
+			virtual ComputeValueType getMaxHitDistance() const = 0;
 		};
 
 		PhysicsGlobalCollisionQuery() = default;
 		virtual ~PhysicsGlobalCollisionQuery() = default;
 
-		virtual void rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const = 0;
+		virtual void rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const = 0;
 	};
 }

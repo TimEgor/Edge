@@ -20,7 +20,7 @@ EdgeD3D11::D3D11GPUBuffer::D3D11GPUBuffer(const Edge::GPUBufferDesc& desc, const
 		assert(initialData->m_dataSize <= desc.m_size);
 
 		d3d11InitialData.pSysMem = initialData->m_data;
-		d3d11InitialData.SysMemPitch = min(initialData->m_dataSize, desc.m_size);
+		d3d11InitialData.SysMemPitch = std::min(initialData->m_dataSize, desc.m_size);
 	}
 
 	device->CreateBuffer(&d3d11Desc, initialData ? &d3d11InitialData : nullptr, m_buffer.GetAddressOf());

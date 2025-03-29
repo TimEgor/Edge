@@ -13,6 +13,8 @@ namespace EdgeDemo
 		Edge::PhysicsBodyReference m_dynamicBody;
 		Edge::PhysicsConstraintReference m_constraint;
 
+		Edge::FloatQuaternion m_testRotation = Edge::FloatQuaternionIdentity;
+
 		void drawBox(const Edge::PhysicsBodyReference& body, bool isDynamic) const;
 
 	public:

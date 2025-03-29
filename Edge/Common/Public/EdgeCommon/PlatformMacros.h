@@ -3,6 +3,7 @@
 #include "CommonMacros.h"
 
 #if defined(WIN32) || defined(_WIN32)
+#define NOMINMAX
 #include <Windows.h>
 
 #define EDGE_WIN_PLATFORM

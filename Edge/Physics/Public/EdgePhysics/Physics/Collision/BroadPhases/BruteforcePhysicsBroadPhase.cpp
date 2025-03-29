@@ -140,7 +140,7 @@ void Edge::BruteforcePhysicsBroadPhase::findCollidingPairs(const PhysicsEntityCo
 	}
 }
 
-void Edge::BruteforcePhysicsBroadPhase::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const
+void Edge::BruteforcePhysicsBroadPhase::rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const
 {
 	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
 

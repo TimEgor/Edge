@@ -21,9 +21,9 @@ namespace Edge
 			ContactFrictionAxleConstraintPart m_frictionPart2;
 			ContactPenetrationAxleConstraintPart m_penetrationPart;
 
-			FloatVector3 m_frictionTangent1 = FloatVector3Zero;
-			FloatVector3 m_frictionTangent2 = FloatVector3Zero;
-			FloatVector3 m_contactPosition = FloatVector3Zero;
+			ComputeVector3 m_frictionTangent1 = ComputeVector3Zero;
+			ComputeVector3 m_frictionTangent2 = ComputeVector3Zero;
+			ComputeVector3 m_contactPosition = ComputeVector3Zero;
 
 			const PhysicsCollisionContactPoint& m_contactPoint;
 

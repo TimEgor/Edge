@@ -16,8 +16,8 @@ namespace Edge
 
 		struct EntityMotionCreationParam : public HashedType
 		{
-			float m_mass = 1.0f;
-			float m_gravityFactor = 1.0f;
+			ComputeValueType m_mass = ComputeValueType(1.0);
+			ComputeValueType m_gravityFactor = ComputeValueType(1.0);
 
 			EntityMotionCreationParam() = default;
 			virtual ~EntityMotionCreationParam() = default;
@@ -29,8 +29,8 @@ namespace Edge
 		{
 			PhysicsEntityCollisionShapeReference m_shape;
 
-			float m_friction = 1.0f;
-			float m_elasticity = 0.5f;
+			ComputeValueType m_friction = ComputeValueType(1.0);
+			ComputeValueType m_elasticity = ComputeValueType(0.5);
 		};
 
 		struct EntityCreationParam : public HashedType

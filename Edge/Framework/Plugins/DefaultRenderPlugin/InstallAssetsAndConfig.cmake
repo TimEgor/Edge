@@ -6,7 +6,7 @@ function(edge_default_render_install)
 	configure_file(${CMAKE_CURRENT_LIST_DIR}/DefaultRenderPluginConfig.xml.tpl ${OUTPUT_DIR}/DefaultRenderPluginConfig.xml)
 
 	cmake_policy(SET CMP0087 NEW)
-	set(INSTALL_OUTPUT_BASE_PATH ${CMAKE_INSTALL_PREFIX}/EnginePlugins/DefaultRender/lib/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>)
+	set(INSTALL_OUTPUT_BASE_PATH ${CMAKE_INSTALL_PREFIX}/Framework/Plugins/DefaultRender/lib/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>)
 	install(CODE
 		"
 		set(TPL_PLUGIN_ASSETS_PATH ${INSTALL_OUTPUT_BASE_PATH}/Assets)
@@ -16,5 +16,5 @@ function(edge_default_render_install)
 		"
 	)
 
-	install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Assets" DESTINATION "EnginePlugins/DefaultRender" OPTIONAL)
+	install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Assets" DESTINATION "Framework/Plugins/DefaultRender" OPTIONAL)
 endfunction()

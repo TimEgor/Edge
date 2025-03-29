@@ -1,10 +1,10 @@
 #include "IkPrismaticJoint.h"
 
-#include "EdgeCommon/Math/ComputeMatrix.h"
+#include "EdgeCommon/Math/ComputeMatrix44.h"
 
 #include "IkLink.h"
 
-EdgeDemo::IkPrismaticJoint::IkPrismaticJoint(IkLink* parentLink, IkLink* childLink, const Edge::FloatVector3& localAxis)
+EdgeDemo::IkPrismaticJoint::IkPrismaticJoint(IkLink* parentLink, IkLink* childLink, const Edge::ComputeVector3& localAxis)
 	: IkJoint(parentLink, childLink),
 	m_initialLocalTransform(childLink->getLocalTransform()), m_localAxis(localAxis)
 {
@@ -12,18 +12,18 @@ EdgeDemo::IkPrismaticJoint::IkPrismaticJoint(IkLink* parentLink, IkLink* childLi
 
 void EdgeDemo::IkPrismaticJoint::updateLinks()
 {
-	const Edge::ComputeMatrix localJointOffset = ComputeMatrixFromTranslation((m_localAxis * m_value).getFloatVector3());
-	const Edge::ComputeMatrix localJointTransform = localJointOffset * m_initialLocalTransform.m_matrix;
+	const Edge::ComputeMatrix4x4 localJointOffset = Edge::TranslationComputeMatrix4x4(m_localAxis * m_value);
+	const Edge::ComputeMatrix4x4 localJointTransform = localJointOffset * m_initialLocalTransform.m_matrix;
 
-	getChildLink()->setLocalTransform(localJointTransform.getMatrix4x4());
+	getChildLink()->setLocalTransform(localJointTransform);
 }
 
-Edge::FloatVector3 EdgeDemo::IkPrismaticJoint::calcDerivative(const Edge::FloatVector3& effectorPosition) const
+Edge::ComputeVector3 EdgeDemo::IkPrismaticJoint::calcDerivative(const Edge::ComputeVector3& effectorPosition) const
 {
 	const IkLink* childLink = getChildLink();
-	const Edge::ComputeVector worldJointAxis = childLink->getWorldTransform().m_matrix * m_localAxis;
+	const Edge::ComputeVector3 worldJointAxis = (childLink->getWorldTransform().m_matrix * Edge::ComputeVector4(m_localAxis)).getXYZ();
 
-	return worldJointAxis.getFloatVector3();
+	return worldJointAxis;
 }
 
 void EdgeDemo::IkPrismaticJoint::applyValue(float value)

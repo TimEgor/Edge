@@ -1,15 +1,15 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
 namespace Edge
 {
 	namespace MotionPropertyComputer
 	{
-		float CalcSphereMass(float radius, float density);
-		FloatVector3 CalcSphereInertiaTensor(float mass, float radius);
+		ComputeValueType CalcSphereMass(ComputeValueType radius, ComputeValueType density);
+		ComputeVector3 CalcSphereInertiaTensor(ComputeValueType mass, ComputeValueType radius);
 
-		float CalcBoxMass(const FloatVector3& size, float density);
-		FloatVector3 CalcBoxInertiaTensor(float mass, const FloatVector3& size);
+		ComputeValueType CalcBoxMass(const ComputeVector3& size, ComputeValueType density);
+		ComputeVector3 CalcBoxInertiaTensor(ComputeValueType mass, const ComputeVector3& size);
 	};
 }

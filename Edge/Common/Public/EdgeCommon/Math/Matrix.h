@@ -201,39 +201,46 @@ namespace Edge
 
 	constexpr FloatMatrix2x2 FloatMatrix2x2Zero = FloatMatrix2x2(
 		0.0f, 0.0f,
-		0.0f, 0.0f);
+		0.0f, 0.0f
+	);
 
 	constexpr FloatMatrix2x2 FloatMatrix2x2Identity = FloatMatrix2x2(
 		1.0f, 0.0f,
-		0.0f, 1.0f);
+		0.0f, 1.0f
+	);
 
 	constexpr FloatMatrix3x3 FloatMatrix3x3Zero = FloatMatrix3x3(
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f);
+		0.0f, 0.0f, 0.0f
+	);
 
 	constexpr FloatMatrix3x3 FloatMatrix3x3Identity = FloatMatrix3x3(
 		1.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f);
+		0.0f, 0.0f, 1.0f
+	);
 
 	constexpr FloatMatrix4x4 FloatMatrix4x4Zero = FloatMatrix4x4(
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f);
+		0.0f, 0.0f, 0.0f, 0.0f
+	);
 
 	constexpr FloatMatrix4x4 FloatMatrix4x4Identity = FloatMatrix4x4(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
 
 	constexpr FloatMatrix4x4 FloatMatrix4x4ZeroIdentity = FloatMatrix4x4(
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
 }
 
 #include "Matrix.hpp"

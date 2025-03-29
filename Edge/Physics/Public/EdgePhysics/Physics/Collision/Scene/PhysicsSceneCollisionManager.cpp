@@ -180,7 +180,7 @@ void Edge::PhysicsSceneCollisionManager::updateCollisionTransform(const PhysicsE
 	m_contactManager->markContactsForChecking(collision);
 }
 
-void Edge::PhysicsSceneCollisionManager::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const
+void Edge::PhysicsSceneCollisionManager::rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const
 {
 	m_broadPhase->rayCast(origin, end, resultCollector);
 }

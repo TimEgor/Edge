@@ -27,13 +27,13 @@ Edge::JobGraphReference Edge::PhysicsScene::getUpdateJobGraph(float deltaTime)
 		getConstraintVelocitySolvingJobGraph(),
 		constraintPreSolvingJobsID);
 
-	const JobGraphBuilder::JobGraphJobID constraintPositionSolvingJobsID = m_graphBuilder.addJobGraphAfter(
-		getConstraintPositionSolvingJobGraph(),
-		constraintVelocitySolvingJobsID);
-
 	const JobGraphBuilder::JobGraphJobID velocityIntegrationJobsID = m_graphBuilder.addJobGraphAfter(
 		m_entityManager->getVelocityIntegrationJobGraph(deltaTime),
-		constraintPositionSolvingJobsID);
+		constraintVelocitySolvingJobsID);
+
+	const JobGraphBuilder::JobGraphJobID constraintPositionSolvingJobsID = m_graphBuilder.addJobGraphAfter(
+		getConstraintPositionSolvingJobGraph(),
+		velocityIntegrationJobsID);
 
 	return m_graphBuilder.getGraph();
 }

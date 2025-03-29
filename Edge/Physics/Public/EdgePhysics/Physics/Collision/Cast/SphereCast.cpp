@@ -1,46 +1,45 @@
 #include "SphereCast.h"
 
-#include "EdgeCommon/Math/ComputeVector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
-bool Edge::CastSphere::rayCast(const FloatVector3& sphereCenter, float sphereRadius, const FloatVector3& origin, const FloatVector3& end, PhysicsCollisionQuery::PointCastingResult& result)
+bool Edge::CastSphere::rayCast(const ComputeVector3& sphereCenter, ComputeValueType sphereRadius, const ComputeVector3& origin, const ComputeVector3& end, PhysicsCollisionQuery::PointCastingResult& result)
 {
-	const ComputeVector baseDelta = origin - sphereCenter;
-	const ComputeVector ray = end - origin;
-	const float rayLength = ray.getLength3();
-	const ComputeVector rayDirection = ray / rayLength;
+	const ComputeVector3 baseDelta = origin - sphereCenter;
+	const ComputeVector3 ray = end - origin;
+	const ComputeValueType rayLength = ray.getLength();
+	const ComputeVector3 rayDirection = ray / rayLength;
 
-	const float b = DotVector3(baseDelta, NormalizeVector(rayDirection));
-	const float c = DotVector3(baseDelta, baseDelta) - sphereRadius * sphereRadius;
+	const ComputeValueType b = DotComputeVector3(baseDelta, NormalizeComputeVector3(rayDirection));
+	const ComputeValueType c = DotComputeVector3(baseDelta, baseDelta) - sphereRadius * sphereRadius;
 
-	if (c > 0.0f && b > 0.0f)
+	if (c > ComputeValueType(0.0) && b > ComputeValueType(0.0))
 	{
 		return false;
 	}
 
-	const float discriminant = b * b - c;
-	if (discriminant < 0.0f)
+	const ComputeValueType discriminant = b * b - c;
+	if (discriminant < ComputeValueType(0.0))
 	{
 		return false;
 	}
 
-	float t = -b - sqrtf(discriminant);
+	ComputeValueType t = -b - sqrt(discriminant);
 
 	if (t > rayLength)
 	{
 		return false;
 	}
 
-	if (t < 0.0f) // ray origin is located inside a sphere
+	if (t < ComputeValueType(0.0)) // ray origin is located inside a sphere
 	{
-		t = 0.0f;
+		t = ComputeValueType(0.0);
 	}
 
-	ComputeVector hitPos = origin;
-	const ComputeVector delta = rayDirection * t;
-	hitPos += delta;
+	result.m_hitPosition = origin;
+	const ComputeVector3 delta = rayDirection * t;
+	result.m_hitPosition += delta;
 
-	hitPos.saveToFloatVector3(result.m_hitPosition);
-	result.m_distance = delta.getLength3();
+	result.m_distance = delta.getLength();
 
 	return true;
 }

@@ -1,7 +1,5 @@
 #include "PointCastingResultCollectors.h"
 
-#include "EdgeCommon/Math/Const.h"
-
 void Edge::ClosestPointCastingResultCollector::addHit(const PointInstanceCastingResult& result)
 {
 	if (!m_hasHit || result.m_result.m_distance < m_hitResult.m_result.m_distance)
@@ -13,7 +11,7 @@ void Edge::ClosestPointCastingResultCollector::addHit(const PointInstanceCasting
 
 void Edge::ClosestPointCastingResultCollector::reset()
 {
-	m_hitResult.m_result.m_distance = Math::FltMax;
+	m_hitResult.m_result.m_distance = Math::Max;
 	m_hasHit = false;
 }
 

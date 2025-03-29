@@ -4,5 +4,5 @@
 
 namespace Edge::CastSphere
 {
-	bool rayCast(const FloatVector3& sphereCenter, float sphereRadius, const FloatVector3& origin, const FloatVector3& end, PhysicsCollisionQuery::PointCastingResult& result);
+	bool rayCast(const ComputeVector3& sphereCenter, ComputeValueType sphereRadius, const ComputeVector3& origin, const ComputeVector3& end, PhysicsCollisionQuery::PointCastingResult& result);
 }

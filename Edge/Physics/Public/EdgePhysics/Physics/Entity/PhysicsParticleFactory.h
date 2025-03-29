@@ -10,14 +10,14 @@ namespace Edge
 	public:
 		struct ParticleCreationParam final : public EntityCreationParam
 		{
-			FloatVector3 m_position = FloatVector3Zero;
+			ComputeVector3 m_position = ComputeVector3Zero;
 
 			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(PARTICAL)
 		};
 
 		struct ParticleMotionCreationParam final : public EntityMotionCreationParam
 		{
-			float m_linearDampingFactor = 0.05f;
+			ComputeValueType m_linearDampingFactor = ComputeValueType(0.05);
 			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(PARTICAL)
 		};
 

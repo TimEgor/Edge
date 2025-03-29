@@ -1,9 +1,9 @@
 #include "HingeConstraint.h"
 
 Edge::HingeConstraint::HingeConstraint(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-	const FloatVector3& anchor1, const FloatVector3& anchor2, const FloatVector3& axis1, const FloatVector3& axis2)
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2, const ComputeVector3& axis1, const ComputeVector3& axis2)
 	: TwoPhysicsEntityConstraint(entity1, entity2),
-	m_positionPart(entity1, entity2), m_axisRotationPart(entity1, entity2),
+	m_positionPart(entity1, entity2), m_rotationPart(entity1, entity2),
 	m_anchor1(anchor1), m_anchor2(anchor2),
 	m_axis1(axis1), m_axis2(axis2)
 {
@@ -12,7 +12,7 @@ Edge::HingeConstraint::HingeConstraint(const PhysicsEntityReference& entity1, co
 void Edge::HingeConstraint::preSolve(float deltaTime)
 {
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
-	m_axisRotationPart.preSolve(m_axis1, m_axis2);
+	m_rotationPart.preSolve(m_axis1, m_axis2);
 }
 
 void Edge::HingeConstraint::warmUp()
@@ -22,9 +22,9 @@ void Edge::HingeConstraint::warmUp()
 		m_positionPart.warmUp();
 	}
 
-	if (m_axisRotationPart.isActive())
+	if (m_rotationPart.isActive())
 	{
-		m_axisRotationPart.warmUp();
+		m_rotationPart.warmUp();
 	}
 }
 
@@ -35,9 +35,9 @@ void Edge::HingeConstraint::solveVelocity()
 		m_positionPart.solveVelocity();
 	}
 
-	if (m_axisRotationPart.isActive())
+	if (m_rotationPart.isActive())
 	{
-		m_axisRotationPart.solveVelocity();
+		m_rotationPart.solveVelocity();
 	}
 }
 
@@ -50,10 +50,10 @@ void Edge::HingeConstraint::solvePosition()
 		m_positionPart.solvePosition();
 	}
 
-	m_axisRotationPart.preSolve(m_axis1, m_axis2);
+	m_rotationPart.preSolve(m_axis1, m_axis2);
 
-	if (m_axisRotationPart.isActive())
+	if (m_rotationPart.isActive())
 	{
-		m_axisRotationPart.solvePosition();
+		m_rotationPart.solvePosition();
 	}
 }

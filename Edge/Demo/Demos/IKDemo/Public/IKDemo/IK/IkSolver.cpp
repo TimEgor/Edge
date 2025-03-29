@@ -1,8 +1,6 @@
 #include "IkSolver.h"
 
 #include "EdgeCommon/Math/ComputeDynamicMatrix.h"
-#include "EdgeCommon/Math/ComputeVector.h"
-#include "EdgeCommon/Math/Const.h"
 #include "EdgeCommon/Math/Transform.h"
 
 #include "IkSystem.h"
@@ -107,11 +105,11 @@ Edge::FloatDynamicMatrix EdgeDemo::IkSolver::getCoeff(const IkSystem& system)
 	for (uint32_t jointIndex = 0; jointIndex < jointCount; ++jointIndex)
 	{
 		const IkJoint* joint = joints[jointIndex];
-		const Edge::FloatVector3 jointDerivative = joint->calcDerivative(system.getEffectorLink()->getWorldTransform().getOrigin());
+		const Edge::ComputeVector3 jointDerivative = joint->calcDerivative(system.getEffectorLink()->getWorldTransform().getOrigin());
 
-		coeff.setElement(0, jointIndex, jointDerivative.m_x);
-		coeff.setElement(1, jointIndex, jointDerivative.m_y);
-		coeff.setElement(2, jointIndex, jointDerivative.m_z);
+		coeff.setElement(0, jointIndex, jointDerivative.getX());
+		coeff.setElement(1, jointIndex, jointDerivative.getY());
+		coeff.setElement(2, jointIndex, jointDerivative.getZ());
 	}
 
 	return coeff;
@@ -123,11 +121,11 @@ void EdgeDemo::IkSolver::solve(const IkSystem& system, float deltaTime)
 	const float iterationDeltaTime = deltaTime / iterationCount;
 	for (uint32_t iterationIndex = 0; iterationIndex < iterationCount; ++iterationIndex)
 	{
-		const Edge::ComputeVector targetPosition = system.getTargetPosition();
-		const Edge::ComputeVector effectorPosition = Edge::Transform(system.getEffectorLink()->getWorldTransform()).getOrigin();
-		const Edge::ComputeVector deltaPosition = targetPosition - effectorPosition;
+		const Edge::ComputeVector3 targetPosition = system.getTargetPosition();
+		const Edge::ComputeVector3 effectorPosition = Edge::Transform(system.getEffectorLink()->getWorldTransform()).getOrigin();
+		const Edge::ComputeVector3 deltaPosition = targetPosition - effectorPosition;
 
-		if (IsVectorNearEqual(deltaPosition, Edge::FloatVector3Zero, Edge::FloatVector3(0.01f)))
+		if (deltaPosition.isEqual(Edge::FloatVector3Zero, 0.01f))
 		{
 			break;
 		}
@@ -143,8 +141,8 @@ void EdgeDemo::IkSolver::updateTransforms(const IkSystem& system)
 
 	while (link)
 	{
-		const Edge::ComputeMatrix worldTranform = link->getLocalTransform().m_matrix * parentTransform->m_matrix;
-		link->setWorldTransform(worldTranform.getMatrix4x4());
+		const Edge::ComputeMatrix4x4 worldTranform = link->getLocalTransform().m_matrix * parentTransform->m_matrix;
+		link->setWorldTransform(worldTranform);
 
 		parentTransform = &link->getWorldTransform();
 		link = link->getChildLink();

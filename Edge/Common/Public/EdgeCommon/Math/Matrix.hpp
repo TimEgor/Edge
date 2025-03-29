@@ -45,14 +45,14 @@ namespace Edge
 	typename Matrix2x2Base<T>::ValueType Matrix2x2Base<T>::getElement(size_t row, size_t column) const
 	{
 		EDGE_ASSERT(row < 2 && column < 2);
-		return m_values[row * 2 + column];
+		return m_values[row][column];
 	}
 
 	template <typename T>
 	typename Matrix2x2Base<T>::ValueType& Matrix2x2Base<T>::getElement(size_t row, size_t column)
 	{
 		EDGE_ASSERT(row < 2 && column < 2);
-		return m_values[row * 2 + column];
+		return m_values[row][column];
 	}
 
 	template <typename T>
@@ -114,14 +114,14 @@ namespace Edge
 	typename Matrix3x3Base<T>::ValueType Matrix3x3Base<T>::getElement(size_t row, size_t column) const
 	{
 		EDGE_ASSERT(row < 3 && column < 3);
-		return m_values[row * 3 + column];
+		return m_values[row][column];
 	}
 
 	template <typename T>
 	typename Matrix3x3Base<T>::ValueType& Matrix3x3Base<T>::getElement(size_t row, size_t column)
 	{
 		EDGE_ASSERT(row < 3 && column < 3);
-		return m_values[row * 3 + column];
+		return m_values[row][column];
 	}
 
 	template <typename T>
@@ -195,14 +195,14 @@ namespace Edge
 	typename Matrix4x4Base<T>::ValueType Matrix4x4Base<T>::getElement(size_t row, size_t column) const
 	{
 		EDGE_ASSERT(row < 4 && column < 4);
-		return m_values[row * 4 + column];
+		return m_values[row][column];
 	}
 
 	template <typename T>
 	typename Matrix4x4Base<T>::ValueType& Matrix4x4Base<T>::getElement(size_t row, size_t column)
 	{
 		EDGE_ASSERT(row < 4 && column < 4);
-		return m_values[row * 4 + column];
+		return m_values[row][column];
 	}
 
 	template <typename T>

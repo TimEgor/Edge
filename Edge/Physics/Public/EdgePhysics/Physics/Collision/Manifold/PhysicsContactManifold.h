@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
 #include <vector>
 
@@ -8,12 +8,12 @@ namespace Edge
 {
 	struct PhysicsContactManifold final
 	{
-		using PositionCollection = std::vector<FloatVector3>;
+		using PositionCollection = std::vector<ComputeVector3>;
 
 		PositionCollection m_positions1;
 		PositionCollection m_positions2;
-		FloatVector3 m_normal = FloatVector3Zero;
-		float m_depth = 0.0f;
+		ComputeVector3 m_normal = ComputeVector3Zero;
+		ComputeValueType m_depth = 0.0f;
 
 		uint32_t getContactPointCount() const { return m_positions1.size(); }
 	};

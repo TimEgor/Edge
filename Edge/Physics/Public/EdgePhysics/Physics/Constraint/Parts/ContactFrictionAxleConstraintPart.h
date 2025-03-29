@@ -9,15 +9,15 @@ namespace Edge
 	class ContactFrictionAxleConstraintPart final
 	{
 	private:
-		FloatVector3 m_radiusNorm1 = FloatVector3Zero;
-		FloatVector3 m_radiusNorm2 = FloatVector3Zero;
+		ComputeVector3 m_radiusNorm1 = ComputeVector3Zero;
+		ComputeVector3 m_radiusNorm2 = ComputeVector3Zero;
 
-		FloatVector3 m_invInerRadiusNorm1 = FloatVector3Zero;
-		FloatVector3 m_invInerRadiusNorm2 = FloatVector3Zero;
+		ComputeVector3 m_invInerRadiusNorm1 = ComputeVector3Zero;
+		ComputeVector3 m_invInerRadiusNorm2 = ComputeVector3Zero;
 
-		float m_totalLambda = 0.0f;
-		float m_invEffectiveMass = 0.0f;
-		float m_friction = 0.0f;
+		ComputeValueType m_totalLambda = ComputeValueType(0.0);
+		ComputeValueType m_invEffectiveMass = ComputeValueType(0.0);
+		ComputeValueType m_friction = ComputeValueType(0.0);
 
 		PhysicsEntityReference m_entity1;
 		PhysicsEntityReference m_entity2;
@@ -28,10 +28,10 @@ namespace Edge
 		ContactFrictionAxleConstraintPart(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2)
 			: m_entity1(entity1), m_entity2(entity2) {}
 
-		void preSolve(const FloatVector3& contactPosition, const FloatVector3& normal);
-		void warmUp(const FloatVector3& normal);
-		float solveVelocity(const FloatVector3& normal);
-		void applyVelocity(const FloatVector3& normal, float lambda);
+		void preSolve(const ComputeVector3& contactPosition, const ComputeVector3& normal);
+		void warmUp(const ComputeVector3& normal);
+		ComputeValueType solveVelocity(const ComputeVector3& normal);
+		void applyVelocity(const ComputeVector3& normal, ComputeValueType lambda);
 
 		bool isActive() const;
 	};

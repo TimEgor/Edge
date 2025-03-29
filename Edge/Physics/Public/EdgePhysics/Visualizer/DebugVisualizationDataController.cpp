@@ -54,9 +54,9 @@ void Edge::DebugVisualizationDataController::addBox(const Transform& transform, 
 {
 	Transform scaledTransform = transform;
 
-	scaledTransform.setAxisX((transform.getAxisX() * size.m_x).getFloatVector3());
-	scaledTransform.setAxisY((transform.getAxisY() * size.m_y).getFloatVector3());
-	scaledTransform.setAxisZ((transform.getAxisZ() * size.m_z).getFloatVector3());
+	scaledTransform.setAxisX(transform.getAxisX() * size.m_x);
+	scaledTransform.setAxisY(transform.getAxisY() * size.m_y);
+	scaledTransform.setAxisZ(transform.getAxisZ() * size.m_z);
 
 	addBox(scaledTransform, color);
 }
@@ -71,9 +71,9 @@ void Edge::DebugVisualizationDataController::addWireframeBox(const Transform& tr
 {
 	Transform scaledTransform = transform;
 
-	scaledTransform.setAxisX((transform.getAxisX() * size.m_x).getFloatVector3());
-	scaledTransform.setAxisY((transform.getAxisY() * size.m_y).getFloatVector3());
-	scaledTransform.setAxisZ((transform.getAxisZ() * size.m_z).getFloatVector3());
+	scaledTransform.setAxisX(transform.getAxisX() * size.m_x);
+	scaledTransform.setAxisY(transform.getAxisY() * size.m_y);
+	scaledTransform.setAxisZ(transform.getAxisZ() * size.m_z);
 
 	addWireframeBox(scaledTransform, color);
 }
@@ -92,7 +92,7 @@ void Edge::DebugVisualizationDataController::addSphere(const FloatVector3& posit
 
 void Edge::DebugVisualizationDataController::addSphere(const Transform& transform, float radius, const NormalizedColorRGB& color)
 {
-	addSphere(transform.getOrigin(), transform.getAxisZ(), transform.getAxisY(), radius, color);
+	addSphere(transform.getOrigin().getFloatVector3(), transform.getAxisZ().getFloatVector3(), transform.getAxisY().getFloatVector3(), radius, color);
 }
 
 void Edge::DebugVisualizationDataController::addWireframeSphere(const FloatVector3& position,
@@ -109,46 +109,40 @@ void Edge::DebugVisualizationDataController::addWireframeSphere(const FloatVecto
 
 void Edge::DebugVisualizationDataController::addWireframeSphere(const Transform& transform, float radius, const NormalizedColorRGB& color)
 {
-	addWireframeSphere(transform.getOrigin(), transform.getAxisZ(), transform.getAxisY(), radius, color);
+	addWireframeSphere(transform.getOrigin().getFloatVector3(), transform.getAxisZ().getFloatVector3(), transform.getAxisY().getFloatVector3(), radius, color);
 }
 
 void Edge::DebugVisualizationDataController::addGrid(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& directionRight,
 	const FloatVector2& areaSize, const UInt32Vector2& gridNums, const NormalizedColorRGB& color)
 {
-	const ComputeVector directionUp = CrossVector3(directionRight, normal);
+	const FloatComputeVector3 directionUp = CrossComputeVector3(FloatComputeVector3(directionRight), FloatComputeVector3(normal));
 
-	const ComputeVector baseULinePosition = position - directionRight * areaSize.m_x * 0.5f;
+	const FloatComputeVector3 baseULinePosition = FloatComputeVector3(position) - FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
 	const float gridUStep = areaSize.m_x / gridNums.m_x;
 
 	const uint32_t uLineCount = gridNums.m_x + 1;
 	for (uint32_t uLineIndex = 0; uLineIndex < uLineCount; ++uLineIndex)
 	{
-		const ComputeVector baseLineStepPosition = baseULinePosition + directionRight * gridUStep * uLineIndex;
+		const FloatComputeVector3 baseLineStepPosition = baseULinePosition + FloatComputeVector3(directionRight) * gridUStep * static_cast<float>(uLineIndex);
 
-		FloatVector3 linePosition1;
-		FloatVector3 linePosition2;
+		FloatComputeVector3 linePosition1 = baseLineStepPosition + directionUp * areaSize.m_y * 0.5f;
+		FloatComputeVector3 linePosition2 = baseLineStepPosition - directionUp * areaSize.m_y * 0.5f;
 
-		(baseLineStepPosition + directionUp * areaSize.m_y * 0.5f).saveToFloatVector3(linePosition1);
-		(baseLineStepPosition - directionUp * areaSize.m_y * 0.5f).saveToFloatVector3(linePosition2);
-
-		addLine(linePosition1, linePosition2, color);
+		addLine(linePosition1.getFloatVector3(), linePosition2.getFloatVector3(), color);
 	}
 
-	const ComputeVector baseVLinePosition = position - directionUp * areaSize.m_y * 0.5f;
+	const FloatComputeVector3 baseVLinePosition = FloatComputeVector3(position) - FloatComputeVector3(directionUp) * areaSize.m_y * 0.5f;
 	const float gridVStep = areaSize.m_y / gridNums.m_y;
 
 	const uint32_t vLineCount = gridNums.m_y + 1;
 	for (uint32_t vLineIndex = 0; vLineIndex < vLineCount; ++vLineIndex)
 	{
-		const ComputeVector baseLineStepPosition = baseVLinePosition + directionUp * gridVStep * vLineIndex;
+		const FloatComputeVector3 baseLineStepPosition = baseVLinePosition + directionUp * gridVStep * static_cast<float>(vLineIndex);
 
-		FloatVector3 linePosition1;
-		FloatVector3 linePosition2;
+		FloatComputeVector3 linePosition1 = baseLineStepPosition + FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
+		FloatComputeVector3 linePosition2 = baseLineStepPosition - FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
 
-		(baseLineStepPosition + directionRight * areaSize.m_x * 0.5f).saveToFloatVector3(linePosition1);
-		(baseLineStepPosition - directionRight * areaSize.m_x * 0.5f).saveToFloatVector3(linePosition2);
-
-		addLine(linePosition1, linePosition2, color);
+		addLine(linePosition1.getFloatVector3(), linePosition2.getFloatVector3(), color);
 	}
 }
 

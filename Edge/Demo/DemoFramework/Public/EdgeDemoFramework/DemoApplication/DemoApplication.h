@@ -18,7 +18,7 @@ namespace EdgeDemo
 		bool initDemo();
 
 		void update(float deltaTime);
-		void prepareCameraTransforms(Edge::Renderer::CameraTransforms& cameraTransforms) const;
+		void prepareCameraData(Edge::Renderer::CameraParams& cameraParams, Edge::Transform& cameraTransform) const;
 
 		virtual Edge::JobGraphReference getMainLoopJobGraph() override;
 

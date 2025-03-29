@@ -34,7 +34,6 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPreSolvingJobGra
 		createLambdaJob([dt = deltaTime, this]()
 			{
 				preSolve(dt);
-				warmUp();
 			}, "Pre solve constraints")
 	);
 
@@ -48,6 +47,7 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getVelocitySolvingJ
 	const JobGraphBuilder::JobGraphJobID velocitySolvingJobID = m_graphBuilder.addJob(
 		createLambdaJob([this]()
 			{
+				warmUp();
 				solveVelocity();
 			}, "Solve constraints velocities")
 	);

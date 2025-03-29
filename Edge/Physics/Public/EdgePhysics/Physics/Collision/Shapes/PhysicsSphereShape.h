@@ -7,19 +7,19 @@ namespace Edge
 	class PhysicsSphereShape : public PhysicsEntityCollisionShape
 	{
 	private:
-		const float m_radius = 0.0f;
+		const ComputeValueType m_radius = 0.0_ecv;
 
 	public:
-		PhysicsSphereShape(float radius)
+		PhysicsSphereShape(ComputeValueType radius)
 			: m_radius(radius) {}
 
-		float getRadius() const { return m_radius; }
+		ComputeValueType getRadius() const { return m_radius; }
 
 		virtual AABB3 getAABB() const override;
-		virtual FloatVector3 getFurthestKeyPoint(const FloatVector3& direction) const override;
-		virtual void getSupportingFace(const FloatVector3& direction, SupportingFaceVertexCollection& vertices) const override {}
+		virtual ComputeVector3 getFurthestKeyPoint(const ComputeVector3& direction) const override;
+		virtual void getSupportingFace(const ComputeVector3& direction, SupportingFaceVertexCollection& vertices) const override {}
 
-		virtual bool rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const override;
+		virtual bool rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const override;
 
 		EDGE_PHYSICS_COLLISION_SHAPE_TYPE(SPHERE);
 	};

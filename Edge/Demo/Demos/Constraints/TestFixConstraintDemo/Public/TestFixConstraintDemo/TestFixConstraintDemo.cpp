@@ -10,11 +10,11 @@ void EdgeDemo::TestFixConstraintDemo::drawSphere(const Edge::PhysicsBodyReferenc
 {
 	const Edge::Transform& transform = body->getTransform()->getWorldTransform();
 
-	m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisX(), 0.2f, Edge::NormalizedColorRed);
-	m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
-	m_debugVisualizationDataController->addArrow(transform.getOrigin(), transform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
+	m_debugVisualizationDataController->addArrow(transform.getOrigin().getFloatVector3(), transform.getAxisX().getFloatVector3(), 0.2f, Edge::NormalizedColorRed);
+	m_debugVisualizationDataController->addArrow(transform.getOrigin().getFloatVector3(), transform.getAxisY().getFloatVector3(), 0.2f, Edge::NormalizedColorGreen);
+	m_debugVisualizationDataController->addArrow(transform.getOrigin().getFloatVector3(), transform.getAxisZ().getFloatVector3(), 0.2f, Edge::NormalizedColorBlue);
 
-	m_debugVisualizationDataController->addSphere(transform.getOrigin(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
+	m_debugVisualizationDataController->addSphere(transform.getOrigin().getFloatVector3(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.5f);
 }
 
 bool EdgeDemo::TestFixConstraintDemo::initDemo()
@@ -22,9 +22,9 @@ bool EdgeDemo::TestFixConstraintDemo::initDemo()
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
-	bodyMotionCreationParam.m_mass = 1.0f;
-	bodyMotionCreationParam.m_angularDamping = 0.2f;
-	bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, 1.0f);
+	bodyMotionCreationParam.m_mass = 1.0;
+	bodyMotionCreationParam.m_angularDamping = 0.2;
+	bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, 1.0);
 
 	Edge::PhysicsBodyFactory::EntityCollisionCreationParam bodyCollisionCreationParam;
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(0.5f);
@@ -32,8 +32,8 @@ bool EdgeDemo::TestFixConstraintDemo::initDemo()
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
 	{
-		bodyCreationParam.m_position.m_x = 0.0f;
-		bodyCreationParam.m_position.m_y = 5.0f;
+		bodyCreationParam.m_position.setX(0.0);
+		bodyCreationParam.m_position.setY(5.0);
 
 		const Edge::PhysicsBodyReference staticBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 		m_physicsScene->addEntity(staticBody);
@@ -45,14 +45,14 @@ bool EdgeDemo::TestFixConstraintDemo::initDemo()
 
 	for (uint32_t i = 0; i < 5; ++i)
 	{
-		bodyCreationParam.m_position.m_x = 1.5f * static_cast<float>(i + 1);
-		bodyCreationParam.m_position.m_y = 5.0f;
+		bodyCreationParam.m_position.setX(1.5 * static_cast<Edge::ComputeValueType>(i + 1));
+		bodyCreationParam.m_position.setY(5.0);
 
 		const Edge::PhysicsBodyReference dynamicBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 		m_physicsScene->addEntity(dynamicBody);
 
-		const Edge::PhysicsConstraintReference constraint = new Edge::FixedConstraint(m_bodies[m_bodies.size() - 1], dynamicBody, Edge::FloatVector3Zero, Edge::FloatVector3(-1.5f, 0.0f, 0.0f));
+		const Edge::PhysicsConstraintReference constraint = new Edge::FixedConstraint(m_bodies[m_bodies.size() - 1], dynamicBody, Edge::ComputeVector3Zero, Edge::ComputeVector3(-1.5, 0.0, 0.0));
 
 
 		m_physicsScene->addConstraint(constraint);

@@ -2,13 +2,13 @@
 
 void Edge::AxisRotationConstraintPart::deactivate()
 {
-	m_invEffectiveMass = FloatMatrix2x2Zero;
-	m_totalLambda = FloatVector2Zero;
+	m_invEffectiveMass = ComputeMatrix2x2Zero;
+	m_totalLambda = ComputeVector3Zero;
 }
 
-void Edge::AxisRotationConstraintPart::applyVelocity(const FloatVector3& lambda) const
+void Edge::AxisRotationConstraintPart::applyVelocity(const ComputeVector3& lambda) const
 {
-	if (IsVectorEqual(lambda, FloatVector3Zero))
+	if (lambda == ComputeVector3Zero)
 	{
 		return;
 	}
@@ -18,22 +18,22 @@ void Edge::AxisRotationConstraintPart::applyVelocity(const FloatVector3& lambda)
 
 	if (motion1)
 	{
-		const ComputeVector angularVelocityDelta = m_invIner1 * lambda;
-		const FloatVector3 newAngularVelocity = (motion1->getAngularVelocity() - angularVelocityDelta).getFloatVector3();
+		const ComputeVector3 angularVelocityDelta = m_invIner1 * lambda;
+		const ComputeVector3 newAngularVelocity = motion1->getAngularVelocity() - angularVelocityDelta;
 		motion1->setAngularVelocity(newAngularVelocity);
 	}
 
 	if (motion2)
 	{
-		const ComputeVector angularVelocityDelta = m_invIner2 * lambda;
-		const FloatVector3 newAngularVelocity = (motion2->getAngularVelocity() + angularVelocityDelta).getFloatVector3();
+		const ComputeVector3 angularVelocityDelta = m_invIner2 * lambda;
+		const ComputeVector3 newAngularVelocity = motion2->getAngularVelocity() + angularVelocityDelta;
 		motion2->setAngularVelocity(newAngularVelocity);
 	}
 }
 
-void Edge::AxisRotationConstraintPart::applyPosition(const FloatVector3& lambda) const
+void Edge::AxisRotationConstraintPart::applyPosition(const ComputeVector3& lambda) const
 {
-	if (IsVectorEqual(lambda, FloatVector3Zero))
+	if (lambda == ComputeVector3Zero)
 	{
 		return;
 	}
@@ -49,39 +49,36 @@ void Edge::AxisRotationConstraintPart::applyPosition(const FloatVector3& lambda)
 
 	if (motion1)
 	{
-		const ComputeVector angularVelocityDelta = m_invIner1 * lambda;
-		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
+		const ComputeVector3 angularVelocityDelta = m_invIner1 * lambda;
+		const ComputeValueType angularVelocityDeltaLength = angularVelocityDelta.getLength();
 		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
-			transformAccessor1.setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternion(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
+			transformAccessor1.setRotation(newRotation);
 		}
 	}
 
 	if (motion2)
 	{
-		const ComputeVector angularVelocityDelta = m_invIner2 * lambda;
-		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
+		const ComputeVector3 angularVelocityDelta = m_invIner2 * lambda;
+		const ComputeValueType angularVelocityDeltaLength = angularVelocityDelta.getLength();
 		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
-			transformAccessor2.setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternion(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
+			transformAccessor2.setRotation(newRotation);
 		}
 	}
 }
 
-void Edge::AxisRotationConstraintPart::preSolve(const FloatVector3& axis1, const FloatVector3& axis2)
+void Edge::AxisRotationConstraintPart::preSolve(const ComputeVector3& axis1, const ComputeVector3& axis2)
 {
-	const ComputeVector worldAxis1 = RotateVector(m_entity1->getTransform()->getRotation(), axis1);
-	const ComputeVector worldAxis2 = RotateVector(m_entity2->getTransform()->getRotation(), axis2);
+	const ComputeVector3 worldAxis1 = m_entity1->getTransform()->getRotation().rotate(axis1);
+	const ComputeVector3 worldAxis2 = m_entity2->getTransform()->getRotation().rotate(axis2);
 
-	m_axis1 = worldAxis1.getFloatVector3();
+	m_axis1 = worldAxis1;
 
-	const ComputeVector b2 = Vector3Orthogonal(worldAxis2);
-	const ComputeVector c2 = CrossVector3(worldAxis2, b2);
-
-	b2.saveToFloatVector3(m_axisOrtho1);
-	c2.saveToFloatVector3(m_axisOrtho2);
+	m_axisOrtho1 = worldAxis2.getOrthogonal();
+	m_axisOrtho2 = CrossComputeVector3(worldAxis2, m_axisOrtho1);
 
 	const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
 	const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
@@ -92,38 +89,29 @@ void Edge::AxisRotationConstraintPart::preSolve(const FloatVector3& axis1, const
 		return;
 	}
 
-	ComputeMatrix totalInvInertia = FloatMatrix4x4Zero;
+	ComputeMatrix3x3 totalInvInertia = ComputeMatrix3x3Zero;
 
 	if (motion1)
 	{
-		ComputeMatrix invInertia;
-		motion1->getWorldInverseInertiaTensor(invInertia);
-		invInertia.saveToMatrix4x4(m_invIner1);
-
-		totalInvInertia += invInertia;
+		motion1->getWorldInverseInertiaTensor(m_invIner1);
+		totalInvInertia += m_invIner1;
 	}
 
 	if (motion2)
 	{
-		ComputeMatrix invInertia;
-		motion2->getWorldInverseInertiaTensor(invInertia);
-		invInertia.saveToMatrix4x4(m_invIner2);
-
-		totalInvInertia += invInertia;
+		motion2->getWorldInverseInertiaTensor(m_invIner2);
+		totalInvInertia += m_invIner2;
 	}
 
-	totalInvInertia.setElement(3, 3, 1.0f);
+	const ComputeVector3 a1b2 = CrossComputeVector3(m_axisOrtho1, worldAxis1);
+	const ComputeVector3 a1c2 = CrossComputeVector3(m_axisOrtho2, worldAxis1);
 
-	const ComputeVector a1b2 = CrossVector3(b2, worldAxis1);
-	const ComputeVector a1c2 = CrossVector3(c2, worldAxis1);
+	const ComputeMatrix2x2 invEffectiveMass(
+		DotComputeVector3(a1b2, totalInvInertia * a1b2), DotComputeVector3(a1c2, totalInvInertia * a1b2),
+		DotComputeVector3(a1b2, totalInvInertia * a1c2), DotComputeVector3(a1c2, totalInvInertia * a1c2)
+	);
 
-	FloatMatrix4x4 invEffectiveMass = FloatMatrix4x4Identity;
-	invEffectiveMass.m_m11 = DotVector3(a1b2, TransformVector(totalInvInertia, a1b2));
-	invEffectiveMass.m_m12 = DotVector3(a1b2, TransformVector(totalInvInertia, a1c2));
-	invEffectiveMass.m_m21 = DotVector3(a1c2, TransformVector(totalInvInertia, a1b2));
-	invEffectiveMass.m_m22 = DotVector3(a1c2, TransformVector(totalInvInertia, a1c2));
-
-	InverseMatrix(invEffectiveMass).saveToMatrix2x2(m_invEffectiveMass);
+	m_invEffectiveMass = InvertComputeMatrix2x2(invEffectiveMass);
 }
 
 void Edge::AxisRotationConstraintPart::warmUp()
@@ -133,30 +121,29 @@ void Edge::AxisRotationConstraintPart::warmUp()
 
 void Edge::AxisRotationConstraintPart::solveVelocity()
 {
-	FloatVector3 lambda = FloatVector3Zero;
+	ComputeVector3 lambda = FloatVector3Zero;
 
 	{
 		const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
 		const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
 
-		const ComputeVector velocity1 = motion1 ? motion1->getAngularVelocity() : FloatVector3Zero;
-		const ComputeVector velocity2 = motion2 ? motion2->getAngularVelocity() : FloatVector3Zero;
+		const ComputeVector3 velocity1 = motion1 ? motion1->getAngularVelocity() : ComputeVector3Zero;
+		const ComputeVector3 velocity2 = motion2 ? motion2->getAngularVelocity() : ComputeVector3Zero;
 
-		const ComputeVector delta = velocity1 - velocity2;
+		const ComputeVector3 linearVelocityDelta = velocity2 - velocity1;
 
-		const ComputeVector a1b2 = CrossVector3(m_axisOrtho1, m_axis1);
-		const ComputeVector a1c2 = CrossVector3(m_axisOrtho2, m_axis1);
+		const ComputeVector3 a1b2 = CrossComputeVector3(m_axisOrtho1, m_axis1);
+		const ComputeVector3 a1c2 = CrossComputeVector3(m_axisOrtho2, m_axis1);
 
-		FloatVector2 jv(
-			DotVector3(a1b2, delta),
-			DotVector3(a1c2, delta)
+		const ComputeVector2 jv(
+			DotComputeVector3(a1b2, linearVelocityDelta),
+			DotComputeVector3(a1c2, linearVelocityDelta)
 		);
 
-		ComputeVector computeLambda = m_invEffectiveMass * jv;
-		computeLambda = a1b2 * computeLambda.getX() + a1c2 * computeLambda.getY();
+		ComputeVector2 computeLambda = m_invEffectiveMass * -jv; //negate jv instead of m_invEffectiveMass
+		lambda = a1b2 * computeLambda.getX() + a1c2 * computeLambda.getY();
 
-		computeLambda.saveToFloatVector3(lambda);
-		(m_totalLambda + computeLambda).saveToFloatVector3(m_totalLambda);
+		m_totalLambda += lambda;
 	}
 
 	applyVelocity(lambda);
@@ -164,23 +151,21 @@ void Edge::AxisRotationConstraintPart::solveVelocity()
 
 void Edge::AxisRotationConstraintPart::solvePosition()
 {
-	FloatVector3 lambda = FloatVector3Zero;
+	ComputeVector3 lambda = FloatVector3Zero;
 
 	{
 		static constexpr float baumgarteCoeff = 1.0f;
 
-		const ComputeVector a1b2 = CrossVector3(m_axisOrtho1, m_axis1);
-		const ComputeVector a1c2 = CrossVector3(m_axisOrtho2, m_axis1);
+		const ComputeVector3 a1b2 = CrossComputeVector3(m_axisOrtho1, m_axis1);
+		const ComputeVector3 a1c2 = CrossComputeVector3(m_axisOrtho2, m_axis1);
 
-		FloatVector2 jv(
-			DotVector3(m_axis1, m_axisOrtho1),
-			DotVector3(m_axis1, m_axisOrtho2)
+		const ComputeVector2 jv(
+			DotComputeVector3(m_axis1, m_axisOrtho1),
+			DotComputeVector3(m_axis1, m_axisOrtho2)
 		);
 
-		ComputeVector computeLambda = m_invEffectiveMass * jv * -baumgarteCoeff;
-		computeLambda = a1b2 * computeLambda.getX() + a1c2 * computeLambda.getY();
-
-		computeLambda.saveToFloatVector3(lambda);
+		const ComputeVector2 computeLambda = m_invEffectiveMass * (jv * -baumgarteCoeff); //negate baumgarteCoeff instead of m_invEffectiveMass
+		lambda = a1b2 * computeLambda.getX() + a1c2 * computeLambda.getY();
 	}
 
 	applyPosition(lambda);
@@ -188,5 +173,6 @@ void Edge::AxisRotationConstraintPart::solvePosition()
 
 bool Edge::AxisRotationConstraintPart::isActive() const
 {
-	return m_invEffectiveMass.m_m22 > Math::Epsilon;
+	//return m_invEffectiveMass.getElement(1, 1) > Math::Epsilon;
+	return true;
 }

@@ -23,7 +23,7 @@ namespace Edge
 		bool init(const FileName& rendererPluginPath);
 		void release();
 
-		void prepareData(const Renderer::CameraTransforms& cameraTransforms, const DebugVisualizationDataController& visualizationData);
+		void prepareData(const Renderer::CameraParams& cameraTransforms, const Transform& cameraTransform, const DebugVisualizationDataController& visualizationData);
 		void render(Texture2D& texture);
 	};
 }

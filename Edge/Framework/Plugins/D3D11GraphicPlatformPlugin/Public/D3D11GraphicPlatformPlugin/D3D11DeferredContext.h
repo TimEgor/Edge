@@ -43,7 +43,12 @@ namespace EdgeD3D11
 		virtual void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount) override;
 
 		virtual void prepareMatrixForShader(const Edge::FloatMatrix4x4& originalMatrix, Edge::FloatMatrix4x4& destinationMatrix) override;
-		virtual void prepareMatrixForShader(const Edge::ComputeMatrix& originalMatrix, Edge::FloatMatrix4x4& destinationMatrix) override;
+		virtual void prepareMatrixForShader(Edge::FloatMatrix4x4& matrix) override;
+
+		virtual void prepareViewTransform(const Edge::FloatVector3& viewPosition, const Edge::FloatVector3& viewDirection,
+			const Edge::FloatVector3& upDirection, Edge::FloatMatrix4x4& destinationMatrix) override;
+		virtual void preparePerspectiveProjTransform(float angle, float aspectRatio, float nearPlaneZ, float farPlaneZ,
+			Edge::FloatMatrix4x4& destinationMatrix) override;
 
 		virtual void* getNativeHandle() const override { return m_d3d11Context.Get(); }
 	};

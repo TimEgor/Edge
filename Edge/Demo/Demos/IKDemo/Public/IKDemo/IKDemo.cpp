@@ -51,16 +51,16 @@ bool EdgeDemo::IkDemo::initDemo()
 	IkLink& link4 = m_ikLinks.emplace_back();
 	//IkLink& link5 = m_ikLinks.emplace_back();
 
-	link2.setLocalTransform(ComputeMatrixFromTranslation(Edge::FloatVector3UnitY).getMatrix4x4());
+	link2.setLocalTransform(Edge::TranslationComputeMatrix4x4(Edge::ComputeVector3UnitY));
 	link2.setParentLink(&link1);
 
-	link3.setLocalTransform(ComputeMatrixFromTranslation(Edge::FloatVector3UnitY).getMatrix4x4());
+	link3.setLocalTransform(Edge::TranslationComputeMatrix4x4(Edge::ComputeVector3UnitY));
 	link3.setParentLink(&link2);
 
-	link4.setLocalTransform(ComputeMatrixFromTranslation(Edge::FloatVector3UnitY).getMatrix4x4());
+	link4.setLocalTransform(Edge::TranslationComputeMatrix4x4(Edge::ComputeVector3UnitY));
 	link4.setParentLink(&link3);
 	
-	//link5.setLocalTransform(ComputeMatrixFromTranslation(Edge::FloatVector3UnitY).getMatrix4x4());
+	//link5.setLocalTransform(Edge::TranslationComputeMatrix4x4(Edge::ComputeVector3UnitY));
 	//link5.setParentLink(&link4);
 
 	m_ikJoints.reserve(4);
@@ -113,7 +113,7 @@ void EdgeDemo::IkDemo::updateDemoLogic(float deltaTime)
 		{
 			const Edge::Transform* newParentTransform = &link->getWorldTransform();
 			m_debugVisualizationDataController->addWireframeSphere(*newParentTransform, 0.1f);
-			m_debugVisualizationDataController->addLine(parentTransform->getOrigin(), newParentTransform->getOrigin());
+			m_debugVisualizationDataController->addLine(parentTransform->getOrigin().getFloatVector3(), newParentTransform->getOrigin().getFloatVector3());
 
 			parentTransform = newParentTransform;
 			link = link->getChildLink();

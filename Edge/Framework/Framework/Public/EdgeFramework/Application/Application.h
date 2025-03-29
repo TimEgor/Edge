@@ -50,6 +50,7 @@ namespace Edge
 		WindowHandleReference m_mainWindowHandle;
 
 		float m_deltaTime = 0.0f;
+		float m_timeScale = 1.0f;
 
 		bool m_isStopped = false;
 		bool m_isPaused = false;
@@ -81,6 +82,7 @@ namespace Edge
 		void unpause();
 
 		float getDeltaTime() const;
+		void setTimeScale(float scale);
 
 		bool isStopped() const;
 		bool isPaused() const;

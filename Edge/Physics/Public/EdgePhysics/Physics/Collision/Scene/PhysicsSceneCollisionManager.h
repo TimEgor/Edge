@@ -55,7 +55,7 @@ namespace Edge
 
 		void updateCollisionTransform(const PhysicsEntityCollisionReference& collision);
 
-		virtual void rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const override;
+		virtual void rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const override;
 
 		const PhysicsCollisionContactManager& getContactManager() const;
 		PhysicsCollisionConstraintManager& getCollisionConstraintManager() const;

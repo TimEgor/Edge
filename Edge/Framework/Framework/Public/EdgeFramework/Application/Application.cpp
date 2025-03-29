@@ -237,7 +237,13 @@ void Edge::Application::unpause()
 
 float Edge::Application::getDeltaTime() const
 {
-	return m_deltaTime;
+	return m_deltaTime * m_timeScale;
+}
+
+void Edge::Application::setTimeScale(float scale)
+{
+	EDGE_ASSERT(scale >= 0);
+	m_timeScale = scale;
 }
 
 bool Edge::Application::isStopped() const

@@ -2,7 +2,6 @@
 
 #include "EdgeCommon/UtilsMacros.h"
 #include "EdgeCommon/FileName/FileName.h"
-#include "EdgeCommon/Math/ComputeMath/ComputeMatrix.h"
 
 #include "EdgePhysics/Visualizer/DebugVisualizationDataController.h"
 
@@ -570,7 +569,7 @@ void EdgeDefRender::DefaultRenderer::preparePointRenderData(float deltaTime, con
 		{
 			const Edge::DebugVisualizationDataController::PointData& pointDebugData = visualizationData.getPoint(pointIndex);
 			PointRenderData::PointData& pointData = *pointDataIter.getCurrentTypedElement<PointRenderData::PointData>();
-			pointData.m_position = pointDebugData.m_position;
+			pointData.m_position = Edge::FloatVector3(pointDebugData.m_position);
 			pointData.m_color = PackedColor(pointDebugData.m_color);
 
 			pointDataIter.next();
@@ -615,9 +614,9 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 
 			const PackedColor color(arrowDebugData.m_color);
 
-			const Edge::ComputeVector endPoint = Edge::ComputeVector(arrowDebugData.m_position) + Edge::ComputeVector(arrowDebugData.m_direction);
-			const Edge::ComputeVector normalizeDir = Edge::ComputeVector(arrowDebugData.m_direction).normalize() * arrowDebugData.m_size;
-			const Edge::ComputeVector headPerpendicular = Edge::ComputeVector(calculateArrowHeadPerpendicular(arrowDebugData.m_direction)) * arrowDebugData.m_size;
+			const Edge::FloatComputeVector3 endPoint = Edge::FloatComputeVector3(arrowDebugData.m_position) + Edge::FloatComputeVector3(arrowDebugData.m_direction);
+			const Edge::FloatComputeVector3 normalizeDir = Edge::NormalizeComputeVector3(Edge::FloatComputeVector3(arrowDebugData.m_direction)) * arrowDebugData.m_size;
+			const Edge::FloatComputeVector3 headPerpendicular = calculateArrowHeadPerpendicular(arrowDebugData.m_direction) * arrowDebugData.m_size;
 
 			LineRenderData::LineData& lineData = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
 
@@ -706,9 +705,9 @@ void EdgeDefRender::DefaultRenderer::preparePolygonRenderData(float deltaTime, c
 			PolygonRenderData::PolygonData& polygonData = *polygonDataIter.getCurrentTypedElement<PolygonRenderData::PolygonData>();
 
 			const PackedColor color(polygonDebugData.m_color);
-			const Edge::FloatVector3 normal = CrossVector3(
-				polygonDebugData.m_position1 - polygonDebugData.m_position2,
-				polygonDebugData.m_position1 - polygonDebugData.m_position3
+			const Edge::FloatVector3 normal = Edge::CrossComputeVector3(
+				Edge::FloatComputeVector3(polygonDebugData.m_position1) - Edge::FloatComputeVector3(polygonDebugData.m_position2),
+				Edge::FloatComputeVector3(polygonDebugData.m_position1) - Edge::FloatComputeVector3(polygonDebugData.m_position3)
 			).getFloatVector3();
 
 			polygonData.m_point1.m_position = polygonDebugData.m_position1;
@@ -797,14 +796,14 @@ void EdgeDefRender::DefaultRenderer::prepareBoxRenderData(float deltaTime, const
 		{
 			const Edge::DebugVisualizationDataController::BoxData& boxDebugData = visualizationData.getBox(boxIndex);
 			Edge::FloatMatrix4x4& boxTransform = *boxDataIter.getCurrentTypedElement<Edge::FloatMatrix4x4>();
-			boxTransform = boxDebugData.m_transform.m_matrix;
+			boxDebugData.m_transform.m_matrix.getFloatMatrix4x4(boxTransform);
 
 			assert(boxTransform.m_row4.m_w == 1.0f);
 
 			const PackedColor color(boxDebugData.m_color);
 			boxTransform.m_row4.m_w = *reinterpret_cast<const float*>(&color.m_data);
 
-			//m_graphicContext->prepareMatrixForShader(boxTransform, boxTransform);
+			//m_graphicContext->prepareMatrixForShader(boxTransform);
 
 			boxDataIter.next();
 		}
@@ -826,14 +825,14 @@ void EdgeDefRender::DefaultRenderer::prepareWireframeBoxRenderData(float deltaTi
 		{
 			const Edge::DebugVisualizationDataController::BoxData& boxDebugData = visualizationData.getWireframeBox(boxIndex);
 			Edge::FloatMatrix4x4& boxTransform = *boxDataIter.getCurrentTypedElement<Edge::FloatMatrix4x4>();
-			boxTransform = boxDebugData.m_transform.m_matrix;
+			boxDebugData.m_transform.m_matrix.getFloatMatrix4x4(boxTransform);
 
 			assert(boxTransform.m_row4.m_w == 1.0f);
 
 			const PackedColor color(boxDebugData.m_color);
 			boxTransform.m_row4.m_w = *reinterpret_cast<const float*>(&color.m_data);
 
-			//m_graphicContext->prepareMatrixForShader(boxTransform, boxTransform);
+			//m_graphicContext->prepareMatrixForShader(boxTransform);
 
 			boxDataIter.next();
 		}
@@ -892,24 +891,38 @@ void EdgeDefRender::DefaultRenderer::prepareWireframeSphereRenderData(float delt
 	}
 }
 
-Edge::FloatVector3 EdgeDefRender::DefaultRenderer::calculateArrowHeadPerpendicular(const Edge::FloatVector3& arrowDirection)
+Edge::FloatComputeVector3 EdgeDefRender::DefaultRenderer::calculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection)
 {
-	if (fabs(arrowDirection.m_x) > fabs(arrowDirection.m_y))
+	if (abs(arrowDirection.getX()) > abs(arrowDirection.getY()))
 	{
-		const float length = sqrtf(arrowDirection.m_x * arrowDirection.m_x + arrowDirection.m_z * arrowDirection.m_z);
-		return (Edge::ComputeVector(Edge::FloatVector3(arrowDirection.m_z, 0.0f, -arrowDirection.m_x)) / length).getFloatVector3();
+		const float length = sqrt(arrowDirection.getX() * arrowDirection.getX() + arrowDirection.getZ() * arrowDirection.getZ());
+		return Edge::FloatComputeVector3(arrowDirection.getZ(), 0.0f, -arrowDirection.getX()) / length;
 	}
 
-	const float length = sqrtf(arrowDirection.m_y * arrowDirection.m_y + arrowDirection.m_z * arrowDirection.m_z);
-	return (Edge::ComputeVector(Edge::FloatVector3(0.0f, arrowDirection.m_z, -arrowDirection.m_y)) / length).getFloatVector3();
+	const float length = sqrt(arrowDirection.getY() * arrowDirection.getY() + arrowDirection.getZ() * arrowDirection.getZ());
+	return Edge::FloatComputeVector3(0.0f, arrowDirection.getZ(), -arrowDirection.getY()) / length;
 }
 
-void EdgeDefRender::DefaultRenderer::prepareData(const CameraTransforms& cameraTransforms, const Edge::DebugVisualizationDataController& visualizationData)
+void EdgeDefRender::DefaultRenderer::prepareData(const CameraParams& cameraParams, const Edge::Transform& cameraTransform, const Edge::DebugVisualizationDataController& visualizationData)
 {
 	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
 	const float deltaTime = application.getDeltaTime();
 
-	m_cameraShaderData.m_transforms = cameraTransforms;
+	m_graphicContext->prepareViewTransform(
+		cameraTransform.getOrigin().getFloatVector3(),
+		cameraTransform.getAxisZ().getFloatVector3(),
+		cameraTransform.getAxisY().getFloatVector3(),
+		m_cameraShaderData.m_transforms.m_viewTransform
+	);
+
+	m_graphicContext->preparePerspectiveProjTransform(
+		cameraParams.m_FoV, cameraParams.m_ratio,
+		cameraParams.m_nearPlaneDistance, cameraParams.m_farPlaneDistance,
+		m_cameraShaderData.m_transforms.m_projTransform
+	);
+
+	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_viewTransform);
+	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_projTransform);
 
 	preparePointRenderData(deltaTime, visualizationData);
 	prepareLineRenderData(deltaTime, visualizationData);
@@ -1222,8 +1235,6 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 
 	prepareDepthBuffer(targetTextureDesc.m_size);
 
-	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_viewTransform, m_cameraShaderData.m_transforms.m_viewTransform);
-	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_projTransform, m_cameraShaderData.m_transforms.m_projTransform);
 	m_cameraShaderData.m_screenSize = targetTextureDesc.m_size;
 
 	CameraShaderData* mappedCameraShaderData;

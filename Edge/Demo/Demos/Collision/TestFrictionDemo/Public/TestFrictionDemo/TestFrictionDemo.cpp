@@ -58,13 +58,13 @@ void EdgeDemo::TestFrictionDemo::updateDemoLogic(float deltaTime)
 	m_debugVisualizationDataController->clear();
 
 	m_debugVisualizationDataController->addBox(m_staticBox->getTransform()->getWorldTransform(),
-		m_staticBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize());
+		m_staticBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize().getFloatVector3());
 
 	const Edge::Transform& dynamicTransform = m_dynamicBody->getTransform()->getWorldTransform();
 
-	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisX(), 0.2f, Edge::NormalizedColorRed);
-	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
-	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisX().getFloatVector3(), 0.2f, Edge::NormalizedColorRed);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisY().getFloatVector3(), 0.2f, Edge::NormalizedColorGreen);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisZ().getFloatVector3(), 0.2f, Edge::NormalizedColorBlue);
 
 	m_debugVisualizationDataController->addSphere(dynamicTransform,
 		m_dynamicBody->getCollision()->getShape().getObjectCastRef<Edge::PhysicsSphereShape>().getRadius());

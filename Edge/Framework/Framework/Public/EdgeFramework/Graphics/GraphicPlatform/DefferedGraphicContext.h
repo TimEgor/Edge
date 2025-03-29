@@ -1,14 +1,11 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Math/ComputeMatrix44.h"
 
 #include "GraphicObject/GraphicObject.h"
-#include "EdgeCommon/Math/Matrix.h"
 
 namespace Edge
 {
-	class ComputeMatrix;
-
 	class GPUBuffer;
 
 	class Texture2D;
@@ -110,7 +107,12 @@ namespace Edge
 		virtual void drawInstanced(uint32_t vertexCount, uint32_t instanceCount) = 0;
 		virtual void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount) = 0;
 
+		//per graphic platform utils functions
 		virtual void prepareMatrixForShader(const FloatMatrix4x4& originalMatrix, FloatMatrix4x4& destinationMatrix) = 0;
-		virtual void prepareMatrixForShader(const ComputeMatrix& originalMatrix, FloatMatrix4x4& destinationMatrix) = 0;
+		virtual void prepareMatrixForShader(FloatMatrix4x4& matrix) = 0;
+
+		virtual void prepareViewTransform(const FloatVector3& viewPosition, const FloatVector3& viewDirection,
+			const FloatVector3& upDirection, FloatMatrix4x4& destinationMatrix) = 0;
+		virtual void preparePerspectiveProjTransform(float angle, float aspectRatio, float nearPlaneZ, float farPlaneZ, FloatMatrix4x4& destinationMatrix) = 0;
 	};
 }

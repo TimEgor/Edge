@@ -15,13 +15,13 @@ namespace Edge
 	class PhysicsEntityCollisionShape : public HashedType, public PhysicsCollisionQuery, public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
-		using SupportingFaceVertexCollection = std::vector<FloatVector3>;
+		using SupportingFaceVertexCollection = std::vector<ComputeVector3>;
 
 		PhysicsEntityCollisionShape() = default;
 
 		virtual AABB3 getAABB() const = 0;
-		virtual FloatVector3 getFurthestKeyPoint(const FloatVector3& direction) const = 0;
-		virtual void getSupportingFace(const FloatVector3& direction, SupportingFaceVertexCollection& vertices) const = 0;
+		virtual ComputeVector3 getFurthestKeyPoint(const ComputeVector3& direction) const = 0;
+		virtual void getSupportingFace(const ComputeVector3& direction, SupportingFaceVertexCollection& vertices) const = 0;
 
 		virtual PhysicsEntityCollisionShapeType getType() const = 0;
 	};

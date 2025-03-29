@@ -1,14 +1,14 @@
 #include "Fireworks.h"
 
-#include "EdgeCommon/Math/ComputeVector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 #include "EdgePhysics/Physics/Physics.h"
 
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Scene/PhysicsScene.h"
 
 EdgeDemo::FireworksParticle::FireworksParticle(FireworksParticleID id, const Edge::PhysicsSceneReference& physScene,
-	const Edge::FloatVector3& color, float maxLifeTime,
-	const Edge::FloatVector3& initialPosition, const Edge::FloatVector3& initialDir, float explosionForce)
+	const Edge::ComputeVector3& color, float maxLifeTime, const Edge::ComputeVector3& initialPosition,
+	const Edge::ComputeVector3& initialDir, Edge::ComputeValueType explosionForce)
 	: m_color(color), m_maxLifeTime(maxLifeTime), m_id(id)
 {
 	Edge::PhysicsParticleFactory::ParticleCreationParam particleCreationParam;
@@ -22,10 +22,10 @@ EdgeDemo::FireworksParticle::FireworksParticle(FireworksParticleID id, const Edg
 
 	m_physParticleEntity = Edge::GetPhysics().createParticle(&particleCreationParam);
 
-	Edge::ComputeVector impulse(initialDir);
+	Edge::ComputeVector3 impulse(initialDir);
 	impulse *= explosionForce;
 
-	m_physParticleEntity->getMotion()->applyImpulse(impulse.getFloatVector3());
+	m_physParticleEntity->getMotion()->applyImpulse(impulse);
 
 	physScene->addEntity(m_physParticleEntity);
 }
@@ -46,12 +46,12 @@ bool EdgeDemo::FireworksParticle::isAlive() const
 	return m_lifeTime < m_maxLifeTime;
 }
 
-Edge::FloatVector3 EdgeDemo::FireworksParticle::getPosition() const
+Edge::ComputeVector3 EdgeDemo::FireworksParticle::getPosition() const
 {
 	return m_physParticleEntity->getTransform()->getPosition();
 }
 
-const Edge::FloatVector3& EdgeDemo::FireworksParticle::getColor() const
+const Edge::ComputeVector3& EdgeDemo::FireworksParticle::getColor() const
 {
 	return m_color;
 }

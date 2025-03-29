@@ -18,8 +18,8 @@
 
 void EdgeDemo::TestGJKCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 {
-	constexpr float linearChangingSpeed = 3.0f;
-	constexpr float angularChangingSpeed = 45.0f;
+	constexpr Edge::ComputeValueType linearChangingSpeed = 3.0f;
+	constexpr Edge::ComputeValueType angularChangingSpeed = 45.0f;
 
 	const Edge::InputDeviceController& inputController = Edge::FrameworkCore::getInstance().getApplication().getInputDeviceController();
 
@@ -33,42 +33,38 @@ void EdgeDemo::TestGJKCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 
 	Edge::Transform dynamicBoxTransform = m_dynamicBox->getTransform()->getWorldTransform();
 
-	Edge::ComputeVector position = dynamicBoxTransform.getOrigin();
+	Edge::ComputeVector3 position = dynamicBoxTransform.getOrigin();
 
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-	float roll = 0.0f;
-
-	Edge::GetAnglesFromRotationMatrix(dynamicBoxTransform.getRotationComputeMatrix(), pitch, yaw, roll);
+	Edge::ComputeVector3 angles = Edge::EulerAnglesFromRotationComputeMatrix3x3(dynamicBoxTransform.getRotationMatrix());
 
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowUp)))
 	{
-		position += Edge::FloatVector3UnitY * linearChangingSpeed * deltaTime;
+		position += Edge::ComputeVector3UnitY * linearChangingSpeed * deltaTime;
 	}
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowDown)))
 	{
-		position -= Edge::FloatVector3UnitY * linearChangingSpeed * deltaTime;
+		position -= Edge::ComputeVector3UnitY * linearChangingSpeed * deltaTime;
 	}
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowRight)))
 	{
-		position += Edge::FloatVector3UnitX * linearChangingSpeed * deltaTime;
+		position += Edge::ComputeVector3UnitX * linearChangingSpeed * deltaTime;
 	}
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowLeft)))
 	{
-		position -= Edge::FloatVector3UnitX * linearChangingSpeed * deltaTime;
+		position -= Edge::ComputeVector3UnitX * linearChangingSpeed * deltaTime;
 	}
 
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ShiftRight)))
 	{
-		roll += deltaTime * angularChangingSpeed * Edge::Math::DegToRad;
+		angles.setZ(angles.getZ() + Edge::Math::ConvertDegToRad(angularChangingSpeed) * deltaTime);
 	}
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ControlRight)))
 	{
-		roll -= deltaTime * angularChangingSpeed * Edge::Math::DegToRad;
+		angles.setZ(angles.getZ() - Edge::Math::ConvertDegToRad(angularChangingSpeed) * deltaTime);
 	}
 
 	dynamicBoxTransform.setOrigin(position.getFloatVector3());
-	Edge::FloatQuaternion rotation = Edge::ComputeQuaternion().setupFromRollPitchYaw(pitch, yaw, roll).getFloatQuaternion();
+	Edge::ComputeQuaternion rotation = Edge::ComputeQuaternion().setupFromRollPitchYaw(angles);
 	dynamicBoxTransform.setRotationQuaternion(rotation);
 
 	m_dynamicBox->getTransform()->setWorldTransform(dynamicBoxTransform);
@@ -127,9 +123,9 @@ void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 	{
 		color = Edge::NormalizedColorRed;
 
-		m_debugVisualizationDataController->addSphere(contactPoint.m_position1,
+		m_debugVisualizationDataController->addSphere(contactPoint.m_position1.getFloatVector3(),
 			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.07f, Edge::NormalizedColorOrange);
-		m_debugVisualizationDataController->addSphere(contactPoint.m_position2,
+		m_debugVisualizationDataController->addSphere(contactPoint.m_position2.getFloatVector3(),
 			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.07f, Edge::NormalizedColorMagneta);
 
 		Edge::PhysicsContactManifold manifold;
@@ -140,15 +136,15 @@ void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 
 		for (uint32_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
 		{
-			const Edge::FloatVector3& position1 = manifold.m_positions1[contactPointIndex];
-			const Edge::FloatVector3& position2 = manifold.m_positions2[contactPointIndex];
+			const Edge::FloatVector3& position1 = manifold.m_positions1[contactPointIndex].getFloatVector3();
+			const Edge::FloatVector3& position2 = manifold.m_positions2[contactPointIndex].getFloatVector3();
 
 			m_debugVisualizationDataController->addSphere(position1,
 				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorViolet);
 			m_debugVisualizationDataController->addSphere(position2,
 				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorForestGreen);
 
-			m_debugVisualizationDataController->addArrow(position1, manifold.m_normal, 0.1f, Edge::NormalizedColorBlue);
+			m_debugVisualizationDataController->addArrow(position1, manifold.m_normal.getFloatVector3(), 0.1f, Edge::NormalizedColorBlue);
 		}
 	}
 	else if (collisionTestResult.m_testResult == Edge::GJK::Result::TestResult::OverIterationTesting)
@@ -157,8 +153,8 @@ void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 	}
 
 	m_debugVisualizationDataController->addWireframeBox(m_staticBox->getTransform()->getWorldTransform(),
-		m_staticBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize(), color);
+		m_staticBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize().getFloatVector3(), color);
 
 	m_debugVisualizationDataController->addWireframeBox(m_dynamicBox->getTransform()->getWorldTransform(),
-		m_dynamicBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize(), color);
+		m_dynamicBox->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize().getFloatVector3(), color);
 }

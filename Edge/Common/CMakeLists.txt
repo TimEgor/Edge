@@ -15,10 +15,10 @@ edge_add_module(EdgeCommon STATIC "Edge")
 edge_link_profile(EdgeCommon)
 
 # Compute math impl
-set(COMPUTE_MATH DX)
+set(COMPUTE_TYPE FLOAT)
 
 target_compile_definitions(EdgeCommon
-	PUBLIC EDGE_MATH_${COMPUTE_MATH}
+	PUBLIC EDGE_COMPUTE_TYPE_${COMPUTE_TYPE}
 )
 
 edge_install_include(EdgeCommon EdgeCommon "" EDGE_PUBLIC_MODULE_SOURCES)

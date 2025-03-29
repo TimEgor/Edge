@@ -23,15 +23,20 @@ namespace EdgeDefRender
 {
 	class DefaultRenderer final : public Edge::Renderer
 	{
+		struct CameraTransformData final {
+			Edge::FloatMatrix4x4 m_viewTransform = Edge::FloatMatrix4x4Identity;
+			Edge::FloatMatrix4x4 m_projTransform = Edge::FloatMatrix4x4Identity;
+		};
+
 		struct CameraShaderData final
 		{
-			CameraTransforms m_transforms;
+			CameraTransformData m_transforms;
 			Edge::Texture2DSize m_screenSize;
 		};
 
 	private:
 		Edge::DeferredGraphicContext* m_graphicContext = nullptr;
-		
+
 		Edge::RasterizationState* m_baseRasterizationState = nullptr;
 
 		Edge::Texture2D* m_depthBuffer = nullptr;
@@ -95,7 +100,7 @@ namespace EdgeDefRender
 		void prepareSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 		void prepareWireframeSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 
-		static Edge::FloatVector3 calculateArrowHeadPerpendicular(const Edge::FloatVector3& arrowDirection);
+		static Edge::FloatComputeVector3 calculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection);
 
 		void prepareDepthBuffer(const Edge::Texture2DSize& bufferSize);
 
@@ -120,7 +125,7 @@ namespace EdgeDefRender
 		virtual bool init() override;
 		virtual void release() override;
 
-		virtual void prepareData(const CameraTransforms& cameraTransforms, const Edge::DebugVisualizationDataController& visualizationData) override;
+		virtual void prepareData(const CameraParams& cameraParams, const Edge::Transform& cameraTransform, const Edge::DebugVisualizationDataController& visualizationData) override;
 		virtual void render(Edge::Texture2D& targetTexture) override;
 	};
 }

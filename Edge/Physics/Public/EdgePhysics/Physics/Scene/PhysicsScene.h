@@ -22,7 +22,7 @@ namespace Edge
 		PhysicsSceneCollisionManagerReference m_collisionManager;
 		PhysicsSceneConstraintManagerReference m_constraintManager;
 
-		FloatVector3 m_gravity = FloatVector3(0.0f, -9.81f, 0.0f);
+		ComputeVector3 m_gravity = ComputeVector3(ComputeValueType(0.0), ComputeValueType(-9.81), ComputeValueType(0.0));
 
 		PhysicsWorldWeakReference m_world;
 

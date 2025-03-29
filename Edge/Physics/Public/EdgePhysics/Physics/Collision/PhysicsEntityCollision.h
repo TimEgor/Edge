@@ -37,8 +37,8 @@ namespace Edge
 
 		PhysicsEntityCollisionShapeReference m_shape;
 
-		float m_friction = 1.0f;
-		float m_elasticity = 0.5f;
+		ComputeValueType m_friction = ComputeValueType(1.0);
+		ComputeValueType m_elasticity = ComputeValueType(0.5);
 
 	public:
 		PhysicsEntityCollision() = default;
@@ -48,21 +48,21 @@ namespace Edge
 		void setShape(const PhysicsEntityCollisionShapeReference& shape);
 
 		AABB3 getWorldShapeAABB() const;
-		FloatVector3 getFurthestKeyPoint(const FloatVector3& direction) const;
-		void getSupportingFace(const FloatVector3& direction, PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const;
+		ComputeVector3 getFurthestKeyPoint(const ComputeVector3& direction) const;
+		void getSupportingFace(const ComputeVector3& direction, PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const;
 
-		virtual bool rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const override;
+		virtual bool rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const override;
 
 		PhysicsEntityCollisionSceneContextReference getSceneContext() const { return m_sceneContext; }
 		void setSceneContext(const PhysicsEntityCollisionSceneContextReference& context);
 
 		PhysicsSceneCollisionManagerReference getCollisionManager() const;
 
-		float getFriction() const { return m_friction; }
-		void setFriction(float friction);
+		ComputeValueType getFriction() const { return m_friction; }
+		void setFriction(ComputeValueType friction);
 
-		float getElasticity() const { return m_elasticity; }
-		void setElasticity(float elasticity);
+		ComputeValueType getElasticity() const { return m_elasticity; }
+		void setElasticity(ComputeValueType elasticity);
 	};
 
 	EDGE_MT_REFERENCE(PhysicsEntityCollision);

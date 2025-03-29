@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
-
 #include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityConstraint.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisRotationConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/KeepPositionConstraintPart.h"
@@ -14,15 +12,17 @@ namespace Edge
 		KeepPositionConstraintPart m_positionPart;
 		AxisRotationConstraintPart m_axisRotationPart;
 
-		FloatVector3 m_anchor1 = FloatVector3Zero;
-		FloatVector3 m_anchor2 = FloatVector3Zero;
-		FloatVector3 m_axis1 = FloatVector3Zero;
-		FloatVector3 m_axis2 = FloatVector3Zero;
+		ComputeVector3 m_anchor1 = ComputeVector3Zero;
+		ComputeVector3 m_anchor2 = ComputeVector3Zero;
+		ComputeVector3 m_axis1 = ComputeVector3Zero;
+		ComputeVector3 m_axis2 = ComputeVector3Zero;
 
 	public:
-		HingeConstraint(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-			const FloatVector3& anchor1, const FloatVector3& anchor2,
-			const FloatVector3& axis1, const FloatVector3& axis2);
+		HingeConstraint(
+			const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+			const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+			const ComputeVector3& axis1, const ComputeVector3& axis2
+		);
 
 		virtual void preSolve(float deltaTime) override;
 		virtual void warmUp() override;

@@ -1,27 +1,26 @@
 #include "AABB3Cast.h"
 
 #include "EdgeCommon/Math/AABB.h"
-#include "EdgeCommon/Math/ComputeVector.h"
-#include "EdgeCommon/Math/Const.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
-bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, const FloatVector3& end, PhysicsCollisionQuery::PointCastingResult& result)
+bool Edge::CastAABB3::rayCast(const AABB3& aabb, const ComputeVector3& origin, const ComputeVector3& end, PhysicsCollisionQuery::PointCastingResult& result)
 {
-	const ComputeVector ray = end - origin;
+	const ComputeVector3 ray = end - origin;
 
-	float tMin = 0.0f;
+	ComputeValueType tMin = ComputeValueType(0.0);
 	//float tMax = TS_FLT_MAX;
-	float tMax = 1.0f;
+	ComputeValueType tMax = ComputeValueType(1.0);
 
 	for (uint32_t slabIndex = 0; slabIndex < 3; ++slabIndex)
 	{
-		const float directionElement = ray.getElement(slabIndex);
+		const ComputeValueType directionElement = ray.getElement(slabIndex);
 
-		const float originElement = origin.getElement(slabIndex);
+		const ComputeValueType originElement = origin.getElement(slabIndex);
 
-		const float minBoundPositionElement = aabb.m_minPosition.getElement(slabIndex);
-		const float maxBoundPositionElement = aabb.m_maxPosition.getElement(slabIndex);
+		const ComputeValueType minBoundPositionElement = aabb.m_minPosition.getElement(slabIndex);
+		const ComputeValueType maxBoundPositionElement = aabb.m_maxPosition.getElement(slabIndex);
 
-		if (fabs(directionElement) < Math::Epsilon)
+		if (abs(directionElement) < Math::Epsilon)
 		{
 			if (originElement < minBoundPositionElement ||
 				originElement > maxBoundPositionElement)
@@ -31,13 +30,13 @@ bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, con
 		}
 		else
 		{
-			const float ood = 1.0f / directionElement;
-			float t1 = (minBoundPositionElement - originElement) * ood;
-			float t2 = (maxBoundPositionElement - originElement) * ood;
+			const ComputeValueType ood = ComputeValueType(1.0) / directionElement;
+			ComputeValueType t1 = (minBoundPositionElement - originElement) * ood;
+			ComputeValueType t2 = (maxBoundPositionElement - originElement) * ood;
 
 			if (t1 > t2)
 			{
-				const float tmp = t1;
+				const ComputeValueType tmp = t1;
 				t1 = t2;
 				t2 = tmp;
 			}
@@ -60,17 +59,15 @@ bool Edge::CastAABB3::rayCast(const AABB3& aabb, const FloatVector3& origin, con
 
 	}
 
-	if (tMin > 1.0f)
+	if (tMin > ComputeValueType(1.0))
 	{
 		return false;
 	}
 
-	ComputeVector hitPos = origin;
-	const ComputeVector delta = ray * tMin;
-	hitPos += delta;
+	const ComputeVector3 delta = ray * tMin;
 
-	hitPos.saveToFloatVector3(result.m_hitPosition);
-	result.m_distance = delta.getLength3();
+	result.m_hitPosition = origin + delta;
+	result.m_distance = delta.getLength();
 
 	return true;
 }

@@ -1,8 +1,5 @@
 #include "D3D11DeferredContext.h"
 
-#include "EdgeCommon/Math/ComputeMatrix.h"
-#include "EdgeCommon/Math/ComputeMath/ComputeMatrix.h"
-
 #include "GraphicObjects/D3D11GPUBuffer.h"
 #include "GraphicObjects/D3D11InputLayout.h"
 #include "GraphicObjects/D3D11RasterizationState.h"
@@ -185,14 +182,33 @@ void EdgeD3D11::D3D11DeferredGraphicContext::drawIndexedInstanced(uint32_t index
 
 void EdgeD3D11::D3D11DeferredGraphicContext::prepareMatrixForShader(const Edge::FloatMatrix4x4& originalMatrix, Edge::FloatMatrix4x4& destinationMatrix)
 {
-	prepareMatrixForShader(Edge::ComputeMatrix(originalMatrix), destinationMatrix);
+	Edge::FloatComputeMatrix4x4 computeMatr = originalMatrix;
+	computeMatr.transpose();
+	computeMatr.getFloatMatrix4x4(destinationMatrix);
 }
 
-void EdgeD3D11::D3D11DeferredGraphicContext::prepareMatrixForShader(const Edge::ComputeMatrix& originalMatrix,
+void EdgeD3D11::D3D11DeferredGraphicContext::prepareMatrixForShader(Edge::FloatMatrix4x4& matrix)
+{
+	prepareMatrixForShader(matrix, matrix);
+}
+
+void EdgeD3D11::D3D11DeferredGraphicContext::prepareViewTransform(const Edge::FloatVector3& viewPosition,
+	const Edge::FloatVector3& viewDirection, const Edge::FloatVector3& upDirection,
 	Edge::FloatMatrix4x4& destinationMatrix)
 {
-	Edge::ComputeMatrix destinationComputeMatrix = originalMatrix;
-	destinationComputeMatrix.transpose();
+	const DirectX::XMMATRIX dxViewMatrix = DirectX::XMMatrixLookToLH(
+		DirectX::XMLoadFloat3(reinterpret_cast<const DirectX::XMFLOAT3*>(&viewPosition)),
+		DirectX::XMLoadFloat3(reinterpret_cast<const DirectX::XMFLOAT3*>(&viewDirection)),
+		DirectX::XMLoadFloat3(reinterpret_cast<const DirectX::XMFLOAT3*>(&upDirection))
+	);
 
-	destinationComputeMatrix.saveToMatrix4x4(destinationMatrix);
+	DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&destinationMatrix), dxViewMatrix);
+}
+
+void EdgeD3D11::D3D11DeferredGraphicContext::preparePerspectiveProjTransform(float angle, float aspectRatio,
+	float nearPlaneZ, float farPlaneZ, Edge::FloatMatrix4x4& destinationMatrix)
+{
+	const DirectX::XMMATRIX dxProjMatrix = DirectX::XMMatrixPerspectiveFovLH(angle, aspectRatio, nearPlaneZ, farPlaneZ);
+
+	DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&destinationMatrix), dxProjMatrix);
 }

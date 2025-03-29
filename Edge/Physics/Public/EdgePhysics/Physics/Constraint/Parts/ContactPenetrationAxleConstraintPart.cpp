@@ -6,9 +6,9 @@ void Edge::ContactPenetrationAxleConstraintPart::deactivate()
 	m_invEffectiveMass = 0.0f;
 }
 
-void Edge::ContactPenetrationAxleConstraintPart::applyVelocity(const FloatVector3& normal, float lambda) const
+void Edge::ContactPenetrationAxleConstraintPart::applyVelocity(const ComputeVector3& normal, ComputeValueType lambda) const
 {
-	if (fabsf(lambda) <= Math::Epsilon)
+	if (abs(lambda) <= Math::Epsilon)
 	{
 		return;
 	}
@@ -18,30 +18,30 @@ void Edge::ContactPenetrationAxleConstraintPart::applyVelocity(const FloatVector
 
 	if (motion1)
 	{
-		const ComputeVector linearVelocityDelta = (motion1->getInverseMass() * lambda) * normal;
-		const FloatVector3 newLinVelocity = (motion1->getLinearVelocity() - linearVelocityDelta).getFloatVector3();
+		const ComputeVector3 linearVelocityDelta = (motion1->getInverseMass() * lambda) * normal;
+		const ComputeVector3 newLinVelocity = motion1->getLinearVelocity() - linearVelocityDelta;
 		motion1->setLinearVelocity(newLinVelocity);
 
-		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
-		const FloatVector3 newAngularVelocity = (motion1->getAngularVelocity() - angularVelocityDelta).getFloatVector3();
+		const ComputeVector3 angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
+		const ComputeVector3 newAngularVelocity = motion1->getAngularVelocity() - angularVelocityDelta;
 		motion1->setAngularVelocity(newAngularVelocity);
 	}
 
 	if (motion2)
 	{
-		const ComputeVector linearVelocityDelta = (motion2->getInverseMass() * lambda) * normal;
-		const FloatVector3 newLinVelocity = (motion2->getLinearVelocity() + linearVelocityDelta).getFloatVector3();
+		const ComputeVector3 linearVelocityDelta = (motion2->getInverseMass() * lambda) * normal;
+		const ComputeVector3 newLinVelocity = motion2->getLinearVelocity() + linearVelocityDelta;
 		motion2->setLinearVelocity(newLinVelocity);
 
-		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
-		const FloatVector3 newAngularVelocity = (motion2->getAngularVelocity() + angularVelocityDelta).getFloatVector3();
+		const ComputeVector3 angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
+		const ComputeVector3 newAngularVelocity = motion2->getAngularVelocity() + angularVelocityDelta;
 		motion2->setAngularVelocity(newAngularVelocity);
 	}
 }
 
-void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const FloatVector3& normal, float lambda) const
+void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const ComputeVector3& normal, ComputeValueType lambda) const
 {
-	if (fabsf(lambda) <= Math::Epsilon)
+	if (abs(lambda) <= Math::Epsilon)
 	{
 		return;
 	}
@@ -57,42 +57,42 @@ void Edge::ContactPenetrationAxleConstraintPart::applyPosition(const FloatVector
 
 	if (motion1)
 	{
-		const ComputeVector positionDelta = (motion1->getInverseMass() * lambda) * normal;
-		const FloatVector3 newPosition = (transformAccessor1.getPosition() - positionDelta).getFloatVector3();
+		const ComputeVector3 positionDelta = (motion1->getInverseMass() * lambda) * normal;
+		const ComputeVector3 newPosition = transformAccessor1.getPosition() - positionDelta;
 		transformAccessor1.setPosition(newPosition);
 
-		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
-		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
+		const ComputeVector3 angularVelocityDelta = m_invInerRadiusNorm1 * lambda;
+		const ComputeValueType angularVelocityDeltaLength = angularVelocityDelta.getLength();
 		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
-			transformAccessor1.setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternion(angularVelocityDelta, angularVelocityDeltaLength) * transformAccessor1.getRotation()).normalize();
+			transformAccessor1.setRotation(newRotation);
 		}
 	}
 
 	if (motion2)
 	{
-		const ComputeVector positionDelta = (motion1->getInverseMass() * lambda) * normal;
-		const FloatVector3 newPosition = (transformAccessor2.getPosition() + positionDelta).getFloatVector3();
+		const ComputeVector3 positionDelta = (motion1->getInverseMass() * lambda) * normal;
+		const ComputeVector3 newPosition = transformAccessor2.getPosition() + positionDelta;
 		transformAccessor2.setPosition(newPosition);
 
-		const ComputeVector angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
-		const float angularVelocityDeltaLength = angularVelocityDelta.getLength3();
+		const ComputeVector3 angularVelocityDelta = m_invInerRadiusNorm2 * lambda;
+		const ComputeValueType angularVelocityDeltaLength = angularVelocityDelta.getLength();
 		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
-			const ComputeQuaternion newRotation = (ComputeQuaternionFromRotationAxis(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
-			transformAccessor2.setRotation(newRotation.getFloatQuaternion());
+			const ComputeQuaternion newRotation = (ComputeQuaternion(angularVelocityDelta, -angularVelocityDeltaLength) * transformAccessor2.getRotation()).normalize();
+			transformAccessor2.setRotation(newRotation);
 		}
 	}
 }
 
-void Edge::ContactPenetrationAxleConstraintPart::preSolve(const FloatVector3& contactPosition, const FloatVector3& normal)
+void Edge::ContactPenetrationAxleConstraintPart::preSolve(const ComputeVector3& contactPosition, const ComputeVector3& normal)
 {
 	const PhysicsEntityTransformReference transform1 = m_entity1->getTransform();
 	const PhysicsEntityTransformReference transform2 = m_entity2->getTransform();
 
-	const ComputeVector radius1 = contactPosition - transform1->getPosition();
-	const ComputeVector radius2 = contactPosition - transform2->getPosition();
+	const ComputeVector3 radius1 = contactPosition - transform1->getPosition();
+	const ComputeVector3 radius2 = contactPosition - transform2->getPosition();
 
 	const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
 	const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
@@ -106,78 +106,74 @@ void Edge::ContactPenetrationAxleConstraintPart::preSolve(const FloatVector3& co
 	const PhysicsEntityCollisionReference collision1 = m_entity1->getCollision();
 	const PhysicsEntityCollisionReference collision2 = m_entity2->getCollision();
 
-	const float elasticity1 = collision1->getElasticity();
-	const float elasticity2 = collision2->getElasticity();
-	const float elasticity = std::max(elasticity1, elasticity2);
+	const ComputeValueType elasticity1 = collision1->getElasticity();
+	const ComputeValueType elasticity2 = collision2->getElasticity();
+	const ComputeValueType elasticity = std::max(elasticity1, elasticity2);
 
-	ComputeVector relativeVelocity;
-	float effectiveMass = 0.0f;
+	ComputeVector3 relativeVelocity;
+	ComputeValueType effectiveMass = ComputeValueType(0.0);
 
 	if (motion1)
 	{
-		relativeVelocity -= motion1->getLocalPointLinearVelocity(radius1.getFloatVector3());
+		relativeVelocity -= motion1->getLocalPointLinearVelocity(radius1);
 
 		effectiveMass += motion1->getInverseMass();
 
-		const ComputeVector r1 = CrossVector3(radius1, normal);
-		r1.saveToFloatVector3(m_radiusNorm1);
+		m_radiusNorm1 = CrossComputeVector3(radius1, normal);
 
-		ComputeMatrix invInertia;
+		ComputeMatrix3x3 invInertia;
 		motion1->getWorldInverseInertiaTensor(invInertia);
 
-		const ComputeVector invInertiaR1 = invInertia * r1;
-		invInertiaR1.saveToFloatVector3(m_invInerRadiusNorm1);
+		m_invInerRadiusNorm1 = invInertia * m_radiusNorm1;
 
-		effectiveMass += DotVector3(invInertiaR1, r1);
+		effectiveMass += DotComputeVector3(m_invInerRadiusNorm1, m_radiusNorm1);
 	}
 
 	if (motion2)
 	{
-		relativeVelocity += motion2->getLocalPointLinearVelocity(radius2.getFloatVector3());
+		relativeVelocity += motion2->getLocalPointLinearVelocity(radius2);
 
 		effectiveMass += motion2->getInverseMass();
 
-		const ComputeVector r2 = CrossVector3(radius2, normal);
-		r2.saveToFloatVector3(m_radiusNorm2);
+		m_radiusNorm2 = CrossComputeVector3(radius2, normal);
 
-		ComputeMatrix invInertia;
+		ComputeMatrix3x3 invInertia;
 		motion2->getWorldInverseInertiaTensor(invInertia);
 
-		const ComputeVector invInertiaR2 = invInertia * r2;
-		invInertiaR2.saveToFloatVector3(m_invInerRadiusNorm2);
+		m_invInerRadiusNorm2 = invInertia * m_radiusNorm2;
 
-		effectiveMass += DotVector3(invInertiaR2, r2);
+		effectiveMass += DotComputeVector3(m_invInerRadiusNorm2, m_radiusNorm2);
 	}
 
-	const float relativeSpeed = DotVector3(relativeVelocity, normal);
+	const ComputeValueType relativeSpeed = DotComputeVector3(relativeVelocity, normal);
 	m_restitution = elasticity * relativeSpeed;
 
-	m_invEffectiveMass = 1.0f / effectiveMass;
+	m_invEffectiveMass = ComputeValueType(1.0) / effectiveMass;
 }
 
-void Edge::ContactPenetrationAxleConstraintPart::warmUp(const FloatVector3& normal)
+void Edge::ContactPenetrationAxleConstraintPart::warmUp(const ComputeVector3& normal)
 {
 	applyVelocity(normal, m_totalLambda);
 }
 
-void Edge::ContactPenetrationAxleConstraintPart::solveVelocity(const FloatVector3& normal)
+void Edge::ContactPenetrationAxleConstraintPart::solveVelocity(const ComputeVector3& normal)
 {
-	float lambda = 0.0f;
+	ComputeValueType lambda = 0.0f;
 
 	{
 		const PhysicsEntityMotionReference motion1 = m_entity1->getMotion();
 		const PhysicsEntityMotionReference motion2 = m_entity2->getMotion();
 
-		const ComputeVector linearVelocity1 = motion1 ? motion1->getLinearVelocity() : FloatVector3Zero;
-		const ComputeVector linearVelocity2 = motion2 ? motion2->getLinearVelocity() : FloatVector3Zero;
-		const ComputeVector linearVelocityDelta = linearVelocity1 - linearVelocity2;
+		const ComputeVector3 linearVelocity1 = motion1 ? motion1->getLinearVelocity() : ComputeVector3Zero;
+		const ComputeVector3 linearVelocity2 = motion2 ? motion2->getLinearVelocity() : ComputeVector3Zero;
+		const ComputeVector3 linearVelocityDelta = linearVelocity1 - linearVelocity2;
 
-		const ComputeVector angularVelocity1 = motion1 ? motion1->getAngularVelocity() : FloatVector3Zero;
-		const ComputeVector angularVelocity2 = motion2 ? motion2->getAngularVelocity() : FloatVector3Zero;
+		const ComputeVector3 angularVelocity1 = motion1 ? motion1->getAngularVelocity() : ComputeVector3Zero;
+		const ComputeVector3 angularVelocity2 = motion2 ? motion2->getAngularVelocity() : ComputeVector3Zero;
 
-		float JV = DotVector3(normal, linearVelocityDelta);
-		JV += DotVector3(m_radiusNorm1, angularVelocity1);
-		JV -= DotVector3(m_radiusNorm2, angularVelocity2);
+		ComputeValueType JV = DotComputeVector3(normal, linearVelocityDelta);
+		JV += DotComputeVector3(m_radiusNorm1, angularVelocity1);
+		JV -= DotComputeVector3(m_radiusNorm2, angularVelocity2);
 
 		lambda = m_invEffectiveMass * (JV - m_restitution);
 
@@ -187,15 +183,15 @@ void Edge::ContactPenetrationAxleConstraintPart::solveVelocity(const FloatVector
 	applyVelocity(normal, lambda);
 }
 
-void Edge::ContactPenetrationAxleConstraintPart::solvePosition(const FloatVector3& normal, float depth)
+void Edge::ContactPenetrationAxleConstraintPart::solvePosition(const ComputeVector3& normal, ComputeValueType depth)
 {
-	static constexpr float baumgarteCoeff = 1.0f;
-	const float lambda = m_invEffectiveMass * depth * baumgarteCoeff;
+	static constexpr ComputeValueType baumgarteCoeff = ComputeValueType(1.0);
+	const ComputeValueType lambda = m_invEffectiveMass * depth * baumgarteCoeff;
 
 	applyPosition(normal, lambda);
 }
 
 bool Edge::ContactPenetrationAxleConstraintPart::isActive() const
 {
-	return fabsf(m_invEffectiveMass) > Math::Epsilon;
+	return abs(m_invEffectiveMass) > Math::Epsilon;
 }

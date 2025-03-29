@@ -1,11 +1,15 @@
 #pragma once
 
+#include "EdgeCommon/PlatformMacros.h"
+
 #include <d3d11.h>
 #include <d3dcommon.h>
 
 #include <dxgi1_6.h>
 
 #include <wrl/client.h>
+
+#include "DirectXMath.h"
 
 #ifdef EDGE_CONFIG_DEBUG
 #define GRAPHIC_DEBUG
