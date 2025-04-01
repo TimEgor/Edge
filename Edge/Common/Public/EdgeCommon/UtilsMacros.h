@@ -3,6 +3,7 @@
 #define EDGE_CHECK_CALL(check_val, function) if (!(check_val)) { function; }
 #define EDGE_CHECK_INITIALIZATION(check_val) if (!(check_val)) { release(); return false; }
 #define EDGE_CHECK_RETURN_FALSE(check_val) if (!(check_val)) { return false; }
+#define EDGE_CHECK_RETURN_NULL(check_val) if (!(check_val)) { return nullptr; }
 
 #define EDGE_ALLOCATE_RAW(type, size) ( reinterpret_cast<type*>(new uint8_t[size]))
 

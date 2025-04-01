@@ -1,18 +1,24 @@
 #include "PrismaticConstraint.h"
 
-Edge::PrismaticConstraint::PrismaticConstraint(const PhysicsEntityReference& entity1,
-	const PhysicsEntityReference& entity2, const ComputeVector3& anchor1, const ComputeVector3& anchor2,
-	const ComputeVector3& axis1, const ComputeVector3& axis2)
+#include "EdgeCommon/UtilsMacros.h"
+
+Edge::PrismaticConstraint::PrismaticConstraint(
+	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+	const ComputeVector3& axis1, const ComputeVector3& axis2,
+	const ComputeQuaternion& deltaRotation
+)
 	: TwoPhysicsEntityConstraint(entity1, entity2),
 	m_positionPart(entity1, entity2), m_rotationPart(entity1, entity2),
 	m_anchor1(anchor1), m_anchor2(anchor2),
-	m_axis1(axis1), m_axis2(axis2)
+	m_axis1(axis1), m_axis2(axis2),
+	m_initialDeltaRotation(deltaRotation)
 {
 }
 
 void Edge::PrismaticConstraint::preSolve(float deltaTime)
 {
-	m_positionPart.preSolve(m_anchor1, m_anchor2);
+	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
 	m_rotationPart.preSolve();
 }
 
@@ -44,7 +50,7 @@ void Edge::PrismaticConstraint::solveVelocity()
 
 void Edge::PrismaticConstraint::solvePosition()
 {
-	m_positionPart.preSolve(m_anchor1, m_anchor2);
+	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
 
 	if (m_positionPart.isActive())
 	{
@@ -57,4 +63,91 @@ void Edge::PrismaticConstraint::solvePosition()
 	{
 		m_rotationPart.solvePosition(m_initialDeltaRotation);
 	}
+}
+
+Edge::PrismaticConstraintReference Edge::CreatePrismaticConstraintInWorldSpace(
+	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+	const ComputeVector3& axis1, const ComputeVector3& axis2
+)
+{
+	EDGE_CHECK_RETURN_NULL(entity1 && entity2);
+
+	return CreatePrismaticConstraintInWorldSpace(
+		entity1, entity2,
+		anchor1, anchor2,
+		axis1, axis2,
+		entity1->getTransform()->getWorldTransform(), entity2->getTransform()->getWorldTransform()
+	);
+}
+
+Edge::PrismaticConstraintReference Edge::CreatePrismaticConstraintInWorldSpace(
+	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+	const ComputeVector3& axis1, const ComputeVector3& axis2,
+	const Transform& transform1, const Transform& transform2
+)
+{
+	EDGE_CHECK_RETURN_NULL(entity1 && entity2);
+
+	return CreatePrismaticConstraintInWorldSpace(
+		entity1, entity2,
+		anchor1, anchor2,
+		axis1, axis2,
+		transform1.getAxisX(), transform2.getAxisX(),
+		transform1.getAxisY(), transform2.getAxisY()
+	);
+}
+
+Edge::PrismaticConstraintReference Edge::CreatePrismaticConstraintInWorldSpace(
+	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+	const ComputeVector3& axis1, const ComputeVector3& axis2,
+	const ComputeVector3& dirX1, const ComputeVector3& dirX2,
+	const ComputeVector3& dirY1, const ComputeVector3& dirY2
+)
+{
+	EDGE_CHECK_RETURN_NULL(entity1 && entity2);
+
+	ComputeVector3 localAnchor1;
+	ComputeVector3 localAnchor2;
+
+	ComputeVector3 localAxis1;
+	ComputeVector3 localAxis2;
+
+	{
+		const ComputeMatrix4x4 invertTransform1 = InvertComputeMatrix4x4(entity1->getTransform()->getWorldTransform().m_matrix);
+		const ComputeMatrix4x4 invertTransform2 = InvertComputeMatrix4x4(entity2->getTransform()->getWorldTransform().m_matrix);
+
+		localAnchor1 = (invertTransform1 * ComputeVector4FromPoint(anchor1)).getXYZ();
+		localAnchor2 = (invertTransform2 * ComputeVector4FromPoint(anchor2)).getXYZ();
+
+		localAxis1 = (invertTransform1 * ComputeVector4(axis1)).getXYZ();
+		localAxis2 = (invertTransform2 * ComputeVector4(axis2)).getXYZ();
+	}
+
+	ComputeQuaternion rotationDelta;
+
+	{
+		const ComputeMatrix3x3 rotation1(
+			dirX1,
+			dirY1,
+			CrossComputeVector3(dirX1, dirY1)
+		);
+
+		const ComputeMatrix3x3 rotation2(
+			dirX2,
+			dirY2,
+			CrossComputeVector3(dirX2, dirY2)
+		);
+
+		rotationDelta = ComputeQuaternion(rotation1) * ComputeQuaternion(rotation2).conjugate();
+	}
+
+	return new PrismaticConstraint(
+		entity1, entity2,
+		localAnchor1, localAnchor2,
+		localAxis1, localAxis2,
+		rotationDelta
+	);
 }

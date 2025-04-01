@@ -20,7 +20,9 @@ void Edge::KeepPositionConstraintPart::applyVelocity(const ComputeVector3& lambd
 
 	if (motion1)
 	{
-		const ComputeVector3 newLinVelocity = motion1->getLinearVelocity() - motion1->getInverseMass() * lambda;
+		const ComputeVector3 deltaVelocity = motion1->getInverseMass() * lambda;
+
+		const ComputeVector3 newLinVelocity = motion1->getLinearVelocity() - deltaVelocity;
 		motion1->setLinearVelocity(newLinVelocity);
 
 		ComputeMatrix3x3 invInertia;
@@ -37,8 +39,6 @@ void Edge::KeepPositionConstraintPart::applyVelocity(const ComputeVector3& lambd
 
 		const ComputeVector3 newLinVelocity = motion2->getLinearVelocity() + deltaVelocity;
 		motion2->setLinearVelocity(newLinVelocity);
-
-		//const ComputeVector angularVelocityDelta = m_invInerR2 * lambda;
 
 		ComputeMatrix3x3 invInertia;
 		motion2->getWorldInverseInertiaTensor(invInertia);
@@ -67,7 +67,9 @@ void Edge::KeepPositionConstraintPart::applyPosition(const ComputeVector3& lambd
 
 	if (motion1)
 	{
-		const ComputeVector3 newPosition = transformAccessor1.getPosition() - motion1->getInverseMass() * lambda;
+		const ComputeVector3 deltaPosition = motion1->getInverseMass() * lambda;
+
+		const ComputeVector3 newPosition = transformAccessor1.getPosition() - deltaPosition;
 		transformAccessor1.setPosition(newPosition);
 
 		ComputeMatrix3x3 invInertia;

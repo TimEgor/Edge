@@ -18,14 +18,20 @@ void Edge::KeepRotationConstraintPart::applyVelocity(const ComputeVector3& lambd
 
 	if (motion1)
 	{
-		const ComputeVector3 angularVelocityDelta = m_invIner1 * lambda;
+		ComputeMatrix3x3 invInertia;
+		motion1->getWorldInverseInertiaTensor(invInertia);
+
+		const ComputeVector3 angularVelocityDelta = invInertia * lambda;
 		const ComputeVector3 newAngularVelocity = motion1->getAngularVelocity() - angularVelocityDelta;
 		motion1->setAngularVelocity(newAngularVelocity);
 	}
 
 	if (motion2)
 	{
-		const ComputeVector3 angularVelocityDelta = m_invIner2 * lambda;
+		ComputeMatrix3x3 invInertia;
+		motion2->getWorldInverseInertiaTensor(invInertia);
+
+		const ComputeVector3 angularVelocityDelta = invInertia * lambda;
 		const ComputeVector3 newAngularVelocity = motion2->getAngularVelocity() + angularVelocityDelta;
 		motion2->setAngularVelocity(newAngularVelocity);
 	}
@@ -49,7 +55,10 @@ void Edge::KeepRotationConstraintPart::applyPosition(const ComputeVector3& lambd
 
 	if (motion1)
 	{
-		const ComputeVector3 angularVelocityDelta = m_invIner1 * lambda;
+		ComputeMatrix3x3 invInertia;
+		motion1->getWorldInverseInertiaTensor(invInertia);
+
+		const ComputeVector3 angularVelocityDelta = invInertia * lambda;
 		const ComputeValueType angularVelocityDeltaLength = angularVelocityDelta.getLength();
 		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
@@ -60,7 +69,10 @@ void Edge::KeepRotationConstraintPart::applyPosition(const ComputeVector3& lambd
 
 	if (motion2)
 	{
-		const ComputeVector3 angularVelocityDelta = m_invIner2 * lambda;
+		ComputeMatrix3x3 invInertia;
+		motion2->getWorldInverseInertiaTensor(invInertia);
+
+		const ComputeVector3 angularVelocityDelta = invInertia * lambda;
 		const ComputeValueType angularVelocityDeltaLength = angularVelocityDelta.getLength();
 		if (angularVelocityDeltaLength > Math::Epsilon)
 		{
@@ -85,14 +97,16 @@ void Edge::KeepRotationConstraintPart::preSolve()
 
 	if (motion1)
 	{
-		motion1->getWorldInverseInertiaTensor(m_invIner1);
-		effectiveMass += m_invIner1;
+		ComputeMatrix3x3 invInertia;
+		motion1->getWorldInverseInertiaTensor(invInertia);
+		effectiveMass += invInertia;
 	}
 
 	if (motion2)
 	{
-		motion2->getWorldInverseInertiaTensor(m_invIner2);
-		effectiveMass += m_invIner2;
+		ComputeMatrix3x3 invInertia;
+		motion2->getWorldInverseInertiaTensor(invInertia);
+		effectiveMass += invInertia;
 	}
 
 	m_invEffectiveMass = InvertComputeMatrix3x3(effectiveMass);

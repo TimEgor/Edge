@@ -20,7 +20,7 @@ namespace Edge
 		FixedConstraint(
 			const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
 			const ComputeVector3& anchor1, const ComputeVector3& anchor2,
-			ComputeQuaternion deltaRotation = ComputeQuaternionIdentity
+			const ComputeQuaternion& deltaRotation = ComputeQuaternionIdentity
 		);
 
 		virtual void preSolve(float deltaTime) override;
@@ -30,4 +30,24 @@ namespace Edge
 
 		EDGE_PHYSICS_CONSTRAINT_TYPE(FIXED)
 	};
+
+	EDGE_MT_REFERENCE(FixedConstraint);
+
+	FixedConstraintReference CreateFixedConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2
+	);
+
+	FixedConstraintReference CreateFixedConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const Transform& transform1, const Transform& transform2
+	);
+
+	FixedConstraintReference CreateFixedConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const ComputeVector3& dirX1, const ComputeVector3& dirX2,
+		const ComputeVector3& dirY1, const ComputeVector3& dirY2
+	);
 }

@@ -10,7 +10,7 @@ namespace Edge
 	{
 	private:
 		KeepPositionConstraintPart m_positionPart;
-		AxisRotationConstraintPart m_axisRotationPart;
+		AxisRotationConstraintPart m_rotationPart;
 
 		ComputeVector3 m_anchor1 = ComputeVector3Zero;
 		ComputeVector3 m_anchor2 = ComputeVector3Zero;
@@ -31,4 +31,12 @@ namespace Edge
 
 		EDGE_PHYSICS_CONSTRAINT_TYPE(HINDGE)
 	};
+
+	EDGE_MT_REFERENCE(HingeConstraint);
+
+	HingeConstraintReference CreateHingeConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const ComputeVector3& axis1, const ComputeVector3& axis2
+	);
 }

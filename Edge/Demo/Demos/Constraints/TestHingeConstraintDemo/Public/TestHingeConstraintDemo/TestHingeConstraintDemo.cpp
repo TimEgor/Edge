@@ -1,20 +1,17 @@
 #include "TestHingeConstraintDemo.h"
 
-#include "EdgeDemoFramework/DemoApplication/DemoApplication.h"
-#include "EdgeFramework/FrameworkCore.h"
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
-#include "EdgePhysics/Physics/Collision/Scene/PhysicsCollisionContactManager.h"
-#include "EdgePhysics/Physics/Collision/Shapes/PhysicsBoxShape.h"
 #include "EdgePhysics/Physics/Constraint/Constraints/HingeConstraint.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
+
+#include "EdgeDemoFramework/DemoApplication/DemoApplication.h"
 
 void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::PhysicsBodyReference& body, bool isDynamic) const
 {
 	const Edge::Transform& transform = body->getBodyTransform().getObjectRef().getWorldTransform();
 	const Edge::PhysicsBodyMotionReference motion = body->getBodyMotion();
 
-	//const Edge::FloatVector3& size = body->getCollision()->getShape().getObjectCastRef<Edge::PhysicsBoxShape>().getSize();
 	constexpr Edge::FloatVector3 size(2.0f);
 
 	if (isDynamic)
@@ -35,8 +32,6 @@ void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::PhysicsBodyReference
 
 bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 {
-	//Edge::FrameworkCore::getInstance().getApplication().setTimeScale(0.05f);
-
 	m_cameraController->getTransform().setOrigin(Edge::FloatVector3(0.0f, 0.0f, -5.0f));
 
 	//
@@ -46,10 +41,6 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
 	bodyMotionCreationParam.m_mass = 1.0f;
-
-	Edge::PhysicsBodyFactory::EntityCollisionCreationParam bodyCollisionCreationParam;
-
-	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
 	{
 		m_staticBody = Edge::GetPhysics().createBody(&bodyCreationParam);
@@ -91,16 +82,4 @@ void EdgeDemo::TestHingeConstraintDemo::updateDemoLogic(float deltaTime)
 
 	drawBox(m_staticBody, false);
 	drawBox(m_dynamicBody, true);
-
-	const Edge::PhysicsCollisionContactManager::ContactPointCollection& contactPoints =
-		m_physicsScene->getCollisionManager()->getContactManager().getContactPoints();
-
-	for (const Edge::PhysicsInstancedCollisionContactPoint& contactPoint : contactPoints)
-	{
-		m_debugVisualizationDataController->addWireframeSphere(contactPoint.m_pointData.m_position1.getFloatVector3(), Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f);
-		m_debugVisualizationDataController->addLine(
-			contactPoint.m_pointData.m_position1.getFloatVector3(),
-			(contactPoint.m_pointData.m_position1 + contactPoint.m_pointData.m_normal).getFloatVector3()
-		);
-	}
 }

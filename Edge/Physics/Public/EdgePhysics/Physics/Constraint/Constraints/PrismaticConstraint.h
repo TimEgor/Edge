@@ -22,7 +22,8 @@ namespace Edge
 		PrismaticConstraint(
 			const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
 			const ComputeVector3& anchor1, const ComputeVector3& anchor2,
-			const ComputeVector3& axis1, const ComputeVector3& axis2
+			const ComputeVector3& axis1, const ComputeVector3& axis2,
+			const ComputeQuaternion& deltaRotation = ComputeQuaternionIdentity
 		);
 
 		virtual void preSolve(float deltaTime) override;
@@ -32,4 +33,27 @@ namespace Edge
 
 		EDGE_PHYSICS_CONSTRAINT_TYPE(PRISMATIC)
 	};
+
+	EDGE_MT_REFERENCE(PrismaticConstraint);
+
+	PrismaticConstraintReference CreatePrismaticConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const ComputeVector3& axis1, const ComputeVector3& axis2
+	);
+
+	PrismaticConstraintReference CreatePrismaticConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const ComputeVector3& axis1, const ComputeVector3& axis2,
+		const Transform& transform1, const Transform& transform2
+	);
+
+	PrismaticConstraintReference CreatePrismaticConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const ComputeVector3& axis1, const ComputeVector3& axis2,
+		const ComputeVector3& dirX1, const ComputeVector3& dirX2,
+		const ComputeVector3& dirY1, const ComputeVector3& dirY2
+	);
 }

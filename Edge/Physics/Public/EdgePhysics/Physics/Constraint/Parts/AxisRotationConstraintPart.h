@@ -9,9 +9,6 @@ namespace Edge
 	class AxisRotationConstraintPart final
 	{
 	private:
-		ComputeMatrix3x3 m_invIner1 = ComputeMatrix3x3Zero;
-		ComputeMatrix3x3 m_invIner2 = ComputeMatrix3x3Zero;
-
 		ComputeMatrix2x2 m_invEffectiveMass = ComputeMatrix2x2Zero;
 
 		ComputeVector3 m_totalLambda = ComputeVector3Zero;

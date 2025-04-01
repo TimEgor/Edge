@@ -1,7 +1,11 @@
 #include "HingeConstraint.h"
 
-Edge::HingeConstraint::HingeConstraint(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-	const ComputeVector3& anchor1, const ComputeVector3& anchor2, const ComputeVector3& axis1, const ComputeVector3& axis2)
+#include "EdgeCommon/UtilsMacros.h"
+
+Edge::HingeConstraint::HingeConstraint(
+	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+	const ComputeVector3& axis1, const ComputeVector3& axis2)
 	: TwoPhysicsEntityConstraint(entity1, entity2),
 	m_positionPart(entity1, entity2), m_rotationPart(entity1, entity2),
 	m_anchor1(anchor1), m_anchor2(anchor2),
@@ -56,4 +60,35 @@ void Edge::HingeConstraint::solvePosition()
 	{
 		m_rotationPart.solvePosition();
 	}
+}
+
+Edge::HingeConstraintReference Edge::CreateHingeConstraintInWorldSpace(
+	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+	const ComputeVector3& axis1, const ComputeVector3& axis2)
+{
+	EDGE_CHECK_RETURN_NULL(entity1 && entity2);
+
+	ComputeVector3 localAnchor1;
+	ComputeVector3 localAnchor2;
+
+	ComputeVector3 localAxis1;
+	ComputeVector3 localAxis2;
+
+	{
+		const ComputeMatrix4x4 invertTransform1 = InvertComputeMatrix4x4(entity1->getTransform()->getWorldTransform().m_matrix);
+		const ComputeMatrix4x4 invertTransform2 = InvertComputeMatrix4x4(entity2->getTransform()->getWorldTransform().m_matrix);
+
+		localAnchor1 = (invertTransform1 * ComputeVector4FromPoint(anchor1)).getXYZ();
+		localAnchor2 = (invertTransform2 * ComputeVector4FromPoint(anchor2)).getXYZ();
+
+		localAxis1 = (invertTransform1 * ComputeVector4(axis1)).getXYZ();
+		localAxis2 = (invertTransform2 * ComputeVector4(axis2)).getXYZ();
+	}
+
+	return new HingeConstraint(
+		entity1, entity2,
+		localAnchor1, localAnchor2,
+		localAxis1, localAxis2
+	);
 }

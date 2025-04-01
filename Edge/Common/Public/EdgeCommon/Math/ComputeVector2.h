@@ -93,8 +93,24 @@ namespace Edge
 	template <typename T>
 	T DotComputeVector2(const ComputeVector2Base<T>& vector1, const ComputeVector2Base<T>& vector2);
 
+	template <typename T>
+	constexpr ComputeVector2Base<T> ComputeVector2ZeroBase() { return ComputeVector2Base<T>(0.0); }
+	template <typename T>
+	constexpr ComputeVector2Base<T> ComputeVector2OneBase() { return ComputeVector2Base<T>(1.0); }
+	template <typename T>
+	constexpr ComputeVector2Base<T> ComputeVector2NegativeOneBase() { return ComputeVector2Base<T>(-1.0); }
+
+	template <typename T>
+	constexpr ComputeVector2Base<T> ComputeVector2EpsilonBase() { return ComputeVector2Base<T>(Math::TypedEpsilon<T>()); }
+
 	using ComputeVector2 = ComputeVector2Base<ComputeValueType>;
 	using FloatComputeVector2 = ComputeVector2Base<float>;
+
+	constexpr ComputeVector2 ComputeVector2Zero = ComputeVector2ZeroBase<ComputeValueType>();
+	constexpr ComputeVector2 ComputeVector2One = ComputeVector2OneBase<ComputeValueType>();
+	constexpr ComputeVector2 ComputeVector2NegativeOne = ComputeVector2NegativeOneBase<ComputeValueType>();
+
+	constexpr ComputeVector2 ComputeVector2Epsilon = ComputeVector2EpsilonBase<ComputeValueType>();
 }
 
 #include "ComputeVector2.hpp"
