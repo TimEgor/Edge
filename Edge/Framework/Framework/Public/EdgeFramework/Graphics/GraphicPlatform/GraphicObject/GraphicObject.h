@@ -12,5 +12,7 @@ namespace Edge
 
 		template<typename T>
 		T* getNativeHandleCast() const { return reinterpret_cast<T*>(getNativeHandle()); }
+
+		virtual void setName(const char* name) = 0;
 	};
 }

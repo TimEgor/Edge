@@ -31,9 +31,9 @@ namespace EdgeD3D11
 
 		virtual Edge::SwapChain* createSwapChain(const Edge::SwapChainDesc& desc, const Edge::Window& window) override;
 
-		virtual Edge::GPUBuffer* createBuffer(const Edge::GPUBufferDesc& desc, const Edge::InitialGPUBufferData* initialData) override;
+		virtual Edge::GPUBuffer* createBuffer(const Edge::GPUBufferDesc& desc, const Edge::InitialGraphicResourceData* initialData) override;
 
-		virtual Edge::Texture2D* createTexture2D(const Edge::Texture2DDesc& desc) override;
+		virtual Edge::Texture2D* createTexture2D(const Edge::Texture2DDesc& desc, const Edge::InitialGraphicResourceData* initialData) override;
 
 		virtual Edge::VertexShader* createVertexShaderFromSources(const void* srcs, size_t size) override;
 		virtual Edge::PixelShader* createPixelShaderFromSources(const void* srcs, size_t size) override;
@@ -46,6 +46,7 @@ namespace EdgeD3D11
 		virtual Edge::InputLayout* createInputLayout(const Edge::InputLayoutDesc& desc, const Edge::VertexShader& shader) override;
 
 		virtual Edge::RasterizationState* createRasterizationState(const Edge::RasterizationStateDesc& desc) override;
+		virtual Edge::SamplerState* createSamplerState() override;
 
 		D3D11DeviceComPtr getD3D11Device() const { return m_d3d11Device; }
 	};

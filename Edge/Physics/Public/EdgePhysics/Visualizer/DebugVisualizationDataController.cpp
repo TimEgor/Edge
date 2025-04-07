@@ -20,25 +20,47 @@ void Edge::DebugVisualizationDataController::addArrow(const FloatVector3& positi
 	m_arrows.emplace_back(position, direction, size, color);
 }
 
-void Edge::DebugVisualizationDataController::addPolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addPolygon(
+	const FloatVector3& position1,
+	const FloatVector3& position2,
+	const FloatVector3& position3,
+	const NormalizedColorRGB& color
+)
 {
 	LockGuard locker(m_polygonMutex);
 	m_polygons.emplace_back(position1, position2, position3, color);
 }
 
-void Edge::DebugVisualizationDataController::addWireframePolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addWireframePolygon(
+	const FloatVector3& position1,
+	const FloatVector3& position2,
+	const FloatVector3& position3,
+	const NormalizedColorRGB& color
+)
 {
 	LockGuard locker(m_wireframePolygonMutex);
 	m_wireframePolygons.emplace_back(position1, position2, position3, color);
 }
 
-void Edge::DebugVisualizationDataController::addPlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addPlane(
+	const FloatVector3& position,
+	const FloatVector3& normal,
+	const FloatVector3& dir,
+	const FloatVector2& size,
+	const NormalizedColorRGB& color
+)
 {
 	LockGuard locker(m_planeMutex);
 	m_planes.emplace_back(position, normal, dir, size, color);
 }
 
-void Edge::DebugVisualizationDataController::addWireframePlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addWireframePlane(
+	const FloatVector3& position,
+	const FloatVector3& normal,
+	const FloatVector3& dir,
+	const FloatVector2& size,
+	const NormalizedColorRGB& color
+)
 {
 	LockGuard locker(m_wireframePlaneMutex);
 	m_wireframePlanes.emplace_back(position, normal, dir, size, color);
@@ -78,8 +100,13 @@ void Edge::DebugVisualizationDataController::addWireframeBox(const Transform& tr
 	addWireframeBox(scaledTransform, color);
 }
 
-void Edge::DebugVisualizationDataController::addSphere(const FloatVector3& position,
-	const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addSphere(
+	const FloatVector3& position,
+	const FloatVector3& directionForward,
+	const FloatVector3& directionUp,
+	float radius,
+	const NormalizedColorRGB& color
+)
 {
 	LockGuard locker(m_sphereMutex);
 	m_spheres.emplace_back(position, directionForward, directionUp, radius, color);
@@ -92,11 +119,22 @@ void Edge::DebugVisualizationDataController::addSphere(const FloatVector3& posit
 
 void Edge::DebugVisualizationDataController::addSphere(const Transform& transform, float radius, const NormalizedColorRGB& color)
 {
-	addSphere(transform.getOrigin().getFloatVector3(), transform.getAxisZ().getFloatVector3(), transform.getAxisY().getFloatVector3(), radius, color);
+	addSphere(
+		transform.getOrigin().getFloatVector3(),
+		transform.getAxisZ().getFloatVector3(),
+		transform.getAxisY().getFloatVector3(),
+		radius,
+		color
+	);
 }
 
-void Edge::DebugVisualizationDataController::addWireframeSphere(const FloatVector3& position,
-	const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addWireframeSphere(
+	const FloatVector3& position,
+	const FloatVector3& directionForward,
+	const FloatVector3& directionUp,
+	float radius,
+	const NormalizedColorRGB& color
+)
 {
 	LockGuard locker(m_wireframeSphereMutex);
 	m_wireframeSpheres.emplace_back(position, directionForward, directionUp, radius, color);
@@ -109,11 +147,23 @@ void Edge::DebugVisualizationDataController::addWireframeSphere(const FloatVecto
 
 void Edge::DebugVisualizationDataController::addWireframeSphere(const Transform& transform, float radius, const NormalizedColorRGB& color)
 {
-	addWireframeSphere(transform.getOrigin().getFloatVector3(), transform.getAxisZ().getFloatVector3(), transform.getAxisY().getFloatVector3(), radius, color);
+	addWireframeSphere(
+		transform.getOrigin().getFloatVector3(),
+		transform.getAxisZ().getFloatVector3(),
+		transform.getAxisY().getFloatVector3(),
+		radius,
+		color
+	);
 }
 
-void Edge::DebugVisualizationDataController::addGrid(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& directionRight,
-	const FloatVector2& areaSize, const UInt32Vector2& gridNums, const NormalizedColorRGB& color)
+void Edge::DebugVisualizationDataController::addGrid(
+	const FloatVector3& position,
+	const FloatVector3& normal,
+	const FloatVector3& directionRight,
+	const FloatVector2& areaSize,
+	const UInt32Vector2& gridNums,
+	const NormalizedColorRGB& color
+)
 {
 	const FloatComputeVector3 directionUp = CrossComputeVector3(FloatComputeVector3(directionRight), FloatComputeVector3(normal));
 
@@ -125,8 +175,8 @@ void Edge::DebugVisualizationDataController::addGrid(const FloatVector3& positio
 	{
 		const FloatComputeVector3 baseLineStepPosition = baseULinePosition + FloatComputeVector3(directionRight) * gridUStep * static_cast<float>(uLineIndex);
 
-		FloatComputeVector3 linePosition1 = baseLineStepPosition + directionUp * areaSize.m_y * 0.5f;
-		FloatComputeVector3 linePosition2 = baseLineStepPosition - directionUp * areaSize.m_y * 0.5f;
+		const FloatComputeVector3 linePosition1 = baseLineStepPosition + directionUp * areaSize.m_y * 0.5f;
+		const FloatComputeVector3 linePosition2 = baseLineStepPosition - directionUp * areaSize.m_y * 0.5f;
 
 		addLine(linePosition1.getFloatVector3(), linePosition2.getFloatVector3(), color);
 	}
@@ -139,11 +189,46 @@ void Edge::DebugVisualizationDataController::addGrid(const FloatVector3& positio
 	{
 		const FloatComputeVector3 baseLineStepPosition = baseVLinePosition + directionUp * gridVStep * static_cast<float>(vLineIndex);
 
-		FloatComputeVector3 linePosition1 = baseLineStepPosition + FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
-		FloatComputeVector3 linePosition2 = baseLineStepPosition - FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
+		const FloatComputeVector3 linePosition1 = baseLineStepPosition + FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
+		const FloatComputeVector3 linePosition2 = baseLineStepPosition - FloatComputeVector3(directionRight) * areaSize.m_x * 0.5f;
 
 		addLine(linePosition1.getFloatVector3(), linePosition2.getFloatVector3(), color);
 	}
+}
+
+void Edge::DebugVisualizationDataController::addWorldText(
+	const FloatVector3& position,
+	const FloatVector3& directionForward,
+	const FloatVector3& directionUp,
+	const std::string& text,
+	float textHeight,
+	const NormalizedColorRGB& color
+)
+{
+	LockGuard locker(m_worldTextMutex);
+	m_worldTexts.emplace_back(position, directionForward, directionUp, text, textHeight, color);
+}
+
+void Edge::DebugVisualizationDataController::addBillboardWorldText(
+	const FloatVector3& position,
+	const std::string& text,
+	float textHeight,
+	const NormalizedColorRGB& color
+)
+{
+	LockGuard locker(m_billboardWorldTextMutex);
+	m_billboardWorldTexts.emplace_back(position, text, textHeight, color);
+}
+
+void Edge::DebugVisualizationDataController::addScreenText(
+	const UInt32Vector2& position,
+	const std::string& text,
+	uint32_t textHeight,
+	const NormalizedColorRGB& color
+)
+{
+	LockGuard locker(m_screenTextMutex);
+	m_screenTexts.emplace_back(position, text, textHeight, color);
 }
 
 uint32_t Edge::DebugVisualizationDataController::getPointCount() const
@@ -278,6 +363,42 @@ const Edge::DebugVisualizationDataController::SphereData& Edge::DebugVisualizati
 	return m_wireframeSpheres[index];
 }
 
+uint32_t Edge::DebugVisualizationDataController::getWorldTextCount() const
+{
+	SharedLockGuard locker(m_worldTextMutex);
+	return m_worldTexts.size();
+}
+
+const Edge::DebugVisualizationDataController::WorldTextData& Edge::DebugVisualizationDataController::getWorldTextData(uint32_t index) const
+{
+	SharedLockGuard locker(m_worldTextMutex);
+	return m_worldTexts[index];
+}
+
+uint32_t Edge::DebugVisualizationDataController::getBillboardWorldTextCount() const
+{
+	SharedLockGuard locker(m_billboardWorldTextMutex);
+	return m_billboardWorldTexts.size();
+}
+
+const Edge::DebugVisualizationDataController::BillboardWorldTextData& Edge::DebugVisualizationDataController::getBillboardWorldTextData(uint32_t index) const
+{
+	SharedLockGuard locker(m_billboardWorldTextMutex);
+	return m_billboardWorldTexts[index];
+}
+
+uint32_t Edge::DebugVisualizationDataController::getScreenTextCount() const
+{
+	SharedLockGuard locker(m_screenTextMutex);
+	return m_screenTexts.size();
+}
+
+const Edge::DebugVisualizationDataController::ScreenTextData& Edge::DebugVisualizationDataController::getScreenTextData(uint32_t index) const
+{
+	SharedLockGuard locker(m_screenTextMutex);
+	return m_screenTexts[index];
+}
+
 void Edge::DebugVisualizationDataController::clear()
 {
 	{
@@ -333,5 +454,20 @@ void Edge::DebugVisualizationDataController::clear()
 	{
 		LockGuard locker(m_wireframeSphereMutex);
 		m_wireframeSpheres.clear();
+	}
+
+	{
+		LockGuard locker(m_worldTextMutex);
+		m_worldTexts.clear();
+	}
+
+	{
+		LockGuard locker(m_billboardWorldTextMutex);
+		m_billboardWorldTexts.clear();
+	}
+
+	{
+		LockGuard locker(m_screenTextMutex);
+		m_screenTexts.clear();
 	}
 }

@@ -100,8 +100,10 @@ namespace Edge
 		ComputeMatrix4x4Base<ValueType> getRotationMatrix4x4() const;
 		void getRotationMatrix4x4(ComputeMatrix4x4Base<ValueType>& matrix) const;
 
-		ComputeVector3Base<ValueType> getAngles() const;
-		void getAngles(ComputeVector3Base<ValueType>& angles) const;
+		ValueType getAxisAngle(const ComputeVector3Base<ValueType>& axis) const;
+
+		ComputeVector3Base<ValueType> getEulerAngles() const;
+		void getEulerAngles(ComputeVector3Base<ValueType>& angles) const;
 	};
 
 	template <typename T>

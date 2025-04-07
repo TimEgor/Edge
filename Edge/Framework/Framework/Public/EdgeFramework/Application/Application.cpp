@@ -170,6 +170,8 @@ bool Edge::Application::init()
 
 	ThreadUtils::SetThreadName("Edge Application main");
 
+	m_currentFrame = 0;
+
 	return true;
 }
 
@@ -217,6 +219,8 @@ void Edge::Application::run()
 		m_jobController->waitAndExecute(mailLoopJobGraph);
 
 		endFrame();
+
+		++m_currentFrame;
 	}
 }
 
@@ -233,6 +237,11 @@ void Edge::Application::pause()
 void Edge::Application::unpause()
 {
 	m_isPaused = false;
+}
+
+uint32_t Edge::Application::getCurrentFrameNum() const
+{
+	return m_currentFrame;
 }
 
 float Edge::Application::getDeltaTime() const

@@ -9,6 +9,8 @@
 
 #include <vector>
 
+#include "Font/Win32PlatformFontProvider.h"
+
 #define EDGE_PLARFORM_WIN32_TYPE
 
 namespace EdgeWin32
@@ -19,6 +21,7 @@ namespace EdgeWin32
 
 	private:
 		Win32WindowEventController m_windowEventController;
+		Win32PlatformFontProvider m_fontProvider;
 
 		MonitorInfoCollection m_monitorInfos;
 
@@ -42,6 +45,9 @@ namespace EdgeWin32
 		virtual Edge::Window* createWindow(Edge::WindowID windowID) const override;
 		virtual const Edge::WindowEventController& getWindowEventController() const override;
 		virtual Edge::WindowEventController& getWindowEventController() override;
+
+		virtual const Edge::FontProvider& getFontProvider() const override;
+		virtual Edge::FontProvider& getFontProvider() override;
 
 		virtual uint32_t getMonitorCount() const override { return static_cast<uint32_t>(m_monitorInfos.size()); }
 		virtual const Edge::MonitorInfo& getMonitorInfo(uint32_t index) const override { return m_monitorInfos[index]; }

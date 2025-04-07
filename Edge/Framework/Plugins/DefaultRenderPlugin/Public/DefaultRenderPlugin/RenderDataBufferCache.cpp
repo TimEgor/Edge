@@ -28,8 +28,13 @@ void EdgeDefRender::RenderDataBufferCache::release()
 void EdgeDefRender::RenderDataBufferCache::updateBuffers(float deltaTime, uint32_t requiredElementCount)
 {
 	addDelayTime(deltaTime);
-	updateBufferSpaces(requiredElementCount);
-	freeUnusedBuffers();
+	prepareSpace(requiredElementCount);
+	freeUnusedSpace();
+}
+
+void EdgeDefRender::RenderDataBufferCache::updateBuffers(float deltaTime)
+{
+	addDelayTime(deltaTime);
 }
 
 uint32_t EdgeDefRender::RenderDataBufferCache::getBufferCount() const
@@ -43,7 +48,8 @@ Edge::GPUBuffer& EdgeDefRender::RenderDataBufferCache::getBuffer(uint32_t index)
 }
 
 EdgeDefRender::RenderDataBufferCache::BufferData::BufferData(BufferData&& data) noexcept
-	: m_buffer(data.m_buffer), m_unusingTime(data.m_unusingTime)
+	: m_buffer(data.m_buffer),
+	m_unusingTime(data.m_unusingTime)
 {
 	data.m_buffer = nullptr;
 }
@@ -71,7 +77,7 @@ void EdgeDefRender::RenderDataBufferCache::addDelayTime(float deltaTime)
 	}
 }
 
-void EdgeDefRender::RenderDataBufferCache::updateBufferSpaces(uint32_t requiredElementCount)
+void EdgeDefRender::RenderDataBufferCache::prepareSpace(uint32_t requiredElementCount)
 {
 	const uint32_t requiredBufferCount = ceilf(static_cast<float>(requiredElementCount) / m_perBufferElementCount);
 	const uint32_t currentBufferCount = m_buffers.size();
@@ -108,7 +114,7 @@ void EdgeDefRender::RenderDataBufferCache::updateBufferSpaces(uint32_t requiredE
 	}
 }
 
-void EdgeDefRender::RenderDataBufferCache::freeUnusedBuffers()
+void EdgeDefRender::RenderDataBufferCache::freeUnusedSpace()
 {
 	const uint32_t bufferCount = m_buffers.size();
 	uint32_t releasingBufferIndex = bufferCount;
@@ -128,10 +134,18 @@ void EdgeDefRender::RenderDataBufferCache::freeUnusedBuffers()
 	m_buffers.resize(releasingBufferIndex);
 }
 
-EdgeDefRender::RenderDataBufferCacheIterator::RenderDataBufferCacheIterator(const RenderDataBufferCache& bufferCache, Edge::DeferredGraphicContext& graphicContext)
-	: m_bufferCache(bufferCache), m_graphicContext(graphicContext)
+EdgeDefRender::RenderDataBufferCacheIterator::RenderDataBufferCacheIterator(
+	const RenderDataBufferCache& bufferCache,
+	Edge::DeferredGraphicContext& graphicContext,
+	bool iterOnInit
+)
+	: m_bufferCache(bufferCache),
+	m_graphicContext(graphicContext)
 {
-	next();
+	if (iterOnInit)
+	{
+		next();
+	}
 }
 
 EdgeDefRender::RenderDataBufferCacheIterator::~RenderDataBufferCacheIterator()
@@ -140,6 +154,14 @@ EdgeDefRender::RenderDataBufferCacheIterator::~RenderDataBufferCacheIterator()
 	{
 		m_graphicContext.unmapBuffer(m_bufferCache.getBuffer(m_currentBufferIndex));
 	}
+}
+
+bool EdgeDefRender::RenderDataBufferCacheIterator::isInInitialState() const
+{
+	return
+		m_currentElement == nullptr &&
+		m_currentBufferIndex == 0 &&
+		m_currentElementIndex == 0;
 }
 
 bool EdgeDefRender::RenderDataBufferCacheIterator::next()
@@ -159,8 +181,12 @@ bool EdgeDefRender::RenderDataBufferCacheIterator::next()
 
 	if (!m_currentElement && m_currentBufferIndex < m_bufferCache.getBufferCount())
 	{
-		m_graphicContext.mapBuffer(m_bufferCache.getBuffer(m_currentBufferIndex),
-			Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE, Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD, &m_currentElement);
+		m_graphicContext.mapBuffer(
+			m_bufferCache.getBuffer(m_currentBufferIndex),
+			Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+			Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+			&m_currentElement
+		);
 
 		m_currentElementIndex = 0;
 	}

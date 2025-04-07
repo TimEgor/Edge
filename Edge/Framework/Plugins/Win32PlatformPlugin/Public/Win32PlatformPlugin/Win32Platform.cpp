@@ -80,3 +80,13 @@ Edge::WindowEventController& EdgeWin32::Win32Platform::getWindowEventController(
 {
 	return m_windowEventController;
 }
+
+const Edge::FontProvider& EdgeWin32::Win32Platform::getFontProvider() const
+{
+	return m_fontProvider;
+}
+
+Edge::FontProvider& EdgeWin32::Win32Platform::getFontProvider()
+{
+	return m_fontProvider;
+}

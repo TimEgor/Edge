@@ -49,6 +49,8 @@ namespace Edge
 
 		WindowHandleReference m_mainWindowHandle;
 
+		uint32_t m_currentFrame = 0;
+
 		float m_deltaTime = 0.0f;
 		float m_timeScale = 1.0f;
 
@@ -80,6 +82,8 @@ namespace Edge
 		void stop();
 		void pause();
 		void unpause();
+
+		uint32_t getCurrentFrameNum() const;
 
 		float getDeltaTime() const;
 		void setTimeScale(float scale);

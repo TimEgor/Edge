@@ -11,6 +11,9 @@ Edge::HingeConstraint::HingeConstraint(
 	m_anchor1(anchor1), m_anchor2(anchor2),
 	m_axis1(axis1), m_axis2(axis2)
 {
+	m_initialRotationDelta = 
+		ComputeQuaternion(getEntity1()->getTransform()->getRotation()) * 
+		ComputeQuaternion(getEntity2()->getTransform()->getRotation()).conjugate();
 }
 
 void Edge::HingeConstraint::preSolve(float deltaTime)
@@ -60,6 +63,16 @@ void Edge::HingeConstraint::solvePosition()
 	{
 		m_rotationPart.solvePosition();
 	}
+}
+
+Edge::ComputeValueType Edge::HingeConstraint::getCurrentAngle() const
+{
+	const ComputeQuaternion rotation1 = getEntity1()->getTransform()->getRotation();
+	const ComputeQuaternion rotation2 = getEntity2()->getTransform()->getRotation();
+	const ComputeVector3 worldAxis2 = rotation2.rotate(m_axis2);
+
+	const ComputeQuaternion diffRotation = rotation1 * m_initialRotationDelta * ConjugateComputeQuaternion(rotation2);
+	return diffRotation.getAxisAngle(worldAxis2);
 }
 
 Edge::HingeConstraintReference Edge::CreateHingeConstraintInWorldSpace(

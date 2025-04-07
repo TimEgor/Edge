@@ -1,0 +1,15 @@
+Texture2D glyphAtlasTexture : register(t0);
+SamplerState textureSampler : register(s0);
+
+struct PixelInput
+{
+	float4 position : SV_Position;
+	float2 uv : TEXCOORD;
+	float4 color : COLOR;
+};
+
+float4 PS(PixelInput input) : SV_Target0
+{
+    const float alpha = glyphAtlasTexture.Sample(textureSampler, input.uv).r;
+	return float4(input.color.xyz * alpha, alpha);
+}

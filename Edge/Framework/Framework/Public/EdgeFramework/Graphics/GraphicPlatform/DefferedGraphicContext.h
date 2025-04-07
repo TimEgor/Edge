@@ -3,6 +3,7 @@
 #include "EdgeCommon/Math/ComputeMatrix44.h"
 
 #include "GraphicObject/GraphicObject.h"
+#include "GraphicObject/Shader.h"
 
 namespace Edge
 {
@@ -13,10 +14,8 @@ namespace Edge
 	struct InputLayoutDesc;
 	class InputLayout;
 
-	class VertexShader;
-	class PixelShader;
-
 	class RasterizationState;
+	class SamplerState;
 
 	enum class PrimitiveTopology
 	{
@@ -93,10 +92,14 @@ namespace Edge
 		virtual void setPrimitiveTopology(PrimitiveTopology topology) = 0;
 		virtual void setRasterizationState(const RasterizationState& state) = 0;
 
+		virtual void setSamplerState(const SamplerState& state, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
+
 		virtual void setConstantBuffer(const GPUBuffer& buffer, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
 
 		virtual void setVertexBuffers(uint32_t bufferCount, GPUBuffer** buffers, const InputLayoutDesc& inputLayoutDesc) = 0;
 		virtual void setIndexBuffer(GPUBuffer& buffer) = 0;
+
+		virtual void setShaderResource(const Texture2D& texture, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
 
 		virtual void mapBuffer(GPUBuffer& buffer, GraphicResourceMappingType type, GraphicResourceMappingFlag flag, void** data) = 0;
 		virtual void unmapBuffer(GPUBuffer& buffer) = 0;

@@ -369,6 +369,17 @@ namespace Edge
 	}
 
 	template <typename T>
+	ComputeMatrix4x4Base<T> ScaleComputeMatrix4x4(const ComputeVector3Base<T>& scale)
+	{
+		return ComputeMatrix4x4Base<T>(
+			ComputeVector4Base<T>(scale.getX(), T(0.0), T(0.0), T(0.0)),
+			ComputeVector4Base<T>(T(0.0), scale.getY(), T(0.0), T(0.0)),
+			ComputeVector4Base<T>(T(0.0), T(0.0), scale.getZ(), T(0.0)),
+			ComputeVector4Base<T>(T(0.0), T(0.0), T(0.0), T(1.0))
+		);
+	}
+
+	template <typename T>
 	ComputeMatrix4x4Base<T> RotationEulerComputeMatrix4x4(T pitch, T yaw, T roll)
 	{
 		return RotationEulerComputeMatrix4x4(ComputeVector3Base<T>(pitch, yaw, roll));

@@ -334,7 +334,13 @@ namespace Edge
 	}
 
 	template <typename T>
-	ComputeVector3Base<T> ComputeQuaternionBase<T>::getAngles() const
+	T ComputeQuaternionBase<T>::getAxisAngle(const ComputeVector3Base<T>& axis) const
+	{
+		return std::atan(getXYZ().dot(axis) / getW()) * 2.0_ecv;
+	}
+
+	template <typename T>
+	ComputeVector3Base<T> ComputeQuaternionBase<T>::getEulerAngles() const
 	{
 		ComputeVector3Base<T> angles;
 		getAngles(angles);
@@ -343,7 +349,7 @@ namespace Edge
 	}
 
 	template <typename T>
-	void ComputeQuaternionBase<T>::getAngles(ComputeVector3Base<T>& angles) const
+	void ComputeQuaternionBase<T>::getEulerAngles(ComputeVector3Base<T>& angles) const
 	{
 		const T sinr_cosp = 2.0_ecv * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_z);
 		const T cosr_cosp = 1.0_ecv - 2.0_ecv * (m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y);

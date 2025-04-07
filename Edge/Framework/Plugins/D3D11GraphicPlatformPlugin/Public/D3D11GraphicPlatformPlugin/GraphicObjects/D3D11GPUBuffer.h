@@ -11,10 +11,12 @@ namespace EdgeD3D11
 		D3D11BufferComPtr m_buffer;
 
 	public:
-		D3D11GPUBuffer(const Edge::GPUBufferDesc& desc, const D3D11DeviceComPtr& device, const Edge::InitialGPUBufferData* initialData);
+		D3D11GPUBuffer(const Edge::GPUBufferDesc& desc, const D3D11DeviceComPtr& device, const Edge::InitialGraphicResourceData* initialData);
 
 		const D3D11BufferComPtr& getBufferHandle() const { return m_buffer; }
 
 		virtual void* getNativeHandle() const override { return m_buffer.Get(); }
+
+		virtual void setName(const char* name) override;
 	};
 }

@@ -3,7 +3,8 @@
 #include "PackedColor.h"
 #include "RenderDataBufferCache.h"
 
-namespace Edge {
+namespace Edge
+{
 	class GPUBuffer;
 
 	class VertexShader;
@@ -22,8 +23,10 @@ namespace EdgeDefRender
 			PackedColor m_color;
 
 			PointData() = default;
+
 			PointData(const Edge::FloatVector3& position, const Edge::FloatVector4& color)
-				: m_position(position), m_color(color) {}
+				: m_position(position),
+				m_color(color) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;
@@ -45,8 +48,10 @@ namespace EdgeDefRender
 
 
 			VertexData() = default;
+
 			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector4& color)
-				: m_position(position), m_color(color) {}
+				: m_position(position),
+				m_color(color) {}
 		};
 
 		struct LineData final
@@ -75,8 +80,11 @@ namespace EdgeDefRender
 
 
 			VertexData() = default;
+
 			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector4& color, const Edge::FloatVector3& normal)
-				: m_position(position), m_color(color), m_normal(normal) {}
+				: m_position(position),
+				m_color(color),
+				m_normal(normal) {}
 		};
 
 		struct PolygonData final
@@ -108,10 +116,20 @@ namespace EdgeDefRender
 			PackedColor m_color;
 
 			PlaneData() = default;
-			PlaneData(const Edge::FloatVector3& position, const Edge::FloatVector3& normal, const Edge::FloatVector3& directionRight,
-				const Edge::FloatVector2& size, const Edge::FloatVector4& color)
-				: m_position(position), m_sizeX(size.m_x), m_normal(normal),
-				m_sizeY(size.m_y), m_directionRight(directionRight), m_color(color) {}
+
+			PlaneData(
+				const Edge::FloatVector3& position,
+				const Edge::FloatVector3& normal,
+				const Edge::FloatVector3& directionRight,
+				const Edge::FloatVector2& size,
+				const Edge::FloatVector4& color
+			)
+				: m_position(position),
+				m_sizeX(size.m_x),
+				m_normal(normal),
+				m_sizeY(size.m_y),
+				m_directionRight(directionRight),
+				m_color(color) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;
@@ -150,10 +168,19 @@ namespace EdgeDefRender
 			PackedColor m_color;
 
 			SphereData() = default;
-			SphereData(const Edge::FloatVector3& position, const Edge::FloatVector3& directionForward,
-				const Edge::FloatVector3& directionUp, float radius, const Edge::FloatVector4& color)
-				: m_position(position), m_directionForward(directionForward),
-				m_directionUp(directionUp), m_color(color), m_radius(radius) {}
+
+			SphereData(
+				const Edge::FloatVector3& position,
+				const Edge::FloatVector3& directionForward,
+				const Edge::FloatVector3& directionUp,
+				float radius,
+				const Edge::FloatVector4& color
+			)
+				: m_position(position),
+				m_directionForward(directionForward),
+				m_directionUp(directionUp),
+				m_color(color),
+				m_radius(radius) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;
@@ -168,5 +195,56 @@ namespace EdgeDefRender
 
 		uint32_t m_sphereCount = 0;
 		uint32_t m_indexCountPerSphere = 0;
+	};
+
+	struct WorldTextRenderData final
+	{
+		struct VertexData final
+		{
+			Edge::FloatVector3 m_position = Edge::FloatVector3Zero;
+			Edge::FloatVector2 m_textureCoord = Edge::FloatVector2Zero;
+			PackedColor m_color;
+
+			VertexData() = default;
+
+			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector2& textureCoord, const Edge::FloatVector4& color)
+				: m_position(position),
+				m_textureCoord(textureCoord),
+				m_color(color) {}
+		};
+
+		struct GlyphData final
+		{
+			VertexData m_vertex1;
+			VertexData m_vertex2;
+			VertexData m_vertex3;
+
+			VertexData m_vertex4;
+			VertexData m_vertex5;
+			VertexData m_vertex6;
+
+			GlyphData() = default;
+			GlyphData(
+				const VertexData& v1,
+				const VertexData& v2,
+				const VertexData& v3,
+				const VertexData& v4
+			) :
+				m_vertex1(v1),
+				m_vertex2(v2),
+				m_vertex3(v3),
+				m_vertex4(v3),
+				m_vertex5(v2),
+				m_vertex6(v4) {}
+		};
+
+		Edge::VertexShader* m_vertexShader = nullptr;
+		Edge::PixelShader* m_pixelShader = nullptr;
+
+		Edge::InputLayout* m_inputLayout = nullptr;
+
+		RenderDataBufferCache m_glyphData;
+
+		uint32_t m_glyphCount = 0;
 	};
 }

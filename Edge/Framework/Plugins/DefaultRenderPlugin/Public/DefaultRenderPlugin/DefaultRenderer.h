@@ -6,6 +6,11 @@
 #include "EdgeFramework/Graphics/Render/Renderer.h"
 
 #include "RenderDatas.h"
+#include "Font/FontController.h"
+
+namespace EdgeDefRender {
+	class FontController;
+}
 
 namespace Edge {
 	class AssetsDirectoryController;
@@ -17,6 +22,7 @@ namespace Edge {
 	class GPUBuffer;
 
 	class RasterizationState;
+	class SamplerState;
 }
 
 namespace EdgeDefRender
@@ -35,14 +41,6 @@ namespace EdgeDefRender
 		};
 
 	private:
-		Edge::DeferredGraphicContext* m_graphicContext = nullptr;
-
-		Edge::RasterizationState* m_baseRasterizationState = nullptr;
-
-		Edge::Texture2D* m_depthBuffer = nullptr;
-
-		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
-
 		CameraShaderData m_cameraShaderData;
 
 		PointRenderData m_pointRenderData;
@@ -54,6 +52,16 @@ namespace EdgeDefRender
 		BoxRenderData m_wireframeBoxRenderData;
 		SphereRenderData m_sphereRenderData;
 		SphereRenderData m_wireframeSphereRenderData;
+		WorldTextRenderData m_worldTextRenderData;
+
+		Font m_defaultFont;
+
+		Edge::DeferredGraphicContext* m_graphicContext = nullptr;
+
+		Edge::RasterizationState* m_baseRasterizationState = nullptr;
+		Edge::SamplerState* m_baseSamplerState = nullptr;
+		Edge::Texture2D* m_depthBuffer = nullptr;
+		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
 
 		//init
 		bool initPointRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
@@ -70,6 +78,10 @@ namespace EdgeDefRender
 		bool initSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 		bool initWireframeSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 
+		bool initWorldTextRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
+
+		bool initDefaultFont(Edge::GraphicDevice& device);
+
 		//releasing
 		void releasePointRenderData();
 		void releaseLineRenderData();
@@ -84,6 +96,10 @@ namespace EdgeDefRender
 
 		void releaseSphereRenderData();
 		void releaseWireframeSphereRenderData();
+
+		void releaseWorldTextRenderData();
+
+		void releaseDefaultFont();
 
 		//preparation
 		void preparePointRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
@@ -100,7 +116,7 @@ namespace EdgeDefRender
 		void prepareSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 		void prepareWireframeSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 
-		static Edge::FloatComputeVector3 calculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection);
+		void prepareWorldTextRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 
 		void prepareDepthBuffer(const Edge::Texture2DSize& bufferSize);
 
@@ -118,6 +134,12 @@ namespace EdgeDefRender
 
 		void drawSpheres();
 		void drawWireframeSpheres();
+
+		void drawWorldTexts();
+
+		static constexpr char DefaultFontName[] = "Arial";
+		static constexpr uint32_t DefaultFontHeight = 24;
+		static Edge::FloatComputeVector3 CalculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection);
 
 	public:
 		DefaultRenderer() = default;

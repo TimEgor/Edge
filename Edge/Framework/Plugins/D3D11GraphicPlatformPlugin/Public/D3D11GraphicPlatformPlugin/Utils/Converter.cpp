@@ -3,7 +3,7 @@
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/GPUBuffer.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Texture.h"
 
-DXGI_FORMAT EdgeD3D11::convertTSFormatToDXGI(Edge::GraphicResourceFormat format)
+DXGI_FORMAT EdgeD3D11::ConvertEdgeFormatToDXGI(Edge::GraphicResourceFormat format)
 {
 	switch (format)
 	{
@@ -106,7 +106,7 @@ DXGI_FORMAT EdgeD3D11::convertTSFormatToDXGI(Edge::GraphicResourceFormat format)
 	}
 }
 
-D3D11_PRIMITIVE_TOPOLOGY EdgeD3D11::convertTSPrimitiveTopologyToD3D11(Edge::PrimitiveTopology topology)
+D3D11_PRIMITIVE_TOPOLOGY EdgeD3D11::ConvertEdgePrimitiveTopologyToD3D11(Edge::PrimitiveTopology topology)
 {
 	switch (topology)
 	{
@@ -126,7 +126,7 @@ D3D11_PRIMITIVE_TOPOLOGY EdgeD3D11::convertTSPrimitiveTopologyToD3D11(Edge::Prim
 	}
 }
 
-D3D11_CULL_MODE EdgeD3D11::convertTSRasterizationCullModeToD3D11(Edge::RasterizationCullMode mode)
+D3D11_CULL_MODE EdgeD3D11::ConvertEdgeRasterizationCullModeToD3D11(Edge::RasterizationCullMode mode)
 {
 	switch (mode)
 	{
@@ -140,7 +140,7 @@ D3D11_CULL_MODE EdgeD3D11::convertTSRasterizationCullModeToD3D11(Edge::Rasteriza
 	}
 }
 
-D3D11_FILL_MODE EdgeD3D11::convertTSRasterizationFillModeToD3D11(Edge::RasterizationFillMode mode)
+D3D11_FILL_MODE EdgeD3D11::ConvertEdgeRasterizationFillModeToD3D11(Edge::RasterizationFillMode mode)
 {
 	switch (mode)
 	{
@@ -152,7 +152,7 @@ D3D11_FILL_MODE EdgeD3D11::convertTSRasterizationFillModeToD3D11(Edge::Rasteriza
 	}
 }
 
-D3D11_USAGE EdgeD3D11::convertTSResourceAccessToD3D11(Edge::GraphicResourceAccessValueType access)
+D3D11_USAGE EdgeD3D11::ConvertEdgeResourceAccessToD3D11(Edge::GraphicResourceAccessValueType access)
 {
 	if (access == (Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_WRITE))
 	{
@@ -179,7 +179,7 @@ D3D11_USAGE EdgeD3D11::convertTSResourceAccessToD3D11(Edge::GraphicResourceAcces
 	return D3D11_USAGE_DEFAULT;
 }
 
-UINT EdgeD3D11::convertTSCPUAccessToD3D11(Edge::GraphicResourceAccessValueType access)
+UINT EdgeD3D11::ConvertEdgeCpuAccessToD3D11(Edge::GraphicResourceAccessValueType access)
 {
 	UINT d3d11CPUAccess = 0;
 
@@ -196,7 +196,7 @@ UINT EdgeD3D11::convertTSCPUAccessToD3D11(Edge::GraphicResourceAccessValueType a
 	return d3d11CPUAccess;
 }
 
-UINT EdgeD3D11::convertTSBufferUsageToD3D11(Edge::GraphicResourceUsageValueType usage)
+UINT EdgeD3D11::ConvertEdgeBufferUsageToD3D11(Edge::GraphicResourceUsageValueType usage)
 {
 	UINT d3d11Usage = 0;
 
@@ -228,7 +228,7 @@ UINT EdgeD3D11::convertTSBufferUsageToD3D11(Edge::GraphicResourceUsageValueType 
 	return d3d11Usage;
 }
 
-UINT EdgeD3D11::convertTSTextureUsageToD3D11(Edge::GraphicResourceUsageValueType usage)
+UINT EdgeD3D11::ConvertEdgeTextureUsageToD3D11(Edge::GraphicResourceUsageValueType usage)
 {
 	UINT d3d11Usage = 0;
 
@@ -255,7 +255,7 @@ UINT EdgeD3D11::convertTSTextureUsageToD3D11(Edge::GraphicResourceUsageValueType
 	return d3d11Usage;
 }
 
-D3D11_INPUT_CLASSIFICATION EdgeD3D11::convertInputLayoutBindingTypeTStoD3D11(Edge::InputLayoutBindingType bindingType)
+D3D11_INPUT_CLASSIFICATION EdgeD3D11::ConvertEdgeInputLayoutBindingTypeToD3D11(Edge::InputLayoutBindingType bindingType)
 {
 	switch (bindingType)
 	{
@@ -268,7 +268,7 @@ D3D11_INPUT_CLASSIFICATION EdgeD3D11::convertInputLayoutBindingTypeTStoD3D11(Edg
 	}
 }
 
-void EdgeD3D11::convertTSMapParamsToD3D11(Edge::GraphicResourceMappingType type, Edge::GraphicResourceMappingFlag flag,
+void EdgeD3D11::ConvertEdgeMapParamsToD3D11(Edge::GraphicResourceMappingType type, Edge::GraphicResourceMappingFlag flag,
 	D3D11_MAP& d3d11Map, UINT& d3d11Flags)
 {
 	d3d11Map = static_cast<D3D11_MAP>(0);
@@ -304,7 +304,7 @@ void EdgeD3D11::convertTSMapParamsToD3D11(Edge::GraphicResourceMappingType type,
 	}
 }
 
-DXGI_FORMAT EdgeD3D11::convertInputLayoutFormatTStoDXGI(Edge::InputLayoutElementType type, uint32_t componentsNum)
+DXGI_FORMAT EdgeD3D11::ConvertEdgeInputLayoutFormatToDxgi(Edge::InputLayoutElementType type, uint32_t componentsNum)
 {
 	switch (type)
 	{
@@ -439,7 +439,7 @@ DXGI_FORMAT EdgeD3D11::convertInputLayoutFormatTStoDXGI(Edge::InputLayoutElement
 	}
 }
 
-void EdgeD3D11::convertInputLayoutTStoD3D11(const Edge::InputLayoutDesc& desc,
+void EdgeD3D11::ConvertEdgeInputLayoutToD3D11(const Edge::InputLayoutDesc& desc,
                                            std::vector<D3D11_INPUT_ELEMENT_DESC>& d3d11Descs)
 {
 	const size_t elementsCount = desc.m_elements.size();
@@ -453,10 +453,10 @@ void EdgeD3D11::convertInputLayoutTStoD3D11(const Edge::InputLayoutDesc& desc,
 		D3D11_INPUT_ELEMENT_DESC& d3d11ElementDesc = d3d11Descs[elementIndex];
 		d3d11ElementDesc.SemanticName = elementDesc.m_semanticName;
 		d3d11ElementDesc.SemanticIndex = elementDesc.m_index;
-		d3d11ElementDesc.Format = convertInputLayoutFormatTStoDXGI(elementDesc.m_type, elementDesc.m_componentsCount);
+		d3d11ElementDesc.Format = ConvertEdgeInputLayoutFormatToDxgi(elementDesc.m_type, elementDesc.m_componentsCount);
 		d3d11ElementDesc.InputSlot = elementDesc.m_slot;
 		d3d11ElementDesc.AlignedByteOffset = elementDesc.m_offset;
-		d3d11ElementDesc.InputSlotClass = convertInputLayoutBindingTypeTStoD3D11(elementBindingDesc.m_type);
+		d3d11ElementDesc.InputSlotClass = ConvertEdgeInputLayoutBindingTypeToD3D11(elementBindingDesc.m_type);
 		d3d11ElementDesc.InstanceDataStepRate = elementBindingDesc.m_type == Edge::InputLayoutBindingType::InstanceBinding ? 1 : 0;
 	}
 }

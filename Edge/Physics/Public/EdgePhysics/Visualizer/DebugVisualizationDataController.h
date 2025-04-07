@@ -19,8 +19,12 @@ namespace Edge
 			FloatVector3 m_position;
 			NormalizedColorRGB m_color;
 
-			PointData(const FloatVector3& position, const NormalizedColorRGB& color)
-				: m_position(position), m_color(color) {}
+			PointData(
+				const FloatVector3& position,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_color(color) {}
 		};
 
 		struct LineData final
@@ -29,8 +33,14 @@ namespace Edge
 			FloatVector3 m_position2;
 			NormalizedColorRGB m_color;
 
-			LineData(const FloatVector3& position1, const FloatVector3& position2, const NormalizedColorRGB& color)
-				: m_position1(position1), m_position2(position2), m_color(color) {}
+			LineData(
+				const FloatVector3& position1,
+				const FloatVector3& position2,
+				const NormalizedColorRGB& color
+			)
+				: m_position1(position1),
+				  m_position2(position2),
+				  m_color(color) {}
 		};
 
 		struct ArrowData final
@@ -40,8 +50,16 @@ namespace Edge
 			NormalizedColorRGB m_color;
 			float m_size;
 
-			ArrowData(const FloatVector3& position, const FloatVector3& direction, float size, const NormalizedColorRGB& color)
-				: m_position(position), m_direction(direction), m_color(color), m_size(size) {}
+			ArrowData(
+				const FloatVector3& position,
+				const FloatVector3& direction,
+				float size,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_direction(direction),
+				  m_color(color),
+				  m_size(size) {}
 		};
 
 		struct PolygonData final
@@ -51,8 +69,16 @@ namespace Edge
 			FloatVector3 m_position3;
 			NormalizedColorRGB m_color;
 
-			PolygonData(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color)
-				: m_position1(position1), m_position2(position2), m_position3(position3), m_color(color) {}
+			PolygonData(
+				const FloatVector3& position1,
+				const FloatVector3& position2,
+				const FloatVector3& position3,
+				const NormalizedColorRGB& color
+			)
+				: m_position1(position1),
+				  m_position2(position2),
+				  m_position3(position3),
+				  m_color(color) {}
 		};
 
 		struct PlaneData final
@@ -63,10 +89,18 @@ namespace Edge
 			NormalizedColorRGB m_color;
 			FloatVector2 m_size;
 
-			PlaneData(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& directionRight,
-				const FloatVector2& size, const NormalizedColorRGB& color)
-				: m_position(position), m_normal(normal), m_directionRight(directionRight),
-				m_size(size), m_color(color) {}
+			PlaneData(
+				const FloatVector3& position,
+				const FloatVector3& normal,
+				const FloatVector3& directionRight,
+				const FloatVector2& size,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_normal(normal),
+				  m_directionRight(directionRight),
+				  m_color(color),
+				  m_size(size) {}
 		};
 
 		struct BoxData final
@@ -74,8 +108,12 @@ namespace Edge
 			Transform m_transform;
 			NormalizedColorRGB m_color;
 
-			BoxData(const Transform& transform, const NormalizedColorRGB& color)
-				: m_transform(transform), m_color(color) {}
+			BoxData(
+				const Transform& transform,
+				const NormalizedColorRGB& color
+			)
+				: m_transform(transform),
+				  m_color(color) {}
 		};
 
 		struct SphereData final
@@ -86,10 +124,81 @@ namespace Edge
 			NormalizedColorRGB m_color;
 			float m_radius;
 
-			SphereData(const FloatVector3& position, const FloatVector3& directionForward,
-				const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color)
-				: m_position(position), m_directionForward(directionForward),
-				m_directionUp(directionUp), m_color(color), m_radius(radius) {}
+			SphereData(
+				const FloatVector3& position,
+				const FloatVector3& directionForward,
+				const FloatVector3& directionUp,
+				float radius,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_directionForward(directionForward),
+				  m_directionUp(directionUp),
+				  m_color(color),
+				  m_radius(radius) {}
+		};
+
+		struct WorldTextData final
+		{
+			FloatVector3 m_position;
+			FloatVector3 m_directionForward;
+			FloatVector3 m_directionUp;
+			NormalizedColorRGB m_color;
+			std::string m_text;
+			float m_textHeight;
+
+			WorldTextData(
+				const FloatVector3& position,
+				const FloatVector3& directionForward,
+				const FloatVector3& directionUp,
+				const std::string& text,
+				float textHeight,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_directionForward(directionForward),
+				  m_directionUp(directionUp),
+				  m_color(color),
+				  m_text(text),
+				  m_textHeight(textHeight) {}
+		};
+
+		struct BillboardWorldTextData final
+		{
+			FloatVector3 m_position;
+			NormalizedColorRGB m_color;
+			std::string m_text;
+			uint32_t m_textHeight;
+
+			BillboardWorldTextData(
+				const FloatVector3& position,
+				const std::string& text,
+				uint32_t textHeight,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_color(color),
+				  m_text(text),
+				  m_textHeight(textHeight) {}
+		};
+
+		struct ScreenTextData final
+		{
+			UInt32Vector2 m_position;
+			NormalizedColorRGB m_color;
+			std::string m_text;
+			uint32_t m_textHeight;
+
+			ScreenTextData(
+				const UInt32Vector2& position,
+				const std::string& text,
+				uint32_t textHeight,
+				const NormalizedColorRGB& color
+			)
+				: m_position(position),
+				  m_color(color),
+				  m_text(text),
+				  m_textHeight(textHeight) {}
 		};
 
 	private:
@@ -100,6 +209,9 @@ namespace Edge
 		using PlaneContainer = std::vector<PlaneData>;
 		using BoxContainer = std::vector<BoxData>;
 		using SphereContainer = std::vector<SphereData>;
+		using WorldTextContainer = std::vector<WorldTextData>;
+		using BillboardWorldTextContainer = std::vector<BillboardWorldTextData>;
+		using ScreenTextContainer = std::vector<ScreenTextData>;
 
 		PointContainer m_points;
 		LineContainer m_lines;
@@ -112,6 +224,9 @@ namespace Edge
 		BoxContainer m_wireframeBoxes;
 		SphereContainer m_spheres;
 		SphereContainer m_wireframeSpheres;
+		WorldTextContainer m_worldTexts;
+		BillboardWorldTextContainer m_billboardWorldTexts;
+		ScreenTextContainer m_screenTexts;
 
 		mutable SharedMutex m_pointMutex;
 		mutable SharedMutex m_lineMutex;
@@ -124,6 +239,9 @@ namespace Edge
 		mutable SharedMutex m_wireframeBoxMutex;
 		mutable SharedMutex m_sphereMutex;
 		mutable SharedMutex m_wireframeSphereMutex;
+		mutable SharedMutex m_worldTextMutex;
+		mutable SharedMutex m_billboardWorldTextMutex;
+		mutable SharedMutex m_screenTextMutex;
 
 	public:
 		DebugVisualizationDataController() = default;
@@ -132,25 +250,82 @@ namespace Edge
 		void addLine(const FloatVector3& position1, const FloatVector3& position2, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addArrow(const FloatVector3& position, const FloatVector3& direction, float size, const NormalizedColorRGB& color = NormalizedColorWhite);
 
-		void addPolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color = NormalizedColorWhite);
-		void addWireframePolygon(const FloatVector3& position1, const FloatVector3& position2, const FloatVector3& position3, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addPolygon(
+			const FloatVector3& position1,
+			const FloatVector3& position2,
+			const FloatVector3& position3,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
+		void addWireframePolygon(
+			const FloatVector3& position1,
+			const FloatVector3& position2,
+			const FloatVector3& position3,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
 
-		void addPlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color = NormalizedColorWhite);
-		void addWireframePlane(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& dir, const FloatVector2& size, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addPlane(
+			const FloatVector3& position,
+			const FloatVector3& normal,
+			const FloatVector3& dir,
+			const FloatVector2& size,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
+		void addWireframePlane(
+			const FloatVector3& position,
+			const FloatVector3& normal,
+			const FloatVector3& dir,
+			const FloatVector2& size,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
 
 		void addBox(const Transform& transform, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addBox(const Transform& transform, const FloatVector3& size, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeBox(const Transform& transform, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeBox(const Transform& transform, const FloatVector3& size, const NormalizedColorRGB& color = NormalizedColorWhite);
 
-		void addSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addSphere(
+			const FloatVector3& position,
+			const FloatVector3& directionForward,
+			const FloatVector3& directionUp,
+			float radius,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
 		void addSphere(const FloatVector3& position, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addSphere(const Transform& transform, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
-		void addWireframeSphere(const FloatVector3& position, const FloatVector3& directionForward, const FloatVector3& directionUp, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addWireframeSphere(
+			const FloatVector3& position,
+			const FloatVector3& directionForward,
+			const FloatVector3& directionUp,
+			float radius,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
 		void addWireframeSphere(const FloatVector3& position, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 		void addWireframeSphere(const Transform& transform, float radius, const NormalizedColorRGB& color = NormalizedColorWhite);
 
-		void addGrid(const FloatVector3& position, const FloatVector3& normal, const FloatVector3& directionRight, const FloatVector2& areaSize, const UInt32Vector2& gridNums, const NormalizedColorRGB& color = NormalizedColorWhite);
+		void addGrid(
+			const FloatVector3& position,
+			const FloatVector3& normal,
+			const FloatVector3& directionRight,
+			const FloatVector2& areaSize,
+			const UInt32Vector2& gridNums,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
+
+		void addWorldText(
+			const FloatVector3& position,
+			const FloatVector3& directionForward,
+			const FloatVector3& directionUp,
+			const std::string& text,
+			float textHeight,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
+		void addBillboardWorldText(
+			const FloatVector3& position,
+			const std::string& text,
+			float textHeight,
+			const NormalizedColorRGB& color = NormalizedColorWhite
+		);
+		void addScreenText(const UInt32Vector2& position, const std::string& text, uint32_t textHeight, const NormalizedColorRGB& color = NormalizedColorWhite);
 
 		uint32_t getPointCount() const;
 		const PointData& getPoint(uint32_t index) const;
@@ -184,6 +359,15 @@ namespace Edge
 
 		uint32_t getWireframeSphereCount() const;
 		const SphereData& getWireframeSphere(uint32_t index) const;
+
+		uint32_t getWorldTextCount() const;
+		const WorldTextData& getWorldTextData(uint32_t index) const;
+
+		uint32_t getBillboardWorldTextCount() const;
+		const BillboardWorldTextData& getBillboardWorldTextData(uint32_t index) const;
+
+		uint32_t getScreenTextCount() const;
+		const ScreenTextData& getScreenTextData(uint32_t index) const;
 
 		void clear();
 	};

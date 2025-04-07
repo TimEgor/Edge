@@ -23,5 +23,7 @@ namespace EdgeD3D11
 		virtual void present() override;
 
 		virtual void* getNativeHandle() const override { return m_dxgiSwapChain.Get(); }
+
+		virtual void setName(const char* name) override;
 	};
 }

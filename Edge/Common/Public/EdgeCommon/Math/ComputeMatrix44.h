@@ -148,6 +148,8 @@ namespace Edge
 	ComputeMatrix4x4Base<T> RotationEulerComputeMatrix4x4(const ComputeVector3Base<T>& vector);
 	template <typename T>
 	ComputeMatrix4x4Base<T> RotationEulerComputeMatrix4x4(T pitch, T yaw, T roll);
+	template <typename T>
+	ComputeMatrix4x4Base<T> ScaleComputeMatrix4x4(const ComputeVector3Base<T>& scale);
 
 	template <typename T>
 	ComputeMatrix4x4Base<T> InvertComputeMatrix4x4(const ComputeMatrix4x4Base<T>& matrix);

@@ -31,6 +31,17 @@ namespace Edge
 		GRAPHIC_RESOURCE_ACCESS_GPU_WRITE = 1 << 3
 	};
 
+	struct InitialGraphicResourceData final
+	{
+		const void* m_data = nullptr;
+		uint32_t m_dataSize = 0;
+
+		InitialGraphicResourceData(const void* data, uint32_t dataSize)
+			: m_data(data), m_dataSize(dataSize) {}
+
+		bool isValid() const { return m_data && m_dataSize; }
+	};
+
 	using GraphicResourceType = HashedType::Type;
 
 	class GraphicResource : public GraphicObject, public HashedType
