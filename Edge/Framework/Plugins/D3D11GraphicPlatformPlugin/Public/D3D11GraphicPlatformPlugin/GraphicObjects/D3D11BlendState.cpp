@@ -11,17 +11,6 @@ EdgeD3D11::D3D11BlendState::D3D11BlendState(Edge::BlendMode mode, const D3D11Dev
 	case Edge::BlendMode::Off:
 		d3d11BlendDesc.RenderTarget[0].BlendEnable = FALSE;
 		break;
-	case Edge::BlendMode::AlphaTest:
-		d3d11BlendDesc.AlphaToCoverageEnable = TRUE;
-		d3d11BlendDesc.RenderTarget[0].BlendEnable = TRUE;
-		d3d11BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		d3d11BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		d3d11BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		d3d11BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-		d3d11BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		d3d11BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		d3d11BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		break;
 	case Edge::BlendMode::AlphaBlend:
 		d3d11BlendDesc.RenderTarget[0].BlendEnable = TRUE;
 		d3d11BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -30,7 +19,7 @@ EdgeD3D11::D3D11BlendState::D3D11BlendState(Edge::BlendMode mode, const D3D11Dev
 		d3d11BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
 		d3d11BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		d3d11BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		d3d11BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE;
+		d3d11BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		break;
 	}
 

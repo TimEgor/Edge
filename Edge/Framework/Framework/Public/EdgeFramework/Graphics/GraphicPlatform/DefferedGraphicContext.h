@@ -17,6 +17,7 @@ namespace Edge
 	class RasterizationState;
 	class SamplerState;
 	class BlendState;
+	class DepthStencilState;
 
 	enum class PrimitiveTopology
 	{
@@ -99,6 +100,7 @@ namespace Edge
 
 		virtual void setSamplerState(const SamplerState& state, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
 		virtual void setBlendState(const BlendState& state) = 0;
+		virtual void setDepthStencilState(const DepthStencilState& state) = 0;
 
 		virtual void setConstantBuffer(const GPUBuffer& buffer, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
 

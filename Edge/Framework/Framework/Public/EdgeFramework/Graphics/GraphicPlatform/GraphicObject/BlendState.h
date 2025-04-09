@@ -10,7 +10,6 @@ namespace Edge
 	enum class BlendMode
 	{
 		Off,
-		AlphaTest,
 		AlphaBlend
 	};
 

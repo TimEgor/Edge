@@ -1048,7 +1048,6 @@ bool EdgeDefRender::DefaultRenderer::init()
 	m_graphicContext = device.createDeferredGraphicContext();
 	EDGE_CHECK_INITIALIZATION(m_graphicContext);
 
-
 	m_baseRasterizationState = device.createRasterizationState(Edge::RasterizationStateDesc{});
 	EDGE_CHECK_INITIALIZATION(m_baseRasterizationState);
 
@@ -1057,6 +1056,12 @@ bool EdgeDefRender::DefaultRenderer::init()
 
 	m_alphaBlendState = device.createBlendState(Edge::BlendMode::AlphaBlend);
 	EDGE_CHECK_INITIALIZATION(m_alphaBlendState);
+
+	m_depthTestEnableState = device.createDepthStencilState(true);
+	EDGE_CHECK_INITIALIZATION(m_depthTestEnableState);
+
+	m_depthTestDisableState = device.createDepthStencilState(false);
+	EDGE_CHECK_INITIALIZATION(m_depthTestDisableState);
 
 	Edge::GPUBufferDesc cameraBufferDesc{};
 	cameraBufferDesc.m_size = sizeof(CameraShaderData);
@@ -1984,8 +1989,10 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	m_graphicContext->clearRenderTarget(targetTexture, Edge::FloatVector4(0.5f, 0.5f, 0.5f, 1.0f));
 	m_graphicContext->clearDepthStencil(*m_depthBuffer);
 
-	//
 	m_graphicContext->setBlendState(*m_alphaBlendState);
+
+	//
+	m_graphicContext->setDepthStencilState(*m_depthTestEnableState);
 
 	drawPoints();
 	drawLines();
@@ -2002,6 +2009,8 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	drawWireframeSpheres();
 
 	//
+	m_graphicContext->setDepthStencilState(*m_depthTestDisableState);
+
 	drawWorldTexts();
 
 	Edge::GraphicDevice& device = Edge::FrameworkCore::getInstance().getApplication().getGraphicPlatform().getGraphicDevice();

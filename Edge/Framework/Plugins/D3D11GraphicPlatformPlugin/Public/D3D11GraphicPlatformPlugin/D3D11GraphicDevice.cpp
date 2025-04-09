@@ -15,6 +15,7 @@
 #include "D3D11DeferredContext.h"
 
 #include "d3dcompiler.h"
+#include "GraphicObjects/D3D11DepthStencilState.h"
 
 EdgeD3D11::D3D11GraphicDevice::D3D11GraphicDevice()
 	: GraphicDevice()
@@ -236,6 +237,11 @@ Edge::SamplerState* EdgeD3D11::D3D11GraphicDevice::createSamplerState()
 Edge::BlendState* EdgeD3D11::D3D11GraphicDevice::createBlendState(Edge::BlendMode mode)
 {
 	return new D3D11BlendState(mode, m_d3d11Device);
+}
+
+Edge::DepthStencilState* EdgeD3D11::D3D11GraphicDevice::createDepthStencilState(bool depthTestEnable)
+{
+	return new D3D11DepthStencilState(depthTestEnable, m_d3d11Device);
 }
 
 void EdgeD3D11::D3D11GraphicDevice::executeGraphicContext(const Edge::DeferredGraphicContext& context)

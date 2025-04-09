@@ -30,6 +30,7 @@ namespace EdgeD3D11
 
 		virtual void setSamplerState(const Edge::SamplerState& state, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
 		virtual void setBlendState(const Edge::BlendState& state) override;
+		virtual void setDepthStencilState(const Edge::DepthStencilState& state) override;
 
 		virtual void setConstantBuffer(const Edge::GPUBuffer& buffer, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
 

@@ -21,6 +21,7 @@ namespace Edge {
 	class RasterizationState;
 	class SamplerState;
 	class BlendState;
+	class DepthStencilState;
 }
 
 namespace EdgeDefRender
@@ -59,6 +60,8 @@ namespace EdgeDefRender
 		Edge::RasterizationState* m_baseRasterizationState = nullptr;
 		Edge::SamplerState* m_baseSamplerState = nullptr;
 		Edge::BlendState* m_alphaBlendState = nullptr;
+		Edge::DepthStencilState* m_depthTestEnableState = nullptr;
+		Edge::DepthStencilState* m_depthTestDisableState = nullptr;
 		Edge::Texture2D* m_depthBuffer = nullptr;
 		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
 

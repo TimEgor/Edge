@@ -48,6 +48,7 @@ namespace EdgeD3D11
 		virtual Edge::RasterizationState* createRasterizationState(const Edge::RasterizationStateDesc& desc) override;
 		virtual Edge::SamplerState* createSamplerState() override;
 		virtual Edge::BlendState* createBlendState(Edge::BlendMode mode) override;
+		virtual Edge::DepthStencilState* createDepthStencilState(bool depthTestEnable) override;
 
 		D3D11DeviceComPtr getD3D11Device() const { return m_d3d11Device; }
 	};
