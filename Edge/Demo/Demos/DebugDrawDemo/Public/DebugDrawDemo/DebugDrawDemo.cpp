@@ -206,7 +206,7 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 		Edge::FloatVector3(2.0f, 6.0f, 0.0f),
 		Edge::FloatVector3UnitZ,
 		Edge::FloatVector3UnitY,
-		"Test",
+		"Red",
 		1.0f,
 		Edge::NormalizedColorRed
 	);
@@ -214,7 +214,7 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 		Edge::FloatVector3(2.0f, 8.0f, 0.0f),
 		Edge::FloatVector3UnitZ,
 		Edge::FloatVector3UnitY,
-		"Test",
+		"Green",
 		1.0f,
 		Edge::NormalizedColorGreen
 	);
@@ -222,8 +222,15 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 		Edge::FloatVector3(2.0f, 10.0f, 0.0f),
 		Edge::FloatVector3UnitZ,
 		Edge::FloatVector3UnitY,
-		"Test",
+		"Blue",
 		1.0f,
 		Edge::NormalizedColorBlue
+	);
+	m_debugVisualizationDataController->addWorldText(
+		Edge::FloatVector3(2.0f, 12.0f, 0.0f),
+		Edge::FloatVector3UnitZ,
+		Edge::FloatVector3UnitY,
+		"(Te) The quick brown fox jumps over the lazy dog",
+		1.0f
 	);
 }

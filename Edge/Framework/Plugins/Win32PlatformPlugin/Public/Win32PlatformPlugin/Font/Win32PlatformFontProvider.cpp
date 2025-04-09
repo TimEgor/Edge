@@ -109,10 +109,14 @@ EdgeWin32::Win32PlatformFontProvider::GlyphDataCollection EdgeWin32::Win32Platfo
 						}
 					}
 
+					static uint32_t glyphSpacing = 2;
+					totalWidth += glyphSpacing * (GlyphDataCollection::GlyphCount - 1);
+
 					result.m_atlasHeight = totalHeight;
 					result.m_atlasWidth = totalWidth;
 					result.m_dataSize = totalHeight * totalWidth;
 					result.m_data = new uint8_t[result.m_dataSize];
+					memset(result.m_data, 0, result.m_dataSize);
 
 					uint32_t offsetX = 0;
 
@@ -134,7 +138,11 @@ EdgeWin32::Win32PlatformFontProvider::GlyphDataCollection EdgeWin32::Win32Platfo
 								const uint8_t* charDataLineScr = charData + offsetY * srcPitch;
 								uint8_t* charDataLineDst = result.m_data + offsetY * result.m_atlasWidth + offsetX;
 
-								memcpy(charDataLineDst, charDataLineScr, charMetrics.gmBlackBoxX);
+								for (uint32_t lineTexelIndex = 0; lineTexelIndex < charMetrics.gmBlackBoxX; ++lineTexelIndex)
+								{
+									const uint32_t convertedValue = charDataLineScr[lineTexelIndex] * 4;
+									charDataLineDst[lineTexelIndex] = static_cast<uint8_t>(std::clamp(convertedValue, 0u, 255u));
+								}
 							}
 
 							delete[] charData;
@@ -143,7 +151,7 @@ EdgeWin32::Win32PlatformFontProvider::GlyphDataCollection EdgeWin32::Win32Platfo
 						const uint32_t glyphIndex = charIndex - GlyphDataCollection::BeginCharIndex;
 						result.m_x[glyphIndex] = offsetX;
 
-						offsetX += charMetrics.gmBlackBoxX;
+						offsetX += charMetrics.gmBlackBoxX + glyphSpacing;
 					}
 				}
 			}

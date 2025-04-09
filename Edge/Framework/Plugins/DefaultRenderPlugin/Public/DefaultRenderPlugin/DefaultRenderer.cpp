@@ -10,6 +10,7 @@
 #include "EdgeFramework/Graphics/GraphicPlatform/DefferedGraphicContext.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicDevice.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicPlatform.h"
+#include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/DepthStencilState.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/GPUBuffer.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/InputLayout.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/RasterizationState.h"
@@ -1118,6 +1119,8 @@ void EdgeDefRender::DefaultRenderer::release()
 	EDGE_SAFE_DESTROY(m_baseRasterizationState);
 	EDGE_SAFE_DESTROY(m_baseSamplerState);
 	EDGE_SAFE_DESTROY(m_alphaBlendState);
+	EDGE_SAFE_DESTROY(m_depthTestEnableState);
+	EDGE_SAFE_DESTROY(m_depthTestDisableState);
 	EDGE_SAFE_DESTROY(m_depthBuffer);
 	EDGE_SAFE_DESTROY(m_cameraTransformBuffer);
 }
