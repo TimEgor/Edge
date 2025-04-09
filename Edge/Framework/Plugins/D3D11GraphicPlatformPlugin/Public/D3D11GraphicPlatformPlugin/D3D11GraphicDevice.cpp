@@ -4,16 +4,17 @@
 #include "EdgeCommon/String/Format.h"
 #include "EdgeCommon/String/StringConverter.h"
 
-#include "GraphicObjects/D3D11SwapChain.h"
-#include "GraphicObjects/D3D11Shaders.h"
-
-#include "D3D11DeferredContext.h"
-
-#include "d3dcompiler.h"
+#include "GraphicObjects/D3D11BlendState.h"
 #include "GraphicObjects/D3D11GPUBuffer.h"
 #include "GraphicObjects/D3D11InputLayout.h"
 #include "GraphicObjects/D3D11RasterizationState.h"
 #include "GraphicObjects/D3D11SamplerState.h"
+#include "GraphicObjects/D3D11Shaders.h"
+#include "GraphicObjects/D3D11SwapChain.h"
+
+#include "D3D11DeferredContext.h"
+
+#include "d3dcompiler.h"
 
 EdgeD3D11::D3D11GraphicDevice::D3D11GraphicDevice()
 	: GraphicDevice()
@@ -230,6 +231,11 @@ Edge::RasterizationState* EdgeD3D11::D3D11GraphicDevice::createRasterizationStat
 Edge::SamplerState* EdgeD3D11::D3D11GraphicDevice::createSamplerState()
 {
 	return new D3D11SamplerState(m_d3d11Device);
+}
+
+Edge::BlendState* EdgeD3D11::D3D11GraphicDevice::createBlendState(Edge::BlendMode mode)
+{
+	return new D3D11BlendState(mode, m_d3d11Device);
 }
 
 void EdgeD3D11::D3D11GraphicDevice::executeGraphicContext(const Edge::DeferredGraphicContext& context)

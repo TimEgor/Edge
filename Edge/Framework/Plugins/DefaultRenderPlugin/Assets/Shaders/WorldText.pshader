@@ -11,5 +11,5 @@ struct PixelInput
 float4 PS(PixelInput input) : SV_Target0
 {
     const float alpha = glyphAtlasTexture.Sample(textureSampler, input.uv).r;
-	return float4(input.color.xyz * alpha, alpha);
+	return float4(input.color.xyz, alpha);
 }

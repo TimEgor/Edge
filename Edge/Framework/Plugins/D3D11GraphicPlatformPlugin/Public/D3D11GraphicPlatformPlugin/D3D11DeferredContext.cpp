@@ -1,5 +1,6 @@
 #include "D3D11DeferredContext.h"
 
+#include "GraphicObjects/D3D11BlendState.h"
 #include "GraphicObjects/D3D11GPUBuffer.h"
 #include "GraphicObjects/D3D11InputLayout.h"
 #include "GraphicObjects/D3D11RasterizationState.h"
@@ -116,6 +117,13 @@ void EdgeD3D11::D3D11DeferredGraphicContext::setSamplerState(
 	{
 		m_context->PSSetSamplers(slot, 1, d3d11SamplerState.getStateHandle().GetAddressOf());
 	}
+}
+
+void EdgeD3D11::D3D11DeferredGraphicContext::setBlendState(const Edge::BlendState& state)
+{
+	const D3D11BlendState& d3d11BlendState = static_cast<const D3D11BlendState&>(state);
+
+	m_context->OMSetBlendState(d3d11BlendState.getStateHandle().Get(), nullptr, UINT_MAX);
 }
 
 void EdgeD3D11::D3D11DeferredGraphicContext::setConstantBuffer(

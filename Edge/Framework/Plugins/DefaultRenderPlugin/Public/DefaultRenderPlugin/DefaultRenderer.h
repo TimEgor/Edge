@@ -5,12 +5,9 @@
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Texture.h"
 #include "EdgeFramework/Graphics/Render/Renderer.h"
 
-#include "RenderDatas.h"
 #include "Font/FontController.h"
 
-namespace EdgeDefRender {
-	class FontController;
-}
+#include "RenderDatas.h"
 
 namespace Edge {
 	class AssetsDirectoryController;
@@ -23,6 +20,7 @@ namespace Edge {
 
 	class RasterizationState;
 	class SamplerState;
+	class BlendState;
 }
 
 namespace EdgeDefRender
@@ -60,6 +58,7 @@ namespace EdgeDefRender
 
 		Edge::RasterizationState* m_baseRasterizationState = nullptr;
 		Edge::SamplerState* m_baseSamplerState = nullptr;
+		Edge::BlendState* m_alphaBlendState = nullptr;
 		Edge::Texture2D* m_depthBuffer = nullptr;
 		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
 

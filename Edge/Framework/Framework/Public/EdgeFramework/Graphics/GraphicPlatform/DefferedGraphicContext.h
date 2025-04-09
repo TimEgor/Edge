@@ -16,6 +16,7 @@ namespace Edge
 
 	class RasterizationState;
 	class SamplerState;
+	class BlendState;
 
 	enum class PrimitiveTopology
 	{
@@ -36,8 +37,10 @@ namespace Edge
 		uint32_t m_bottom = 0;
 
 		Scissors() = default;
+
 		Scissors(uint32_t right, uint32_t bottom)
-			: m_right(right), m_bottom(bottom) {}
+			: m_right(right),
+			  m_bottom(bottom) {}
 	};
 
 	struct Viewport final
@@ -48,8 +51,10 @@ namespace Edge
 		uint32_t m_y = 0;
 
 		Viewport() = default;
+
 		Viewport(uint32_t width, uint32_t height)
-			: m_width(width), m_height(height) {}
+			: m_width(width),
+			  m_height(height) {}
 	};
 
 	enum GraphicResourceMappingType
@@ -93,6 +98,7 @@ namespace Edge
 		virtual void setRasterizationState(const RasterizationState& state) = 0;
 
 		virtual void setSamplerState(const SamplerState& state, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
+		virtual void setBlendState(const BlendState& state) = 0;
 
 		virtual void setConstantBuffer(const GPUBuffer& buffer, uint32_t slot, GraphicContextBindingShaderStage shaderStages) = 0;
 
@@ -114,8 +120,12 @@ namespace Edge
 		virtual void prepareMatrixForShader(const FloatMatrix4x4& originalMatrix, FloatMatrix4x4& destinationMatrix) = 0;
 		virtual void prepareMatrixForShader(FloatMatrix4x4& matrix) = 0;
 
-		virtual void prepareViewTransform(const FloatVector3& viewPosition, const FloatVector3& viewDirection,
-			const FloatVector3& upDirection, FloatMatrix4x4& destinationMatrix) = 0;
+		virtual void prepareViewTransform(
+			const FloatVector3& viewPosition,
+			const FloatVector3& viewDirection,
+			const FloatVector3& upDirection,
+			FloatMatrix4x4& destinationMatrix
+		) = 0;
 		virtual void preparePerspectiveProjTransform(float angle, float aspectRatio, float nearPlaneZ, float farPlaneZ, FloatMatrix4x4& destinationMatrix) = 0;
 	};
 }

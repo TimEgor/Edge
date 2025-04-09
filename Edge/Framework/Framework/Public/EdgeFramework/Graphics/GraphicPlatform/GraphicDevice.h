@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GraphicObject/BlendState.h"
+
 namespace Edge
 {
 	class FileName;
@@ -58,5 +60,6 @@ namespace Edge
 
 		virtual RasterizationState* createRasterizationState(const RasterizationStateDesc& desc) = 0;
 		virtual SamplerState* createSamplerState() = 0;
+		virtual BlendState* createBlendState(BlendMode mode) = 0;
 	};
 }

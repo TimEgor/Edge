@@ -13,6 +13,7 @@
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/GPUBuffer.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/InputLayout.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/RasterizationState.h"
+#include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/SamplerState.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Shader.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Texture.h"
 #include "EdgeFramework/Platform/Platform.h"
@@ -1054,6 +1055,9 @@ bool EdgeDefRender::DefaultRenderer::init()
 	m_baseSamplerState = device.createSamplerState();
 	EDGE_CHECK_INITIALIZATION(m_baseSamplerState);
 
+	m_alphaBlendState = device.createBlendState(Edge::BlendMode::AlphaBlend);
+	EDGE_CHECK_INITIALIZATION(m_alphaBlendState);
+
 	Edge::GPUBufferDesc cameraBufferDesc{};
 	cameraBufferDesc.m_size = sizeof(CameraShaderData);
 	cameraBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_CONSTANT_BUFFER;
@@ -1107,6 +1111,8 @@ void EdgeDefRender::DefaultRenderer::release()
 
 	EDGE_SAFE_DESTROY(m_graphicContext);
 	EDGE_SAFE_DESTROY(m_baseRasterizationState);
+	EDGE_SAFE_DESTROY(m_baseSamplerState);
+	EDGE_SAFE_DESTROY(m_alphaBlendState);
 	EDGE_SAFE_DESTROY(m_depthBuffer);
 	EDGE_SAFE_DESTROY(m_cameraTransformBuffer);
 }
@@ -1979,6 +1985,7 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	m_graphicContext->clearDepthStencil(*m_depthBuffer);
 
 	//
+	m_graphicContext->setBlendState(*m_alphaBlendState);
 
 	drawPoints();
 	drawLines();
@@ -1994,6 +2001,7 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	drawSpheres();
 	drawWireframeSpheres();
 
+	//
 	drawWorldTexts();
 
 	Edge::GraphicDevice& device = Edge::FrameworkCore::getInstance().getApplication().getGraphicPlatform().getGraphicDevice();

@@ -29,6 +29,7 @@ namespace EdgeD3D11
 		virtual void setRasterizationState(const Edge::RasterizationState& state) override;
 
 		virtual void setSamplerState(const Edge::SamplerState& state, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
+		virtual void setBlendState(const Edge::BlendState& state) override;
 
 		virtual void setConstantBuffer(const Edge::GPUBuffer& buffer, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
 
