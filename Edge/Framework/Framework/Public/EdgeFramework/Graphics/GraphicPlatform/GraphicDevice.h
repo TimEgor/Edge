@@ -32,6 +32,7 @@ namespace Edge
 
 	class SamplerState;
 
+	struct DepthStencilStateDesc;
 	class DepthStencilState;
 
 	class GraphicDevice
@@ -63,6 +64,6 @@ namespace Edge
 		virtual RasterizationState* createRasterizationState(const RasterizationStateDesc& desc) = 0;
 		virtual SamplerState* createSamplerState() = 0;
 		virtual BlendState* createBlendState(BlendMode mode) = 0;
-		virtual DepthStencilState* createDepthStencilState(bool depthTestEnable) = 0;
+		virtual DepthStencilState* createDepthStencilState(const DepthStencilStateDesc& desc) = 0;
 	};
 }

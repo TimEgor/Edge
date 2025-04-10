@@ -102,10 +102,12 @@ EdgeWin32::Win32PlatformFontProvider::GlyphDataCollection EdgeWin32::Win32Platfo
 							totalHeight = std::max(totalHeight, charMetrics.gmBlackBoxY);
 							totalWidth += charMetrics.gmBlackBoxX;
 							result.m_heights[glyphIndex] = charMetrics.gmBlackBoxY;
+							result.m_offsetY[glyphIndex] = charMetrics.gmptGlyphOrigin.y - charMetrics.gmBlackBoxY;
 						}
 						else
 						{
 							result.m_heights[glyphIndex] = 0;
+							result.m_offsetY[glyphIndex] = 0;
 						}
 					}
 

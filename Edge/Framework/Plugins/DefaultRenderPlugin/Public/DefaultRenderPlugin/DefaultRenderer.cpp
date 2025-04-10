@@ -1058,10 +1058,12 @@ bool EdgeDefRender::DefaultRenderer::init()
 	m_alphaBlendState = device.createBlendState(Edge::BlendMode::AlphaBlend);
 	EDGE_CHECK_INITIALIZATION(m_alphaBlendState);
 
-	m_depthTestEnableState = device.createDepthStencilState(true);
+	Edge::DepthStencilStateDesc depthStencilStateDesc{};
+	m_depthTestEnableState = device.createDepthStencilState(depthStencilStateDesc);
 	EDGE_CHECK_INITIALIZATION(m_depthTestEnableState);
 
-	m_depthTestDisableState = device.createDepthStencilState(false);
+	depthStencilStateDesc.m_depthWrite = false;
+	m_depthTestDisableState = device.createDepthStencilState(depthStencilStateDesc);
 	EDGE_CHECK_INITIALIZATION(m_depthTestDisableState);
 
 	Edge::GPUBufferDesc cameraBufferDesc{};
@@ -1532,9 +1534,11 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(float deltaTime,
 						const float relativeSizeX = static_cast<float>(glyphWidth) / fontHeight;
 						const float relativeSizeY = static_cast<float>(glyphHeight) / fontHeight;
 
+						const float glyphLocalOffsetedY = glyphLocalY + static_cast<float>(m_defaultFont.getGlyphOffsetY(atlasLocalGlyphIndex)) / fontHeight;
+
 						const Edge::FloatVector2 offsetedPosition(
 							glyphLocalX + relativeSizeX,
-							glyphLocalY + relativeSizeY
+							glyphLocalOffsetedY + relativeSizeY
 						);
 
 						const Edge::FloatVector2 uv1(glyphAtlasPosition * invFontAtlasWidth, 0.0f);
@@ -1543,7 +1547,7 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(float deltaTime,
 						WorldTextRenderData::GlyphData* glyphData = glyphDataIter.getCurrentTypedElement<WorldTextRenderData::GlyphData>();
 
 						WorldTextRenderData::VertexData vertex1;
-						(glyphTransform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
+						(glyphTransform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
 						vertex1.m_textureCoord = Edge::FloatVector2(uv1.m_x, uv2.m_y);
 						vertex1.m_color = packedColor;
 
@@ -1553,7 +1557,7 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(float deltaTime,
 						vertex2.m_color = packedColor;
 
 						WorldTextRenderData::VertexData vertex3;
-						(glyphTransform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
+						(glyphTransform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
 						vertex3.m_textureCoord = uv2;
 						vertex3.m_color = packedColor;
 

@@ -11,7 +11,7 @@ namespace EdgeD3D11
 		D3D11DepthStencilStateComPtr m_state;
 
 	public:
-		D3D11DepthStencilState(bool depthTestEnable, const D3D11DeviceComPtr& device);
+		D3D11DepthStencilState(const Edge::DepthStencilStateDesc& desc, const D3D11DeviceComPtr& device);
 
 		const D3D11DepthStencilStateComPtr& getStateHandle() const { return m_state; }
 

@@ -27,6 +27,7 @@ bool EdgeDefRender::Font::init(const Edge::FontProvider::GlyphDataCollection& gl
 
 	memcpy(m_widths, glyphData.m_widths, sizeof(glyphData.m_widths));
 	memcpy(m_heights, glyphData.m_heights, sizeof(glyphData.m_heights));
+	memcpy(m_offsetY, glyphData.m_offsetY, sizeof(glyphData.m_offsetY));
 	memcpy(m_spacing, glyphData.m_spacing, sizeof(glyphData.m_spacing));
 	memcpy(m_x, glyphData.m_x, sizeof(glyphData.m_x));
 
@@ -56,6 +57,11 @@ uint16_t EdgeDefRender::Font::getGlyphWidth(uint32_t index) const
 uint16_t EdgeDefRender::Font::getGlyphHeight(uint32_t index) const
 {
 	return m_heights[index];
+}
+
+int16_t EdgeDefRender::Font::getGlyphOffsetY(uint32_t index) const
+{
+	return m_offsetY[index];
 }
 
 uint16_t EdgeDefRender::Font::getGlyphPairSpacing(uint32_t index1, uint32_t index2) const

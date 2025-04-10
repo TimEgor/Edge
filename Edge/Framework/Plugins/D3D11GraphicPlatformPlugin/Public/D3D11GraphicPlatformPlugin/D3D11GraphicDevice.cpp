@@ -239,9 +239,9 @@ Edge::BlendState* EdgeD3D11::D3D11GraphicDevice::createBlendState(Edge::BlendMod
 	return new D3D11BlendState(mode, m_d3d11Device);
 }
 
-Edge::DepthStencilState* EdgeD3D11::D3D11GraphicDevice::createDepthStencilState(bool depthTestEnable)
+Edge::DepthStencilState* EdgeD3D11::D3D11GraphicDevice::createDepthStencilState(const Edge::DepthStencilStateDesc& desc)
 {
-	return new D3D11DepthStencilState(depthTestEnable, m_d3d11Device);
+	return new D3D11DepthStencilState(desc, m_d3d11Device);
 }
 
 void EdgeD3D11::D3D11GraphicDevice::executeGraphicContext(const Edge::DeferredGraphicContext& context)
