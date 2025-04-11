@@ -22,7 +22,7 @@ namespace EdgeDefRender
 		uint16_t m_widths[GlyphCount];
 		uint16_t m_heights[GlyphCount];
 		int16_t m_offsetY[GlyphCount];
-		uint16_t m_spacing[GlyphCount][GlyphCount];
+		int16_t m_spacing[GlyphCount][GlyphCount];
 		uint16_t m_x[GlyphCount];
 
 	public:
@@ -39,7 +39,7 @@ namespace EdgeDefRender
 		uint16_t getGlyphWidth(uint32_t index) const;
 		uint16_t getGlyphHeight(uint32_t index) const;
 		int16_t getGlyphOffsetY(uint32_t index) const;
-		uint16_t getGlyphPairSpacing(uint32_t index1, uint32_t index2) const;
+		int16_t getGlyphPairSpacing(uint32_t index1, uint32_t index2) const;
 		uint16_t getGlyphPosition(uint32_t index) const;
 	};
 }

@@ -230,7 +230,15 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 		Edge::FloatVector3(2.0f, 12.0f, 0.0f),
 		Edge::FloatVector3UnitZ,
 		Edge::FloatVector3UnitY,
-		"(Te) The quick brown fox jumps over the lazy dog",
+		"The quick brown fox jumps over the lazy dog",
 		1.0f
+	);
+	m_debugVisualizationDataController->addWorldText(
+		Edge::FloatVector3(6.0f, 10.0f, 0.0f),
+		Edge::FloatVector3UnitZ,
+		Edge::FloatVector3UnitY,
+		"New line\n\tand tab",
+		1.0f,
+		Edge::NormalizedColorOrange
 	);
 }

@@ -64,7 +64,7 @@ int16_t EdgeDefRender::Font::getGlyphOffsetY(uint32_t index) const
 	return m_offsetY[index];
 }
 
-uint16_t EdgeDefRender::Font::getGlyphPairSpacing(uint32_t index1, uint32_t index2) const
+int16_t EdgeDefRender::Font::getGlyphPairSpacing(uint32_t index1, uint32_t index2) const
 {
 	return m_spacing[index1][index2];
 }

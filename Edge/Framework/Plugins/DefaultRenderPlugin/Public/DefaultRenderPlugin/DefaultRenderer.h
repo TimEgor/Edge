@@ -139,8 +139,8 @@ namespace EdgeDefRender
 
 		void drawWorldTexts();
 
-		static constexpr char DefaultFontName[] = "Arial";
-		static constexpr uint32_t DefaultFontHeight = 24;
+		static constexpr char DefaultFontName[] = "Consolas";
+		static constexpr uint32_t DefaultFontHeight = 50;
 		static Edge::FloatComputeVector3 CalculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection);
 
 	public:

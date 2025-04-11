@@ -24,7 +24,7 @@ namespace Edge
 			uint16_t m_widths[GlyphCount];
 			uint16_t m_heights[GlyphCount];
 			int16_t m_offsetY[GlyphCount];
-			uint16_t m_spacing[GlyphCount][GlyphCount];
+			int16_t m_spacing[GlyphCount][GlyphCount];
 			uint16_t m_x[GlyphCount];
 		};
 

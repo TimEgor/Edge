@@ -1524,9 +1524,11 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(float deltaTime,
 				for (uint32_t glyphIndex = 0; glyphIndex < textGlyphCount; ++glyphIndex)
 				{
 					const char glyph = textData.m_text[glyphIndex];
-					const uint32_t atlasLocalGlyphIndex = glyph - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
 
+					if (Edge::FontProvider::GlyphDataCollection::BeginCharIndex <= glyph && glyph <= Edge::FontProvider::GlyphDataCollection::EndCharIndex)
 					{
+						const uint32_t atlasLocalGlyphIndex = glyph - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
+
 						const uint16_t glyphWidth = m_defaultFont.getGlyphWidth(atlasLocalGlyphIndex);
 						const uint16_t glyphHeight = m_defaultFont.getGlyphHeight(atlasLocalGlyphIndex);
 						const uint16_t glyphAtlasPosition = m_defaultFont.getGlyphPosition(atlasLocalGlyphIndex);
@@ -1534,41 +1536,57 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(float deltaTime,
 						const float relativeSizeX = static_cast<float>(glyphWidth) / fontHeight;
 						const float relativeSizeY = static_cast<float>(glyphHeight) / fontHeight;
 
-						const float glyphLocalOffsetedY = glyphLocalY + static_cast<float>(m_defaultFont.getGlyphOffsetY(atlasLocalGlyphIndex)) / fontHeight;
+						{
+							const float glyphLocalOffsetedY = glyphLocalY + static_cast<float>(m_defaultFont.getGlyphOffsetY(atlasLocalGlyphIndex)) / fontHeight;
 
-						const Edge::FloatVector2 offsetedPosition(
-							glyphLocalX + relativeSizeX,
-							glyphLocalOffsetedY + relativeSizeY
-						);
+							const Edge::FloatVector2 offsetedPosition(
+								glyphLocalX + relativeSizeX,
+								glyphLocalOffsetedY + relativeSizeY
+							);
 
-						const Edge::FloatVector2 uv1(glyphAtlasPosition * invFontAtlasWidth, 0.0f);
-						const Edge::FloatVector2 uv2((glyphAtlasPosition + glyphWidth) * invFontAtlasWidth, glyphHeight * invFontAtlasHeight);
+							const Edge::FloatVector2 uv1(glyphAtlasPosition * invFontAtlasWidth, 0.0f);
+							const Edge::FloatVector2 uv2((glyphAtlasPosition + glyphWidth) * invFontAtlasWidth, glyphHeight * invFontAtlasHeight);
 
-						WorldTextRenderData::GlyphData* glyphData = glyphDataIter.getCurrentTypedElement<WorldTextRenderData::GlyphData>();
+							WorldTextRenderData::GlyphData* glyphData = glyphDataIter.getCurrentTypedElement<WorldTextRenderData::GlyphData>();
 
-						WorldTextRenderData::VertexData vertex1;
-						(glyphTransform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
-						vertex1.m_textureCoord = Edge::FloatVector2(uv1.m_x, uv2.m_y);
-						vertex1.m_color = packedColor;
+							WorldTextRenderData::VertexData vertex1;
+							(glyphTransform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
+							vertex1.m_textureCoord = Edge::FloatVector2(uv1.m_x, uv2.m_y);
+							vertex1.m_color = packedColor;
 
-						WorldTextRenderData::VertexData vertex2;
-						(glyphTransform * Edge::FloatComputeVector4(glyphLocalX, offsetedPosition.m_y, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex2.m_position);
-						vertex2.m_textureCoord = uv1;
-						vertex2.m_color = packedColor;
+							WorldTextRenderData::VertexData vertex2;
+							(glyphTransform * Edge::FloatComputeVector4(glyphLocalX, offsetedPosition.m_y, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex2.m_position);
+							vertex2.m_textureCoord = uv1;
+							vertex2.m_color = packedColor;
 
-						WorldTextRenderData::VertexData vertex3;
-						(glyphTransform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
-						vertex3.m_textureCoord = uv2;
-						vertex3.m_color = packedColor;
+							WorldTextRenderData::VertexData vertex3;
+							(glyphTransform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
+							vertex3.m_textureCoord = uv2;
+							vertex3.m_color = packedColor;
 
-						WorldTextRenderData::VertexData vertex4;
-						(glyphTransform * Edge::FloatComputeVector4(offsetedPosition, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex4.m_position);
-						vertex4.m_textureCoord = Edge::FloatVector2(uv2.m_x, uv1.m_y);
-						vertex4.m_color = packedColor;
+							WorldTextRenderData::VertexData vertex4;
+							(glyphTransform * Edge::FloatComputeVector4(offsetedPosition, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex4.m_position);
+							vertex4.m_textureCoord = Edge::FloatVector2(uv2.m_x, uv1.m_y);
+							vertex4.m_color = packedColor;
 
-						new (glyphData) WorldTextRenderData::GlyphData(vertex1, vertex2, vertex3, vertex4);
+							new (glyphData) WorldTextRenderData::GlyphData(vertex1, vertex2, vertex3, vertex4);
 
-						glyphDataIter.next();
+							glyphDataIter.next();
+						}
+
+						if (glyphIndex + 1 < textGlyphCount)
+						{
+							const char nextGlyph = textData.m_text[glyphIndex + 1];
+							if (Edge::FontProvider::GlyphDataCollection::BeginCharIndex <= nextGlyph && nextGlyph <= Edge::FontProvider::GlyphDataCollection::EndCharIndex)
+							{
+								const uint32_t nextAtlasLocalGlyphIndex = nextGlyph - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
+								glyphLocalX += static_cast<float>(m_defaultFont.getGlyphPairSpacing(atlasLocalGlyphIndex, nextAtlasLocalGlyphIndex)) / fontHeight;
+							}
+							else
+							{
+								glyphLocalX += relativeSizeX;
+							}
+						}
 					}
 
 					if (glyph == '\n')
@@ -1576,10 +1594,10 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(float deltaTime,
 						glyphLocalX = 0.0f;
 						glyphLocalY -= 1.0f;
 					}
-					else if (glyphIndex + 1 < textGlyphCount)
+					else if (glyph == '\t')
 					{
-						const uint32_t nextAtlasLocalGlyphIndex = textData.m_text[glyphIndex + 1] - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
-						glyphLocalX += static_cast<float>(m_defaultFont.getGlyphPairSpacing(atlasLocalGlyphIndex, nextAtlasLocalGlyphIndex)) / fontHeight;
+						const uint32_t spaceLocalAtlasIndex = ' ' - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
+						glyphLocalX += (static_cast<float>(m_defaultFont.getGlyphPairSpacing(spaceLocalAtlasIndex, spaceLocalAtlasIndex)) / fontHeight) * 4;
 					}
 				}
 			}
@@ -2016,9 +2034,9 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	drawWireframeSpheres();
 
 	//
-	m_graphicContext->setDepthStencilState(*m_depthTestDisableState);
-
 	drawWorldTexts();
+
+	//m_graphicContext->setDepthStencilState(*m_depthTestDisableState);
 
 	Edge::GraphicDevice& device = Edge::FrameworkCore::getInstance().getApplication().getGraphicPlatform().getGraphicDevice();
 	device.executeGraphicContext(*m_graphicContext);

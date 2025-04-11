@@ -41,13 +41,11 @@ EdgeWin32::Win32PlatformFontProvider::GlyphDataCollection EdgeWin32::Win32Platfo
 					{
 						const uint32_t glyphIndex1 = charIndex1 - GlyphDataCollection::BeginCharIndex;
 
-						result.m_widths[glyphIndex1] = widths[charIndex1].abcB;
-
 						for (uint32_t charIndex2 = GlyphDataCollection::BeginCharIndex; charIndex2 < GlyphDataCollection::EndCharIndex; ++charIndex2)
 						{
 							const uint32_t glyphIndex2 = charIndex2 - GlyphDataCollection::BeginCharIndex;
 
-							const uint32_t spacing =
+							const int32_t spacing =
 								widths[charIndex2].abcA +
 								widths[charIndex1].abcB +
 								widths[charIndex1].abcC;
@@ -101,11 +99,13 @@ EdgeWin32::Win32PlatformFontProvider::GlyphDataCollection EdgeWin32::Win32Platfo
 						{
 							totalHeight = std::max(totalHeight, charMetrics.gmBlackBoxY);
 							totalWidth += charMetrics.gmBlackBoxX;
+							result.m_widths[glyphIndex] = charMetrics.gmBlackBoxX;
 							result.m_heights[glyphIndex] = charMetrics.gmBlackBoxY;
 							result.m_offsetY[glyphIndex] = charMetrics.gmptGlyphOrigin.y - charMetrics.gmBlackBoxY;
 						}
 						else
 						{
+							result.m_widths[glyphIndex] = 0;
 							result.m_heights[glyphIndex] = 0;
 							result.m_offsetY[glyphIndex] = 0;
 						}
