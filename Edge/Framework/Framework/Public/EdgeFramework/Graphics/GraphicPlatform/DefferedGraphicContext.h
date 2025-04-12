@@ -129,5 +129,6 @@ namespace Edge
 			FloatMatrix4x4& destinationMatrix
 		) = 0;
 		virtual void preparePerspectiveProjTransform(float angle, float aspectRatio, float nearPlaneZ, float farPlaneZ, FloatMatrix4x4& destinationMatrix) = 0;
+		virtual void prepareOrthogonalProjTransform(float viewWidth, float viewHeight, float nearPlaneZ, float farPlaneZ, FloatMatrix4x4& destinationMatrix) = 0;
 	};
 }

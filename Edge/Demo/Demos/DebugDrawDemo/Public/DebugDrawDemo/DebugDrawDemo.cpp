@@ -203,31 +203,7 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 	}
 
 	m_debugVisualizationDataController->addOrientedWorldText(
-		Edge::FloatVector3(2.0f, 6.0f, 0.0f),
-		Edge::FloatVector3UnitZ,
-		Edge::FloatVector3UnitY,
-		"Red",
-		1.0f,
-		Edge::NormalizedColorRed
-	);
-	m_debugVisualizationDataController->addOrientedWorldText(
 		Edge::FloatVector3(2.0f, 8.0f, 0.0f),
-		Edge::FloatVector3UnitZ,
-		Edge::FloatVector3UnitY,
-		"Green",
-		1.0f,
-		Edge::NormalizedColorGreen
-	);
-	m_debugVisualizationDataController->addOrientedWorldText(
-		Edge::FloatVector3(2.0f, 10.0f, 0.0f),
-		Edge::FloatVector3UnitZ,
-		Edge::FloatVector3UnitY,
-		"Blue",
-		1.0f,
-		Edge::NormalizedColorBlue
-	);
-	m_debugVisualizationDataController->addOrientedWorldText(
-		Edge::FloatVector3(2.0f, 12.0f, 0.0f),
 		Edge::FloatVector3UnitZ,
 		Edge::FloatVector3UnitY,
 		"The quick brown fox jumps over the lazy dog",
@@ -235,8 +211,14 @@ void EdgeDemo::DebugDrawDemo::updateDemoLogic(float deltaTime)
 	);
 
 	m_debugVisualizationDataController->addWorldText(
-		Edge::FloatVector3(6.0f, 10.0f, 0.0f),
-		"Watching you :^)",
+		Edge::FloatVector3(2.0f, 10.0f, 0.0f),
+		":^)",
 		1.0f
+	);
+
+	m_debugVisualizationDataController->addScreenText(
+		Edge::UInt32Vector2Zero,
+		"Test",
+		20
 	);
 }

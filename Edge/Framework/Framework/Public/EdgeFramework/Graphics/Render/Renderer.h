@@ -25,7 +25,12 @@ namespace Edge
 		virtual bool init() = 0;
 		virtual void release() = 0;
 
-		virtual void prepareData(const CameraParams& cameraParams, const Transform& cameraTransform, const DebugVisualizationDataController& visualizationData) = 0;
+		virtual void prepareData(
+			const Texture2D& targetTexture,
+			const CameraParams& cameraParams,
+			const Transform& cameraTransform,
+			const DebugVisualizationDataController& visualizationData
+		) = 0;
 		virtual void render(Texture2D& targetTexture) = 0;
 	};
 }

@@ -197,7 +197,7 @@ namespace EdgeDefRender
 		uint32_t m_indexCountPerSphere = 0;
 	};
 
-	struct WorldTextRenderData final
+	struct TextRenderData final
 	{
 		struct VertexData final
 		{

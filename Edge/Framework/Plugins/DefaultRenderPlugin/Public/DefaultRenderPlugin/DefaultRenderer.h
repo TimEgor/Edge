@@ -29,20 +29,21 @@ namespace EdgeDefRender
 {
 	class DefaultRenderer final : public Edge::Renderer
 	{
-		struct CameraTransformData final
+		struct CameraProjectionTransformData final
 		{
-			Edge::FloatMatrix4x4 m_viewTransform = Edge::FloatMatrix4x4Identity;
 			Edge::FloatMatrix4x4 m_projTransform = Edge::FloatMatrix4x4Identity;
 		};
 
-		struct CameraShaderData final
+		struct CameraTransformData final
 		{
-			CameraTransformData m_transforms;
+			Edge::FloatMatrix4x4 m_viewTransform = Edge::FloatMatrix4x4Identity;
 			Edge::Texture2DSize m_screenSize;
 		};
 
 	private:
-		CameraShaderData m_cameraShaderData;
+		CameraProjectionTransformData m_perspectiveShaderData;
+		CameraProjectionTransformData m_orthogonalShaderData;
+		CameraTransformData m_cameraShaderData;
 
 		PointRenderData m_pointRenderData;
 		LineRenderData m_lineRenderData;
@@ -53,19 +54,23 @@ namespace EdgeDefRender
 		BoxRenderData m_wireframeBoxRenderData;
 		SphereRenderData m_sphereRenderData;
 		SphereRenderData m_wireframeSphereRenderData;
-		WorldTextRenderData m_orientedWorldTextRenderData;
-		WorldTextRenderData m_worldTextRenderData;
+		TextRenderData m_orientedWorldTextRenderData;
+		TextRenderData m_worldTextRenderData;
+		TextRenderData m_screenTextRenderData;
 
 		Font m_defaultFont;
 
 		Edge::DeferredGraphicContext* m_graphicContext = nullptr;
 
 		Edge::RasterizationState* m_baseRasterizationState = nullptr;
+		Edge::RasterizationState* m_orthogonalRasterizationState = nullptr;
 		Edge::SamplerState* m_baseSamplerState = nullptr;
 		Edge::BlendState* m_alphaBlendState = nullptr;
 		Edge::DepthStencilState* m_depthTestEnableState = nullptr;
 		Edge::DepthStencilState* m_depthTestDisableState = nullptr;
 		Edge::Texture2D* m_depthBuffer = nullptr;
+		Edge::GPUBuffer* m_perspectiveTransformBuffer = nullptr;
+		Edge::GPUBuffer* m_orthogonalTransformBuffer = nullptr;
 		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
 
 		//init
@@ -83,12 +88,14 @@ namespace EdgeDefRender
 		bool initSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 		bool initWireframeSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 
-		bool initWorldTextRenderData(
+		bool initTextRenderData(
 			Edge::GraphicDevice& device,
 			const Edge::AssetsDirectoryController& assetsDirectoryController,
-			WorldTextRenderData& worldTextRenderData
+			TextRenderData& textRenderData,
+			bool isOrthoProj
 		);
 
+		bool initCameraTransformBuffers(Edge::GraphicDevice& device);
 		bool initDefaultFont(Edge::GraphicDevice& device);
 
 		//releasing
@@ -106,8 +113,9 @@ namespace EdgeDefRender
 		void releaseSphereRenderData();
 		void releaseWireframeSphereRenderData();
 
-		void releaseWorldTextRenderData(WorldTextRenderData& worldTextRenderData);
+		void releaseTextRenderData(TextRenderData& textRenderData);
 
+		void releaseCameraTransformBuffers();
 		void releaseDefaultFont();
 
 		//preparation
@@ -137,8 +145,14 @@ namespace EdgeDefRender
 			const Edge::DebugVisualizationDataController& visualizationData,
 			const Edge::Transform& cameraTransform
 		);
+		void prepareScreenTextRenderData(
+			float deltaTime,
+			const Edge::DebugVisualizationDataController& visualizationData,
+			const Edge::Texture2DSize& textureSize
+		);
 
 		void prepareDepthBuffer(const Edge::Texture2DSize& bufferSize);
+		void prepareCameraData() const;
 
 		//drawing
 		void drawPoints();
@@ -155,8 +169,7 @@ namespace EdgeDefRender
 		void drawSpheres();
 		void drawWireframeSpheres();
 
-		void drawOrientedWorldTexts();
-		void drawWorldTexts();
+		void drawTexts(const TextRenderData& worldRenderData);
 
 		static constexpr char DefaultFontName[] = "Consolas";
 		static constexpr uint32_t DefaultFontHeight = 50;
@@ -169,6 +182,7 @@ namespace EdgeDefRender
 		virtual void release() override;
 
 		virtual void prepareData(
+			const Edge::Texture2D& targetTexture,
 			const CameraParams& cameraParams,
 			const Edge::Transform& cameraTransform,
 			const Edge::DebugVisualizationDataController& visualizationData

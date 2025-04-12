@@ -57,10 +57,11 @@ namespace Edge
 	};
 
 	using Texture2DSize = UInt32Vector2;
+	constexpr Texture2DSize Texture2DSizeZero = UInt32Vector2Zero;
 
 	struct Texture2DDesc final
 	{
-		Texture2DSize m_size = UInt32Vector2Zero;
+		Texture2DSize m_size = Texture2DSizeZero;
 		GraphicResourceFormat m_format = GraphicResourceFormat::Undefined;
 		GraphicResourceUsageValueType m_usage = GRAPHIC_RESOURCE_USAGE_UNDEFINED;
 		GraphicResourceAccessValueType m_access = GRAPHIC_RESOURCE_ACCESS_UNDEFINED;
@@ -81,10 +82,11 @@ namespace Edge
 	};
 
 	using Texture3DSize = UInt32Vector3;
+	constexpr Texture3DSize Texture3DSizeZero = UInt32Vector3Zero;
 
 	struct Texture3DDesc final
 	{
-		Texture3DSize m_size = UInt32Vector3Zero;
+		Texture3DSize m_size = Texture3DSizeZero;
 		GraphicResourceFormat m_format = GraphicResourceFormat::Undefined;
 		GraphicResourceUsageValueType m_usage = GRAPHIC_RESOURCE_USAGE_UNDEFINED;
 		GraphicResourceAccessValueType m_access = GRAPHIC_RESOURCE_ACCESS_UNDEFINED;

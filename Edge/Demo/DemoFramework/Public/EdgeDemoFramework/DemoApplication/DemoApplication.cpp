@@ -68,7 +68,7 @@ Edge::JobGraphReference EdgeDemo::DemoApplication::getMainLoopJobGraph()
 				Edge::Transform cameraTransform;
 				prepareCameraData(cameraParams, cameraTransform);
 
-				getRenderController().prepareData(cameraParams, cameraTransform, visualizationData);
+				getRenderController().prepareData(*getWindowGraphicPresenter().getTargetTexture(), cameraParams, cameraTransform, visualizationData);
 			}, "Renderer prepare")
 	);
 

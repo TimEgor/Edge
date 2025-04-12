@@ -1,4 +1,5 @@
 #include "Color.shader"
+#include "Camera.shader"
 
 static float2 pointScreenPositions[4] =
 {
@@ -9,13 +10,6 @@ static float2 pointScreenPositions[4] =
 };
 
 static uint pointSize = 12;
-
-cbuffer CameraTransforms : register(b0)
-{
-	float4x4 viewTransform;
-	float4x4 projTransform;
-	uint2 screenSpaceSize;
-};
 
 struct VertexInput
 {

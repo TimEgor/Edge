@@ -287,6 +287,19 @@ void EdgeD3D11::D3D11DeferredGraphicContext::preparePerspectiveProjTransform(
 	DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&destinationMatrix), dxProjMatrix);
 }
 
+void EdgeD3D11::D3D11DeferredGraphicContext::prepareOrthogonalProjTransform(
+	float viewWidth,
+	float viewHeight,
+	float nearPlaneZ,
+	float farPlaneZ,
+	Edge::FloatMatrix4x4& destinationMatrix
+)
+{
+	const DirectX::XMMATRIX dxProjMatrix = DirectX::XMMatrixOrthographicLH(viewWidth, viewHeight, nearPlaneZ, farPlaneZ);
+
+	DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&destinationMatrix), dxProjMatrix);
+}
+
 void EdgeD3D11::D3D11DeferredGraphicContext::setName(const char* name)
 {
 	if (!m_context)

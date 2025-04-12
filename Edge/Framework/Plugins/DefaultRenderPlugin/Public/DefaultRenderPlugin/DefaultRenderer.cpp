@@ -855,21 +855,22 @@ bool EdgeDefRender::DefaultRenderer::initWireframeSphereRenderData(
 	return true;
 }
 
-bool EdgeDefRender::DefaultRenderer::initWorldTextRenderData(
+bool EdgeDefRender::DefaultRenderer::initTextRenderData(
 	Edge::GraphicDevice& device,
 	const Edge::AssetsDirectoryController& assetsDirectoryController,
-	WorldTextRenderData& worldTextRenderData
+	TextRenderData& textRenderData,
+	bool isOrthoProj
 )
 {
-	worldTextRenderData.m_vertexShader = device.createVertexShaderFromFile(
-		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WorldText.vshader")
+	textRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", isOrthoProj ? "Shaders/OrthoText.vshader" : "Shaders/Text.vshader")
 	);
-	EDGE_CHECK_RETURN_FALSE(worldTextRenderData.m_vertexShader);
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_vertexShader);
 
-	worldTextRenderData.m_pixelShader = device.createPixelShaderFromFile(
-		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WorldText.pshader")
+	textRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Text.pshader")
 	);
-	EDGE_CHECK_RETURN_FALSE(worldTextRenderData.m_pixelShader);
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
 	inputLayoutDesc.m_elements.push_back(
@@ -877,7 +878,7 @@ bool EdgeDefRender::DefaultRenderer::initWorldTextRenderData(
 			"POSITION",
 			0,
 			0,
-			offsetof(WorldTextRenderData::VertexData, m_position),
+			offsetof(TextRenderData::VertexData, m_position),
 			3,
 			Edge::InputLayoutElementType::Float32
 		}
@@ -887,7 +888,7 @@ bool EdgeDefRender::DefaultRenderer::initWorldTextRenderData(
 			"TEXCOORD",
 			0,
 			0,
-			offsetof(WorldTextRenderData::VertexData, m_textureCoord),
+			offsetof(TextRenderData::VertexData, m_textureCoord),
 			2,
 			Edge::InputLayoutElementType::Float32
 		}
@@ -897,7 +898,7 @@ bool EdgeDefRender::DefaultRenderer::initWorldTextRenderData(
 			"COLOR",
 			0,
 			0,
-			offsetof(WorldTextRenderData::VertexData, m_color),
+			offsetof(TextRenderData::VertexData, m_color),
 			1,
 			Edge::InputLayoutElementType::UInt32
 		}
@@ -905,20 +906,40 @@ bool EdgeDefRender::DefaultRenderer::initWorldTextRenderData(
 	inputLayoutDesc.m_bindings.push_back(
 		{
 			0,
-			sizeof(WorldTextRenderData::VertexData),
+			sizeof(TextRenderData::VertexData),
 			Edge::InputLayoutBindingType::VertexBinding
 		}
 	);
 
-	worldTextRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *worldTextRenderData.m_vertexShader);
-	EDGE_CHECK_RETURN_FALSE(worldTextRenderData.m_inputLayout);
+	textRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *textRenderData.m_vertexShader);
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_inputLayout);
 
 	RenderDataBufferCache::BufferDesc worldTextTransformBufferDesc{};
-	worldTextTransformBufferDesc.m_stride = sizeof(WorldTextRenderData::GlyphData);
+	worldTextTransformBufferDesc.m_stride = sizeof(TextRenderData::GlyphData);
 	worldTextTransformBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
 	worldTextTransformBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	EDGE_CHECK_RETURN_FALSE(worldTextRenderData.m_glyphData.init(worldTextTransformBufferDesc, 512));
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_glyphData.init(worldTextTransformBufferDesc, 512));
+
+	return true;
+}
+
+bool EdgeDefRender::DefaultRenderer::initCameraTransformBuffers(Edge::GraphicDevice& device)
+{
+	Edge::GPUBufferDesc cameraBufferDesc{};
+	cameraBufferDesc.m_size = sizeof(CameraProjectionTransformData);
+	cameraBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_CONSTANT_BUFFER;
+	cameraBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
+
+	m_perspectiveTransformBuffer = device.createBuffer(cameraBufferDesc);
+	EDGE_CHECK_INITIALIZATION(m_perspectiveTransformBuffer);
+
+	m_orthogonalTransformBuffer = device.createBuffer(cameraBufferDesc);
+	EDGE_CHECK_INITIALIZATION(m_orthogonalTransformBuffer);
+
+	cameraBufferDesc.m_size = sizeof(CameraTransformData);
+	m_cameraTransformBuffer = device.createBuffer(cameraBufferDesc);
+	EDGE_CHECK_INITIALIZATION(m_cameraTransformBuffer);
 
 	return true;
 }
@@ -1030,13 +1051,20 @@ void EdgeDefRender::DefaultRenderer::releaseWireframeSphereRenderData()
 	m_wireframeSphereRenderData.m_sphereData.release();
 }
 
-void EdgeDefRender::DefaultRenderer::releaseWorldTextRenderData(WorldTextRenderData& worldTextRenderData)
+void EdgeDefRender::DefaultRenderer::releaseTextRenderData(TextRenderData& worldTextRenderData)
 {
 	EDGE_SAFE_DESTROY(worldTextRenderData.m_vertexShader);
 	EDGE_SAFE_DESTROY(worldTextRenderData.m_pixelShader);
 	EDGE_SAFE_DESTROY(worldTextRenderData.m_inputLayout);
 
 	worldTextRenderData.m_glyphData.release();
+}
+
+void EdgeDefRender::DefaultRenderer::releaseCameraTransformBuffers()
+{
+	EDGE_SAFE_DESTROY(m_perspectiveTransformBuffer);
+	EDGE_SAFE_DESTROY(m_orthogonalTransformBuffer);
+	EDGE_SAFE_DESTROY(m_cameraTransformBuffer);
 }
 
 void EdgeDefRender::DefaultRenderer::releaseDefaultFont()
@@ -1053,8 +1081,13 @@ bool EdgeDefRender::DefaultRenderer::init()
 	m_graphicContext = device.createDeferredGraphicContext();
 	EDGE_CHECK_INITIALIZATION(m_graphicContext);
 
-	m_baseRasterizationState = device.createRasterizationState(Edge::RasterizationStateDesc{});
+	Edge::RasterizationStateDesc rasterizationStateDesc{};
+	m_baseRasterizationState = device.createRasterizationState(rasterizationStateDesc);
 	EDGE_CHECK_INITIALIZATION(m_baseRasterizationState);
+
+	rasterizationStateDesc.m_depthClip = false;
+	m_orthogonalRasterizationState = device.createRasterizationState(rasterizationStateDesc);
+	EDGE_CHECK_INITIALIZATION(m_orthogonalRasterizationState);
 
 	m_baseSamplerState = device.createSamplerState();
 	EDGE_CHECK_INITIALIZATION(m_baseSamplerState);
@@ -1066,17 +1099,12 @@ bool EdgeDefRender::DefaultRenderer::init()
 	m_depthTestEnableState = device.createDepthStencilState(depthStencilStateDesc);
 	EDGE_CHECK_INITIALIZATION(m_depthTestEnableState);
 
+	depthStencilStateDesc.m_depthTestEnable = false;
 	depthStencilStateDesc.m_depthWrite = false;
 	m_depthTestDisableState = device.createDepthStencilState(depthStencilStateDesc);
 	EDGE_CHECK_INITIALIZATION(m_depthTestDisableState);
 
-	Edge::GPUBufferDesc cameraBufferDesc{};
-	cameraBufferDesc.m_size = sizeof(CameraShaderData);
-	cameraBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_CONSTANT_BUFFER;
-	cameraBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
-
-	m_cameraTransformBuffer = device.createBuffer(cameraBufferDesc, nullptr);
-	EDGE_CHECK_INITIALIZATION(m_cameraTransformBuffer);
+	EDGE_CHECK_INITIALIZATION(initCameraTransformBuffers(device));
 
 	const Edge::AssetsDirectoryController& assetsDirectoryController = application.getAssetsDirectoryController();
 
@@ -1094,8 +1122,9 @@ bool EdgeDefRender::DefaultRenderer::init()
 	EDGE_CHECK_INITIALIZATION(initSphereRenderData(device, assetsDirectoryController));
 	EDGE_CHECK_INITIALIZATION(initWireframeSphereRenderData(device, assetsDirectoryController));
 
-	EDGE_CHECK_INITIALIZATION(initWorldTextRenderData(device, assetsDirectoryController, m_orientedWorldTextRenderData));
-	EDGE_CHECK_INITIALIZATION(initWorldTextRenderData(device, assetsDirectoryController, m_worldTextRenderData));
+	EDGE_CHECK_INITIALIZATION(initTextRenderData(device, assetsDirectoryController, m_orientedWorldTextRenderData, false));
+	EDGE_CHECK_INITIALIZATION(initTextRenderData(device, assetsDirectoryController, m_worldTextRenderData, false));
+	EDGE_CHECK_INITIALIZATION(initTextRenderData(device, assetsDirectoryController, m_screenTextRenderData, true));
 
 	EDGE_CHECK_INITIALIZATION(initDefaultFont(device));
 
@@ -1118,19 +1147,77 @@ void EdgeDefRender::DefaultRenderer::release()
 	releaseSphereRenderData();
 	releaseWireframeSphereRenderData();
 
-	releaseWorldTextRenderData(m_orientedWorldTextRenderData);
-	releaseWorldTextRenderData(m_worldTextRenderData);
+	releaseTextRenderData(m_orientedWorldTextRenderData);
+	releaseTextRenderData(m_worldTextRenderData);
+	releaseTextRenderData(m_screenTextRenderData);
 
 	releaseDefaultFont();
+	releaseCameraTransformBuffers();
 
 	EDGE_SAFE_DESTROY(m_graphicContext);
 	EDGE_SAFE_DESTROY(m_baseRasterizationState);
+	EDGE_SAFE_DESTROY(m_orthogonalRasterizationState);
 	EDGE_SAFE_DESTROY(m_baseSamplerState);
 	EDGE_SAFE_DESTROY(m_alphaBlendState);
 	EDGE_SAFE_DESTROY(m_depthTestEnableState);
 	EDGE_SAFE_DESTROY(m_depthTestDisableState);
 	EDGE_SAFE_DESTROY(m_depthBuffer);
-	EDGE_SAFE_DESTROY(m_cameraTransformBuffer);
+}
+
+void EdgeDefRender::DefaultRenderer::prepareData(
+	const Edge::Texture2D& targetTexture,
+	const CameraParams& cameraParams,
+	const Edge::Transform& cameraTransform,
+	const Edge::DebugVisualizationDataController& visualizationData
+)
+{
+	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
+	const float deltaTime = application.getDeltaTime();
+
+	const Edge::Texture2DDesc& targetTextureDesc = targetTexture.getDesc();
+
+	m_graphicContext->prepareViewTransform(
+		cameraTransform.getOrigin().getFloatVector3(),
+		cameraTransform.getAxisZ().getFloatVector3(),
+		cameraTransform.getAxisY().getFloatVector3(),
+		m_cameraShaderData.m_viewTransform
+	);
+
+	m_cameraShaderData.m_screenSize = targetTextureDesc.m_size;
+
+	m_graphicContext->preparePerspectiveProjTransform(
+		cameraParams.m_FoV,
+		cameraParams.m_ratio,
+		cameraParams.m_nearPlaneDistance,
+		cameraParams.m_farPlaneDistance,
+		m_perspectiveShaderData.m_projTransform
+	);
+
+	m_graphicContext->prepareOrthogonalProjTransform(
+		targetTextureDesc.m_size.m_x,
+		targetTextureDesc.m_size.m_y,
+		cameraParams.m_nearPlaneDistance,
+		cameraParams.m_farPlaneDistance,
+		m_orthogonalShaderData.m_projTransform
+	);
+
+	preparePointRenderData(deltaTime, visualizationData);
+	prepareLineRenderData(deltaTime, visualizationData);
+
+	preparePolygonRenderData(deltaTime, visualizationData);
+
+	preparePlaneRenderData(deltaTime, visualizationData);
+	prepareWireframePlaneRenderData(deltaTime, visualizationData);
+
+	prepareBoxRenderData(deltaTime, visualizationData);
+	prepareWireframeBoxRenderData(deltaTime, visualizationData);
+
+	prepareSphereRenderData(deltaTime, visualizationData);
+	prepareWireframeSphereRenderData(deltaTime, visualizationData);
+
+	prepareOrientedWorldTextRenderData(deltaTime, visualizationData);
+	prepareWorldTextRenderData(deltaTime, visualizationData, cameraTransform);
+	prepareScreenTextRenderData(deltaTime, visualizationData, targetTextureDesc.m_size);
 }
 
 void EdgeDefRender::DefaultRenderer::preparePointRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData)
@@ -1519,29 +1606,29 @@ void EdgeDefRender::DefaultRenderer::buildStringVertexBuffer(
 				const Edge::FloatVector2 uv1(glyphAtlasPosition * invFontAtlasWidth, 0.0f);
 				const Edge::FloatVector2 uv2((glyphAtlasPosition + glyphWidth) * invFontAtlasWidth, glyphHeight * invFontAtlasHeight);
 
-				WorldTextRenderData::GlyphData* glyphData = cacheIterator.getCurrentTypedElement<WorldTextRenderData::GlyphData>();
+				TextRenderData::GlyphData* glyphData = cacheIterator.getCurrentTypedElement<TextRenderData::GlyphData>();
 
-				WorldTextRenderData::VertexData vertex1;
+				TextRenderData::VertexData vertex1;
 				(transform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
 				vertex1.m_textureCoord = Edge::FloatVector2(uv1.m_x, uv2.m_y);
 				vertex1.m_color = color;
 
-				WorldTextRenderData::VertexData vertex2;
+				TextRenderData::VertexData vertex2;
 				(transform * Edge::FloatComputeVector4(glyphLocalX, offsetedPosition.m_y, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex2.m_position);
 				vertex2.m_textureCoord = uv1;
 				vertex2.m_color = color;
 
-				WorldTextRenderData::VertexData vertex3;
+				TextRenderData::VertexData vertex3;
 				(transform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
 				vertex3.m_textureCoord = uv2;
 				vertex3.m_color = color;
 
-				WorldTextRenderData::VertexData vertex4;
+				TextRenderData::VertexData vertex4;
 				(transform * Edge::FloatComputeVector4(offsetedPosition, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex4.m_position);
 				vertex4.m_textureCoord = Edge::FloatVector2(uv2.m_x, uv1.m_y);
 				vertex4.m_color = color;
 
-				new(glyphData) WorldTextRenderData::GlyphData(vertex1, vertex2, vertex3, vertex4);
+				new(glyphData) TextRenderData::GlyphData(vertex1, vertex2, vertex3, vertex4);
 
 				cacheIterator.next();
 			}
@@ -1677,6 +1764,61 @@ void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(
 	m_worldTextRenderData.m_glyphData.freeUnusedSpace();
 }
 
+void EdgeDefRender::DefaultRenderer::prepareScreenTextRenderData(
+	float deltaTime,
+	const Edge::DebugVisualizationDataController& visualizationData,
+	const Edge::Texture2DSize& textureSize
+)
+{
+	const uint32_t textCount = visualizationData.getScreenTextCount();
+
+	m_screenTextRenderData.m_glyphData.updateBuffers(deltaTime);
+
+	RenderDataBufferCacheIterator glyphDataIter(m_screenTextRenderData.m_glyphData, *m_graphicContext, false);
+
+	uint32_t glyphCount = 0;
+
+	if (textCount > 0)
+	{
+		const uint32_t halfTextureSizeX = textureSize.m_x * 0.5f;
+		const uint32_t halfTextureSizeY = textureSize.m_y * 0.5f;
+
+		for (uint32_t textIndex = 0; textIndex < textCount; ++textIndex)
+		{
+			const Edge::DebugVisualizationDataController::ScreenTextData& textData = visualizationData.getScreenTextData(textIndex);
+
+			const uint32_t textGlyphCount = textData.m_text.size();
+			if (textGlyphCount > 0)
+			{
+				glyphCount += textGlyphCount;
+
+				m_screenTextRenderData.m_glyphData.prepareSpace(glyphCount);
+				if (glyphDataIter.isInInitialState())
+				{
+					glyphDataIter.next();
+				}
+
+				const int32_t posX = textData.m_position.m_x - halfTextureSizeX;
+				const int32_t posY = halfTextureSizeY - textData.m_position.m_y;
+
+				Edge::FloatComputeMatrix4x4 glyphTransform(
+					Edge::FloatVector4(textData.m_textHeight, 0.0f, 0.0f, 0.0f),
+					Edge::FloatVector4(0.0f, textData.m_textHeight, 0.0f, 0.0f),
+					Edge::FloatVector4(0.0f, 0.0f, 1.0f, 0.0f),
+					Edge::FloatVector4(posX, posY, 0.0f, 1.0f)
+				);
+
+				const PackedColor packedColor = PackedColor(textData.m_color);
+
+				buildStringVertexBuffer(glyphDataIter, textData.m_text, glyphTransform, packedColor);
+			}
+		}
+	}
+
+	m_screenTextRenderData.m_glyphCount = glyphCount;
+	m_screenTextRenderData.m_glyphData.freeUnusedSpace();
+}
+
 Edge::FloatComputeVector3 EdgeDefRender::DefaultRenderer::CalculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection)
 {
 	if (abs(arrowDirection.getX()) > abs(arrowDirection.getY()))
@@ -1687,51 +1829,6 @@ Edge::FloatComputeVector3 EdgeDefRender::DefaultRenderer::CalculateArrowHeadPerp
 
 	const float length = sqrt(arrowDirection.getY() * arrowDirection.getY() + arrowDirection.getZ() * arrowDirection.getZ());
 	return Edge::FloatComputeVector3(0.0f, arrowDirection.getZ(), -arrowDirection.getY()) / length;
-}
-
-void EdgeDefRender::DefaultRenderer::prepareData(
-	const CameraParams& cameraParams,
-	const Edge::Transform& cameraTransform,
-	const Edge::DebugVisualizationDataController& visualizationData
-)
-{
-	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
-	const float deltaTime = application.getDeltaTime();
-
-	m_graphicContext->prepareViewTransform(
-		cameraTransform.getOrigin().getFloatVector3(),
-		cameraTransform.getAxisZ().getFloatVector3(),
-		cameraTransform.getAxisY().getFloatVector3(),
-		m_cameraShaderData.m_transforms.m_viewTransform
-	);
-
-	m_graphicContext->preparePerspectiveProjTransform(
-		cameraParams.m_FoV,
-		cameraParams.m_ratio,
-		cameraParams.m_nearPlaneDistance,
-		cameraParams.m_farPlaneDistance,
-		m_cameraShaderData.m_transforms.m_projTransform
-	);
-
-	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_viewTransform);
-	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_projTransform);
-
-	preparePointRenderData(deltaTime, visualizationData);
-	prepareLineRenderData(deltaTime, visualizationData);
-
-	preparePolygonRenderData(deltaTime, visualizationData);
-
-	preparePlaneRenderData(deltaTime, visualizationData);
-	prepareWireframePlaneRenderData(deltaTime, visualizationData);
-
-	prepareBoxRenderData(deltaTime, visualizationData);
-	prepareWireframeBoxRenderData(deltaTime, visualizationData);
-
-	prepareSphereRenderData(deltaTime, visualizationData);
-	prepareWireframeSphereRenderData(deltaTime, visualizationData);
-
-	prepareOrientedWorldTextRenderData(deltaTime, visualizationData);
-	prepareWorldTextRenderData(deltaTime, visualizationData, cameraTransform);
 }
 
 void EdgeDefRender::DefaultRenderer::drawPoints()
@@ -1989,61 +2086,31 @@ void EdgeDefRender::DefaultRenderer::drawWireframeSpheres()
 	}
 }
 
-void EdgeDefRender::DefaultRenderer::drawOrientedWorldTexts()
+void EdgeDefRender::DefaultRenderer::drawTexts(const TextRenderData& worldRenderData)
 {
-	if (m_orientedWorldTextRenderData.m_glyphCount > 0)
+	if (worldRenderData.m_glyphCount > 0)
 	{
-		m_graphicContext->setVertexShader(*m_orientedWorldTextRenderData.m_vertexShader);
-		m_graphicContext->setPixelShader(*m_orientedWorldTextRenderData.m_pixelShader);
+		m_graphicContext->setVertexShader(*worldRenderData.m_vertexShader);
+		m_graphicContext->setPixelShader(*worldRenderData.m_pixelShader);
 
 		m_graphicContext->setPrimitiveTopology(Edge::PrimitiveTopology::TriangleList);
-		m_graphicContext->setInputLayout(*m_orientedWorldTextRenderData.m_inputLayout);
+		m_graphicContext->setInputLayout(*worldRenderData.m_inputLayout);
 
 		m_graphicContext->setShaderResource(*m_defaultFont.getAtlas(), 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_PIXEL);
 		m_graphicContext->setSamplerState(*m_baseSamplerState, 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_PIXEL);
 
-		uint32_t remainedGlyphCount = m_orientedWorldTextRenderData.m_glyphCount;
-		const uint32_t glyphPerBuffer = m_orientedWorldTextRenderData.m_glyphData.getElementCountPerBuffer();
+		uint32_t remainedGlyphCount = worldRenderData.m_glyphCount;
+		const uint32_t glyphPerBuffer = worldRenderData.m_glyphData.getElementCountPerBuffer();
 
-		const uint32_t bufferCount = m_orientedWorldTextRenderData.m_glyphData.getBufferCount();
+		const uint32_t bufferCount = worldRenderData.m_glyphData.getBufferCount();
 		for (uint32_t bufferIndex = 0; bufferIndex < bufferCount && remainedGlyphCount > 0; ++bufferIndex)
 		{
 			const uint32_t drawingGlyphCount = std::min(remainedGlyphCount, glyphPerBuffer);
 			remainedGlyphCount -= glyphPerBuffer;
 
-			Edge::GPUBuffer* instanceDataBuffer = &m_orientedWorldTextRenderData.m_glyphData.getBuffer(bufferIndex);
+			Edge::GPUBuffer* instanceDataBuffer = &worldRenderData.m_glyphData.getBuffer(bufferIndex);
 
-			m_graphicContext->setVertexBuffers(1, &instanceDataBuffer, m_orientedWorldTextRenderData.m_inputLayout->getDesc());
-			m_graphicContext->draw(drawingGlyphCount * 6);
-		}
-	}
-}
-
-void EdgeDefRender::DefaultRenderer::drawWorldTexts()
-{
-	if (m_worldTextRenderData.m_glyphCount > 0)
-	{
-		m_graphicContext->setVertexShader(*m_worldTextRenderData.m_vertexShader);
-		m_graphicContext->setPixelShader(*m_worldTextRenderData.m_pixelShader);
-
-		m_graphicContext->setPrimitiveTopology(Edge::PrimitiveTopology::TriangleList);
-		m_graphicContext->setInputLayout(*m_worldTextRenderData.m_inputLayout);
-
-		m_graphicContext->setShaderResource(*m_defaultFont.getAtlas(), 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_PIXEL);
-		m_graphicContext->setSamplerState(*m_baseSamplerState, 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_PIXEL);
-
-		uint32_t remainedGlyphCount = m_worldTextRenderData.m_glyphCount;
-		const uint32_t glyphPerBuffer = m_worldTextRenderData.m_glyphData.getElementCountPerBuffer();
-
-		const uint32_t bufferCount = m_worldTextRenderData.m_glyphData.getBufferCount();
-		for (uint32_t bufferIndex = 0; bufferIndex < bufferCount && remainedGlyphCount > 0; ++bufferIndex)
-		{
-			const uint32_t drawingGlyphCount = std::min(remainedGlyphCount, glyphPerBuffer);
-			remainedGlyphCount -= glyphPerBuffer;
-
-			Edge::GPUBuffer* instanceDataBuffer = &m_worldTextRenderData.m_glyphData.getBuffer(bufferIndex);
-
-			m_graphicContext->setVertexBuffers(1, &instanceDataBuffer, m_worldTextRenderData.m_inputLayout->getDesc());
+			m_graphicContext->setVertexBuffers(1, &instanceDataBuffer, worldRenderData.m_inputLayout->getDesc());
 			m_graphicContext->draw(drawingGlyphCount * 6);
 		}
 	}
@@ -2082,6 +2149,52 @@ void EdgeDefRender::DefaultRenderer::prepareDepthBuffer(const Edge::Texture2DSiz
 	}
 }
 
+void EdgeDefRender::DefaultRenderer::prepareCameraData() const
+{
+	{
+		CameraTransformData* mappedCameraShaderData;
+
+		m_graphicContext->mapBuffer(
+			*m_cameraTransformBuffer,
+			Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+			Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+			reinterpret_cast<void**>(&mappedCameraShaderData)
+		);
+
+		memcpy(mappedCameraShaderData, &m_cameraShaderData, sizeof(CameraTransformData));
+
+		m_graphicContext->unmapBuffer(*m_cameraTransformBuffer);
+	}
+	{
+		CameraProjectionTransformData* mappedProjectionShaderData;
+
+		{
+			m_graphicContext->mapBuffer(
+				*m_perspectiveTransformBuffer,
+				Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+				Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+				reinterpret_cast<void**>(&mappedProjectionShaderData)
+			);
+
+			memcpy(mappedProjectionShaderData, &m_perspectiveShaderData, sizeof(CameraProjectionTransformData));
+
+			m_graphicContext->unmapBuffer(*m_perspectiveTransformBuffer);
+		}
+		{
+			m_graphicContext->mapBuffer(
+				*m_orthogonalTransformBuffer,
+				Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+				Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+				reinterpret_cast<void**>(&mappedProjectionShaderData)
+			);
+
+			memcpy(mappedProjectionShaderData, &m_orthogonalShaderData, sizeof(CameraProjectionTransformData));
+
+			m_graphicContext->unmapBuffer(*m_orthogonalTransformBuffer);
+		}
+	}
+}
+
 void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 {
 	const Edge::Texture2DDesc& targetTextureDesc = targetTexture.getDesc();
@@ -2089,20 +2202,7 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	Edge::Viewport viewport(targetTextureDesc.m_size.m_x, targetTextureDesc.m_size.m_y);
 
 	prepareDepthBuffer(targetTextureDesc.m_size);
-
-	m_cameraShaderData.m_screenSize = targetTextureDesc.m_size;
-
-	CameraShaderData* mappedCameraShaderData;
-	m_graphicContext->mapBuffer(
-		*m_cameraTransformBuffer,
-		Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
-		Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
-		reinterpret_cast<void**>(&mappedCameraShaderData)
-	);
-
-	memcpy(mappedCameraShaderData, &m_cameraShaderData, sizeof(CameraShaderData));
-
-	m_graphicContext->unmapBuffer(*m_cameraTransformBuffer);
+	prepareCameraData();
 
 	m_graphicContext->setConstantBuffer(*m_cameraTransformBuffer, 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_VERTEX);
 
@@ -2117,6 +2217,7 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	m_graphicContext->setBlendState(*m_alphaBlendState);
 
 	//
+	m_graphicContext->setConstantBuffer(*m_perspectiveTransformBuffer, 1, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_VERTEX);
 	m_graphicContext->setDepthStencilState(*m_depthTestEnableState);
 
 	drawPoints();
@@ -2134,10 +2235,17 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	drawWireframeSpheres();
 
 	//
-	drawOrientedWorldTexts();
-	drawWorldTexts();
+	drawTexts(m_orientedWorldTextRenderData);
+	drawTexts(m_worldTextRenderData);
 
-	//m_graphicContext->setDepthStencilState(*m_depthTestDisableState);
+	m_graphicContext->setConstantBuffer(*m_orthogonalTransformBuffer, 1, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_VERTEX);
+	m_graphicContext->setRasterizationState(*m_orthogonalRasterizationState);
+
+	m_graphicContext->setDepthStencilState(*m_depthTestDisableState);
+
+	m_graphicContext->setRenderTarget(targetTexture, nullptr);
+
+	drawTexts(m_screenTextRenderData);
 
 	Edge::GraphicDevice& device = Edge::FrameworkCore::getInstance().getApplication().getGraphicPlatform().getGraphicDevice();
 	device.executeGraphicContext(*m_graphicContext);

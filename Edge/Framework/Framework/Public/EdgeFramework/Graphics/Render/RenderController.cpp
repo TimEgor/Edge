@@ -40,10 +40,10 @@ void Edge::RenderController::release()
 	m_rendererPluginHandle.reset();
 }
 
-void Edge::RenderController::prepareData(const Renderer::CameraParams& cameraTransforms, const Transform& cameraTransform, const DebugVisualizationDataController& visualizationData)
+void Edge::RenderController::prepareData(const Texture2D& texture, const Renderer::CameraParams& cameraTransforms, const Transform& cameraTransform, const DebugVisualizationDataController& visualizationData)
 {
 	assert(m_renderer);
-	m_renderer->prepareData(cameraTransforms, cameraTransform, visualizationData);
+	m_renderer->prepareData(texture, cameraTransforms, cameraTransform, visualizationData);
 }
 
 void Edge::RenderController::render(Texture2D& texture)
