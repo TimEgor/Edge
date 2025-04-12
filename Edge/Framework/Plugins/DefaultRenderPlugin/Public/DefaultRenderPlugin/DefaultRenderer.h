@@ -9,7 +9,8 @@
 
 #include "RenderDatas.h"
 
-namespace Edge {
+namespace Edge
+{
 	class AssetsDirectoryController;
 
 	class GraphicDevice;
@@ -28,7 +29,8 @@ namespace EdgeDefRender
 {
 	class DefaultRenderer final : public Edge::Renderer
 	{
-		struct CameraTransformData final {
+		struct CameraTransformData final
+		{
 			Edge::FloatMatrix4x4 m_viewTransform = Edge::FloatMatrix4x4Identity;
 			Edge::FloatMatrix4x4 m_projTransform = Edge::FloatMatrix4x4Identity;
 		};
@@ -51,6 +53,7 @@ namespace EdgeDefRender
 		BoxRenderData m_wireframeBoxRenderData;
 		SphereRenderData m_sphereRenderData;
 		SphereRenderData m_wireframeSphereRenderData;
+		WorldTextRenderData m_orientedWorldTextRenderData;
 		WorldTextRenderData m_worldTextRenderData;
 
 		Font m_defaultFont;
@@ -80,7 +83,11 @@ namespace EdgeDefRender
 		bool initSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 		bool initWireframeSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 
-		bool initWorldTextRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
+		bool initWorldTextRenderData(
+			Edge::GraphicDevice& device,
+			const Edge::AssetsDirectoryController& assetsDirectoryController,
+			WorldTextRenderData& worldTextRenderData
+		);
 
 		bool initDefaultFont(Edge::GraphicDevice& device);
 
@@ -99,7 +106,7 @@ namespace EdgeDefRender
 		void releaseSphereRenderData();
 		void releaseWireframeSphereRenderData();
 
-		void releaseWorldTextRenderData();
+		void releaseWorldTextRenderData(WorldTextRenderData& worldTextRenderData);
 
 		void releaseDefaultFont();
 
@@ -118,7 +125,18 @@ namespace EdgeDefRender
 		void prepareSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 		void prepareWireframeSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 
-		void prepareWorldTextRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
+		void buildStringVertexBuffer(
+			RenderDataBufferCacheIterator& cacheIterator,
+			const std::string& text,
+			const Edge::FloatComputeMatrix4x4& transform,
+			PackedColor color
+		);
+		void prepareOrientedWorldTextRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
+		void prepareWorldTextRenderData(
+			float deltaTime,
+			const Edge::DebugVisualizationDataController& visualizationData,
+			const Edge::Transform& cameraTransform
+		);
 
 		void prepareDepthBuffer(const Edge::Texture2DSize& bufferSize);
 
@@ -137,6 +155,7 @@ namespace EdgeDefRender
 		void drawSpheres();
 		void drawWireframeSpheres();
 
+		void drawOrientedWorldTexts();
 		void drawWorldTexts();
 
 		static constexpr char DefaultFontName[] = "Consolas";
@@ -149,7 +168,11 @@ namespace EdgeDefRender
 		virtual bool init() override;
 		virtual void release() override;
 
-		virtual void prepareData(const CameraParams& cameraParams, const Edge::Transform& cameraTransform, const Edge::DebugVisualizationDataController& visualizationData) override;
+		virtual void prepareData(
+			const CameraParams& cameraParams,
+			const Edge::Transform& cameraTransform,
+			const Edge::DebugVisualizationDataController& visualizationData
+		) override;
 		virtual void render(Edge::Texture2D& targetTexture) override;
 	};
 }

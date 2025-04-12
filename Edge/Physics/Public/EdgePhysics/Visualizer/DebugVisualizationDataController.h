@@ -138,7 +138,7 @@ namespace Edge
 				  m_radius(radius) {}
 		};
 
-		struct WorldTextData final
+		struct OrientedWorldTextData final
 		{
 			FloatVector3 m_position;
 			FloatVector3 m_directionForward;
@@ -147,7 +147,7 @@ namespace Edge
 			std::string m_text;
 			float m_textHeight;
 
-			WorldTextData(
+			OrientedWorldTextData(
 				const FloatVector3& position,
 				const FloatVector3& directionForward,
 				const FloatVector3& directionUp,
@@ -163,14 +163,14 @@ namespace Edge
 				  m_textHeight(textHeight) {}
 		};
 
-		struct BillboardWorldTextData final
+		struct WorldTextData final
 		{
 			FloatVector3 m_position;
 			NormalizedColorRGB m_color;
 			std::string m_text;
 			uint32_t m_textHeight;
 
-			BillboardWorldTextData(
+			WorldTextData(
 				const FloatVector3& position,
 				const std::string& text,
 				uint32_t textHeight,
@@ -209,8 +209,8 @@ namespace Edge
 		using PlaneContainer = std::vector<PlaneData>;
 		using BoxContainer = std::vector<BoxData>;
 		using SphereContainer = std::vector<SphereData>;
+		using OrientedWorldTextContainer = std::vector<OrientedWorldTextData>;
 		using WorldTextContainer = std::vector<WorldTextData>;
-		using BillboardWorldTextContainer = std::vector<BillboardWorldTextData>;
 		using ScreenTextContainer = std::vector<ScreenTextData>;
 
 		PointContainer m_points;
@@ -224,8 +224,8 @@ namespace Edge
 		BoxContainer m_wireframeBoxes;
 		SphereContainer m_spheres;
 		SphereContainer m_wireframeSpheres;
+		OrientedWorldTextContainer m_orientedWorldTexts;
 		WorldTextContainer m_worldTexts;
-		BillboardWorldTextContainer m_billboardWorldTexts;
 		ScreenTextContainer m_screenTexts;
 
 		mutable SharedMutex m_pointMutex;
@@ -239,8 +239,8 @@ namespace Edge
 		mutable SharedMutex m_wireframeBoxMutex;
 		mutable SharedMutex m_sphereMutex;
 		mutable SharedMutex m_wireframeSphereMutex;
+		mutable SharedMutex m_orientedWorldTextMutex;
 		mutable SharedMutex m_worldTextMutex;
-		mutable SharedMutex m_billboardWorldTextMutex;
 		mutable SharedMutex m_screenTextMutex;
 
 	public:
@@ -311,7 +311,7 @@ namespace Edge
 			const NormalizedColorRGB& color = NormalizedColorWhite
 		);
 
-		void addWorldText(
+		void addOrientedWorldText(
 			const FloatVector3& position,
 			const FloatVector3& directionForward,
 			const FloatVector3& directionUp,
@@ -319,7 +319,7 @@ namespace Edge
 			float textHeight,
 			const NormalizedColorRGB& color = NormalizedColorWhite
 		);
-		void addBillboardWorldText(
+		void addWorldText(
 			const FloatVector3& position,
 			const std::string& text,
 			float textHeight,
@@ -360,11 +360,11 @@ namespace Edge
 		uint32_t getWireframeSphereCount() const;
 		const SphereData& getWireframeSphere(uint32_t index) const;
 
+		uint32_t getOrientedWorldTextCount() const;
+		const OrientedWorldTextData& getOrientedWorldTextData(uint32_t index) const;
+
 		uint32_t getWorldTextCount() const;
 		const WorldTextData& getWorldTextData(uint32_t index) const;
-
-		uint32_t getBillboardWorldTextCount() const;
-		const BillboardWorldTextData& getBillboardWorldTextData(uint32_t index) const;
 
 		uint32_t getScreenTextCount() const;
 		const ScreenTextData& getScreenTextData(uint32_t index) const;

@@ -196,7 +196,7 @@ void Edge::DebugVisualizationDataController::addGrid(
 	}
 }
 
-void Edge::DebugVisualizationDataController::addWorldText(
+void Edge::DebugVisualizationDataController::addOrientedWorldText(
 	const FloatVector3& position,
 	const FloatVector3& directionForward,
 	const FloatVector3& directionUp,
@@ -205,19 +205,19 @@ void Edge::DebugVisualizationDataController::addWorldText(
 	const NormalizedColorRGB& color
 )
 {
-	LockGuard locker(m_worldTextMutex);
-	m_worldTexts.emplace_back(position, directionForward, directionUp, text, textHeight, color);
+	LockGuard locker(m_orientedWorldTextMutex);
+	m_orientedWorldTexts.emplace_back(position, directionForward, directionUp, text, textHeight, color);
 }
 
-void Edge::DebugVisualizationDataController::addBillboardWorldText(
+void Edge::DebugVisualizationDataController::addWorldText(
 	const FloatVector3& position,
 	const std::string& text,
 	float textHeight,
 	const NormalizedColorRGB& color
 )
 {
-	LockGuard locker(m_billboardWorldTextMutex);
-	m_billboardWorldTexts.emplace_back(position, text, textHeight, color);
+	LockGuard locker(m_worldTextMutex);
+	m_worldTexts.emplace_back(position, text, textHeight, color);
 }
 
 void Edge::DebugVisualizationDataController::addScreenText(
@@ -363,6 +363,18 @@ const Edge::DebugVisualizationDataController::SphereData& Edge::DebugVisualizati
 	return m_wireframeSpheres[index];
 }
 
+uint32_t Edge::DebugVisualizationDataController::getOrientedWorldTextCount() const
+{
+	SharedLockGuard locker(m_orientedWorldTextMutex);
+	return m_orientedWorldTexts.size();
+}
+
+const Edge::DebugVisualizationDataController::OrientedWorldTextData& Edge::DebugVisualizationDataController::getOrientedWorldTextData(uint32_t index) const
+{
+	SharedLockGuard locker(m_orientedWorldTextMutex);
+	return m_orientedWorldTexts[index];
+}
+
 uint32_t Edge::DebugVisualizationDataController::getWorldTextCount() const
 {
 	SharedLockGuard locker(m_worldTextMutex);
@@ -373,18 +385,6 @@ const Edge::DebugVisualizationDataController::WorldTextData& Edge::DebugVisualiz
 {
 	SharedLockGuard locker(m_worldTextMutex);
 	return m_worldTexts[index];
-}
-
-uint32_t Edge::DebugVisualizationDataController::getBillboardWorldTextCount() const
-{
-	SharedLockGuard locker(m_billboardWorldTextMutex);
-	return m_billboardWorldTexts.size();
-}
-
-const Edge::DebugVisualizationDataController::BillboardWorldTextData& Edge::DebugVisualizationDataController::getBillboardWorldTextData(uint32_t index) const
-{
-	SharedLockGuard locker(m_billboardWorldTextMutex);
-	return m_billboardWorldTexts[index];
 }
 
 uint32_t Edge::DebugVisualizationDataController::getScreenTextCount() const
@@ -457,13 +457,13 @@ void Edge::DebugVisualizationDataController::clear()
 	}
 
 	{
-		LockGuard locker(m_worldTextMutex);
-		m_worldTexts.clear();
+		LockGuard locker(m_orientedWorldTextMutex);
+		m_orientedWorldTexts.clear();
 	}
 
 	{
-		LockGuard locker(m_billboardWorldTextMutex);
-		m_billboardWorldTexts.clear();
+		LockGuard locker(m_worldTextMutex);
+		m_worldTexts.clear();
 	}
 
 	{
