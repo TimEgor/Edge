@@ -25,7 +25,7 @@ namespace Edge
 		virtual PhysicsEntityCollisionSceneContextType getType() const = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntityCollisionSceneContext);
+	EDGE_REFERENCE(PhysicsEntityCollisionSceneContext);
 
 #define EDGE_PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE(PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE)	\
 	EDGE_HASH_TYPE(#PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE, Edge::PhysicsEntityCollisionSceneContextType, PhysicsEntityCollisionSceneContext)
@@ -65,5 +65,5 @@ namespace Edge
 		void setElasticity(ComputeValueType elasticity);
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntityCollision);
+	EDGE_REFERENCE(PhysicsEntityCollision);
 }

@@ -1,17 +1,13 @@
 #pragma once
 
-#include "EdgeCommon/Multithreading/SpinLock.h"
+#include <atomic>
 
 namespace Edge
 {
 	class MTCountableObjectBase
 	{
 	private:
-		std::atomic<size_t> m_counter;
-		mutable SpinLock m_lockState;
-		bool m_isAlive;
-
-		void tryDestroy();
+		std::atomic<uint32_t> m_counter;
 
 	protected:
 		virtual void selfDestroy() = 0;
@@ -20,13 +16,13 @@ namespace Edge
 		void decrementCounter();
 
 	public:
-		MTCountableObjectBase(size_t initialCounterVal = 0);
+		MTCountableObjectBase(uint32_t initialCounterVal = 0);
 		virtual ~MTCountableObjectBase();
 
-		bool addReferenceCounter();
+		void addReferenceCounter();
 		void releaseReferenceObject();
 
-		size_t getReferenceCount() const;
+		uint32_t getReferenceCount() const;
 	};
 
 	class DefaultDestroyingMTCountableObjectBase : public MTCountableObjectBase
@@ -35,7 +31,7 @@ namespace Edge
 		virtual void selfDestroy() override;
 
 	public:
-		DefaultDestroyingMTCountableObjectBase(size_t initialCounterVal = 0)
+		DefaultDestroyingMTCountableObjectBase(uint32_t initialCounterVal = 0)
 			: MTCountableObjectBase(initialCounterVal) {}
 	};
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EdgeCommon/Reference/MTReference.h"
+#include "EdgeCommon/Reference/Reference.h"
 
 namespace Edge
 {
@@ -15,5 +15,5 @@ namespace Edge
 		virtual void destroyContext(PhysicsConstraintSceneContext* context) = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsConstraintSceneContextCollection);
+	EDGE_REFERENCE(PhysicsConstraintSceneContextCollection);
 }

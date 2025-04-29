@@ -36,7 +36,7 @@ namespace Edge
 		EDGE_PHYSICS_CONSTRAINT_TYPE(HINDGE)
 	};
 
-	EDGE_MT_REFERENCE(HingeConstraint);
+	EDGE_REFERENCE(HingeConstraint);
 
 	HingeConstraintReference CreateHingeConstraintInWorldSpace(
 		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,

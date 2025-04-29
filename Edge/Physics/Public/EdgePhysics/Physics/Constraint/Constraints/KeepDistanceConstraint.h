@@ -27,7 +27,7 @@ namespace Edge
 		EDGE_PHYSICS_CONSTRAINT_TYPE(KEEP_DISTANCE)
 	};
 
-	EDGE_MT_REFERENCE(KeepDistanceConstraint);
+	EDGE_REFERENCE(KeepDistanceConstraint);
 
 	KeepDistanceConstraintReference CreateKeepDistanceConstraintInWorldSpace(
 		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,

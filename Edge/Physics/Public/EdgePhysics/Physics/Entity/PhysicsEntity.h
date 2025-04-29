@@ -25,7 +25,7 @@ namespace Edge
 		virtual PhysicsEntitySceneContextType getType() const = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntitySceneContext);
+	EDGE_REFERENCE(PhysicsEntitySceneContext);
 
 #define EDGE_PHYSICS_ENTITY_SCENE_CONTEXT_TYPE(PHYSICS_ENTITY_SCENE_CONTEXT_TYPE) EDGE_HASH_TYPE(#PHYSICS_ENTITY_SCENE_CONTEXT_TYPE, Edge::PhysicsEntitySceneContextType, PhysicsEntitySceneContext)
 

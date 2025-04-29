@@ -31,7 +31,7 @@ namespace Edge
 		EDGE_PHYSICS_CONSTRAINT_TYPE(FIXED)
 	};
 
-	EDGE_MT_REFERENCE(FixedConstraint);
+	EDGE_REFERENCE(FixedConstraint);
 
 	FixedConstraintReference CreateFixedConstraintInWorldSpace(
 		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,

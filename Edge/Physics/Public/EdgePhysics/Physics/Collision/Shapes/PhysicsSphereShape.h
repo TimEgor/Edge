@@ -24,5 +24,5 @@ namespace Edge
 		EDGE_PHYSICS_COLLISION_SHAPE_TYPE(SPHERE);
 	};
 
-	EDGE_MT_REFERENCE(PhysicsSphereShape);
+	EDGE_REFERENCE(PhysicsSphereShape);
 }

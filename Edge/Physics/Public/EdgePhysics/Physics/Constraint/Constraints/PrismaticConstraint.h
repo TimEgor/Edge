@@ -34,7 +34,7 @@ namespace Edge
 		EDGE_PHYSICS_CONSTRAINT_TYPE(PRISMATIC)
 	};
 
-	EDGE_MT_REFERENCE(PrismaticConstraint);
+	EDGE_REFERENCE(PrismaticConstraint);
 
 	PrismaticConstraintReference CreatePrismaticConstraintInWorldSpace(
 		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,

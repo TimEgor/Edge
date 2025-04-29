@@ -24,5 +24,5 @@ namespace Edge
 		EDGE_PHYSICS_COLLISION_SHAPE_TYPE(BOX);
 	};
 
-	EDGE_MT_REFERENCE(PhysicsBoxShape);
+	EDGE_REFERENCE(PhysicsBoxShape);
 }

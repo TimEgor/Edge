@@ -34,7 +34,7 @@ namespace Edge
 		void destroyDefaultContext(DefaultPhysicsEntitySceneContext* context);
 	};
 
-	EDGE_MT_REFERENCE(DefaultPhysicsEntitySceneContextCollection);
+	EDGE_REFERENCE(DefaultPhysicsEntitySceneContextCollection);
 
 	class PhysicsSceneEntityCollection final
 	{

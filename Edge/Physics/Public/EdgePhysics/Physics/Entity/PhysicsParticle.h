@@ -4,8 +4,8 @@
 
 namespace Edge
 {
-	EDGE_MT_NAMED_REFERENCE(PhysicsPositionBasedTransform, PhysicsParticleTransform);
-	EDGE_MT_NAMED_REFERENCE(PhysicsPositionBasedMotion, PhysicsParticleMotion);
+	EDGE_NAMED_REFERENCE(PhysicsPositionBasedTransform, PhysicsParticleTransform);
+	EDGE_NAMED_REFERENCE(PhysicsPositionBasedMotion, PhysicsParticleMotion);
 
 	class PhysicsParticle : public PhysicsEntity
 	{
@@ -24,5 +24,5 @@ namespace Edge
 		EDGE_PHYSICS_ENTITY_TYPE(PARTICLE);
 	};
 
-	EDGE_MT_REFERENCE(PhysicsParticle);
+	EDGE_REFERENCE(PhysicsParticle);
 }

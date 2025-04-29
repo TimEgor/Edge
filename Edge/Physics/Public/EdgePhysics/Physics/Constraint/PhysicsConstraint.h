@@ -21,7 +21,7 @@ namespace Edge
 		virtual PhysicsConstraintSceneContextType getType() const = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsConstraintSceneContext);
+	EDGE_REFERENCE(PhysicsConstraintSceneContext);
 
 #define EDGE_PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE(PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE) EDGE_HASH_TYPE(#PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE, Edge::PhysicsConstraintSceneContextType, PhysicsConstraintSceneContext)
 
@@ -58,5 +58,5 @@ namespace Edge
 
 #define EDGE_PHYSICS_CONSTRAINT_TYPE(PHYSICS_CONSTRAINT_TYPE) EDGE_HASH_TYPE(#PHYSICS_CONSTRAINT_TYPE, Edge::PhysicsConstraintType, PhysicsConstraint)
 
-	EDGE_MT_REFERENCE(PhysicsConstraint);
+	EDGE_REFERENCE(PhysicsConstraint);
 }

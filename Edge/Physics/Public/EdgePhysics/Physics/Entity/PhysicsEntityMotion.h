@@ -66,7 +66,7 @@ namespace Edge
 		virtual void applyAcceleration(float deltaTime, const ComputeVector3& gravity) = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntityMotion);
+	EDGE_REFERENCE(PhysicsEntityMotion);
 
 	class PhysicsPositionBasedMotion : public PhysicsEntityMotion
 	{
@@ -120,7 +120,7 @@ namespace Edge
 		void clearForceAccumulator();
 	};
 
-	EDGE_MT_REFERENCE(PhysicsPositionBasedMotion);
+	EDGE_REFERENCE(PhysicsPositionBasedMotion);
 
 	class PhysicsPositionAndRotationBasedMotion : public PhysicsPositionBasedMotion
 	{

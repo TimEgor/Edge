@@ -2,7 +2,7 @@
 
 #include "EdgeCommon/HashedType.h"
 #include "EdgeCommon/Math/AABB.h"
-#include "EdgeCommon/Reference/MTReference.h"
+#include "EdgeCommon/Reference/Reference.h"
 
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionQuery.h"
 
@@ -26,7 +26,7 @@ namespace Edge
 		virtual PhysicsEntityCollisionShapeType getType() const = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntityCollisionShape);
+	EDGE_REFERENCE(PhysicsEntityCollisionShape);
 
 #define EDGE_PHYSICS_COLLISION_SHAPE_TYPE(PHYSICS_COLLISION_SHAPE_TYPE) EDGE_HASH_TYPE(#PHYSICS_COLLISION_SHAPE_TYPE, Edge::PhysicsEntityCollisionShapeType, PhysicsEntityCollisionShape)
 }

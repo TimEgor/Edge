@@ -32,7 +32,7 @@ namespace Edge
 		void destroyDefaultContext(DefaultPhysicsConstraintSceneContext* context);
 	};
 
-	EDGE_MT_REFERENCE(DefaultPhysicsConstraintSceneContextCollection);
+	EDGE_REFERENCE(DefaultPhysicsConstraintSceneContextCollection);
 
 	class PhysicsSceneConstraintCollection final
 	{

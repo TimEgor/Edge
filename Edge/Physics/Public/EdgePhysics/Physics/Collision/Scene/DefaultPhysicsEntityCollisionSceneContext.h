@@ -37,7 +37,7 @@ namespace Edge
 		EDGE_PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE(DEFAULT);
 	};
 
-	EDGE_MT_REFERENCE(DefaultPhysicsEntityCollisionSceneContext);
+	EDGE_REFERENCE(DefaultPhysicsEntityCollisionSceneContext);
 
 	namespace CollisionUtil
 	{

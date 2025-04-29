@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EdgeCommon/Patterns/NonCopyable.h"
-#include "EdgeCommon/Reference/MTReference.h"
+#include "EdgeCommon/Reference/Reference.h"
 
 namespace Edge
 {
@@ -35,5 +35,5 @@ namespace Edge
 		}
 	};
 
-	EDGE_MT_REFERENCE(WindowHandle);
+	EDGE_REFERENCE(WindowHandle);
 }

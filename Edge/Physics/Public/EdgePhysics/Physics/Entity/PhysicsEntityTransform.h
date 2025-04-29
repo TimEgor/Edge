@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EdgeCommon/Math/Transform.h"
-#include "EdgeCommon/Reference/MTReference.h"
+#include "EdgeCommon/Reference/Reference.h"
 
 #include "PhysicsEntityWeakLinkObject.h"
 
@@ -36,7 +36,7 @@ namespace Edge
 		virtual void setWorldTransform(const Transform& transform) = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntityTransform);
+	EDGE_REFERENCE(PhysicsEntityTransform);
 
 	class PhysicsPositionBasedTransform : public PhysicsEntityTransform
 	{
@@ -63,7 +63,7 @@ namespace Edge
 		virtual void setWorldTransform(const Transform& transform) override;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsPositionBasedTransform);
+	EDGE_REFERENCE(PhysicsPositionBasedTransform);
 
 	class PhysicsPositionAndRotationBasedTransform : public PhysicsPositionBasedTransform
 	{
@@ -85,7 +85,7 @@ namespace Edge
 		virtual void setWorldTransform(const Transform& transform) override;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsPositionAndRotationBasedTransform);
+	EDGE_REFERENCE(PhysicsPositionAndRotationBasedTransform);
 
 	class PhysicsEntityTransformNotificationFreeAccessor
 	{

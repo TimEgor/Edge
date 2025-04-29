@@ -26,7 +26,7 @@ namespace Edge
 			std::vector<PhysicsBroadPhase::PhysicsSceneCollisionPairCollection> m_collisionCollector;
 		};
 
-		EDGE_MT_REFERENCE(CollisionFindingContext)
+		EDGE_REFERENCE(CollisionFindingContext)
 
 		PhysicsSceneCollisionCollection* m_collisionCollection = nullptr;
 		PhysicsCollisionContactManager* m_contactManager = nullptr;
