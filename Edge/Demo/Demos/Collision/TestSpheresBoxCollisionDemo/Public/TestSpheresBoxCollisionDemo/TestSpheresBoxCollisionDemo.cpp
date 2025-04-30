@@ -126,12 +126,12 @@ void EdgeDemo::TestSpheresBoxCollisionDemo::releaseDemo()
 {
 	for (const auto& sphere : m_spheres)
 	{
-		m_physicsScene->removeEntity(sphere.getObject());
+		m_physicsScene->removeEntity(sphere);
 	}
 
 	for (const auto& box : m_staticBoxes)
 	{
-		m_physicsScene->removeEntity(box.getObject());
+		m_physicsScene->removeEntity(box);
 	}
 }
 

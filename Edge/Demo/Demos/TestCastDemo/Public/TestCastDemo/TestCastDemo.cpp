@@ -61,11 +61,11 @@ bool EdgeDemo::TestCastDemo::initDemo()
 
 void EdgeDemo::TestCastDemo::releaseDemo()
 {
-	m_physicsScene->removeEntity(m_testBox1.getObject());
-	m_physicsScene->removeEntity(m_testBox2.getObject());
+	m_physicsScene->removeEntity(m_testBox1);
+	m_physicsScene->removeEntity(m_testBox2);
 
-	m_physicsScene->removeEntity(m_testSphere1.getObject());
-	m_physicsScene->removeEntity(m_testSphere2.getObject());
+	m_physicsScene->removeEntity(m_testSphere1);
+	m_physicsScene->removeEntity(m_testSphere2);
 
 	m_testBox1.reset();
 	m_testBox2.reset();

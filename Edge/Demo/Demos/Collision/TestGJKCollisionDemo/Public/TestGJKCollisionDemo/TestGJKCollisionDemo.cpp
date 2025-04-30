@@ -96,8 +96,8 @@ bool EdgeDemo::TestGJKCollisionDemo::initDemo()
 
 void EdgeDemo::TestGJKCollisionDemo::releaseDemo()
 {
-	m_physicsScene->removeEntity(m_staticBox.getObject());
-	m_physicsScene->removeEntity(m_dynamicBox.getObject());
+	m_physicsScene->removeEntity(m_staticBox);
+	m_physicsScene->removeEntity(m_dynamicBox);
 
 	m_staticBox.reset();
 	m_dynamicBox.reset();

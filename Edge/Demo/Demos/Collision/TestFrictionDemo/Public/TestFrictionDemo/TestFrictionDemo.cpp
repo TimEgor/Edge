@@ -46,8 +46,8 @@ bool EdgeDemo::TestFrictionDemo::initDemo()
 
 void EdgeDemo::TestFrictionDemo::releaseDemo()
 {
-	m_physicsScene->removeEntity(m_staticBox.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody.getObject());
+	m_physicsScene->removeEntity(m_staticBox);
+	m_physicsScene->removeEntity(m_dynamicBody);
 
 	m_staticBox.reset();
 	m_dynamicBody.reset();

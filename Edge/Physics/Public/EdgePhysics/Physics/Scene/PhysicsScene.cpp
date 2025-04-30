@@ -140,10 +140,10 @@ void Edge::PhysicsScene::removeEntity(PhysicsSceneEntityID entityID)
 
 void Edge::PhysicsScene::removeEntity(const PhysicsEntityReference& entity)
 {
-	if (entity)
+	if (!entity.isNull())
 	{
 		const PhysicsEntityCollisionReference entityCollision = entity->getCollision();
-		if (entityCollision)
+		if (!entityCollision.isNull())
 		{
 			m_collisionManager->removeCollision(entityCollision);
 		}
@@ -179,7 +179,7 @@ Edge::PhysicsConstraintReference Edge::PhysicsScene::getConstraint(PhysicsSceneC
 
 void Edge::PhysicsScene::makeTransformChangingNotification(const PhysicsEntityReference& entity)
 {
-	if (!entity)
+	if (entity.isNull())
 	{
 		return;
 	}

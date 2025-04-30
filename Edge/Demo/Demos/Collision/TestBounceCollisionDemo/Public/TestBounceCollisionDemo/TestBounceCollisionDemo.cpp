@@ -86,11 +86,11 @@ bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 
 void EdgeDemo::TestBounceCollisionDemo::releaseDemo()
 {
-	m_physicsScene->removeEntity(m_dynamicBody1.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody2.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody3.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody4.getObject());
-	m_physicsScene->removeEntity(m_staticBody.getObject());
+	m_physicsScene->removeEntity(m_dynamicBody1);
+	m_physicsScene->removeEntity(m_dynamicBody2);
+	m_physicsScene->removeEntity(m_dynamicBody3);
+	m_physicsScene->removeEntity(m_dynamicBody4);
+	m_physicsScene->removeEntity(m_staticBody);
 
 	m_dynamicBody1.reset();
 	m_dynamicBody2.reset();

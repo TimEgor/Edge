@@ -46,7 +46,8 @@ namespace Edge
 		const T* operator->() const { return m_object; }
 		const T& operator*() const { return *m_object; }
 
-		operator bool() const { return m_object; }
+		operator const T*() const { return m_object; }
+
 		bool isNull() const { return m_object == nullptr; }
 
 		const T* getObject() const { return m_object; }

@@ -72,7 +72,7 @@ void EdgeDemo::TestSpheresCollisionDemo::releaseDemo()
 {
 	for (const auto& sphere : m_spheres)
 	{
-		m_physicsScene->removeEntity(sphere.getObject());
+		m_physicsScene->removeEntity(sphere);
 	}
 }
 

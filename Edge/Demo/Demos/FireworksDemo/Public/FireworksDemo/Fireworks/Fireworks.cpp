@@ -33,7 +33,7 @@ EdgeDemo::FireworksParticle::FireworksParticle(FireworksParticleID id, const Edg
 EdgeDemo::FireworksParticle::~FireworksParticle()
 {
 	Edge::PhysicsSceneReference scene = m_physParticleEntity->getScene();
-	scene->removeEntity(m_physParticleEntity.getObject());
+	scene->removeEntity(m_physParticleEntity);
 }
 
 void EdgeDemo::FireworksParticle::update(float deltaTime)

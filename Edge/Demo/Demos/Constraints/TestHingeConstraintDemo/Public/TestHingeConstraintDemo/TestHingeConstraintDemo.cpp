@@ -1,5 +1,6 @@
 #include "TestHingeConstraintDemo.h"
 
+#include "EdgeCommon/String/Format.h"
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Constraint/Constraints/HingeConstraint.h"
@@ -63,7 +64,7 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 		Edge::FloatVector3UnitZ, Edge::FloatVector3UnitZ);
 	m_physicsScene->addConstraint(m_constraint);
 
-	m_dynamicBody->getBodyMotion()->applyAngularImpulse(Edge::FloatVector3(0.0f, 0.0f, 3.5f));
+	m_dynamicBody->getBodyMotion()->applyAngularImpulse(Edge::FloatVector3(0.0f, 0.0f, 0.5f));
 
 	return true;
 }
@@ -72,8 +73,8 @@ void EdgeDemo::TestHingeConstraintDemo::releaseDemo()
 {
 	m_physicsScene->removeConstraint(m_constraint);
 
-	m_physicsScene->removeEntity(m_staticBody.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody.getObject());
+	m_physicsScene->removeEntity(m_staticBody);
+	m_physicsScene->removeEntity(m_dynamicBody);
 }
 
 void EdgeDemo::TestHingeConstraintDemo::updateDemoLogic(float deltaTime)
@@ -82,4 +83,6 @@ void EdgeDemo::TestHingeConstraintDemo::updateDemoLogic(float deltaTime)
 
 	drawBox(m_staticBody, false);
 	drawBox(m_dynamicBody, true);
+
+	m_debugVisualizationDataController->addScreenText(Edge::UInt32Vector2Zero, Edge::StringFormat("%.3f", Edge::Math::ConvertRadToDeg(m_constraint->getCurrentAngle())), 20);
 }

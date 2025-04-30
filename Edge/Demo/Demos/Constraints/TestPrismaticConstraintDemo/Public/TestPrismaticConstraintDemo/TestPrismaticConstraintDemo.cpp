@@ -73,8 +73,8 @@ void EdgeDemo::TestPrismaticConstraintDemo::releaseDemo()
 {
 	m_physicsScene->removeConstraint(m_constraint);
 
-	m_physicsScene->removeEntity(m_staticBody.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody.getObject());
+	m_physicsScene->removeEntity(m_staticBody);
+	m_physicsScene->removeEntity(m_dynamicBody);
 }
 
 void EdgeDemo::TestPrismaticConstraintDemo::updateDemoLogic(float deltaTime)

@@ -73,7 +73,7 @@ void EdgeDemo::TestFixConstraintDemo::releaseDemo()
 
 	for (const auto& body : m_bodies)
 	{
-		m_physicsScene->removeEntity(body.getObject());
+		m_physicsScene->removeEntity(body);
 	}
 }
 
