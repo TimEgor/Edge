@@ -1,9 +1,9 @@
 #include "TestHingeConstraintDemo.h"
 
 #include "EdgeCommon/String/Format.h"
+
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
-#include "EdgePhysics/Physics/Constraint/Constraints/HingeConstraint.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
 #include "EdgeDemoFramework/DemoApplication/DemoApplication.h"
@@ -33,15 +33,15 @@ void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::PhysicsBodyReference
 
 bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 {
-	m_cameraController->getTransform().setOrigin(Edge::FloatVector3(0.0f, 0.0f, -5.0f));
+	m_cameraController->getTransform().setOrigin(Edge::ComputeVector3(0.0, 0.0, -5.0));
 
 	//
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
-	constexpr Edge::FloatVector3 size(2.0f);
+	constexpr Edge::ComputeVector3 size(2.0);
 
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
-	bodyMotionCreationParam.m_mass = 1.0f;
+	bodyMotionCreationParam.m_mass = 1.0;
 
 	{
 		m_staticBody = Edge::GetPhysics().createBody(&bodyCreationParam);
@@ -58,13 +58,14 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 		m_physicsScene->addEntity(m_dynamicBody);
 	}
 
-	m_constraint = new Edge::HingeConstraint(
+	m_constraint = new Edge::LimitedHingeConstraint(
 		m_staticBody, m_dynamicBody,
-		Edge::FloatVector3Zero, Edge::ComputeVector3(0.0, 0.0, 2.5),
-		Edge::FloatVector3UnitZ, Edge::FloatVector3UnitZ);
+		Edge::ComputeVector3Zero, Edge::ComputeVector3(0.0, 0.0, 2.5),
+		Edge::ComputeVector3UnitZ, Edge::ComputeVector3UnitZ,
+		Edge::Math::ConvertDegToRad(-90.0), Edge::Math::ConvertDegToRad(90.0));
 	m_physicsScene->addConstraint(m_constraint);
 
-	m_dynamicBody->getBodyMotion()->applyAngularImpulse(Edge::FloatVector3(0.0f, 0.0f, 0.5f));
+	m_dynamicBody->getBodyMotion()->applyAngularImpulse(Edge::ComputeVector3(0.0, 0.0, 0.5));
 
 	return true;
 }

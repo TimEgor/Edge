@@ -3,16 +3,23 @@
 #include "EdgeCommon/UtilsMacros.h"
 
 Edge::HingeConstraint::HingeConstraint(
-	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
-	const ComputeVector3& axis1, const ComputeVector3& axis2)
+	const PhysicsEntityReference& entity1,
+	const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1,
+	const ComputeVector3& anchor2,
+	const ComputeVector3& axis1,
+	const ComputeVector3& axis2
+)
 	: TwoPhysicsEntityConstraint(entity1, entity2),
-	m_positionPart(entity1, entity2), m_rotationPart(entity1, entity2),
-	m_anchor1(anchor1), m_anchor2(anchor2),
-	m_axis1(axis1), m_axis2(axis2)
+	  m_positionPart(entity1, entity2),
+	  m_rotationPart(entity1, entity2),
+	  m_anchor1(anchor1),
+	  m_anchor2(anchor2),
+	  m_axis1(axis1),
+	  m_axis2(axis2)
 {
-	m_initialRotationDelta = 
-		ComputeQuaternion(getEntity1()->getTransform()->getRotation()) * 
+	m_initialRotationDelta =
+		ComputeQuaternion(getEntity1()->getTransform()->getRotation()) *
 		ComputeQuaternion(getEntity2()->getTransform()->getRotation()).conjugate();
 }
 
@@ -76,9 +83,13 @@ Edge::ComputeValueType Edge::HingeConstraint::getCurrentAngle() const
 }
 
 Edge::HingeConstraintReference Edge::CreateHingeConstraintInWorldSpace(
-	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-	const ComputeVector3& anchor1, const ComputeVector3& anchor2,
-	const ComputeVector3& axis1, const ComputeVector3& axis2)
+	const PhysicsEntityReference& entity1,
+	const PhysicsEntityReference& entity2,
+	const ComputeVector3& anchor1,
+	const ComputeVector3& anchor2,
+	const ComputeVector3& axis1,
+	const ComputeVector3& axis2
+)
 {
 	EDGE_CHECK_RETURN_NULL(entity1 && entity2);
 
@@ -100,8 +111,11 @@ Edge::HingeConstraintReference Edge::CreateHingeConstraintInWorldSpace(
 	}
 
 	return new HingeConstraint(
-		entity1, entity2,
-		localAnchor1, localAnchor2,
-		localAxis1, localAxis2
+		entity1,
+		entity2,
+		localAnchor1,
+		localAnchor2,
+		localAxis1,
+		localAxis2
 	);
 }

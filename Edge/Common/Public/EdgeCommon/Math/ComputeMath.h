@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <limits>
+#include <utility>
 
 #define EDGE_PI 3.14159265358979323846
 
@@ -98,6 +99,12 @@ namespace Edge
 		{
 			EDGE_ASSERT(epsilon > T(0.0));
 			return (value1 - value2) >= epsilon;
+		}
+
+		template <typename T>
+		T Clamp(T val, T minVal, T maxVal)
+		{
+			return std::min(std::max(val, minVal), maxVal);
 		}
 	}
 }

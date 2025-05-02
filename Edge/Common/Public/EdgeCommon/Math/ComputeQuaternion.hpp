@@ -169,12 +169,12 @@ namespace Edge
 	template <typename T>
 	ComputeQuaternionBase<T>& ComputeQuaternionBase<T>::setupFromRollPitchYaw(ValueType pitch, ValueType yaw, ValueType roll)
 	{
-		const ValueType cx = std::cos(pitch * 0.5_ecv);
-		const ValueType sx = std::sin(pitch * 0.5_ecv);
-		const ValueType cy = std::cos(yaw * 0.5_ecv);
-		const ValueType sy = std::sin(yaw * 0.5_ecv);
-		const ValueType cz = std::cos(roll * 0.5_ecv);
-		const ValueType sz = std::sin(roll * 0.5_ecv);
+		const ValueType cx = std::cos(pitch * T(0.5));
+		const ValueType sx = std::sin(pitch * T(0.5));
+		const ValueType cy = std::cos(yaw * T(0.5));
+		const ValueType sy = std::sin(yaw * T(0.5));
+		const ValueType cz = std::cos(roll * T(0.5));
+		const ValueType sz = std::sin(roll * T(0.5));
 
 		m_quaternion.m_elements.m_x = cz * cy * cx + sz * sy * sx;
 		m_quaternion.m_elements.m_y = cz * cy * sx - sz * sy * cx;
@@ -336,7 +336,7 @@ namespace Edge
 	template <typename T>
 	T ComputeQuaternionBase<T>::getAxisAngle(const ComputeVector3Base<T>& axis) const
 	{
-		return std::atan(getXYZ().dot(axis) / getW()) * 2.0_ecv;
+		return std::atan(getXYZ().dot(axis) / getW()) * T(2.0);
 	}
 
 	template <typename T>
@@ -351,13 +351,13 @@ namespace Edge
 	template <typename T>
 	void ComputeQuaternionBase<T>::getEulerAngles(ComputeVector3Base<T>& angles) const
 	{
-		const T sinr_cosp = 2.0_ecv * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_z);
-		const T cosr_cosp = 1.0_ecv - 2.0_ecv * (m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y);
-		const T sinp = 2.0_ecv * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_y - m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_x);
-		const T siny_cosp = 2.0_ecv * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_z + m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_y);
-		const T cosy_cosp = 1.0_ecv - 2.0_ecv * (m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y + m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_z);
+		const T sinr_cosp = T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_z);
+		const T cosr_cosp = T(1.0) - T(2.0) * (m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y);
+		const T sinp = T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_y - m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_x);
+		const T siny_cosp = T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_z + m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_y);
+		const T cosy_cosp = T(1.0) - T(2.0) * (m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y + m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_z);
 
-		if (std::abs(sinp) >= 1.0_ecv)
+		if (std::abs(sinp) >= T(1.0))
 		{
 			angles.setY(std::copysign(Math::HalfPi, sinp));
 		}

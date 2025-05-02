@@ -6,12 +6,13 @@
 
 namespace Edge
 {
-	class HingeConstraint final : public TwoPhysicsEntityConstraint
+	class HingeConstraint : public TwoPhysicsEntityConstraint
 	{
 	private:
 		KeepPositionConstraintPart m_positionPart;
 		AxisRotationConstraintPart m_rotationPart;
 
+	protected:
 		ComputeQuaternion m_initialRotationDelta = ComputeQuaternionIdentity;
 
 		ComputeVector3 m_anchor1 = ComputeVector3Zero;
