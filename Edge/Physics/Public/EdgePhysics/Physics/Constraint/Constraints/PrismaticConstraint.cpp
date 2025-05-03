@@ -65,6 +65,26 @@ void Edge::PrismaticConstraint::solvePosition()
 	}
 }
 
+Edge::ComputeValueType Edge::PrismaticConstraint::getCurrentOffset() const
+{
+	const PhysicsEntityTransformReference& transform1 = getEntity1()->getTransform();
+	const PhysicsEntityTransformReference& transform2 = getEntity2()->getTransform();
+
+	const ComputeVector3 position1 = transform1->getPosition();
+	const ComputeVector3 position2 = transform2->getPosition();
+
+	const ComputeQuaternion rotation1 = transform1->getRotation();
+	const ComputeQuaternion rotation2 = transform2->getRotation();
+
+	const ComputeVector3 anchor1 = rotation1.rotate(m_anchor1);
+	const ComputeVector3 anchor2 = rotation2.rotate(m_anchor2);
+
+	const ComputeVector3 delta = (position2 + anchor2) - (position1 + anchor1);
+	const ComputeVector3 axis1 = rotation1.rotate(m_axis1);
+
+	return axis1.dot(delta);
+}
+
 Edge::PrismaticConstraintReference Edge::CreatePrismaticConstraintInWorldSpace(
 	const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
 	const ComputeVector3& anchor1, const ComputeVector3& anchor2,

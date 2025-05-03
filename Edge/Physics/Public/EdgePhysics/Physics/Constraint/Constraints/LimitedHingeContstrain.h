@@ -15,6 +15,9 @@ namespace Edge
 		ComputeValueType m_minLimitValue = 0.0;
 		ComputeValueType m_maxLimitValue = 0.0;
 
+		void setMinLimit(ComputeValueType min);
+		void setMaxLimit(ComputeValueType max);
+
 	public:
 		LimitedHingeConstraint(
 			const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
@@ -29,8 +32,6 @@ namespace Edge
 		virtual void solvePosition() override;
 
 		void setLimits(ComputeValueType min, ComputeValueType max);
-		void setMinLimit(ComputeValueType min);
-		void setMaxLimit(ComputeValueType max);
 
 		ComputeValueType getMinLimit() const { return m_minLimitValue; }
 		ComputeValueType getMaxLimit() const { return m_maxLimitValue; }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EdgePhysics/Physics/Constraint/Constraints/LimitedPrismaticConstraint.h"
 #include "EdgePhysics/Physics/Entity/PhysicsBody.h"
 
 #include "EdgeDemoFramework/Demo/PreInitedDemo.h"
@@ -11,7 +12,7 @@ namespace EdgeDemo
 	private:
 		Edge::PhysicsBodyReference m_staticBody;
 		Edge::PhysicsBodyReference m_dynamicBody;
-		Edge::PhysicsConstraintReference m_constraint;
+		Edge::LimitedPrismaticConstraintReference m_constraint;
 
 		Edge::FloatQuaternion m_testRotation = Edge::FloatQuaternionIdentity;
 

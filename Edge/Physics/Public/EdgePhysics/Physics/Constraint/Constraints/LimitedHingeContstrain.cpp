@@ -62,6 +62,12 @@ void Edge::LimitedHingeConstraint::solvePosition()
 
 void Edge::LimitedHingeConstraint::setLimits(ComputeValueType min, ComputeValueType max)
 {
+	if (min > max)
+	{
+		EDGE_ASSERT_FAIL_MESSAGE("Constraint min limit value should be less or equal than max value.");
+		return;
+	}
+
 	setMinLimit(min);
 	setMaxLimit(max);
 }

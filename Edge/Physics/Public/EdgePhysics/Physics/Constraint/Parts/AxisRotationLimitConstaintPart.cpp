@@ -160,7 +160,7 @@ void Edge::AxisRotationLimitConstraintPart::solveVelocity()
 
 		const ComputeValueType jv = (velocity2 - velocity1).dot(m_axis1);
 
-		const ComputeValueType computeLambdaValue = m_invEffectiveMass * -jv; //negate jv instead of m_invEffectiveMass
+		const ComputeValueType computeLambdaValue = -m_invEffectiveMass * jv;
 
 		const ComputeValueType totalLambda = Math::Clamp(m_totalLambda + computeLambdaValue, m_minLambdaLimit, m_maxLambdaLimit);
 		const ComputeValueType deltaLambda = totalLambda - m_totalLambda;
@@ -190,5 +190,5 @@ void Edge::AxisRotationLimitConstraintPart::solvePosition(ComputeValueType delta
 
 bool Edge::AxisRotationLimitConstraintPart::isActive() const
 {
-	return m_invEffectiveMass != 0.0_ecv;
+	return !Math::IsApproxEqual(m_invEffectiveMass, 0.0_ecv);;
 }
