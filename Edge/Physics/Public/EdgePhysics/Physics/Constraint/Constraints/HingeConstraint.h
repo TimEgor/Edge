@@ -1,12 +1,12 @@
 #pragma once
 
-#include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityConstraint.h"
+#include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityMotorizedConstraint.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisRotationConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/KeepPositionConstraintPart.h"
 
 namespace Edge
 {
-	class HingeConstraint : public TwoPhysicsEntityConstraint
+	class HingeConstraint : public TwoPhysicsEntityMotorizedConstraint
 	{
 	private:
 		KeepPositionConstraintPart m_positionPart;

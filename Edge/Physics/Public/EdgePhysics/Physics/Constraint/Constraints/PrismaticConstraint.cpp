@@ -8,7 +8,7 @@ Edge::PrismaticConstraint::PrismaticConstraint(
 	const ComputeVector3& axis1, const ComputeVector3& axis2,
 	const ComputeQuaternion& deltaRotation
 )
-	: TwoPhysicsEntityConstraint(entity1, entity2),
+	: TwoPhysicsEntityMotorizedConstraint(entity1, entity2),
 	m_positionPart(entity1, entity2), m_rotationPart(entity1, entity2),
 	m_anchor1(anchor1), m_anchor2(anchor2),
 	m_axis1(axis1), m_axis2(axis2),
@@ -18,12 +18,24 @@ Edge::PrismaticConstraint::PrismaticConstraint(
 
 void Edge::PrismaticConstraint::preSolve(float deltaTime)
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->preSolve(deltaTime);
+	}
+
 	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
 	m_rotationPart.preSolve();
 }
 
 void Edge::PrismaticConstraint::warmUp()
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->warmUp();
+	}
+
 	if (m_positionPart.isActive())
 	{
 		m_positionPart.warmUp();
@@ -37,6 +49,12 @@ void Edge::PrismaticConstraint::warmUp()
 
 void Edge::PrismaticConstraint::solveVelocity()
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->solveVelocity();
+	}
+
 	if (m_positionPart.isActive())
 	{
 		m_positionPart.solveVelocity();
@@ -50,6 +68,12 @@ void Edge::PrismaticConstraint::solveVelocity()
 
 void Edge::PrismaticConstraint::solvePosition()
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->solvePosition();
+	}
+
 	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
 
 	if (m_positionPart.isActive())

@@ -10,7 +10,7 @@ Edge::HingeConstraint::HingeConstraint(
 	const ComputeVector3& axis1,
 	const ComputeVector3& axis2
 )
-	: TwoPhysicsEntityConstraint(entity1, entity2),
+	: TwoPhysicsEntityMotorizedConstraint(entity1, entity2),
 	  m_positionPart(entity1, entity2),
 	  m_rotationPart(entity1, entity2),
 	  m_anchor1(anchor1),
@@ -25,12 +25,24 @@ Edge::HingeConstraint::HingeConstraint(
 
 void Edge::HingeConstraint::preSolve(float deltaTime)
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->preSolve(deltaTime);
+	}
+
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
 	m_rotationPart.preSolve(m_axis1, m_axis2);
 }
 
 void Edge::HingeConstraint::warmUp()
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->warmUp();
+	}
+
 	if (m_positionPart.isActive())
 	{
 		m_positionPart.warmUp();
@@ -44,6 +56,12 @@ void Edge::HingeConstraint::warmUp()
 
 void Edge::HingeConstraint::solveVelocity()
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->solveVelocity();
+	}
+
 	if (m_positionPart.isActive())
 	{
 		m_positionPart.solveVelocity();
@@ -57,6 +75,12 @@ void Edge::HingeConstraint::solveVelocity()
 
 void Edge::HingeConstraint::solvePosition()
 {
+	const PhysicsConstraintMotorReference motor = getMotor();
+	if (motor)
+	{
+		motor->solvePosition();
+	}
+
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
 
 	if (m_positionPart.isActive())
