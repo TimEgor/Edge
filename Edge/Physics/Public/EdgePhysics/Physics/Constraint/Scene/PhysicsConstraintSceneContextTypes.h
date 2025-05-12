@@ -5,8 +5,8 @@
 namespace Edge
 {
 	using PhysicsSceneConstraintID = uint32_t;
-	constexpr PhysicsSceneConstraintID InvalidPhysicsSceneConstraintID = 0;
+	inline constexpr PhysicsSceneConstraintID InvalidPhysicsSceneConstraintID = 0;
 
 	using PhysicsSceneActivationContextConstraintIndex = uint32_t;
-	constexpr PhysicsSceneActivationContextConstraintIndex InvalidPhysicsSceneActivationContextConstraintIndex = -1;
+	inline constexpr PhysicsSceneActivationContextConstraintIndex InvalidPhysicsSceneActivationContextConstraintIndex = -1;
 }

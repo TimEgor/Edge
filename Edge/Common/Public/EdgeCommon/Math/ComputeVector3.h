@@ -170,31 +170,31 @@ namespace Edge
 	using ComputeVector3 = ComputeVector3Base<ComputeValueType>;
 	using FloatComputeVector3 = ComputeVector3Base<float>;
 
-	constexpr ComputeVector3 ComputeVector3Zero = ComputeVector3ZeroBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3One = ComputeVector3OneBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3NegativeOne = ComputeVector3NegativeOneBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3Zero = ComputeVector3ZeroBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3One = ComputeVector3OneBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3NegativeOne = ComputeVector3NegativeOneBase<ComputeValueType>();
 
-	constexpr ComputeVector3 ComputeVector3Epsilon = ComputeVector3EpsilonBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3Epsilon = ComputeVector3EpsilonBase<ComputeValueType>();
 
-	constexpr ComputeVector3 ComputeVector3UnitX = ComputeVector3UnitXBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3UnitY = ComputeVector3UnitYBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3UnitZ = ComputeVector3UnitZBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3NegativeUnitX = ComputeVector3NegativeUnitXBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3NegativeUnitY = ComputeVector3NegativeUnitYBase<ComputeValueType>();
-	constexpr ComputeVector3 ComputeVector3NegativeUnitZ = ComputeVector3NegativeUnitZBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3UnitX = ComputeVector3UnitXBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3UnitY = ComputeVector3UnitYBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3UnitZ = ComputeVector3UnitZBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3NegativeUnitX = ComputeVector3NegativeUnitXBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3NegativeUnitY = ComputeVector3NegativeUnitYBase<ComputeValueType>();
+	inline constexpr ComputeVector3 ComputeVector3NegativeUnitZ = ComputeVector3NegativeUnitZBase<ComputeValueType>();
 
-	constexpr FloatComputeVector3 FloatComputeVector3Zero = ComputeVector3ZeroBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3One = ComputeVector3OneBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3NegativeOne = ComputeVector3NegativeOneBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3Zero = ComputeVector3ZeroBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3One = ComputeVector3OneBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3NegativeOne = ComputeVector3NegativeOneBase<float>();
 
-	constexpr FloatComputeVector3 FloatComputeVector3Epsilon = ComputeVector3EpsilonBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3Epsilon = ComputeVector3EpsilonBase<float>();
 
-	constexpr FloatComputeVector3 FloatComputeVector3UnitX = ComputeVector3UnitXBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3UnitY = ComputeVector3UnitYBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3UnitZ = ComputeVector3UnitZBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3NegativeUnitX = ComputeVector3NegativeUnitXBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3NegativeUnitY = ComputeVector3NegativeUnitYBase<float>();
-	constexpr FloatComputeVector3 FloatComputeVector3NegativeUnitZ = ComputeVector3NegativeUnitZBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3UnitX = ComputeVector3UnitXBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3UnitY = ComputeVector3UnitYBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3UnitZ = ComputeVector3UnitZBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3NegativeUnitX = ComputeVector3NegativeUnitXBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3NegativeUnitY = ComputeVector3NegativeUnitYBase<float>();
+	inline constexpr FloatComputeVector3 FloatComputeVector3NegativeUnitZ = ComputeVector3NegativeUnitZBase<float>();
 }
 
 #include "ComputeVector3.hpp"

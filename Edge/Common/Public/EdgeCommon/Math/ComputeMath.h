@@ -48,18 +48,18 @@ namespace Edge
 		template <typename T>
 		constexpr T TypedMin() { return std::numeric_limits<T>::min(); }
 
-		constexpr ComputeValueType Pi = TypedPi<ComputeValueType>();
-		constexpr ComputeValueType Pi2 = TypedPi2<ComputeValueType>();
-		constexpr ComputeValueType HalfPi = TypedHalfPi<ComputeValueType>();
+		inline constexpr ComputeValueType Pi = TypedPi<ComputeValueType>();
+		inline constexpr ComputeValueType Pi2 = TypedPi2<ComputeValueType>();
+		inline constexpr ComputeValueType HalfPi = TypedHalfPi<ComputeValueType>();
 
-		constexpr ComputeValueType DegToRad = TypedDegToRad<ComputeValueType>();
-		constexpr ComputeValueType RadToDeg = TypedRadToDeg<ComputeValueType>();
+		inline constexpr ComputeValueType DegToRad = TypedDegToRad<ComputeValueType>();
+		inline constexpr ComputeValueType RadToDeg = TypedRadToDeg<ComputeValueType>();
 
-		constexpr ComputeValueType Epsilon = TypedEpsilon<ComputeValueType>();
-		constexpr ComputeValueType EpsilonSqr = TypedEpsilonSqr<ComputeValueType>();
+		inline constexpr ComputeValueType Epsilon = TypedEpsilon<ComputeValueType>();
+		inline constexpr ComputeValueType EpsilonSqr = TypedEpsilonSqr<ComputeValueType>();
 
-		constexpr ComputeValueType Max = TypedMax<ComputeValueType>();
-		constexpr ComputeValueType Min = TypedMin<ComputeValueType>();
+		inline constexpr ComputeValueType Max = TypedMax<ComputeValueType>();
+		inline constexpr ComputeValueType Min = TypedMin<ComputeValueType>();
 
 		template <typename T>
 		T ConvertDegToRad(T angle) { return angle * TypedDegToRad<T>(); }

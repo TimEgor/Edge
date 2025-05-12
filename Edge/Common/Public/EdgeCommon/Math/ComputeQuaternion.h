@@ -120,8 +120,8 @@ namespace Edge
 	using ComputeQuaternion = ComputeQuaternionBase<ComputeValueType>;
 	using FloatComputeQuaternion = ComputeQuaternionBase<float>;
 
-	constexpr ComputeQuaternion ComputeQuaternionZero = ComputeQuaternionZeroBase<ComputeValueType>();
-	constexpr ComputeQuaternion ComputeQuaternionIdentity = ComputeQuaternionIdentityBase<ComputeValueType>();
+	inline constexpr ComputeQuaternion ComputeQuaternionZero = ComputeQuaternionZeroBase<ComputeValueType>();
+	inline constexpr ComputeQuaternion ComputeQuaternionIdentity = ComputeQuaternionIdentityBase<ComputeValueType>();
 }
 
 #include "ComputeQuaternion.hpp"

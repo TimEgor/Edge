@@ -187,13 +187,13 @@ namespace Edge
 	using ComputeMatrix4x4 = ComputeMatrix4x4Base<ComputeValueType>;
 	using FloatComputeMatrix4x4 = ComputeMatrix4x4Base<float>;
 
-	constexpr ComputeMatrix4x4 ComputeMatrix4x4Zero = ComputeMatrix4x4ZeroBase<ComputeValueType>();
-	constexpr ComputeMatrix4x4 ComputeMatrix4x4Identity = ComputeMatrix4x4IdentityBase<ComputeValueType>();
-	constexpr ComputeMatrix4x4 ComputeMatrix4x4ZeroIdentity = ComputeMatrix4x4ZeroIdentityBase<ComputeValueType>();
+	inline constexpr ComputeMatrix4x4 ComputeMatrix4x4Zero = ComputeMatrix4x4ZeroBase<ComputeValueType>();
+	inline constexpr ComputeMatrix4x4 ComputeMatrix4x4Identity = ComputeMatrix4x4IdentityBase<ComputeValueType>();
+	inline constexpr ComputeMatrix4x4 ComputeMatrix4x4ZeroIdentity = ComputeMatrix4x4ZeroIdentityBase<ComputeValueType>();
 
-	constexpr FloatComputeMatrix4x4 FloatComputeMatrix4x4Zero = ComputeMatrix4x4ZeroBase<float>();
-	constexpr FloatComputeMatrix4x4 FloatComputeMatrix4x4Identity = ComputeMatrix4x4IdentityBase<float>();
-	constexpr FloatComputeMatrix4x4 FloatComputeMatrix4x4ZeroIdentity = ComputeMatrix4x4ZeroIdentityBase<float>();
+	inline constexpr FloatComputeMatrix4x4 FloatComputeMatrix4x4Zero = ComputeMatrix4x4ZeroBase<float>();
+	inline constexpr FloatComputeMatrix4x4 FloatComputeMatrix4x4Identity = ComputeMatrix4x4IdentityBase<float>();
+	inline constexpr FloatComputeMatrix4x4 FloatComputeMatrix4x4ZeroIdentity = ComputeMatrix4x4ZeroIdentityBase<float>();
 }
 
 #include "ComputeMatrix44.hpp"

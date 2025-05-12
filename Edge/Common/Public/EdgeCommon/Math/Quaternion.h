@@ -21,6 +21,6 @@ namespace Edge
 
 	using FloatQuaternion = QuaternionBase<float>;
 
-	constexpr FloatQuaternion FloatQuaternionZero = FloatQuaternion(0.0f, 0.0f, 0.0f, 0.0f);
-	constexpr FloatQuaternion FloatQuaternionIdentity = FloatQuaternion(0.0f, 0.0f, 0.0f, 1.0f);
+	inline constexpr FloatQuaternion FloatQuaternionZero = FloatQuaternion(0.0f, 0.0f, 0.0f, 0.0f);
+	inline constexpr FloatQuaternion FloatQuaternionIdentity = FloatQuaternion(0.0f, 0.0f, 0.0f, 1.0f);
 }

@@ -7,7 +7,7 @@
 namespace Edge
 {
 	using FileNameID = uint32_t;
-	constexpr FileNameID InvalidFileNameID = 0;
+	inline constexpr FileNameID InvalidFileNameID = 0;
 
 	class FileName final
 	{
