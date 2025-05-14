@@ -40,23 +40,20 @@ namespace Edge
 			TypeMetaInfo(const TypeMetaInfo&) = default;
 			TypeMetaInfo(TypeMetaInfo&&) = default;
 
-			bool isBasedOn(TypeMetaInfoID baseTypeID) const;
-			void* castTo(void* object, TypeMetaInfoID baseTypeID) const;
+			bool isBasedOn(const TypeMetaInfo& baseType) const;
+			void* castTo(void* object, const TypeMetaInfo& baseType) const;
 		};
 
 		template <typename T>
 		constexpr TypeMetaInfoID GetTypeMetaInfoID()
 		{
-			static_assert(false && "Should be redefined with the particular specialization.");
-			return InvalidTypeMetaInfoID;
+			return T::GetMetaInfoID();
 		}
 
 		template <typename T>
 		const TypeMetaInfo& GetTypeMetaInfo()
 		{
-			static_assert(false && "Should be redefined with the particular specialization.");
-			static TypeMetaInfo InvalidTypeMetaInfo(0, 0);
-			return InvalidTypeMetaInfo;
+			return T::GetMetaInfo();
 		}
 
 		template<typename Type, typename Base>													
@@ -77,7 +74,13 @@ namespace Edge
 		template<typename Type, typename Base>
 		bool IsBasedOn()
 		{
-			return GetTypeMetaInfo<Type>().isBasedOn(GetTypeMetaInfoID<Base>());
+			return GetTypeMetaInfo<Type>().isBasedOn(GetTypeMetaInfo<Base>());
+		}
+
+		template<typename Base, typename Type>
+		bool IsObjectBasedOn(const Type& object)
+		{
+			return object.GetObjectTypeMetaInfo().isBasedOn(GetTypeMetaInfo<Base>());
 		}
 
 		template<typename Type, typename Base>
@@ -88,17 +91,37 @@ namespace Edge
 	}
 }
 
-#define EDGE_RTTI(TYPE, ...)																			\
-template<>																								\
-constexpr Edge::RTTI::TypeMetaInfoID Edge::RTTI::GetTypeMetaInfoID<TYPE>()								\
-{																										\
-	return Edge::Crc32(#TYPE);																			\
-}																										\
-																										\
-template<>																								\
-inline const Edge::RTTI::TypeMetaInfo& Edge::RTTI::GetTypeMetaInfo<TYPE>()								\
-{																										\
-	static const TypeMetaInfo TypeMetaInfo =															\
-		std::move(RegistryTypeMetaInfo<TYPE, __VA_ARGS__>());											\
-	return TypeMetaInfo;																				\
-}																							
+#define EDGE_RTTI(TYPE, ...)												\
+static constexpr Edge::RTTI::TypeMetaInfoID GetMetaInfoID()					\
+{																			\
+	return Edge::Crc32(#TYPE);												\
+}																			\
+																			\
+static const Edge::RTTI::TypeMetaInfo& GetMetaInfo()						\
+{																			\
+	static const Edge::RTTI::TypeMetaInfo TypeMetaInfo =					\
+		std::move(Edge::RTTI::RegistryTypeMetaInfo<TYPE, __VA_ARGS__>());	\
+	return TypeMetaInfo;													\
+}
+
+#define EDGE_RTTI_OBJECT(TYPE, PRE_MODIFIER, POST_MODIFIER)										\
+	PRE_MODIFIER Edge::RTTI::TypeMetaInfoID GetObjectTypeMetaInfoID() const POST_MODIFIER		\
+	{																							\
+		return GetMetaInfoID();																	\
+	}																							\
+																								\
+	PRE_MODIFIER const Edge::RTTI::TypeMetaInfo& GetObjectTypeMetaInfo() const POST_MODIFIER	\
+	{																							\
+		return GetMetaInfo();																	\
+	}																							
+
+#define EDGE_RTTI_VIRTUAL(TYPE, ...)			\
+	EDGE_RTTI(TYPE, __VA_ARGS__)				\
+	EDGE_RTTI_OBJECT(TYPE, virtual, override)
+
+#define EDGE_RTTI_VIRTUAL_BASE(TYPE)			\
+	EDGE_RTTI(TYPE)								\
+	EDGE_RTTI_OBJECT(TYPE, virtual, )
+
+#define EDGE_RTTI_TYPE_ID(TYPE) (Edge::RTTI::GetTypeMetaInfoID<TYPE>())
+#define EDGE_RTTI_TYPE_META_INFO(TYPE) (Edge::RTTI::GetTypeMetaInfo<TYPE>())

@@ -12,9 +12,7 @@
 
 namespace Edge
 {
-	using PhysicsEntityCollisionSceneContextType = HashedType::Type;
-
-	class PhysicsEntityCollisionSceneContext : public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntityCollisionSceneContext : public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		PhysicsEntityCollisionSceneContext() = default;
@@ -22,13 +20,10 @@ namespace Edge
 
 		virtual PhysicsSceneCollisionManagerWeakReference getCollisionManager() const = 0;
 
-		virtual PhysicsEntityCollisionSceneContextType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsEntityCollisionSceneContext)
 	};
 
 	EDGE_REFERENCE(PhysicsEntityCollisionSceneContext);
-
-#define EDGE_PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE(PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE)	\
-	EDGE_HASH_TYPE(#PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE, Edge::PhysicsEntityCollisionSceneContextType, PhysicsEntityCollisionSceneContext)
 
 	class PhysicsEntityCollision : public PhysicsEntityWeakLinkObject, public PhysicsCollisionQuery, public DefaultDestroyingMTCountableObjectBase
 	{

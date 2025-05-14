@@ -15,6 +15,7 @@
 
 bool Edge::PhysicsCollisionContactManager::DispatcherContext::init()
 {
+#define GET_SHAPE_TYPE_ID(TYPE) (RTTI::GetTypeMetaInfoID<TYPE>())
 #define CREATE_AND_ADD_DISPATCHER(DISPATCHER_TYPE, SHAPE_TYPE1, SHAPE_TYPE2)			\
 	{																					\
 		PhysicsCollisionDispatcher* newDispatcher = new DISPATCHER_TYPE();				\
@@ -25,7 +26,7 @@ bool Edge::PhysicsCollisionContactManager::DispatcherContext::init()
 	m_dispatcherCollection = new PhysicsCollisionDispatcherCollection();
 	EDGE_CHECK_INITIALIZATION(m_dispatcherCollection);
 
-	CREATE_AND_ADD_DISPATCHER(SphereVsSphereCollisionDispatcher, PhysicsSphereShape::PhysicsEntityCollisionShapeType, PhysicsSphereShape::PhysicsEntityCollisionShapeType);
+	CREATE_AND_ADD_DISPATCHER(SphereVsSphereCollisionDispatcher, GET_SHAPE_TYPE_ID(PhysicsSphereShape), GET_SHAPE_TYPE_ID(PhysicsSphereShape));
 
 	PhysicsCollisionDispatcher* gjkDispatcher = new GJKCollisionDispatcher();
 	m_dispatchers.push_back(gjkDispatcher);
@@ -236,8 +237,8 @@ void Edge::PhysicsCollisionContactManager::updateContacts()
 		const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactID.m_collisionID1);
 		const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactID.m_collisionID2);
 
-		const PhysicsEntityCollisionShapeType shapeType1 = collision1->getShape()->getType();
-		const PhysicsEntityCollisionShapeType shapeType2 = collision2->getShape()->getType();
+		const PhysicsEntityCollisionShapeType shapeType1 = collision1->getShape()->GetObjectTypeMetaInfoID();
+		const PhysicsEntityCollisionShapeType shapeType2 = collision2->getShape()->GetObjectTypeMetaInfoID();
 
 		PhysicsCollisionDispatcher* dispatcher = m_dispatcherContext->getDispatcher(shapeType1, shapeType2);
 		if (dispatcher)

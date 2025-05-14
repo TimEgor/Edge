@@ -34,7 +34,7 @@ namespace Edge
 		ComputeValueType getMinLimit() const { return m_minLimitValue; }
 		ComputeValueType getMaxLimit() const { return m_maxLimitValue; }
 
-		EDGE_PHYSICS_CONSTRAINT_TYPE(LIMITED_PRISMATIC)
+		EDGE_RTTI_VIRTUAL(LimitedPrismaticConstraint, PrismaticConstraint)
 	};
 
 	EDGE_REFERENCE(LimitedPrismaticConstraint);

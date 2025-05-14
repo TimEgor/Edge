@@ -21,7 +21,7 @@ namespace Edge
 
 		virtual bool rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const override;
 
-		EDGE_PHYSICS_COLLISION_SHAPE_TYPE(SPHERE);
+		EDGE_RTTI_VIRTUAL(Edge::PhysicsSphereShape, PhysicsEntityCollisionShape)
 	};
 
 	EDGE_REFERENCE(PhysicsSphereShape);

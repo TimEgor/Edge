@@ -8,7 +8,7 @@ Edge::PrismaticConstraint::PrismaticConstraint(
 	const ComputeVector3& axis1, const ComputeVector3& axis2,
 	const ComputeQuaternion& deltaRotation
 )
-	: TwoPhysicsEntityMotorizedConstraint(entity1, entity2),
+	: TwoPhysicsEntityConstraint(entity1, entity2),
 	m_positionPart(entity1, entity2), m_rotationPart(entity1, entity2),
 	m_anchor1(anchor1), m_anchor2(anchor2),
 	m_axis1(axis1), m_axis2(axis2),
@@ -18,10 +18,9 @@ Edge::PrismaticConstraint::PrismaticConstraint(
 
 void Edge::PrismaticConstraint::preSolve(float deltaTime)
 {
-	const PhysicsConstraintMotorReference motor = getMotor();
-	if (motor)
+	if (m_motor)
 	{
-		motor->preSolve(deltaTime);
+		m_motor->preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
 	}
 
 	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
@@ -30,10 +29,9 @@ void Edge::PrismaticConstraint::preSolve(float deltaTime)
 
 void Edge::PrismaticConstraint::warmUp()
 {
-	const PhysicsConstraintMotorReference motor = getMotor();
-	if (motor)
+	if (m_motor)
 	{
-		motor->warmUp();
+		m_motor->warmUp();
 	}
 
 	if (m_positionPart.isActive())
@@ -49,10 +47,9 @@ void Edge::PrismaticConstraint::warmUp()
 
 void Edge::PrismaticConstraint::solveVelocity()
 {
-	const PhysicsConstraintMotorReference motor = getMotor();
-	if (motor)
+	if (m_motor)
 	{
-		motor->solveVelocity();
+		m_motor->solveVelocity();
 	}
 
 	if (m_positionPart.isActive())
@@ -68,10 +65,9 @@ void Edge::PrismaticConstraint::solveVelocity()
 
 void Edge::PrismaticConstraint::solvePosition()
 {
-	const PhysicsConstraintMotorReference motor = getMotor();
-	if (motor)
+	if (m_motor)
 	{
-		motor->solvePosition();
+		m_motor->solvePosition();
 	}
 
 	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
@@ -87,6 +83,39 @@ void Edge::PrismaticConstraint::solvePosition()
 	{
 		m_rotationPart.solvePosition(m_initialDeltaRotation);
 	}
+}
+
+void Edge::PrismaticConstraint::setMotor(const LinearAxisConstraintMotorReference& motor)
+{
+	m_motor = motor;
+
+	if (m_motor == motor)
+	{
+		return;
+	}
+
+	if (motor)
+	{
+		if (motor->getConstraintContext())
+		{
+			EDGE_ASSERT_FAIL_MESSAGE("Constraint motor has been already set.");
+			return;
+		}
+
+		motor->setConstraintContext(this);
+	}
+
+	if (m_motor)
+	{
+		m_motor->setConstraintContext(nullptr);
+	}
+
+	m_motor = motor;
+}
+
+Edge::LinearAxisConstraintMotorReference Edge::PrismaticConstraint::getMotor() const
+{
+	return m_motor;
 }
 
 Edge::ComputeValueType Edge::PrismaticConstraint::getCurrentOffset() const

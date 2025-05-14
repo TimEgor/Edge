@@ -1,14 +1,17 @@
 #pragma once
 
-#include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityMotorizedConstraint.h"
+#include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityConstraint.h"
+#include "EdgePhysics/Physics/Constraint/Motors/LinearAxisConstraintMotor.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisPositionConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/KeepRotationConstraintPart.h"
 
 namespace Edge
 {
-	class PrismaticConstraint : public TwoPhysicsEntityMotorizedConstraint
+	class PrismaticConstraint : public TwoPhysicsEntityConstraint
 	{
 	private:
+		LinearAxisConstraintMotorReference m_motor;
+
 		AxisPositionConstraintPart m_positionPart;
 		KeepRotationConstraintPart m_rotationPart;
 
@@ -32,9 +35,10 @@ namespace Edge
 		virtual void solveVelocity() override;
 		virtual void solvePosition() override;
 
-		ComputeValueType getCurrentOffset() const;
+		void setMotor(const LinearAxisConstraintMotorReference& motor);
+		LinearAxisConstraintMotorReference getMotor() const;
 
-		EDGE_PHYSICS_CONSTRAINT_TYPE(PRISMATIC)
+		ComputeValueType getCurrentOffset() const;
 	};
 
 	EDGE_REFERENCE(PrismaticConstraint);

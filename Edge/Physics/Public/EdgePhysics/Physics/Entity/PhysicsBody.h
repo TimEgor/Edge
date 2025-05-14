@@ -21,7 +21,7 @@ namespace Edge
 
 		virtual void updateTransformWithMotion(float deltaTime) override;
 
-		EDGE_PHYSICS_ENTITY_TYPE(BODY);
+		EDGE_RTTI_VIRTUAL(PhysicsBody, PhysicsEntity)
 	};
 
 	EDGE_REFERENCE(PhysicsBody);

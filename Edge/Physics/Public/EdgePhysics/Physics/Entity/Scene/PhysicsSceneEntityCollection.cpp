@@ -24,7 +24,7 @@ Edge::PhysicsEntitySceneContext* Edge::DefaultPhysicsEntitySceneContextCollectio
 
 void Edge::DefaultPhysicsEntitySceneContextCollection::destroyContext(PhysicsEntitySceneContext* context)
 {
-	if (!context || context->getType() != DefaultPhysicsEntitySceneContext::PhysicsEntitySceneContextType)
+	if (!context || !RTTI::IsObjectBasedOn<DefaultPhysicsEntitySceneContext>(*context))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to destroying of an invalid context.");
 		return;
@@ -104,7 +104,7 @@ void Edge::PhysicsSceneEntityCollection::removeEntity(const PhysicsEntityReferen
 	}
 
 	PhysicsEntitySceneContextReference sceneContext = entity->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntitySceneContext::getPhysicsEntitySceneContextType())
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntitySceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Entity scene context has an invalid type.");
 		return;

@@ -12,13 +12,14 @@ namespace Edge
 		{
 			ComputeVector3 m_position = ComputeVector3Zero;
 
-			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(PARTICAL)
+			EDGE_RTTI_VIRTUAL(ParticleCreationParam, EntityCreationParam)
 		};
 
 		struct ParticleMotionCreationParam final : public EntityMotionCreationParam
 		{
-			ComputeValueType m_linearDampingFactor = ComputeValueType(0.05);
-			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(PARTICAL)
+			ComputeValueType m_linearDampingFactor = 0.05_ecv;
+
+			EDGE_RTTI_VIRTUAL(ParticleMotionCreationParam, EntityMotionCreationParam)
 		};
 
 		PhysicsParticleFactory() = default;

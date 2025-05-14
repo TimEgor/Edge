@@ -28,7 +28,7 @@ namespace Edge
 		virtual void solveVelocity() override;
 		virtual void solvePosition() override;
 
-		EDGE_PHYSICS_CONSTRAINT_TYPE(FIXED)
+		EDGE_RTTI_VIRTUAL(FixedConstraint, TwoPhysicsEntityConstraint)
 	};
 
 	EDGE_REFERENCE(FixedConstraint);

@@ -8,7 +8,7 @@ Edge::PhysicsParticleReference Edge::PhysicsParticleFactory::createParticleEntit
 
 	if (param)
 	{
-		if (param->m_motionCreationParam && param->m_motionCreationParam->getType() == ParticleMotionCreationParam::EntityCreationParamType)
+		if (param->m_motionCreationParam && RTTI::IsObjectBasedOn<ParticleMotionCreationParam>(*param))
 		{
 			const ParticleMotionCreationParam* particleMotionCreationParam = static_cast<const ParticleMotionCreationParam*>(param->m_motionCreationParam);
 			entityPtr->setParticleMotion(createParticleMotion(particleMotionCreationParam));
@@ -47,7 +47,7 @@ Edge::PhysicsParticleMotionReference Edge::PhysicsParticleFactory::createParticl
 
 Edge::PhysicsEntityReference Edge::PhysicsParticleFactory::createEntity(const EntityCreationParam* param)
 {
-	if (param && (param->getType() != ParticleCreationParam::EntityCreationParamType))
+	if (param && !RTTI::IsObjectBasedOn<ParticleCreationParam>(*param))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Ñreation param type is invalid.");
 		return nullptr;
@@ -59,7 +59,7 @@ Edge::PhysicsEntityReference Edge::PhysicsParticleFactory::createEntity(const En
 
 Edge::PhysicsEntityMotionReference Edge::PhysicsParticleFactory::createEntityMotion(const EntityMotionCreationParam* param)
 {
-	if (param && param->getType() != ParticleMotionCreationParam::EntityCreationParamType)
+	if (param && !RTTI::IsObjectBasedOn<ParticleMotionCreationParam>(*param))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Ñreation param type is invalid.");
 		return nullptr;

@@ -22,5 +22,7 @@ namespace Edge
 
 		PhysicsEntityReference getEntity1() const;
 		PhysicsEntityReference getEntity2() const;
+
+		EDGE_RTTI_VIRTUAL(TwoPhysicsEntityConstraint, PhysicsConstraint)
 	};
 }

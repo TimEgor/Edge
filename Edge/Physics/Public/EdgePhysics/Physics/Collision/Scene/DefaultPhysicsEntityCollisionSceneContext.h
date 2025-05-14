@@ -34,7 +34,7 @@ namespace Edge
 		PhysicsSceneBroadPhaseEntityIndex getBroadPhaseEntityIndex() const { return m_broadPhaseEntityIndex; }
 		void setBroadPhaseEntityIndex(PhysicsSceneBroadPhaseEntityIndex index);
 
-		EDGE_PHYSICS_ENTITY_COLLISION_SCENE_CONTEXT_TYPE(DEFAULT);
+		EDGE_RTTI_VIRTUAL(DefaultPhysicsEntityCollisionSceneContext)
 	};
 
 	EDGE_REFERENCE(DefaultPhysicsEntityCollisionSceneContext);
@@ -45,3 +45,5 @@ namespace Edge
 		DefaultPhysicsEntityCollisionSceneContextReference GetDefaultCollisionSceneContext(const PhysicsEntityCollisionReference& collision);
 	}
 }
+
+EDGE_RTTI(Edge::DefaultPhysicsEntityCollisionSceneContext)

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "EdgeCommon/HashedType.h"
 #include "EdgeCommon/Math/AABB.h"
 #include "EdgeCommon/Reference/Reference.h"
+#include "EdgeCommon/RTTI/RTTI.h"
 
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionQuery.h"
 
@@ -10,9 +10,7 @@
 
 namespace Edge
 {
-	using PhysicsEntityCollisionShapeType = HashedType::Type;
-
-	class PhysicsEntityCollisionShape : public HashedType, public PhysicsCollisionQuery, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntityCollisionShape : public PhysicsCollisionQuery, public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		using SupportingFaceVertexCollection = std::vector<ComputeVector3>;
@@ -23,10 +21,10 @@ namespace Edge
 		virtual ComputeVector3 getFurthestKeyPoint(const ComputeVector3& direction) const = 0;
 		virtual void getSupportingFace(const ComputeVector3& direction, SupportingFaceVertexCollection& vertices) const = 0;
 
-		virtual PhysicsEntityCollisionShapeType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsEntityCollisionShape)
 	};
 
 	EDGE_REFERENCE(PhysicsEntityCollisionShape);
 
-#define EDGE_PHYSICS_COLLISION_SHAPE_TYPE(PHYSICS_COLLISION_SHAPE_TYPE) EDGE_HASH_TYPE(#PHYSICS_COLLISION_SHAPE_TYPE, Edge::PhysicsEntityCollisionShapeType, PhysicsEntityCollisionShape)
+	using PhysicsEntityCollisionShapeType = RTTI::TypeMetaInfoID;
 }

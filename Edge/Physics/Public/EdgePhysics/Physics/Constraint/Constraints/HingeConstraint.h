@@ -1,12 +1,12 @@
 #pragma once
 
-#include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityMotorizedConstraint.h"
+#include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityConstraint.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisRotationConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/KeepPositionConstraintPart.h"
 
 namespace Edge
 {
-	class HingeConstraint : public TwoPhysicsEntityMotorizedConstraint
+	class HingeConstraint : public TwoPhysicsEntityConstraint
 	{
 	private:
 		KeepPositionConstraintPart m_positionPart;
@@ -34,7 +34,7 @@ namespace Edge
 
 		ComputeValueType getCurrentAngle() const;
 
-		EDGE_PHYSICS_CONSTRAINT_TYPE(HINDGE)
+		EDGE_RTTI_VIRTUAL(HingeConstraint, TwoPhysicsEntityConstraint)
 	};
 
 	EDGE_REFERENCE(HingeConstraint);

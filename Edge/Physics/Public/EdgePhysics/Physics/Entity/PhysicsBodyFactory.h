@@ -13,17 +13,17 @@ namespace Edge
 			ComputeVector3 m_position = ComputeVector3Zero;
 			ComputeQuaternion m_rotation = ComputeQuaternionIdentity;
 
-			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(BODY)
+			EDGE_RTTI_VIRTUAL(BodyCreationParam, EntityCreationParam)
 		};
 
 		struct BodyMotionCreationParam final : public EntityMotionCreationParam
 		{
 			ComputeVector3 m_inertia = ComputeVector3One; //Inertial tensor diagonal
 
-			ComputeValueType m_linearDampingFactor = ComputeValueType(0.05);
-			ComputeValueType m_angularDamping = ComputeValueType(0.05);
+			ComputeValueType m_linearDampingFactor = 0.05_ecv;
+			ComputeValueType m_angularDamping = 0.05_ecv;
 
-			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(BODY)
+			EDGE_RTTI_VIRTUAL(BodyMotionCreationParam, EntityMotionCreationParam)
 		};
 
 		PhysicsBodyFactory() = default;

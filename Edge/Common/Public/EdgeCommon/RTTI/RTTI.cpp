@@ -17,9 +17,10 @@ Edge::RTTI::TypeMetaInfo::TypeMetaInfo(TypeMetaInfoID id, size_t size, ParentTyp
 	}
 }
 
-bool Edge::RTTI::TypeMetaInfo::isBasedOn(TypeMetaInfoID baseTypeID) const
+
+bool Edge::RTTI::TypeMetaInfo::isBasedOn(const TypeMetaInfo& baseType) const
 {
-	if (baseTypeID == m_id)
+	if (&baseType == this)
 	{
 		return true;
 	}
@@ -27,7 +28,7 @@ bool Edge::RTTI::TypeMetaInfo::isBasedOn(TypeMetaInfoID baseTypeID) const
 	for (const ParentTypeMetaInfoContext& parentContext : m_parentTypeMetaInfos)
 	{
 		const TypeMetaInfo* parentInfo = parentContext.m_info;
-		if (parentInfo->isBasedOn(baseTypeID))
+		if (parentInfo->isBasedOn(*parentInfo))
 		{
 			return true;
 		}
@@ -36,9 +37,9 @@ bool Edge::RTTI::TypeMetaInfo::isBasedOn(TypeMetaInfoID baseTypeID) const
 	return false;
 }
 
-void* Edge::RTTI::TypeMetaInfo::castTo(void* object, TypeMetaInfoID baseTypeID) const
+void* Edge::RTTI::TypeMetaInfo::castTo(void* object, const TypeMetaInfo& baseType) const
 {
-	if (baseTypeID == m_id)
+	if (&baseType == this)
 	{
 		return object;
 	}
@@ -48,7 +49,7 @@ void* Edge::RTTI::TypeMetaInfo::castTo(void* object, TypeMetaInfoID baseTypeID) 
 		const TypeMetaInfo* parentInfo = parentContext.m_info;
 		void* parentObject = static_cast<uint8_t*>(object) + parentContext.m_typeOffset;
 
-		void* baseCast = parentInfo->castTo(parentObject, baseTypeID);
+		void* baseCast = parentInfo->castTo(parentObject, baseType);
 		if (baseCast)
 		{
 			return baseCast;

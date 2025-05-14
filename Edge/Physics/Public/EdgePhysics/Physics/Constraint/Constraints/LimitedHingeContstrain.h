@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EdgePhysics/Physics/Constraint/PhysicsConstraint.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisRotationLimitConstaintPart.h"
 
 #include "HingeConstraint.h"
@@ -36,7 +37,7 @@ namespace Edge
 		ComputeValueType getMinLimit() const { return m_minLimitValue; }
 		ComputeValueType getMaxLimit() const { return m_maxLimitValue; }
 
-		EDGE_PHYSICS_CONSTRAINT_TYPE(LIMITED_HINDGE)
+		EDGE_RTTI_VIRTUAL(LimitedHingeConstraint)
 	};
 
 	EDGE_REFERENCE(LimitedHingeConstraint);
@@ -48,3 +49,5 @@ namespace Edge
 		ComputeValueType minLimit, ComputeValueType maxLimit
 	);
 }
+
+EDGE_RTTI(Edge::LimitedHingeConstraint)

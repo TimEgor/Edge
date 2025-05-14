@@ -1,16 +1,14 @@
 #pragma once
 
-#include "EdgeCommon/HashedType.h"
 #include "EdgeCommon/Patterns/NonCopyable.h"
 #include "EdgeCommon/Reference/MTCountableObjectBase.h"
+#include "EdgeCommon/RTTI/RTTI.h"
 
 #include "Scene/PhysicsSceneConstraintManagerReference.h"
 
 namespace Edge
 {
-	using PhysicsConstraintSceneContextType = HashedType::Type;
-
-	class PhysicsConstraintSceneContext : public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsConstraintSceneContext : public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		PhysicsConstraintSceneContext() = default;
@@ -18,16 +16,12 @@ namespace Edge
 		virtual PhysicsSceneConstraintManagerWeakReference getConstraintManager() const = 0;
 		virtual bool isActive() const = 0;
 
-		virtual PhysicsConstraintSceneContextType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsConstraintSceneContext)
 	};
 
 	EDGE_REFERENCE(PhysicsConstraintSceneContext);
 
-#define EDGE_PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE(PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE) EDGE_HASH_TYPE(#PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE, Edge::PhysicsConstraintSceneContextType, PhysicsConstraintSceneContext)
-
-	using PhysicsConstraintType = HashedType::Type;
-
-	class PhysicsConstraint : public NonCopyable, public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsConstraint : public NonCopyable, public DefaultDestroyingMTCountableObjectBase
 	{
 	private:
 		PhysicsConstraintSceneContextReference m_sceneContext;
@@ -53,10 +47,8 @@ namespace Edge
 
 		bool isActive() const;
 
-		virtual PhysicsConstraintType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsConstraint)
 	};
-
-#define EDGE_PHYSICS_CONSTRAINT_TYPE(PHYSICS_CONSTRAINT_TYPE) EDGE_HASH_TYPE(#PHYSICS_CONSTRAINT_TYPE, Edge::PhysicsConstraintType, PhysicsConstraint)
 
 	EDGE_REFERENCE(PhysicsConstraint);
 }

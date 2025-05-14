@@ -3,13 +3,17 @@
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
-uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results)
+uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(
+	const PhysicsEntityCollisionReference& collision1,
+	const PhysicsEntityCollisionReference& collision2,
+	PhysicsCollisionContactID contactID,
+	ContactManifoldDispatchingResultCollection& results
+)
 {
 	const PhysicsEntityCollisionShapeReference shape1 = collision1->getShape();
 	const PhysicsEntityCollisionShapeReference shape2 = collision2->getShape();
 
-	if (shape1->getType() != PhysicsSphereShape::PhysicsEntityCollisionShapeType
-		|| shape2->getType() != PhysicsSphereShape::PhysicsEntityCollisionShapeType)
+	if (!RTTI::IsObjectBasedOn<PhysicsSphereShape>(shape1.getObjectRef()) || !RTTI::IsObjectBasedOn<PhysicsSphereShape>(shape2.getObjectRef()))
 	{
 		return 0;
 	}
@@ -28,7 +32,7 @@ uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCo
 
 	ComputeValueType depth = radius1 + radius2 - distance;
 
-	if (depth < ComputeValueType(0.0))
+	if (depth < 0.0_ecv)
 	{
 		return 0;
 	}

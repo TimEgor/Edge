@@ -23,7 +23,7 @@ Edge::PhysicsEntityCollisionSceneContext* Edge::DefaultPhysicsEntityCollisionSce
 
 void Edge::DefaultPhysicsEntityCollisionSceneContextCollection::destroyContext(PhysicsEntityCollisionSceneContext* context)
 {
-	if (!context || context->getType() != DefaultPhysicsEntityCollisionSceneContext::PhysicsEntityCollisionSceneContextType)
+	if (!context || !RTTI::IsObjectBasedOn<DefaultPhysicsEntityCollisionSceneContext>(*context))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Trying to destroying of an invalid context.");
 		return;
