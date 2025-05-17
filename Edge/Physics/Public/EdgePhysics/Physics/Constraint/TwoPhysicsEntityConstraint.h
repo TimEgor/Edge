@@ -25,4 +25,6 @@ namespace Edge
 
 		EDGE_RTTI_VIRTUAL(TwoPhysicsEntityConstraint, PhysicsConstraint)
 	};
+
+	EDGE_REFERENCE(TwoPhysicsEntityConstraint)
 }

@@ -5,6 +5,7 @@
 #include "EdgePhysics/Physics/Physics.h"
 #include "EdgePhysics/Physics/PhysicsCore.h"
 #include "EdgePhysics/Physics/Constraint/Constraints/LimitedPrismaticConstraint.h"
+#include "EdgePhysics/Physics/Constraint/Motors/LinearAxisVelocityConstrainMotor.h"
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
 #include "EdgeDemoFramework/DemoApplication/DemoApplication.h"
@@ -68,13 +69,20 @@ bool EdgeDemo::TestPrismaticConstraintDemo::initDemo()
 	);
 	m_physicsScene->addConstraint(m_constraint);
 
-	m_dynamicBody->getBodyMotion()->applyImpulse(Edge::FloatVector3(-1.0f, 0.0f, 0.0f));
+	m_motor = new Edge::LinearAxisVelocityConstraintMotor();
+	m_constraint->setMotor(m_motor);
+
+	m_motor->setTargetVelocity(0.25);
+
+	//m_dynamicBody->getBodyMotion()->applyImpulse(Edge::FloatVector3(-1.0f, 0.0f, 0.0f));
 
 	return true;
 }
 
 void EdgeDemo::TestPrismaticConstraintDemo::releaseDemo()
 {
+	m_constraint->setMotor(nullptr);
+
 	m_physicsScene->removeConstraint(m_constraint);
 
 	m_physicsScene->removeEntity(m_staticBody);

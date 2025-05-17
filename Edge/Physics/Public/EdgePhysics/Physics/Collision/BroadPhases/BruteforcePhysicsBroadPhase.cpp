@@ -33,7 +33,7 @@ void Edge::BruteforcePhysicsBroadPhase::addCollision(const PhysicsEntityCollisio
 	}
 
 	const PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
-	if (!RTTI::IsObjectBasedOn<PhysicsEntityCollisionSceneContext>(sceneContext.getObjectRef()))
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntityCollisionSceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Collision scene context has an invalid type.");
 		return;

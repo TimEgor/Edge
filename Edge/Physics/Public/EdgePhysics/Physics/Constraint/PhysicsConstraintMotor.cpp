@@ -10,12 +10,12 @@ void Edge::PhysicsConstraintMotor::setEnabled(bool isEnabled)
 	m_isEnabled = isEnabled;
 }
 
-void Edge::PhysicsConstraintMotor::setConstraintContext(const PhysicsConstraintReference& constraint)
+void Edge::PhysicsConstraintMotor::setConstraintContext(const TwoPhysicsEntityConstraintReference& constraint)
 {
 	m_constraint = constraint.getObject();
 }
 
-Edge::PhysicsConstraint* Edge::PhysicsConstraintMotor::getConstraintContext() const
+Edge::TwoPhysicsEntityConstraint* Edge::PhysicsConstraintMotor::getConstraintContext() const
 {
 	return m_constraint;
 }

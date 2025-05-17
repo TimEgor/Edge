@@ -18,9 +18,9 @@ Edge::PrismaticConstraint::PrismaticConstraint(
 
 void Edge::PrismaticConstraint::preSolve(float deltaTime)
 {
-	if (m_motor)
+	if (m_motor && m_motor->isEnabled())
 	{
-		m_motor->preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
+		m_motor->preSolve(deltaTime, m_anchor1, m_anchor2, m_axis1, m_axis2);
 	}
 
 	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
@@ -29,7 +29,7 @@ void Edge::PrismaticConstraint::preSolve(float deltaTime)
 
 void Edge::PrismaticConstraint::warmUp()
 {
-	if (m_motor)
+	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
 	{
 		m_motor->warmUp();
 	}
@@ -47,7 +47,7 @@ void Edge::PrismaticConstraint::warmUp()
 
 void Edge::PrismaticConstraint::solveVelocity()
 {
-	if (m_motor)
+	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
 	{
 		m_motor->solveVelocity();
 	}
@@ -65,7 +65,7 @@ void Edge::PrismaticConstraint::solveVelocity()
 
 void Edge::PrismaticConstraint::solvePosition()
 {
-	if (m_motor)
+	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
 	{
 		m_motor->solvePosition();
 	}
@@ -87,8 +87,6 @@ void Edge::PrismaticConstraint::solvePosition()
 
 void Edge::PrismaticConstraint::setMotor(const LinearAxisConstraintMotorReference& motor)
 {
-	m_motor = motor;
-
 	if (m_motor == motor)
 	{
 		return;
