@@ -36,9 +36,9 @@ void Edge::LimitedHingeConstraint::warmUp()
 	m_limitPart.warmUp();
 }
 
-void Edge::LimitedHingeConstraint::solveVelocity()
+void Edge::LimitedHingeConstraint::solveVelocity(ComputeValueType deltaTime)
 {
-	HingeConstraint::solveVelocity();
+	HingeConstraint::solveVelocity(deltaTime);
 
 	if (m_limitPart.isActive())
 	{
@@ -46,9 +46,9 @@ void Edge::LimitedHingeConstraint::solveVelocity()
 	}
 }
 
-void Edge::LimitedHingeConstraint::solvePosition()
+void Edge::LimitedHingeConstraint::solvePosition(ComputeValueType deltaTime)
 {
-	HingeConstraint::solvePosition();
+	HingeConstraint::solvePosition(deltaTime);
 
 	const ComputeValueType angle = getCurrentAngle();
 

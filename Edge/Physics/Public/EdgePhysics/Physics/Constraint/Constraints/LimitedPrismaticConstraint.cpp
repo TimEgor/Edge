@@ -27,7 +27,7 @@ Edge::LimitedPrismaticConstraint::LimitedPrismaticConstraint(
 	setLimits(minLimit, maxLimit);
 }
 
-void Edge::LimitedPrismaticConstraint::preSolve(float deltaTime)
+void Edge::LimitedPrismaticConstraint::preSolve(ComputeValueType deltaTime)
 {
 	PrismaticConstraint::preSolve(deltaTime);
 
@@ -41,9 +41,9 @@ void Edge::LimitedPrismaticConstraint::warmUp()
 	m_limitPart.warmUp();
 }
 
-void Edge::LimitedPrismaticConstraint::solveVelocity()
+void Edge::LimitedPrismaticConstraint::solveVelocity(ComputeValueType deltaTime)
 {
-	PrismaticConstraint::solveVelocity();
+	PrismaticConstraint::solveVelocity(deltaTime);
 
 	if (m_limitPart.isActive())
 	{
@@ -51,9 +51,9 @@ void Edge::LimitedPrismaticConstraint::solveVelocity()
 	}
 }
 
-void Edge::LimitedPrismaticConstraint::solvePosition()
+void Edge::LimitedPrismaticConstraint::solvePosition(ComputeValueType deltaTime)
 {
-	PrismaticConstraint::solvePosition();
+	PrismaticConstraint::solvePosition(deltaTime);
 
 	const ComputeValueType offset = getCurrentOffset();
 

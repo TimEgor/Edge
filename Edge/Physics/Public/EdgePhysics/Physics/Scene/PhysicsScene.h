@@ -26,11 +26,11 @@ namespace Edge
 
 		PhysicsWorldWeakReference m_world;
 
-		JobGraphReference getUpdateJobGraph(float deltaTime);
+		JobGraphReference getUpdateJobGraph(ComputeValueType deltaTime);
 
-		JobGraphReference getConstraintPreparationJobGraph(float deltaTime);
-		JobGraphReference getConstraintVelocitySolvingJobGraph();
-		JobGraphReference getConstraintPositionSolvingJobGraph();
+		JobGraphReference getConstraintPreparationJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getConstraintVelocitySolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getConstraintPositionSolvingJobGraph(ComputeValueType deltaTime);
 
 	public:
 		PhysicsScene(const PhysicsWorldReference& world);
@@ -38,7 +38,7 @@ namespace Edge
 		bool init();
 		void release();
 
-		void update(float deltaTime);
+		void update(ComputeValueType deltaTime);
 
 		PhysicsSceneEntityID addEntity(const PhysicsEntityReference& entity, bool activate = true);
 		void removeEntity(PhysicsSceneEntityID entityID);

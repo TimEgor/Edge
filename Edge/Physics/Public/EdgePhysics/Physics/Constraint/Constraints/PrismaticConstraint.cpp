@@ -16,11 +16,11 @@ Edge::PrismaticConstraint::PrismaticConstraint(
 {
 }
 
-void Edge::PrismaticConstraint::preSolve(float deltaTime)
+void Edge::PrismaticConstraint::preSolve(ComputeValueType deltaTime)
 {
 	if (m_motor && m_motor->isEnabled())
 	{
-		m_motor->preSolve(deltaTime, m_anchor1, m_anchor2, m_axis1, m_axis2);
+		m_motor->preSolve(getCurrentOffset(), m_anchor1, m_anchor2, m_axis1, m_axis2);
 	}
 
 	m_positionPart.preSolve(m_anchor1, m_anchor2, m_axis1, m_axis2);
@@ -45,11 +45,11 @@ void Edge::PrismaticConstraint::warmUp()
 	}
 }
 
-void Edge::PrismaticConstraint::solveVelocity()
+void Edge::PrismaticConstraint::solveVelocity(ComputeValueType deltaTime)
 {
 	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
 	{
-		m_motor->solveVelocity();
+		m_motor->solveVelocity(deltaTime);
 	}
 
 	if (m_positionPart.isActive())
@@ -63,7 +63,7 @@ void Edge::PrismaticConstraint::solveVelocity()
 	}
 }
 
-void Edge::PrismaticConstraint::solvePosition()
+void Edge::PrismaticConstraint::solvePosition(ComputeValueType deltaTime)
 {
 	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
 	{

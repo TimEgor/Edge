@@ -20,10 +20,10 @@ namespace Edge
 
 		PhysicsSceneWeakReference m_scene;
 
-		void preSolve(float deltaTime);
+		void preSolve(ComputeValueType deltaTime);
 		void warmUp();
-		void solveVelocity();
-		void solvePosition();
+		void solveVelocity(ComputeValueType deltaTime);
+		void solvePosition(ComputeValueType deltaTime);
 
 	public:
 		PhysicsSceneConstraintManager() = default;
@@ -31,9 +31,9 @@ namespace Edge
 		bool init(const PhysicsSceneReference& scene);
 		void release();
 
-		JobGraphReference getPreSolvingJobGraph(float deltaTime);
-		JobGraphReference getVelocitySolvingJobGraph();
-		JobGraphReference getPositionSolvingJobGraph();
+		JobGraphReference getPreSolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getVelocitySolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getPositionSolvingJobGraph(ComputeValueType deltaTime);
 
 		PhysicsSceneConstraintID addConstraint(const PhysicsConstraintReference& constraint, bool activate = true);
 		void removeConstraint(PhysicsSceneConstraintID constraintID);

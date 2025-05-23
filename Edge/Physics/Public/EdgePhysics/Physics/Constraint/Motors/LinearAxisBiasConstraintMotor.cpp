@@ -1,14 +1,15 @@
-#include "LinearAxisVelocityConstrainMotor.h"
+#include "LinearAxisBiasConstraintMotor.h"
 
 #include "EdgePhysics/Physics/Entity/PhysicsEntityMotion.h"
 
-void Edge::LinearAxisVelocityConstraintMotor::deactivate()
+void Edge::LinearAxisBiasConstraintMotor::deactivate()
 {
 	m_invEffectiveMass = 0.0;
+	m_currentBias = 0.0;
 	m_totalLambda = 0.0;
 }
 
-void Edge::LinearAxisVelocityConstraintMotor::applyVelocity(ComputeValueType lambda) const
+void Edge::LinearAxisBiasConstraintMotor::applyVelocity(ComputeValueType lambda) const
 {
 	if (Math::IsApproxEqual(lambda, 0.0_ecv))
 	{
@@ -42,8 +43,8 @@ void Edge::LinearAxisVelocityConstraintMotor::applyVelocity(ComputeValueType lam
 	}
 }
 
-void Edge::LinearAxisVelocityConstraintMotor::preSolve(
-	ComputeValueType deltaTime,
+void Edge::LinearAxisBiasConstraintMotor::preSolve(
+	ComputeValueType offset,
 	const ComputeVector3& anchor1,
 	const ComputeVector3& anchor2,
 	const ComputeVector3& axis1,
@@ -84,15 +85,15 @@ void Edge::LinearAxisVelocityConstraintMotor::preSolve(
 	}
 
 	m_invEffectiveMass = 1.0_ecv / effectiveMass;
-	m_impulseLimit = m_forceLimit * deltaTime;
+	m_currentBias = m_bias - offset;
 }
 
-void Edge::LinearAxisVelocityConstraintMotor::warmUp()
+void Edge::LinearAxisBiasConstraintMotor::warmUp()
 {
 	applyVelocity(m_totalLambda);
 }
 
-void Edge::LinearAxisVelocityConstraintMotor::solveVelocity()
+void Edge::LinearAxisBiasConstraintMotor::solveVelocity(ComputeValueType deltaTime)
 {
 	ComputeValueType lambda = 0.0;
 
@@ -110,9 +111,10 @@ void Edge::LinearAxisVelocityConstraintMotor::solveVelocity()
 
 		const ComputeValueType jv = (linearVelocity1 - linearVelocity2).dot(m_a);
 
-		lambda = -m_invEffectiveMass * (jv + m_targetVelocity);
+		const ComputeValueType impulseLimit = m_forceLimit * deltaTime;
+		lambda = -m_invEffectiveMass * (jv + m_currentBias);
 
-		const ComputeValueType totalLambda = Math::Clamp(m_totalLambda + lambda, -m_impulseLimit, m_impulseLimit);
+		const ComputeValueType totalLambda = Math::Clamp(m_totalLambda + lambda, -impulseLimit, impulseLimit);
 		lambda = totalLambda - m_totalLambda;
 
 		m_totalLambda += lambda;
@@ -121,7 +123,7 @@ void Edge::LinearAxisVelocityConstraintMotor::solveVelocity()
 	applyVelocity(lambda);
 }
 
-bool Edge::LinearAxisVelocityConstraintMotor::isActive() const
+bool Edge::LinearAxisBiasConstraintMotor::isActive() const
 {
 	return !Math::IsApproxEqual(m_invEffectiveMass, 0.0_ecv);
 }

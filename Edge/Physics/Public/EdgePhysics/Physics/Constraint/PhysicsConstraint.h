@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EdgeCommon/Math/ComputeMath.h"
 #include "EdgeCommon/Patterns/NonCopyable.h"
 #include "EdgeCommon/Reference/MTCountableObjectBase.h"
 #include "EdgeCommon/RTTI/RTTI.h"
@@ -32,10 +33,10 @@ namespace Edge
 	public:
 		PhysicsConstraint() = default;
 
-		virtual void preSolve(float deltaTime) = 0;
+		virtual void preSolve(ComputeValueType deltaTime) = 0;
 		virtual void warmUp() = 0;
-		virtual void solveVelocity() = 0;
-		virtual void solvePosition() = 0;
+		virtual void solveVelocity(ComputeValueType deltaTime) = 0;
+		virtual void solvePosition(ComputeValueType deltaTime) = 0;
 
 		uint32_t getVelocitySolvingIterationCount() const { return m_velocitySolvingIterationCount; }
 		void setVelocitySolvingIterationCount(uint32_t iterationCount) { m_velocitySolvingIterationCount = iterationCount; }

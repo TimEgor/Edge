@@ -24,7 +24,7 @@ void Edge::KeepDistanceConstraint::warmUp()
 	}
 }
 
-void Edge::KeepDistanceConstraint::solveVelocity()
+void Edge::KeepDistanceConstraint::solveVelocity(ComputeValueType deltaTime)
 {
 	if (m_positionPart.isActive())
 	{
@@ -32,7 +32,7 @@ void Edge::KeepDistanceConstraint::solveVelocity()
 	}
 }
 
-void Edge::KeepDistanceConstraint::solvePosition()
+void Edge::KeepDistanceConstraint::solvePosition(ComputeValueType deltaTime)
 {
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
 

@@ -23,7 +23,7 @@ Edge::HingeConstraint::HingeConstraint(
 		ComputeQuaternion(getEntity2()->getTransform()->getRotation()).conjugate();
 }
 
-void Edge::HingeConstraint::preSolve(float deltaTime)
+void Edge::HingeConstraint::preSolve(ComputeValueType deltaTime)
 {
 	//const PhysicsConstraintMotorReference motor = getMotor();
 	//if (motor)
@@ -54,7 +54,7 @@ void Edge::HingeConstraint::warmUp()
 	}
 }
 
-void Edge::HingeConstraint::solveVelocity()
+void Edge::HingeConstraint::solveVelocity(ComputeValueType deltaTime)
 {
 	//const PhysicsConstraintMotorReference motor = getMotor();
 	//if (motor)
@@ -73,7 +73,7 @@ void Edge::HingeConstraint::solveVelocity()
 	}
 }
 
-void Edge::HingeConstraint::solvePosition()
+void Edge::HingeConstraint::solvePosition(ComputeValueType deltaTime)
 {
 	//const PhysicsConstraintMotorReference motor = getMotor();
 	//if (motor)

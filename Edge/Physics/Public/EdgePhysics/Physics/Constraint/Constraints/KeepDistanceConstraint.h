@@ -19,10 +19,10 @@ namespace Edge
 			const ComputeVector3& anchor1, const ComputeVector3& anchor2
 		);
 
-		virtual void preSolve(float deltaTime) override;
+		virtual void preSolve(ComputeValueType deltaTime) override;
 		virtual void warmUp() override;
-		virtual void solveVelocity() override;
-		virtual void solvePosition() override;
+		virtual void solveVelocity(ComputeValueType deltaTime) override;
+		virtual void solvePosition(ComputeValueType deltaTime) override;
 
 		EDGE_RTTI_VIRTUAL(KeepDistanceConstraint, TwoPhysicsEntityConstraint)
 	};

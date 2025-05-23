@@ -27,10 +27,10 @@ namespace Edge
 			ComputeValueType minLimit, ComputeValueType maxLimit
 		);
 
-		virtual void preSolve(float deltaTime) override;
+		virtual void preSolve(ComputeValueType deltaTime) override;
 		virtual void warmUp() override;
-		virtual void solveVelocity() override;
-		virtual void solvePosition() override;
+		virtual void solveVelocity(ComputeValueType deltaTime) override;
+		virtual void solvePosition(ComputeValueType deltaTime) override;
 
 		void setLimits(ComputeValueType min, ComputeValueType max);
 
