@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityConstraint.h"
+#include "EdgePhysics/Physics/Constraint/Motors/AngularAxisConstraintMotor.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisRotationConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/KeepPositionConstraintPart.h"
 
@@ -9,6 +10,8 @@ namespace Edge
 	class HingeConstraint : public TwoPhysicsEntityConstraint
 	{
 	private:
+		AngularAxisConstraintMotorReference m_motor;
+
 		KeepPositionConstraintPart m_positionPart;
 		AxisRotationConstraintPart m_rotationPart;
 
@@ -31,6 +34,9 @@ namespace Edge
 		virtual void warmUp() override;
 		virtual void solveVelocity(ComputeValueType deltaTime) override;
 		virtual void solvePosition(ComputeValueType deltaTime) override;
+
+		void setMotor(const AngularAxisConstraintMotorReference& motor);
+		AngularAxisConstraintMotorReference getMotor() const;
 
 		ComputeValueType getCurrentAngle() const;
 

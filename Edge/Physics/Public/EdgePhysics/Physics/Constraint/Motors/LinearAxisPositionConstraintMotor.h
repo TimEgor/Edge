@@ -16,7 +16,7 @@ namespace Edge
 
 		ComputeValueType getTargetOffset() const
 		{
-			return getTargetOffset();
+			return getBias();
 		}
 
 		EDGE_RTTI_VIRTUAL(LinearAxisPositionConstraintMotor, LinearAxisConstraintMotor)

@@ -25,11 +25,10 @@ Edge::HingeConstraint::HingeConstraint(
 
 void Edge::HingeConstraint::preSolve(ComputeValueType deltaTime)
 {
-	//const PhysicsConstraintMotorReference motor = getMotor();
-	//if (motor)
-	//{
-	//	motor->preSolve(deltaTime);
-	//}
+	if (m_motor && m_motor->isEnabled())
+	{
+		m_motor->preSolve(getCurrentAngle(), m_anchor1, m_anchor2, m_axis1, m_axis2);
+	}
 
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
 	m_rotationPart.preSolve(m_axis1, m_axis2);
@@ -37,11 +36,10 @@ void Edge::HingeConstraint::preSolve(ComputeValueType deltaTime)
 
 void Edge::HingeConstraint::warmUp()
 {
-	//const PhysicsConstraintMotorReference motor = getMotor();
-	//if (motor)
-	//{
-	//	motor->warmUp();
-	//}
+	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
+	{
+		m_motor->warmUp();
+	}
 
 	if (m_positionPart.isActive())
 	{
@@ -56,11 +54,10 @@ void Edge::HingeConstraint::warmUp()
 
 void Edge::HingeConstraint::solveVelocity(ComputeValueType deltaTime)
 {
-	//const PhysicsConstraintMotorReference motor = getMotor();
-	//if (motor)
-	//{
-	//	motor->solveVelocity();
-	//}
+	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
+	{
+		m_motor->solveVelocity(deltaTime);
+	}
 
 	if (m_positionPart.isActive())
 	{
@@ -75,11 +72,10 @@ void Edge::HingeConstraint::solveVelocity(ComputeValueType deltaTime)
 
 void Edge::HingeConstraint::solvePosition(ComputeValueType deltaTime)
 {
-	//const PhysicsConstraintMotorReference motor = getMotor();
-	//if (motor)
-	//{
-	//	motor->solvePosition();
-	//}
+	if (m_motor && m_motor->isEnabled() && m_motor->isActive())
+	{
+		m_motor->solvePosition();
+	}
 
 	m_positionPart.preSolve(m_anchor1, m_anchor2);
 
@@ -94,6 +90,37 @@ void Edge::HingeConstraint::solvePosition(ComputeValueType deltaTime)
 	{
 		m_rotationPart.solvePosition();
 	}
+}
+
+void Edge::HingeConstraint::setMotor(const AngularAxisConstraintMotorReference& motor)
+{
+	if (m_motor == motor)
+	{
+		return;
+	}
+
+	if (motor)
+	{
+		if (motor->getConstraintContext())
+		{
+			EDGE_ASSERT_FAIL_MESSAGE("Constraint motor has been already set.");
+			return;
+		}
+
+		motor->setConstraintContext(this);
+	}
+
+	if (m_motor)
+	{
+		m_motor->setConstraintContext(nullptr);
+	}
+
+	m_motor = motor;
+}
+
+Edge::AngularAxisConstraintMotorReference Edge::HingeConstraint::getMotor() const
+{
+	return m_motor;
 }
 
 Edge::ComputeValueType Edge::HingeConstraint::getCurrentAngle() const

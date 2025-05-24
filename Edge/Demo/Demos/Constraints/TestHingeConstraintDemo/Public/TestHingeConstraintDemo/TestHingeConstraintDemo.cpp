@@ -7,6 +7,7 @@
 #include "EdgePhysics/Physics/Utils/Body/MotionPropertyComputer.h"
 
 #include "EdgeDemoFramework/DemoApplication/DemoApplication.h"
+#include "EdgePhysics/Physics/Constraint/Motors/AngularAxisPositionConstraintMotor.h"
 
 void EdgeDemo::TestHingeConstraintDemo::drawBox(const Edge::PhysicsBodyReference& body, bool isDynamic) const
 {
@@ -64,6 +65,11 @@ bool EdgeDemo::TestHingeConstraintDemo::initDemo()
 		Edge::ComputeVector3UnitZ, Edge::ComputeVector3UnitZ,
 		Edge::Math::ConvertDegToRad(-90.0), Edge::Math::ConvertDegToRad(90.0));
 	m_physicsScene->addConstraint(m_constraint);
+
+	m_motor = new Edge::AngularAxisPositionConstraintMotor();
+	m_constraint->setMotor(m_motor);
+
+	m_motor->setTargetAngle(Edge::Math::ConvertDegToRad(45.0));
 
 	m_dynamicBody->getBodyMotion()->applyAngularImpulse(Edge::ComputeVector3(0.0, 0.0, 0.5));
 
