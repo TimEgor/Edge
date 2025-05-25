@@ -8,7 +8,7 @@ Edge::PhysicsBodyReference Edge::PhysicsBodyFactory::createBodyEntity(const Body
 
 	if (param)
 	{
-		if (param->m_motionCreationParam && RTTI::IsObjectBasedOn<BodyMotionCreationParam>(*param))
+		if (param->m_motionCreationParam && RTTI::IsObjectBasedOn<BodyMotionCreationParam>(*param->m_motionCreationParam))
 		{
 			const BodyMotionCreationParam* bodyMotionCreationParam = static_cast<const BodyMotionCreationParam*>(param->m_motionCreationParam);
 			entityPtr->setBodyMotion(createBodyMotion(bodyMotionCreationParam));

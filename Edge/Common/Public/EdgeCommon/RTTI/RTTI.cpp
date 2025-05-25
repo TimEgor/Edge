@@ -28,7 +28,7 @@ bool Edge::RTTI::TypeMetaInfo::isBasedOn(const TypeMetaInfo& baseType) const
 	for (const ParentTypeMetaInfoContext& parentContext : m_parentTypeMetaInfos)
 	{
 		const TypeMetaInfo* parentInfo = parentContext.m_info;
-		if (parentInfo->isBasedOn(*parentInfo))
+		if (parentInfo->isBasedOn(baseType))
 		{
 			return true;
 		}

@@ -8,7 +8,7 @@ Edge::PhysicsParticleReference Edge::PhysicsParticleFactory::createParticleEntit
 
 	if (param)
 	{
-		if (param->m_motionCreationParam && RTTI::IsObjectBasedOn<ParticleMotionCreationParam>(*param))
+		if (param->m_motionCreationParam && RTTI::IsObjectBasedOn<ParticleMotionCreationParam>(*param->m_motionCreationParam))
 		{
 			const ParticleMotionCreationParam* particleMotionCreationParam = static_cast<const ParticleMotionCreationParam*>(param->m_motionCreationParam);
 			entityPtr->setParticleMotion(createParticleMotion(particleMotionCreationParam));
