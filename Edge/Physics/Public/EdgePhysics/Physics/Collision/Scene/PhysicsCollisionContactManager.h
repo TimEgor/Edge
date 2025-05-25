@@ -75,6 +75,5 @@ namespace Edge
 		void markContactsForChecking(PhysicsSceneCollisionID changedCollision);
 
 		void updateContacts();
-		void applyCollision();
 	};
 }

@@ -60,14 +60,10 @@ Edge::PhysicsCollisionConstraintManager::ContactConstraints::ContactConstraints(
 void Edge::PhysicsCollisionConstraintManager::ContactConstraints::preSolve(float deltaTime)
 {
 	{
-		const ComputeVector normal = m_contactPoint.m_normal;
-		const ComputeVector tangent1 = Vector3Orthogonal(normal);
-		const ComputeVector tangent2 = CrossVector3(tangent1, normal);
+		m_frictionTangent1 = m_contactPoint.m_normal.getOrthogonal();
+		m_frictionTangent2 = CrossComputeVector3(m_frictionTangent1, m_contactPoint.m_normal);
 
-		tangent1.saveToFloatVector3(m_frictionTangent1);
-		tangent2.saveToFloatVector3(m_frictionTangent2);
-
-		((m_contactPoint.m_position1 + m_contactPoint.m_position2) * 0.5f).saveToFloatVector3(m_contactPosition);
+		m_contactPosition = (m_contactPoint.m_position1 + m_contactPoint.m_position2) * ComputeValueType(0.5);
 	}
 
 	preSolveFrictionParts();

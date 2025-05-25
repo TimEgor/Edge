@@ -6,6 +6,6 @@ namespace Edge
 {
 	class PhysicsSceneEntityManager;
 
-	EDGE_MT_REFERENCE(PhysicsSceneEntityManager);
+	EDGE_REFERENCE(PhysicsSceneEntityManager);
 	EDGE_MT_WEAK_REFERENCE(PhysicsSceneEntityManager);
 }

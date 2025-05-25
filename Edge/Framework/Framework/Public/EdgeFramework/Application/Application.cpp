@@ -170,6 +170,8 @@ bool Edge::Application::init()
 
 	ThreadUtils::SetThreadName("Edge Application main");
 
+	m_currentFrame = 0;
+
 	return true;
 }
 
@@ -217,6 +219,8 @@ void Edge::Application::run()
 		m_jobController->waitAndExecute(mailLoopJobGraph);
 
 		endFrame();
+
+		++m_currentFrame;
 	}
 }
 
@@ -235,9 +239,20 @@ void Edge::Application::unpause()
 	m_isPaused = false;
 }
 
+uint32_t Edge::Application::getCurrentFrameNum() const
+{
+	return m_currentFrame;
+}
+
 float Edge::Application::getDeltaTime() const
 {
-	return m_deltaTime;
+	return m_deltaTime * m_timeScale;
+}
+
+void Edge::Application::setTimeScale(float scale)
+{
+	EDGE_ASSERT(scale >= 0);
+	m_timeScale = scale;
 }
 
 bool Edge::Application::isStopped() const

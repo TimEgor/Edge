@@ -22,15 +22,15 @@ namespace Edge
 		PhysicsSceneCollisionManagerReference m_collisionManager;
 		PhysicsSceneConstraintManagerReference m_constraintManager;
 
-		FloatVector3 m_gravity = FloatVector3(0.0f, -9.81f, 0.0f);
+		ComputeVector3 m_gravity = ComputeVector3(ComputeValueType(0.0), ComputeValueType(-9.81), ComputeValueType(0.0));
 
 		PhysicsWorldWeakReference m_world;
 
-		JobGraphReference getUpdateJobGraph(float deltaTime);
+		JobGraphReference getUpdateJobGraph(ComputeValueType deltaTime);
 
-		JobGraphReference getConstraintPreparationJobGraph(float deltaTime);
-		JobGraphReference getConstraintVelocitySolvingJobGraph();
-		JobGraphReference getConstraintPositionSolvingJobGraph();
+		JobGraphReference getConstraintPreparationJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getConstraintVelocitySolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getConstraintPositionSolvingJobGraph(ComputeValueType deltaTime);
 
 	public:
 		PhysicsScene(const PhysicsWorldReference& world);
@@ -38,7 +38,7 @@ namespace Edge
 		bool init();
 		void release();
 
-		void update(float deltaTime);
+		void update(ComputeValueType deltaTime);
 
 		PhysicsSceneEntityID addEntity(const PhysicsEntityReference& entity, bool activate = true);
 		void removeEntity(PhysicsSceneEntityID entityID);

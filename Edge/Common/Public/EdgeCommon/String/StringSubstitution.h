@@ -9,10 +9,10 @@ namespace Edge
 	{
 		using ResultStringType = std::string;
 
-		inline static constexpr const char* BEGIN_EXP_STR = "${";
-		inline static constexpr const char* END_EXP_STR = "}";
-		inline static constexpr size_t BEGIN_EXP_STR_SIZE = std::char_traits<char>::length(BEGIN_EXP_STR);
-		inline static constexpr size_t END_EXP_STR_SIZE = std::char_traits<char>::length(END_EXP_STR);
+		static constexpr const char* BEGIN_EXP_STR = "${";
+		static constexpr const char* END_EXP_STR = "}";
+		static constexpr size_t BEGIN_EXP_STR_SIZE = std::char_traits<char>::length(BEGIN_EXP_STR);
+		static constexpr size_t END_EXP_STR_SIZE = std::char_traits<char>::length(END_EXP_STR);
 
 	public:
 		using ReplacementMap = std::unordered_map<uint32_t, std::string>;

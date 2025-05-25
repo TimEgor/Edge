@@ -2,7 +2,6 @@
 
 #include "EdgeCommon/UtilsMacros.h"
 #include "EdgeCommon/FileName/FileName.h"
-#include "EdgeCommon/Math/ComputeMath/ComputeMatrix.h"
 
 #include "EdgePhysics/Visualizer/DebugVisualizationDataController.h"
 
@@ -11,11 +10,14 @@
 #include "EdgeFramework/Graphics/GraphicPlatform/DefferedGraphicContext.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicDevice.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicPlatform.h"
+#include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/DepthStencilState.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/GPUBuffer.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/InputLayout.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/RasterizationState.h"
+#include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/SamplerState.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Shader.h"
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Texture.h"
+#include "EdgeFramework/Platform/Platform.h"
 #include "EdgeFramework/Recources/AssetsDirectoryController/AssetsDirectoryController.h"
 
 #include "PrimitiveShapes/Cube.h"
@@ -24,16 +26,44 @@
 
 bool EdgeDefRender::DefaultRenderer::initPointRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_pointRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Point.vshader"));
+	m_pointRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Point.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_pointRenderData.m_vertexShader);
 
-	m_pointRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Point.pshader"));
+	m_pointRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Point.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_pointRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
-	inputLayoutDesc.m_elements.push_back({ "INST_POSITION", 0, 0, offsetof(PointRenderData::PointData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_COLOR", 0, 0, offsetof(PointRenderData::PointData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(PointRenderData::PointData), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_POSITION",
+			0,
+			0,
+			offsetof(PointRenderData::PointData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_COLOR",
+			0,
+			0,
+			offsetof(PointRenderData::PointData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(PointRenderData::PointData),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_pointRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_pointRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_pointRenderData.m_inputLayout);
@@ -50,16 +80,44 @@ bool EdgeDefRender::DefaultRenderer::initPointRenderData(Edge::GraphicDevice& de
 
 bool EdgeDefRender::DefaultRenderer::initLineRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_lineRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Line.vshader"));
+	m_lineRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Line.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_lineRenderData.m_vertexShader);
 
-	m_lineRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Line.pshader"));
+	m_lineRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Line.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_lineRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
-	inputLayoutDesc.m_elements.push_back({ "POSITION", 0, 0, offsetof(LineRenderData::VertexData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "COLOR", 0, 0, offsetof(LineRenderData::VertexData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(LineRenderData::VertexData), Edge::InputLayoutBindingType::VertexBinding });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"POSITION",
+			0,
+			0,
+			offsetof(LineRenderData::VertexData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"COLOR",
+			0,
+			0,
+			offsetof(LineRenderData::VertexData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(LineRenderData::VertexData),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
 
 	m_lineRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_lineRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_lineRenderData.m_inputLayout);
@@ -76,17 +134,54 @@ bool EdgeDefRender::DefaultRenderer::initLineRenderData(Edge::GraphicDevice& dev
 
 bool EdgeDefRender::DefaultRenderer::initPolygonRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_polygonRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Polygon.vshader"));
+	m_polygonRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Polygon.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_vertexShader);
 
-	m_polygonRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Polygon.pshader"));
+	m_polygonRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Polygon.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
-	inputLayoutDesc.m_elements.push_back({ "POSITION", 0, 0, offsetof(PolygonRenderData::VertexData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "COLOR", 0, 0, offsetof(PolygonRenderData::VertexData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
-	inputLayoutDesc.m_elements.push_back({ "NORMAL", 0, 0, offsetof(PolygonRenderData::VertexData, m_normal), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(PolygonRenderData::VertexData), Edge::InputLayoutBindingType::VertexBinding });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"POSITION",
+			0,
+			0,
+			offsetof(PolygonRenderData::VertexData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"COLOR",
+			0,
+			0,
+			offsetof(PolygonRenderData::VertexData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"NORMAL",
+			0,
+			0,
+			offsetof(PolygonRenderData::VertexData, m_normal),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(PolygonRenderData::VertexData),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
 
 	m_polygonRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_polygonRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_polygonRenderData.m_inputLayout);
@@ -103,20 +198,84 @@ bool EdgeDefRender::DefaultRenderer::initPolygonRenderData(Edge::GraphicDevice& 
 
 bool EdgeDefRender::DefaultRenderer::initPlaneRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_planeRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Plane.vshader"));
+	m_planeRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Plane.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_planeRenderData.m_vertexShader);
 
-	m_planeRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Plane.pshader"));
+	m_planeRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Plane.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_planeRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
-	inputLayoutDesc.m_elements.push_back({ "INST_POSITION", 0, 0, offsetof(PlaneRenderData::PlaneData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_SIZE", 0, 0, offsetof(PlaneRenderData::PlaneData, m_sizeX), 1, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_NORMAL", 0, 0, offsetof(PlaneRenderData::PlaneData, m_normal), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_SIZE", 1, 0, offsetof(PlaneRenderData::PlaneData, m_sizeY), 1, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_DIR", 0, 0, offsetof(PlaneRenderData::PlaneData, m_directionRight), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_COLOR", 0, 0, offsetof(PlaneRenderData::PlaneData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(PlaneRenderData::PlaneData), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_POSITION",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_SIZE",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_sizeX),
+			1,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_NORMAL",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_normal),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_SIZE",
+			1,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_sizeY),
+			1,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_DIR",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_directionRight),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_COLOR",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(PlaneRenderData::PlaneData),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_planeRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_planeRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_planeRenderData.m_inputLayout);
@@ -133,20 +292,84 @@ bool EdgeDefRender::DefaultRenderer::initPlaneRenderData(Edge::GraphicDevice& de
 
 bool EdgeDefRender::DefaultRenderer::initWireframePlaneRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_wireframePlaneRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframePlane.vshader"));
+	m_wireframePlaneRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframePlane.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_wireframePlaneRenderData.m_vertexShader);
 
-	m_wireframePlaneRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframePlane.pshader"));
+	m_wireframePlaneRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframePlane.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_wireframePlaneRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
-	inputLayoutDesc.m_elements.push_back({ "INST_POSITION", 0, 0, offsetof(PlaneRenderData::PlaneData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_SIZE", 0, 0, offsetof(PlaneRenderData::PlaneData, m_sizeX), 1, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_NORMAL", 0, 0, offsetof(PlaneRenderData::PlaneData, m_normal), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_SIZE", 1, 0, offsetof(PlaneRenderData::PlaneData, m_sizeY), 1, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_DIR", 0, 0, offsetof(PlaneRenderData::PlaneData, m_directionRight), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_COLOR", 0, 0, offsetof(PlaneRenderData::PlaneData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(PlaneRenderData::PlaneData), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_POSITION",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_SIZE",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_sizeX),
+			1,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_NORMAL",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_normal),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_SIZE",
+			1,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_sizeY),
+			1,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_DIR",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_directionRight),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_COLOR",
+			0,
+			0,
+			offsetof(PlaneRenderData::PlaneData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(PlaneRenderData::PlaneData),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_wireframePlaneRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_wireframePlaneRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_wireframePlaneRenderData.m_inputLayout);
@@ -163,7 +386,9 @@ bool EdgeDefRender::DefaultRenderer::initWireframePlaneRenderData(Edge::GraphicD
 
 bool EdgeDefRender::DefaultRenderer::initBoxRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_boxRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Box.vshader"));
+	m_boxRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Box.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_boxRenderData.m_vertexShader);
 
 	m_boxRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Box.pshader"));
@@ -171,13 +396,60 @@ bool EdgeDefRender::DefaultRenderer::initBoxRenderData(Edge::GraphicDevice& devi
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
 	inputLayoutDesc.m_elements = CubeShape::Vertex::elementsDesc;
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 0, 1, offsetof(Edge::FloatMatrix4x4, m_row1), 4, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 1, 1, offsetof(Edge::FloatMatrix4x4, m_row2), 4, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 2, 1, offsetof(Edge::FloatMatrix4x4, m_row3), 4, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 3, 1, offsetof(Edge::FloatMatrix4x4, m_row4), 4, Edge::InputLayoutElementType::Float32 });
-
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(CubeShape::Vertex), Edge::InputLayoutBindingType::VertexBinding });
-	inputLayoutDesc.m_bindings.push_back({ 1, sizeof(Edge::FloatMatrix4x4), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			0,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row1),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			1,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row2),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			2,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row3),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			3,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row4),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(CubeShape::Vertex),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			1,
+			sizeof(Edge::FloatMatrix4x4),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_boxRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_boxRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_boxRenderData.m_inputLayout);
@@ -192,7 +464,7 @@ bool EdgeDefRender::DefaultRenderer::initBoxRenderData(Edge::GraphicDevice& devi
 	boxVertexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
 	boxVertexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData boxVerticesData(cubeVertices.data(), sizeof(CubeShape::Vertex) * cubeVertices.size());
+	const Edge::InitialGraphicResourceData boxVerticesData(cubeVertices.data(), sizeof(CubeShape::Vertex) * cubeVertices.size());
 
 	m_boxRenderData.m_vertexBuffer = device.createBuffer(boxVertexBufferDesc, &boxVerticesData);
 	EDGE_CHECK_RETURN_FALSE(m_boxRenderData.m_vertexBuffer);
@@ -205,7 +477,7 @@ bool EdgeDefRender::DefaultRenderer::initBoxRenderData(Edge::GraphicDevice& devi
 	boxIndexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_INDEX_BUFFER;
 	boxIndexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData boxIndicesData(cubeIndices.data(), sizeof(CubeShape::VertexIndex) * cubeIndices.size());
+	const Edge::InitialGraphicResourceData boxIndicesData(cubeIndices.data(), sizeof(CubeShape::VertexIndex) * cubeIndices.size());
 
 	m_boxRenderData.m_indexBuffer = device.createBuffer(boxIndexBufferDesc, &boxIndicesData);
 	EDGE_CHECK_RETURN_FALSE(m_boxRenderData.m_indexBuffer);
@@ -222,21 +494,73 @@ bool EdgeDefRender::DefaultRenderer::initBoxRenderData(Edge::GraphicDevice& devi
 
 bool EdgeDefRender::DefaultRenderer::initWireframeBoxRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_wireframeBoxRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeBox.vshader"));
+	m_wireframeBoxRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeBox.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeBoxRenderData.m_vertexShader);
 
-	m_wireframeBoxRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeBox.pshader"));
+	m_wireframeBoxRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeBox.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeBoxRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
 	inputLayoutDesc.m_elements = LineCubeShape::Vertex::elementsDesc;
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 0, 1, offsetof(Edge::FloatMatrix4x4, m_row1), 4, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 1, 1, offsetof(Edge::FloatMatrix4x4, m_row2), 4, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 2, 1, offsetof(Edge::FloatMatrix4x4, m_row3), 4, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_TRANSFORM", 3, 1, offsetof(Edge::FloatMatrix4x4, m_row4), 4, Edge::InputLayoutElementType::Float32 });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			0,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row1),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			1,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row2),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			2,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row3),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_TRANSFORM",
+			3,
+			1,
+			offsetof(Edge::FloatMatrix4x4, m_row4),
+			4,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
 
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(LineCubeShape::Vertex), Edge::InputLayoutBindingType::VertexBinding });
-	inputLayoutDesc.m_bindings.push_back({ 1, sizeof(Edge::FloatMatrix4x4), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(LineCubeShape::Vertex),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			1,
+			sizeof(Edge::FloatMatrix4x4),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_wireframeBoxRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_wireframeBoxRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeBoxRenderData.m_inputLayout);
@@ -251,7 +575,7 @@ bool EdgeDefRender::DefaultRenderer::initWireframeBoxRenderData(Edge::GraphicDev
 	boxVertexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
 	boxVertexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData boxVerticesData(cubeVertices.data(), sizeof(LineCubeShape::Vertex) * cubeVertices.size());
+	const Edge::InitialGraphicResourceData boxVerticesData(cubeVertices.data(), sizeof(LineCubeShape::Vertex) * cubeVertices.size());
 
 	m_wireframeBoxRenderData.m_vertexBuffer = device.createBuffer(boxVertexBufferDesc, &boxVerticesData);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeBoxRenderData.m_vertexBuffer);
@@ -264,7 +588,7 @@ bool EdgeDefRender::DefaultRenderer::initWireframeBoxRenderData(Edge::GraphicDev
 	boxIndexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_INDEX_BUFFER;
 	boxIndexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData boxIndicesData(cubeIndices.data(), sizeof(LineCubeShape::VertexIndex) * cubeIndices.size());
+	const Edge::InitialGraphicResourceData boxIndicesData(cubeIndices.data(), sizeof(LineCubeShape::VertexIndex) * cubeIndices.size());
 
 	m_wireframeBoxRenderData.m_indexBuffer = device.createBuffer(boxIndexBufferDesc, &boxIndicesData);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeBoxRenderData.m_indexBuffer);
@@ -281,22 +605,83 @@ bool EdgeDefRender::DefaultRenderer::initWireframeBoxRenderData(Edge::GraphicDev
 
 bool EdgeDefRender::DefaultRenderer::initSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
 {
-	m_sphereRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Sphere.vshader"));
+	m_sphereRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Sphere.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_sphereRenderData.m_vertexShader);
 
-	m_sphereRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Sphere.pshader"));
+	m_sphereRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Sphere.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_sphereRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
 	inputLayoutDesc.m_elements = SphereShape::Vertex::elementsDesc;
-	inputLayoutDesc.m_elements.push_back({ "INST_POSITION", 0, 1, offsetof(SphereRenderData::SphereData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_DIR", 0, 1, offsetof(SphereRenderData::SphereData, m_directionForward), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_DIR", 1, 1, offsetof(SphereRenderData::SphereData, m_directionUp), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_RADIUS", 0, 1, offsetof(SphereRenderData::SphereData, m_radius), 1, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_COLOR",0, 1, offsetof(SphereRenderData::SphereData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_POSITION",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_DIR",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_directionForward),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_DIR",
+			1,
+			1,
+			offsetof(SphereRenderData::SphereData, m_directionUp),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_RADIUS",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_radius),
+			1,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_COLOR",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
 
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(SphereShape::Vertex), Edge::InputLayoutBindingType::VertexBinding });
-	inputLayoutDesc.m_bindings.push_back({ 1, sizeof(SphereRenderData::SphereData), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(SphereShape::Vertex),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			1,
+			sizeof(SphereRenderData::SphereData),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_sphereRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_sphereRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_sphereRenderData.m_inputLayout);
@@ -311,7 +696,7 @@ bool EdgeDefRender::DefaultRenderer::initSphereRenderData(Edge::GraphicDevice& d
 	sphereVertexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
 	sphereVertexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData sphereVerticesData(cubeVertices.data(), sizeof(SphereShape::Vertex) * cubeVertices.size());
+	const Edge::InitialGraphicResourceData sphereVerticesData(cubeVertices.data(), sizeof(SphereShape::Vertex) * cubeVertices.size());
 
 	m_sphereRenderData.m_vertexBuffer = device.createBuffer(sphereVertexBufferDesc, &sphereVerticesData);
 	EDGE_CHECK_RETURN_FALSE(m_sphereRenderData.m_vertexBuffer);
@@ -326,7 +711,7 @@ bool EdgeDefRender::DefaultRenderer::initSphereRenderData(Edge::GraphicDevice& d
 	sphereIndexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_INDEX_BUFFER;
 	sphereIndexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData sphereIndicesData(cubeIndices.data(), sizeof(SphereShape::VertexIndex) * m_sphereRenderData.m_indexCountPerSphere);
+	const Edge::InitialGraphicResourceData sphereIndicesData(cubeIndices.data(), sizeof(SphereShape::VertexIndex) * m_sphereRenderData.m_indexCountPerSphere);
 
 	m_sphereRenderData.m_indexBuffer = device.createBuffer(sphereIndexBufferDesc, &sphereIndicesData);
 	EDGE_CHECK_RETURN_FALSE(m_sphereRenderData.m_indexBuffer);
@@ -341,24 +726,88 @@ bool EdgeDefRender::DefaultRenderer::initSphereRenderData(Edge::GraphicDevice& d
 	return true;
 }
 
-bool EdgeDefRender::DefaultRenderer::initWireframeSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController)
+bool EdgeDefRender::DefaultRenderer::initWireframeSphereRenderData(
+	Edge::GraphicDevice& device,
+	const Edge::AssetsDirectoryController& assetsDirectoryController
+)
 {
-	m_wireframeSphereRenderData.m_vertexShader = device.createVertexShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeSphere.vshader"));
+	m_wireframeSphereRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeSphere.vshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeSphereRenderData.m_vertexShader);
 
-	m_wireframeSphereRenderData.m_pixelShader = device.createPixelShaderFromFile(assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeSphere.pshader"));
+	m_wireframeSphereRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/WireframeSphere.pshader")
+	);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeSphereRenderData.m_pixelShader);
 
 	Edge::InputLayoutDesc inputLayoutDesc{};
 	inputLayoutDesc.m_elements = LineSphereShape::Vertex::elementsDesc;
-	inputLayoutDesc.m_elements.push_back({ "INST_POSITION", 0, 1, offsetof(SphereRenderData::SphereData, m_position), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_DIR",0, 1, offsetof(SphereRenderData::SphereData, m_directionForward), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_DIR", 1, 1, offsetof(SphereRenderData::SphereData, m_directionUp), 3, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_RADIUS", 0, 1, offsetof(SphereRenderData::SphereData, m_radius), 1, Edge::InputLayoutElementType::Float32 });
-	inputLayoutDesc.m_elements.push_back({ "INST_COLOR", 0, 1, offsetof(SphereRenderData::SphereData, m_color), 1, Edge::InputLayoutElementType::UInt32 });
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_POSITION",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_DIR",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_directionForward),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_DIR",
+			1,
+			1,
+			offsetof(SphereRenderData::SphereData, m_directionUp),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_RADIUS",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_radius),
+			1,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"INST_COLOR",
+			0,
+			1,
+			offsetof(SphereRenderData::SphereData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
 
-	inputLayoutDesc.m_bindings.push_back({ 0, sizeof(LineSphereShape::Vertex), Edge::InputLayoutBindingType::VertexBinding });
-	inputLayoutDesc.m_bindings.push_back({ 1, sizeof(SphereRenderData::SphereData), Edge::InputLayoutBindingType::InstanceBinding });
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(LineSphereShape::Vertex),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			1,
+			sizeof(SphereRenderData::SphereData),
+			Edge::InputLayoutBindingType::InstanceBinding
+		}
+	);
 
 	m_wireframeSphereRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *m_wireframeSphereRenderData.m_vertexShader);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeSphereRenderData.m_inputLayout);
@@ -373,7 +822,7 @@ bool EdgeDefRender::DefaultRenderer::initWireframeSphereRenderData(Edge::Graphic
 	sphereVertexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
 	sphereVertexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData boxVerticesData(cubeVertices.data(), sizeof(LineSphereShape::Vertex) * cubeVertices.size());
+	const Edge::InitialGraphicResourceData boxVerticesData(cubeVertices.data(), sizeof(LineSphereShape::Vertex) * cubeVertices.size());
 
 	m_wireframeSphereRenderData.m_vertexBuffer = device.createBuffer(sphereVertexBufferDesc, &boxVerticesData);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeSphereRenderData.m_vertexBuffer);
@@ -388,7 +837,10 @@ bool EdgeDefRender::DefaultRenderer::initWireframeSphereRenderData(Edge::Graphic
 	sphereIndexBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_INDEX_BUFFER;
 	sphereIndexBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
 
-	const Edge::InitialGPUBufferData boxIndicesData(cubeIndices.data(), sizeof(LineSphereShape::VertexIndex) * m_wireframeSphereRenderData.m_indexCountPerSphere);
+	const Edge::InitialGraphicResourceData boxIndicesData(
+		cubeIndices.data(),
+		sizeof(LineSphereShape::VertexIndex) * m_wireframeSphereRenderData.m_indexCountPerSphere
+	);
 
 	m_wireframeSphereRenderData.m_indexBuffer = device.createBuffer(sphereIndexBufferDesc, &boxIndicesData);
 	EDGE_CHECK_RETURN_FALSE(m_wireframeSphereRenderData.m_indexBuffer);
@@ -401,6 +853,113 @@ bool EdgeDefRender::DefaultRenderer::initWireframeSphereRenderData(Edge::Graphic
 	EDGE_CHECK_RETURN_FALSE(m_wireframeSphereRenderData.m_sphereData.init(sphereTransformBufferDesc, 128));
 
 	return true;
+}
+
+bool EdgeDefRender::DefaultRenderer::initTextRenderData(
+	Edge::GraphicDevice& device,
+	const Edge::AssetsDirectoryController& assetsDirectoryController,
+	TextRenderData& textRenderData,
+	bool isOrthoProj
+)
+{
+	textRenderData.m_vertexShader = device.createVertexShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", isOrthoProj ? "Shaders/OrthoText.vshader" : "Shaders/Text.vshader")
+	);
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_vertexShader);
+
+	textRenderData.m_pixelShader = device.createPixelShaderFromFile(
+		assetsDirectoryController.prepareAssetPath("DefaultRenderPlugin", "Shaders/Text.pshader")
+	);
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_pixelShader);
+
+	Edge::InputLayoutDesc inputLayoutDesc{};
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"POSITION",
+			0,
+			0,
+			offsetof(TextRenderData::VertexData, m_position),
+			3,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"TEXCOORD",
+			0,
+			0,
+			offsetof(TextRenderData::VertexData, m_textureCoord),
+			2,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"COLOR",
+			0,
+			0,
+			offsetof(TextRenderData::VertexData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
+		}
+	);
+	inputLayoutDesc.m_bindings.push_back(
+		{
+			0,
+			sizeof(TextRenderData::VertexData),
+			Edge::InputLayoutBindingType::VertexBinding
+		}
+	);
+
+	textRenderData.m_inputLayout = device.createInputLayout(inputLayoutDesc, *textRenderData.m_vertexShader);
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_inputLayout);
+
+	RenderDataBufferCache::BufferDesc worldTextTransformBufferDesc{};
+	worldTextTransformBufferDesc.m_stride = sizeof(TextRenderData::GlyphData);
+	worldTextTransformBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_VERTEX_BUFFER;
+	worldTextTransformBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
+
+	EDGE_CHECK_RETURN_FALSE(textRenderData.m_glyphData.init(worldTextTransformBufferDesc, 512));
+
+	return true;
+}
+
+bool EdgeDefRender::DefaultRenderer::initCameraTransformBuffers(Edge::GraphicDevice& device)
+{
+	Edge::GPUBufferDesc cameraBufferDesc{};
+	cameraBufferDesc.m_size = sizeof(CameraProjectionTransformData);
+	cameraBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_CONSTANT_BUFFER;
+	cameraBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
+
+	m_perspectiveTransformBuffer = device.createBuffer(cameraBufferDesc);
+	EDGE_CHECK_INITIALIZATION(m_perspectiveTransformBuffer);
+
+	m_orthogonalTransformBuffer = device.createBuffer(cameraBufferDesc);
+	EDGE_CHECK_INITIALIZATION(m_orthogonalTransformBuffer);
+
+	cameraBufferDesc.m_size = sizeof(CameraTransformData);
+	m_cameraTransformBuffer = device.createBuffer(cameraBufferDesc);
+	EDGE_CHECK_INITIALIZATION(m_cameraTransformBuffer);
+
+	return true;
+}
+
+bool EdgeDefRender::DefaultRenderer::initDefaultFont(Edge::GraphicDevice& device)
+{
+	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
+	Edge::FontProvider& fontProvider = application.getPlatform().getFontProvider();
+	Edge::FontProvider::GlyphDataCollection glyphData = fontProvider.getFontGlyphsData(DefaultFontName, DefaultFontHeight);
+
+	if (!glyphData.m_data)
+	{
+		return nullptr;
+	}
+
+	const bool creationResult = m_defaultFont.init(glyphData, device);
+
+	EDGE_SAFE_DESTROY_ARRAY(glyphData.m_data);
+
+	return creationResult;
 }
 
 void EdgeDefRender::DefaultRenderer::releasePointRenderData()
@@ -492,6 +1051,27 @@ void EdgeDefRender::DefaultRenderer::releaseWireframeSphereRenderData()
 	m_wireframeSphereRenderData.m_sphereData.release();
 }
 
+void EdgeDefRender::DefaultRenderer::releaseTextRenderData(TextRenderData& worldTextRenderData)
+{
+	EDGE_SAFE_DESTROY(worldTextRenderData.m_vertexShader);
+	EDGE_SAFE_DESTROY(worldTextRenderData.m_pixelShader);
+	EDGE_SAFE_DESTROY(worldTextRenderData.m_inputLayout);
+
+	worldTextRenderData.m_glyphData.release();
+}
+
+void EdgeDefRender::DefaultRenderer::releaseCameraTransformBuffers()
+{
+	EDGE_SAFE_DESTROY(m_perspectiveTransformBuffer);
+	EDGE_SAFE_DESTROY(m_orthogonalTransformBuffer);
+	EDGE_SAFE_DESTROY(m_cameraTransformBuffer);
+}
+
+void EdgeDefRender::DefaultRenderer::releaseDefaultFont()
+{
+	m_defaultFont.release();
+}
+
 bool EdgeDefRender::DefaultRenderer::init()
 {
 	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
@@ -501,17 +1081,30 @@ bool EdgeDefRender::DefaultRenderer::init()
 	m_graphicContext = device.createDeferredGraphicContext();
 	EDGE_CHECK_INITIALIZATION(m_graphicContext);
 
-
-	m_baseRasterizationState = device.createRasterizationState(Edge::RasterizationStateDesc{});
+	Edge::RasterizationStateDesc rasterizationStateDesc{};
+	m_baseRasterizationState = device.createRasterizationState(rasterizationStateDesc);
 	EDGE_CHECK_INITIALIZATION(m_baseRasterizationState);
 
-	Edge::GPUBufferDesc cameraBufferDesc{};
-	cameraBufferDesc.m_size = sizeof(CameraShaderData);
-	cameraBufferDesc.m_usage = Edge::GPU_BUFFER_USAGE_CONSTANT_BUFFER;
-	cameraBufferDesc.m_access = Edge::GRAPHIC_RESOURCE_ACCESS_CPU_WRITE | Edge::GRAPHIC_RESOURCE_ACCESS_GPU_READ;
+	rasterizationStateDesc.m_depthClip = false;
+	m_orthogonalRasterizationState = device.createRasterizationState(rasterizationStateDesc);
+	EDGE_CHECK_INITIALIZATION(m_orthogonalRasterizationState);
 
-	m_cameraTransformBuffer = device.createBuffer(cameraBufferDesc, nullptr);
-	EDGE_CHECK_INITIALIZATION(m_cameraTransformBuffer);
+	m_baseSamplerState = device.createSamplerState();
+	EDGE_CHECK_INITIALIZATION(m_baseSamplerState);
+
+	m_alphaBlendState = device.createBlendState(Edge::BlendMode::AlphaBlend);
+	EDGE_CHECK_INITIALIZATION(m_alphaBlendState);
+
+	Edge::DepthStencilStateDesc depthStencilStateDesc{};
+	m_depthTestEnableState = device.createDepthStencilState(depthStencilStateDesc);
+	EDGE_CHECK_INITIALIZATION(m_depthTestEnableState);
+
+	depthStencilStateDesc.m_depthTestEnable = false;
+	depthStencilStateDesc.m_depthWrite = false;
+	m_depthTestDisableState = device.createDepthStencilState(depthStencilStateDesc);
+	EDGE_CHECK_INITIALIZATION(m_depthTestDisableState);
+
+	EDGE_CHECK_INITIALIZATION(initCameraTransformBuffers(device));
 
 	const Edge::AssetsDirectoryController& assetsDirectoryController = application.getAssetsDirectoryController();
 
@@ -528,6 +1121,12 @@ bool EdgeDefRender::DefaultRenderer::init()
 
 	EDGE_CHECK_INITIALIZATION(initSphereRenderData(device, assetsDirectoryController));
 	EDGE_CHECK_INITIALIZATION(initWireframeSphereRenderData(device, assetsDirectoryController));
+
+	EDGE_CHECK_INITIALIZATION(initTextRenderData(device, assetsDirectoryController, m_orientedWorldTextRenderData, false));
+	EDGE_CHECK_INITIALIZATION(initTextRenderData(device, assetsDirectoryController, m_worldTextRenderData, false));
+	EDGE_CHECK_INITIALIZATION(initTextRenderData(device, assetsDirectoryController, m_screenTextRenderData, true));
+
+	EDGE_CHECK_INITIALIZATION(initDefaultFont(device));
 
 	return true;
 }
@@ -548,11 +1147,77 @@ void EdgeDefRender::DefaultRenderer::release()
 	releaseSphereRenderData();
 	releaseWireframeSphereRenderData();
 
+	releaseTextRenderData(m_orientedWorldTextRenderData);
+	releaseTextRenderData(m_worldTextRenderData);
+	releaseTextRenderData(m_screenTextRenderData);
+
+	releaseDefaultFont();
+	releaseCameraTransformBuffers();
+
 	EDGE_SAFE_DESTROY(m_graphicContext);
 	EDGE_SAFE_DESTROY(m_baseRasterizationState);
+	EDGE_SAFE_DESTROY(m_orthogonalRasterizationState);
+	EDGE_SAFE_DESTROY(m_baseSamplerState);
+	EDGE_SAFE_DESTROY(m_alphaBlendState);
+	EDGE_SAFE_DESTROY(m_depthTestEnableState);
+	EDGE_SAFE_DESTROY(m_depthTestDisableState);
 	EDGE_SAFE_DESTROY(m_depthBuffer);
-	EDGE_SAFE_DESTROY(m_cameraTransformBuffer);
+}
 
+void EdgeDefRender::DefaultRenderer::prepareData(
+	const Edge::Texture2D& targetTexture,
+	const CameraParams& cameraParams,
+	const Edge::Transform& cameraTransform,
+	const Edge::DebugVisualizationDataController& visualizationData
+)
+{
+	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
+	const float deltaTime = application.getDeltaTime();
+
+	const Edge::Texture2DDesc& targetTextureDesc = targetTexture.getDesc();
+
+	m_graphicContext->prepareViewTransform(
+		cameraTransform.getOrigin().getFloatVector3(),
+		cameraTransform.getAxisZ().getFloatVector3(),
+		cameraTransform.getAxisY().getFloatVector3(),
+		m_cameraShaderData.m_viewTransform
+	);
+
+	m_cameraShaderData.m_screenSize = targetTextureDesc.m_size;
+
+	m_graphicContext->preparePerspectiveProjTransform(
+		cameraParams.m_FoV,
+		cameraParams.m_ratio,
+		cameraParams.m_nearPlaneDistance,
+		cameraParams.m_farPlaneDistance,
+		m_perspectiveShaderData.m_projTransform
+	);
+
+	m_graphicContext->prepareOrthogonalProjTransform(
+		targetTextureDesc.m_size.m_x,
+		targetTextureDesc.m_size.m_y,
+		cameraParams.m_nearPlaneDistance,
+		cameraParams.m_farPlaneDistance,
+		m_orthogonalShaderData.m_projTransform
+	);
+
+	preparePointRenderData(deltaTime, visualizationData);
+	prepareLineRenderData(deltaTime, visualizationData);
+
+	preparePolygonRenderData(deltaTime, visualizationData);
+
+	preparePlaneRenderData(deltaTime, visualizationData);
+	prepareWireframePlaneRenderData(deltaTime, visualizationData);
+
+	prepareBoxRenderData(deltaTime, visualizationData);
+	prepareWireframeBoxRenderData(deltaTime, visualizationData);
+
+	prepareSphereRenderData(deltaTime, visualizationData);
+	prepareWireframeSphereRenderData(deltaTime, visualizationData);
+
+	prepareOrientedWorldTextRenderData(deltaTime, visualizationData);
+	prepareWorldTextRenderData(deltaTime, visualizationData, cameraTransform);
+	prepareScreenTextRenderData(deltaTime, visualizationData, targetTextureDesc.m_size);
 }
 
 void EdgeDefRender::DefaultRenderer::preparePointRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData)
@@ -570,7 +1235,7 @@ void EdgeDefRender::DefaultRenderer::preparePointRenderData(float deltaTime, con
 		{
 			const Edge::DebugVisualizationDataController::PointData& pointDebugData = visualizationData.getPoint(pointIndex);
 			PointRenderData::PointData& pointData = *pointDataIter.getCurrentTypedElement<PointRenderData::PointData>();
-			pointData.m_position = pointDebugData.m_position;
+			pointData.m_position = Edge::FloatVector3(pointDebugData.m_position);
 			pointData.m_color = PackedColor(pointDebugData.m_color);
 
 			pointDataIter.next();
@@ -615,9 +1280,12 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 
 			const PackedColor color(arrowDebugData.m_color);
 
-			const Edge::ComputeVector endPoint = Edge::ComputeVector(arrowDebugData.m_position) + Edge::ComputeVector(arrowDebugData.m_direction);
-			const Edge::ComputeVector normalizeDir = Edge::ComputeVector(arrowDebugData.m_direction).normalize() * arrowDebugData.m_size;
-			const Edge::ComputeVector headPerpendicular = Edge::ComputeVector(calculateArrowHeadPerpendicular(arrowDebugData.m_direction)) * arrowDebugData.m_size;
+			const Edge::FloatComputeVector3 endPoint = Edge::FloatComputeVector3(arrowDebugData.m_position) + Edge::FloatComputeVector3(
+				arrowDebugData.m_direction
+			);
+			const Edge::FloatComputeVector3 normalizeDir = Edge::NormalizeComputeVector3(Edge::FloatComputeVector3(arrowDebugData.m_direction)) * arrowDebugData
+				.m_size;
+			const Edge::FloatComputeVector3 headPerpendicular = CalculateArrowHeadPerpendicular(arrowDebugData.m_direction) * arrowDebugData.m_size;
 
 			LineRenderData::LineData& lineData = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
 
@@ -706,9 +1374,9 @@ void EdgeDefRender::DefaultRenderer::preparePolygonRenderData(float deltaTime, c
 			PolygonRenderData::PolygonData& polygonData = *polygonDataIter.getCurrentTypedElement<PolygonRenderData::PolygonData>();
 
 			const PackedColor color(polygonDebugData.m_color);
-			const Edge::FloatVector3 normal = CrossVector3(
-				polygonDebugData.m_position1 - polygonDebugData.m_position2,
-				polygonDebugData.m_position1 - polygonDebugData.m_position3
+			const Edge::FloatVector3 normal = Edge::CrossComputeVector3(
+				Edge::FloatComputeVector3(polygonDebugData.m_position1) - Edge::FloatComputeVector3(polygonDebugData.m_position2),
+				Edge::FloatComputeVector3(polygonDebugData.m_position1) - Edge::FloatComputeVector3(polygonDebugData.m_position3)
 			).getFloatVector3();
 
 			polygonData.m_point1.m_position = polygonDebugData.m_position1;
@@ -797,14 +1465,14 @@ void EdgeDefRender::DefaultRenderer::prepareBoxRenderData(float deltaTime, const
 		{
 			const Edge::DebugVisualizationDataController::BoxData& boxDebugData = visualizationData.getBox(boxIndex);
 			Edge::FloatMatrix4x4& boxTransform = *boxDataIter.getCurrentTypedElement<Edge::FloatMatrix4x4>();
-			boxTransform = boxDebugData.m_transform.m_matrix;
+			boxDebugData.m_transform.m_matrix.getFloatMatrix4x4(boxTransform);
 
 			assert(boxTransform.m_row4.m_w == 1.0f);
 
 			const PackedColor color(boxDebugData.m_color);
 			boxTransform.m_row4.m_w = *reinterpret_cast<const float*>(&color.m_data);
 
-			//m_graphicContext->prepareMatrixForShader(boxTransform, boxTransform);
+			//m_graphicContext->prepareMatrixForShader(boxTransform);
 
 			boxDataIter.next();
 		}
@@ -826,14 +1494,14 @@ void EdgeDefRender::DefaultRenderer::prepareWireframeBoxRenderData(float deltaTi
 		{
 			const Edge::DebugVisualizationDataController::BoxData& boxDebugData = visualizationData.getWireframeBox(boxIndex);
 			Edge::FloatMatrix4x4& boxTransform = *boxDataIter.getCurrentTypedElement<Edge::FloatMatrix4x4>();
-			boxTransform = boxDebugData.m_transform.m_matrix;
+			boxDebugData.m_transform.m_matrix.getFloatMatrix4x4(boxTransform);
 
 			assert(boxTransform.m_row4.m_w == 1.0f);
 
 			const PackedColor color(boxDebugData.m_color);
 			boxTransform.m_row4.m_w = *reinterpret_cast<const float*>(&color.m_data);
 
-			//m_graphicContext->prepareMatrixForShader(boxTransform, boxTransform);
+			//m_graphicContext->prepareMatrixForShader(boxTransform);
 
 			boxDataIter.next();
 		}
@@ -892,38 +1560,275 @@ void EdgeDefRender::DefaultRenderer::prepareWireframeSphereRenderData(float delt
 	}
 }
 
-Edge::FloatVector3 EdgeDefRender::DefaultRenderer::calculateArrowHeadPerpendicular(const Edge::FloatVector3& arrowDirection)
+void EdgeDefRender::DefaultRenderer::buildStringVertexBuffer(
+	RenderDataBufferCacheIterator& cacheIterator,
+	const std::string& text,
+	const Edge::FloatComputeMatrix4x4& transform,
+	PackedColor color
+)
 {
-	if (fabs(arrowDirection.m_x) > fabs(arrowDirection.m_y))
-	{
-		const float length = sqrtf(arrowDirection.m_x * arrowDirection.m_x + arrowDirection.m_z * arrowDirection.m_z);
-		return (Edge::ComputeVector(Edge::FloatVector3(arrowDirection.m_z, 0.0f, -arrowDirection.m_x)) / length).getFloatVector3();
-	}
+	const Edge::Texture2DDesc& fontAtlasDesc = m_defaultFont.getAtlas()->getDesc();
+	const uint32_t fontAtlasWidth = fontAtlasDesc.m_size.m_x;
+	const uint32_t fontAtlasHeight = fontAtlasDesc.m_size.m_y;
 
-	const float length = sqrtf(arrowDirection.m_y * arrowDirection.m_y + arrowDirection.m_z * arrowDirection.m_z);
-	return (Edge::ComputeVector(Edge::FloatVector3(0.0f, arrowDirection.m_z, -arrowDirection.m_y)) / length).getFloatVector3();
+	const float invFontAtlasWidth = 1.0f / fontAtlasWidth;
+	const float invFontAtlasHeight = 1.0f / fontAtlasHeight;
+
+	const uint32_t fontHeight = m_defaultFont.getHeight();
+
+	const uint32_t textGlyphCount = text.size();
+
+	float glyphLocalX = 0.0f;
+	float glyphLocalY = -1.0f;
+	for (uint32_t glyphIndex = 0; glyphIndex < textGlyphCount; ++glyphIndex)
+	{
+		const char glyph = text[glyphIndex];
+
+		if (Edge::FontProvider::GlyphDataCollection::BeginCharIndex <= glyph && glyph <= Edge::FontProvider::GlyphDataCollection::EndCharIndex)
+		{
+			const uint32_t atlasLocalGlyphIndex = glyph - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
+
+			const uint16_t glyphWidth = m_defaultFont.getGlyphWidth(atlasLocalGlyphIndex);
+			const uint16_t glyphHeight = m_defaultFont.getGlyphHeight(atlasLocalGlyphIndex);
+			const uint16_t glyphAtlasPosition = m_defaultFont.getGlyphPosition(atlasLocalGlyphIndex);
+
+			const float relativeSizeX = static_cast<float>(glyphWidth) / fontHeight;
+			const float relativeSizeY = static_cast<float>(glyphHeight) / fontHeight;
+
+			{
+				const float glyphLocalOffsetedY = glyphLocalY + static_cast<float>(m_defaultFont.getGlyphOffsetY(atlasLocalGlyphIndex)) / fontHeight;
+
+				const Edge::FloatVector2 offsetedPosition(
+					glyphLocalX + relativeSizeX,
+					glyphLocalOffsetedY + relativeSizeY
+				);
+
+				const Edge::FloatVector2 uv1(glyphAtlasPosition * invFontAtlasWidth, 0.0f);
+				const Edge::FloatVector2 uv2((glyphAtlasPosition + glyphWidth) * invFontAtlasWidth, glyphHeight * invFontAtlasHeight);
+
+				TextRenderData::GlyphData* glyphData = cacheIterator.getCurrentTypedElement<TextRenderData::GlyphData>();
+
+				TextRenderData::VertexData vertex1;
+				(transform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
+				vertex1.m_textureCoord = Edge::FloatVector2(uv1.m_x, uv2.m_y);
+				vertex1.m_color = color;
+
+				TextRenderData::VertexData vertex2;
+				(transform * Edge::FloatComputeVector4(glyphLocalX, offsetedPosition.m_y, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex2.m_position);
+				vertex2.m_textureCoord = uv1;
+				vertex2.m_color = color;
+
+				TextRenderData::VertexData vertex3;
+				(transform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
+				vertex3.m_textureCoord = uv2;
+				vertex3.m_color = color;
+
+				TextRenderData::VertexData vertex4;
+				(transform * Edge::FloatComputeVector4(offsetedPosition, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex4.m_position);
+				vertex4.m_textureCoord = Edge::FloatVector2(uv2.m_x, uv1.m_y);
+				vertex4.m_color = color;
+
+				new(glyphData) TextRenderData::GlyphData(vertex1, vertex2, vertex3, vertex4);
+
+				cacheIterator.next();
+			}
+
+			if (glyphIndex + 1 < textGlyphCount)
+			{
+				const char nextGlyph = text[glyphIndex + 1];
+				if (Edge::FontProvider::GlyphDataCollection::BeginCharIndex <= nextGlyph && nextGlyph <= Edge::FontProvider::GlyphDataCollection::EndCharIndex)
+				{
+					const uint32_t nextAtlasLocalGlyphIndex = nextGlyph - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
+					glyphLocalX += static_cast<float>(m_defaultFont.getGlyphPairSpacing(atlasLocalGlyphIndex, nextAtlasLocalGlyphIndex)) / fontHeight;
+				}
+				else
+				{
+					glyphLocalX += relativeSizeX;
+				}
+			}
+		}
+
+		if (glyph == '\n')
+		{
+			glyphLocalX = 0.0f;
+			glyphLocalY -= 1.0f;
+		}
+		else if (glyph == '\t')
+		{
+			const uint32_t spaceLocalAtlasIndex = ' ' - Edge::FontProvider::GlyphDataCollection::BeginCharIndex;
+			glyphLocalX += (static_cast<float>(m_defaultFont.getGlyphPairSpacing(spaceLocalAtlasIndex, spaceLocalAtlasIndex)) / fontHeight) * 4;
+		}
+	}
 }
 
-void EdgeDefRender::DefaultRenderer::prepareData(const CameraTransforms& cameraTransforms, const Edge::DebugVisualizationDataController& visualizationData)
+void EdgeDefRender::DefaultRenderer::prepareOrientedWorldTextRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData)
 {
-	const Edge::Application& application = Edge::FrameworkCore::getInstance().getApplication();
-	const float deltaTime = application.getDeltaTime();
+	const uint32_t textCount = visualizationData.getOrientedWorldTextCount();
 
-	m_cameraShaderData.m_transforms = cameraTransforms;
+	m_orientedWorldTextRenderData.m_glyphData.updateBuffers(deltaTime);
 
-	preparePointRenderData(deltaTime, visualizationData);
-	prepareLineRenderData(deltaTime, visualizationData);
+	RenderDataBufferCacheIterator glyphDataIter(m_orientedWorldTextRenderData.m_glyphData, *m_graphicContext, false);
 
-	preparePolygonRenderData(deltaTime, visualizationData);
+	uint32_t glyphCount = 0;
 
-	preparePlaneRenderData(deltaTime, visualizationData);
-	prepareWireframePlaneRenderData(deltaTime, visualizationData);
+	if (textCount > 0)
+	{
+		for (uint32_t textIndex = 0; textIndex < textCount; ++textIndex)
+		{
+			const Edge::DebugVisualizationDataController::OrientedWorldTextData& textData = visualizationData.getOrientedWorldTextData(textIndex);
 
-	prepareBoxRenderData(deltaTime, visualizationData);
-	prepareWireframeBoxRenderData(deltaTime, visualizationData);
+			const uint32_t textGlyphCount = textData.m_text.size();
+			if (textGlyphCount > 0)
+			{
+				glyphCount += textGlyphCount;
 
-	prepareSphereRenderData(deltaTime, visualizationData);
-	prepareWireframeSphereRenderData(deltaTime, visualizationData);
+				m_orientedWorldTextRenderData.m_glyphData.prepareSpace(glyphCount);
+				if (glyphDataIter.isInInitialState())
+				{
+					glyphDataIter.next();
+				}
+
+				const Edge::FloatComputeVector3 textDirectionRight = Edge::CrossComputeVector3(
+					Edge::FloatComputeVector3(textData.m_directionUp),
+					Edge::FloatComputeVector3(textData.m_directionForward)
+				);
+
+				Edge::FloatComputeMatrix4x4 glyphTransform(
+					textDirectionRight,
+					Edge::FloatComputeVector3(textData.m_directionUp),
+					Edge::FloatComputeVector3(textData.m_directionForward),
+					Edge::ComputeVector4FromPoint(Edge::FloatComputeVector3(textData.m_position))
+				);
+
+				glyphTransform *= Edge::ScaleComputeMatrix4x4(Edge::FloatComputeVector3(textData.m_textHeight));
+
+				const PackedColor packedColor = PackedColor(textData.m_color);
+
+				buildStringVertexBuffer(glyphDataIter, textData.m_text, glyphTransform, packedColor);
+			}
+		}
+	}
+
+	m_orientedWorldTextRenderData.m_glyphCount = glyphCount;
+	m_orientedWorldTextRenderData.m_glyphData.freeUnusedSpace();
+}
+
+void EdgeDefRender::DefaultRenderer::prepareWorldTextRenderData(
+	float deltaTime,
+	const Edge::DebugVisualizationDataController& visualizationData,
+	const Edge::Transform& cameraTransform
+)
+{
+	const uint32_t textCount = visualizationData.getWorldTextCount();
+
+	m_worldTextRenderData.m_glyphData.updateBuffers(deltaTime);
+
+	RenderDataBufferCacheIterator glyphDataIter(m_worldTextRenderData.m_glyphData, *m_graphicContext, false);
+
+	uint32_t glyphCount = 0;
+
+	if (textCount > 0)
+	{
+		for (uint32_t textIndex = 0; textIndex < textCount; ++textIndex)
+		{
+			const Edge::DebugVisualizationDataController::WorldTextData& textData = visualizationData.getWorldTextData(textIndex);
+
+			const uint32_t textGlyphCount = textData.m_text.size();
+			if (textGlyphCount > 0)
+			{
+				glyphCount += textGlyphCount;
+
+				m_worldTextRenderData.m_glyphData.prepareSpace(glyphCount);
+				if (glyphDataIter.isInInitialState())
+				{
+					glyphDataIter.next();
+				}
+
+				Edge::FloatComputeMatrix4x4 glyphTransform(
+					Edge::FloatVector4(cameraTransform.getAxisX().getFloatVector3()),
+					Edge::FloatVector4(cameraTransform.getAxisY().getFloatVector3()),
+					Edge::FloatVector4(cameraTransform.getAxisZ().getFloatVector3()),
+					Edge::ComputeVector4FromPoint(Edge::FloatComputeVector3(textData.m_position))
+				);
+
+				glyphTransform *= Edge::ScaleComputeMatrix4x4(Edge::FloatComputeVector3(textData.m_textHeight));
+
+				const PackedColor packedColor = PackedColor(textData.m_color);
+
+				buildStringVertexBuffer(glyphDataIter, textData.m_text, glyphTransform, packedColor);
+			}
+		}
+	}
+
+	m_worldTextRenderData.m_glyphCount = glyphCount;
+	m_worldTextRenderData.m_glyphData.freeUnusedSpace();
+}
+
+void EdgeDefRender::DefaultRenderer::prepareScreenTextRenderData(
+	float deltaTime,
+	const Edge::DebugVisualizationDataController& visualizationData,
+	const Edge::Texture2DSize& textureSize
+)
+{
+	const uint32_t textCount = visualizationData.getScreenTextCount();
+
+	m_screenTextRenderData.m_glyphData.updateBuffers(deltaTime);
+
+	RenderDataBufferCacheIterator glyphDataIter(m_screenTextRenderData.m_glyphData, *m_graphicContext, false);
+
+	uint32_t glyphCount = 0;
+
+	if (textCount > 0)
+	{
+		const uint32_t halfTextureSizeX = textureSize.m_x * 0.5f;
+		const uint32_t halfTextureSizeY = textureSize.m_y * 0.5f;
+
+		for (uint32_t textIndex = 0; textIndex < textCount; ++textIndex)
+		{
+			const Edge::DebugVisualizationDataController::ScreenTextData& textData = visualizationData.getScreenTextData(textIndex);
+
+			const uint32_t textGlyphCount = textData.m_text.size();
+			if (textGlyphCount > 0)
+			{
+				glyphCount += textGlyphCount;
+
+				m_screenTextRenderData.m_glyphData.prepareSpace(glyphCount);
+				if (glyphDataIter.isInInitialState())
+				{
+					glyphDataIter.next();
+				}
+
+				const int32_t posX = textData.m_position.m_x - halfTextureSizeX;
+				const int32_t posY = halfTextureSizeY - textData.m_position.m_y;
+
+				Edge::FloatComputeMatrix4x4 glyphTransform(
+					Edge::FloatVector4(textData.m_textHeight, 0.0f, 0.0f, 0.0f),
+					Edge::FloatVector4(0.0f, textData.m_textHeight, 0.0f, 0.0f),
+					Edge::FloatVector4(0.0f, 0.0f, 1.0f, 0.0f),
+					Edge::FloatVector4(posX, posY, 0.0f, 1.0f)
+				);
+
+				const PackedColor packedColor = PackedColor(textData.m_color);
+
+				buildStringVertexBuffer(glyphDataIter, textData.m_text, glyphTransform, packedColor);
+			}
+		}
+	}
+
+	m_screenTextRenderData.m_glyphCount = glyphCount;
+	m_screenTextRenderData.m_glyphData.freeUnusedSpace();
+}
+
+Edge::FloatComputeVector3 EdgeDefRender::DefaultRenderer::CalculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection)
+{
+	if (abs(arrowDirection.getX()) > abs(arrowDirection.getY()))
+	{
+		const float length = sqrt(arrowDirection.getX() * arrowDirection.getX() + arrowDirection.getZ() * arrowDirection.getZ());
+		return Edge::FloatComputeVector3(arrowDirection.getZ(), 0.0f, -arrowDirection.getX()) / length;
+	}
+
+	const float length = sqrt(arrowDirection.getY() * arrowDirection.getY() + arrowDirection.getZ() * arrowDirection.getZ());
+	return Edge::FloatComputeVector3(0.0f, arrowDirection.getZ(), -arrowDirection.getY()) / length;
 }
 
 void EdgeDefRender::DefaultRenderer::drawPoints()
@@ -1084,7 +1989,7 @@ void EdgeDefRender::DefaultRenderer::drawBoxes()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_boxRenderData.m_transformData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = { m_boxRenderData.m_vertexBuffer, instanceDataBuffer };
+			Edge::GPUBuffer* vertexBuffers[2] = {m_boxRenderData.m_vertexBuffer, instanceDataBuffer};
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_boxRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(36, drawingBoxCount);
 		}
@@ -1114,7 +2019,7 @@ void EdgeDefRender::DefaultRenderer::drawWireframeBoxes()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_wireframeBoxRenderData.m_transformData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = { m_wireframeBoxRenderData.m_vertexBuffer, instanceDataBuffer };
+			Edge::GPUBuffer* vertexBuffers[2] = {m_wireframeBoxRenderData.m_vertexBuffer, instanceDataBuffer};
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_wireframeBoxRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(24, drawingBoxCount);
 		}
@@ -1144,7 +2049,7 @@ void EdgeDefRender::DefaultRenderer::drawSpheres()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_sphereRenderData.m_sphereData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = { m_sphereRenderData.m_vertexBuffer, instanceDataBuffer };
+			Edge::GPUBuffer* vertexBuffers[2] = {m_sphereRenderData.m_vertexBuffer, instanceDataBuffer};
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_sphereRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(m_sphereRenderData.m_indexCountPerSphere, drawingSphereCount);
 		}
@@ -1174,9 +2079,39 @@ void EdgeDefRender::DefaultRenderer::drawWireframeSpheres()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_wireframeSphereRenderData.m_sphereData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = { m_wireframeSphereRenderData.m_vertexBuffer, instanceDataBuffer };
+			Edge::GPUBuffer* vertexBuffers[2] = {m_wireframeSphereRenderData.m_vertexBuffer, instanceDataBuffer};
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_wireframeSphereRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(m_wireframeSphereRenderData.m_indexCountPerSphere, drawingSphereCount);
+		}
+	}
+}
+
+void EdgeDefRender::DefaultRenderer::drawTexts(const TextRenderData& worldRenderData)
+{
+	if (worldRenderData.m_glyphCount > 0)
+	{
+		m_graphicContext->setVertexShader(*worldRenderData.m_vertexShader);
+		m_graphicContext->setPixelShader(*worldRenderData.m_pixelShader);
+
+		m_graphicContext->setPrimitiveTopology(Edge::PrimitiveTopology::TriangleList);
+		m_graphicContext->setInputLayout(*worldRenderData.m_inputLayout);
+
+		m_graphicContext->setShaderResource(*m_defaultFont.getAtlas(), 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_PIXEL);
+		m_graphicContext->setSamplerState(*m_baseSamplerState, 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_PIXEL);
+
+		uint32_t remainedGlyphCount = worldRenderData.m_glyphCount;
+		const uint32_t glyphPerBuffer = worldRenderData.m_glyphData.getElementCountPerBuffer();
+
+		const uint32_t bufferCount = worldRenderData.m_glyphData.getBufferCount();
+		for (uint32_t bufferIndex = 0; bufferIndex < bufferCount && remainedGlyphCount > 0; ++bufferIndex)
+		{
+			const uint32_t drawingGlyphCount = std::min(remainedGlyphCount, glyphPerBuffer);
+			remainedGlyphCount -= glyphPerBuffer;
+
+			Edge::GPUBuffer* instanceDataBuffer = &worldRenderData.m_glyphData.getBuffer(bufferIndex);
+
+			m_graphicContext->setVertexBuffers(1, &instanceDataBuffer, worldRenderData.m_inputLayout->getDesc());
+			m_graphicContext->draw(drawingGlyphCount * 6);
 		}
 	}
 }
@@ -1214,6 +2149,52 @@ void EdgeDefRender::DefaultRenderer::prepareDepthBuffer(const Edge::Texture2DSiz
 	}
 }
 
+void EdgeDefRender::DefaultRenderer::prepareCameraData() const
+{
+	{
+		CameraTransformData* mappedCameraShaderData;
+
+		m_graphicContext->mapBuffer(
+			*m_cameraTransformBuffer,
+			Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+			Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+			reinterpret_cast<void**>(&mappedCameraShaderData)
+		);
+
+		memcpy(mappedCameraShaderData, &m_cameraShaderData, sizeof(CameraTransformData));
+
+		m_graphicContext->unmapBuffer(*m_cameraTransformBuffer);
+	}
+	{
+		CameraProjectionTransformData* mappedProjectionShaderData;
+
+		{
+			m_graphicContext->mapBuffer(
+				*m_perspectiveTransformBuffer,
+				Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+				Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+				reinterpret_cast<void**>(&mappedProjectionShaderData)
+			);
+
+			memcpy(mappedProjectionShaderData, &m_perspectiveShaderData, sizeof(CameraProjectionTransformData));
+
+			m_graphicContext->unmapBuffer(*m_perspectiveTransformBuffer);
+		}
+		{
+			m_graphicContext->mapBuffer(
+				*m_orthogonalTransformBuffer,
+				Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE,
+				Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
+				reinterpret_cast<void**>(&mappedProjectionShaderData)
+			);
+
+			memcpy(mappedProjectionShaderData, &m_orthogonalShaderData, sizeof(CameraProjectionTransformData));
+
+			m_graphicContext->unmapBuffer(*m_orthogonalTransformBuffer);
+		}
+	}
+}
+
 void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 {
 	const Edge::Texture2DDesc& targetTextureDesc = targetTexture.getDesc();
@@ -1221,18 +2202,7 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	Edge::Viewport viewport(targetTextureDesc.m_size.m_x, targetTextureDesc.m_size.m_y);
 
 	prepareDepthBuffer(targetTextureDesc.m_size);
-
-	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_viewTransform, m_cameraShaderData.m_transforms.m_viewTransform);
-	//m_graphicContext->prepareMatrixForShader(m_cameraShaderData.m_transforms.m_projTransform, m_cameraShaderData.m_transforms.m_projTransform);
-	m_cameraShaderData.m_screenSize = targetTextureDesc.m_size;
-
-	CameraShaderData* mappedCameraShaderData;
-	m_graphicContext->mapBuffer(*m_cameraTransformBuffer, Edge::GRAPHIC_RESOURCE_MAPPING_TYPE_WRITE, Edge::GRAPHIC_RESOURCE_MAPPING_FLAG_DISCARD,
-		reinterpret_cast<void**>(&mappedCameraShaderData));
-
-	memcpy(mappedCameraShaderData, &m_cameraShaderData, sizeof(CameraShaderData));
-
-	m_graphicContext->unmapBuffer(*m_cameraTransformBuffer);
+	prepareCameraData();
 
 	m_graphicContext->setConstantBuffer(*m_cameraTransformBuffer, 0, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_VERTEX);
 
@@ -1244,7 +2214,11 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 	m_graphicContext->clearRenderTarget(targetTexture, Edge::FloatVector4(0.5f, 0.5f, 0.5f, 1.0f));
 	m_graphicContext->clearDepthStencil(*m_depthBuffer);
 
+	m_graphicContext->setBlendState(*m_alphaBlendState);
+
 	//
+	m_graphicContext->setConstantBuffer(*m_perspectiveTransformBuffer, 1, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_VERTEX);
+	m_graphicContext->setDepthStencilState(*m_depthTestEnableState);
 
 	drawPoints();
 	drawLines();
@@ -1259,6 +2233,19 @@ void EdgeDefRender::DefaultRenderer::render(Edge::Texture2D& targetTexture)
 
 	drawSpheres();
 	drawWireframeSpheres();
+
+	//
+	drawTexts(m_orientedWorldTextRenderData);
+	drawTexts(m_worldTextRenderData);
+
+	m_graphicContext->setConstantBuffer(*m_orthogonalTransformBuffer, 1, Edge::GRAPHIC_CONTEXT_BINDING_SHADER_STAGE_VERTEX);
+	m_graphicContext->setRasterizationState(*m_orthogonalRasterizationState);
+
+	m_graphicContext->setDepthStencilState(*m_depthTestDisableState);
+
+	m_graphicContext->setRenderTarget(targetTexture, nullptr);
+
+	drawTexts(m_screenTextRenderData);
 
 	Edge::GraphicDevice& device = Edge::FrameworkCore::getInstance().getApplication().getGraphicPlatform().getGraphicDevice();
 	device.executeGraphicContext(*m_graphicContext);

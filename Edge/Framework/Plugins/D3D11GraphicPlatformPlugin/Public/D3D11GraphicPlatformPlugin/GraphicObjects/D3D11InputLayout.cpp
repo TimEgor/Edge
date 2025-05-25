@@ -7,8 +7,18 @@ EdgeD3D11::D3D11InputLayout::D3D11InputLayout(const Edge::InputLayoutDesc& desc,
 	: InputLayout(desc)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> d3d11InputElementDescs;
-	convertInputLayoutTStoD3D11(desc, d3d11InputElementDescs);
+	ConvertEdgeInputLayoutToD3D11(desc, d3d11InputElementDescs);
 
 	device->CreateInputLayout(d3d11InputElementDescs.data(), d3d11InputElementDescs.size(),
-		shaderCode->GetBufferPointer(), shaderCode->GetBufferSize(), m_d3d11InputLayout.GetAddressOf());
+		shaderCode->GetBufferPointer(), shaderCode->GetBufferSize(), m_inputLayout.GetAddressOf());
+}
+
+void EdgeD3D11::D3D11InputLayout::setName(const char* name)
+{
+	if (!m_inputLayout)
+	{
+		return;
+	}
+
+	m_inputLayout->SetPrivateData(WKPDID_D3DDebugObjectName, strlen(name) - 1, name);
 }

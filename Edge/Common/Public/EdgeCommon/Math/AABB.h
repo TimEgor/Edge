@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ComputeVector3.h"
 #include "Transform.h"
 #include "Vector.h"
 
@@ -7,11 +8,11 @@ namespace Edge
 {
 	struct AABB3 final
 	{
-		FloatVector3 m_minPosition = FloatVector3Zero;
-		FloatVector3 m_maxPosition = FloatVector3Zero;
+		ComputeVector3 m_minPosition = ComputeVector3Zero;
+		ComputeVector3 m_maxPosition = ComputeVector3Zero;
 
 		constexpr AABB3() = default;
-		constexpr AABB3(const FloatVector3& min, const FloatVector3& max) : m_minPosition(min), m_maxPosition(max) {}
+		constexpr AABB3(const ComputeVector3& min, const ComputeVector3& max) : m_minPosition(min), m_maxPosition(max) {}
 
 		AABB3& merge(const AABB3& volume);
 

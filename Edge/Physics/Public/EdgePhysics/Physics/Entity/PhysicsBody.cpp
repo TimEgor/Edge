@@ -1,7 +1,5 @@
 #include "PhysicsBody.h"
 
-#include "EdgeCommon/Math/Const.h"
-
 void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 {
 	if (!m_motion)
@@ -11,25 +9,23 @@ void Edge::PhysicsBody::updateTransformWithMotion(float deltaTime)
 
 	PhysicsEntityTransformAccessor transformAccessor(m_transform);
 
-	ComputeVector position(transformAccessor.getPosition());
-	ComputeQuaternion rotation(transformAccessor.getRotation());
+	ComputeVector3 position = transformAccessor.getPosition();
+	ComputeQuaternion rotation = transformAccessor.getRotation();
 
-	ComputeVector linearVelocity(m_motion->getLinearVelocity());
+	//
+	const ComputeVector3 linearDelta = m_motion->getLinearVelocity() * deltaTime;
+	position += linearDelta;
 
-	position += linearVelocity * deltaTime;
-
-	ComputeVector angularVelocity(m_motion->getAngularVelocity());
-	angularVelocity *= deltaTime;
-
-	const float rotationSpeed = angularVelocity.getLength3();
+	const ComputeVector3 angularDelta = m_motion->getAngularVelocity() * deltaTime;
+	const ComputeValueType rotationSpeed = angularDelta.getLength();
 
 	if (rotationSpeed > Math::Epsilon)
 	{
-		angularVelocity /= rotationSpeed;
-		rotation *= ComputeQuaternionFromRotationAxis(angularVelocity, rotationSpeed);
+		rotation = ComputeQuaternion(angularDelta, rotationSpeed) * rotation;
 		rotation.normalize();
 	}
 
-	transformAccessor.setPosition(position.getFloatVector3());
-	transformAccessor.setRotation(rotation.getFloatQuaternion());
+	//
+	transformAccessor.setPosition(position);
+	transformAccessor.setRotation(rotation);
 }

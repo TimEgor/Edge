@@ -94,7 +94,7 @@ void Edge::JobGraph::DependencyJobBase::removeChildDependencies()
 
 		if (childJob->removeParentDependency())
 		{
-			jobController->addJob(childJob.getObject());
+			jobController->addJob(childJob);
 
 			if (m_dependencyJobs.size() > 1)
 			{
@@ -136,7 +136,7 @@ Edge::JobGraph::PreGraphDependencyJob::PreGraphDependencyJob(const GraphJobDataR
 	GraphJobDataReference dependencyGraphData = m_graph->getGraphData();
 	dependencyGraphData->addCompletionCallback([graphData = m_graphData, postGraphJob]()
 		{
-			graphData->getJobController()->addJob(postGraphJob.getObject());
+			graphData->getJobController()->addJob(postGraphJob);
 		}
 	);
 }

@@ -32,7 +32,7 @@ void Edge::PhysicsSceneActiveConstraintCollection::addConstraint(const PhysicsCo
 	}
 
 	PhysicsConstraintSceneContextReference sceneContext = constraint->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsConstraintSceneContext::getPhysicsConstraintSceneContextType())
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsConstraintSceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Constraint scene context has an invalid type.");
 		return;
@@ -60,7 +60,7 @@ void Edge::PhysicsSceneActiveConstraintCollection::removeConstraint(const Physic
 	}
 
 	PhysicsConstraintSceneContextReference sceneContext = constraint->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsConstraintSceneContext::getPhysicsConstraintSceneContextType())
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsConstraintSceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Constraint scene context has an invalid type.");
 		return;

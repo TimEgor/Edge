@@ -11,10 +11,10 @@ namespace Edge
 		using Base = MTWeakReferencableBase<T>;
 
 		using WeakReferenceHandle = MTWeakReferenceHandle<T>;
-		using WeakReferenceHandleReference = MTReference<WeakReferenceHandle>;
+		using WeakReferenceHandleReference = Reference<WeakReferenceHandle>;
 
-		using ObjectReference = MTReference<T>;
-		using ObjectConstReference = MTConstReference<T>;
+		using ObjectReference = Reference<T>;
+		using ObjectConstReference = ConstReference<T>;
 
 		using ObjectType = T;
 

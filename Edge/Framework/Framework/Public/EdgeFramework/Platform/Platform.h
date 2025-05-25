@@ -9,6 +9,7 @@
 
 namespace Edge
 {
+	class FontProvider;
 	class WindowEventController;
 
 	using PlatformType = HashedType::Type;
@@ -27,6 +28,9 @@ namespace Edge
 		virtual Window* createWindow(WindowID windowID) const = 0;
 		virtual const WindowEventController& getWindowEventController() const = 0;
 		virtual WindowEventController& getWindowEventController() = 0;
+
+		virtual const FontProvider& getFontProvider() const = 0;
+		virtual FontProvider& getFontProvider() = 0;
 
 		virtual uint32_t getMonitorCount() const = 0;
 		virtual const MonitorInfo& getMonitorInfo(uint32_t index) const = 0;

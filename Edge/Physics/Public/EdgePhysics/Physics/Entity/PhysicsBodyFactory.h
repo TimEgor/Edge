@@ -10,20 +10,20 @@ namespace Edge
 	public:
 		struct BodyCreationParam final : public EntityCreationParam
 		{
-			FloatVector3 m_position = FloatVector3Zero;
-			FloatQuaternion m_rotation = FloatQuaternionIdentity;
+			ComputeVector3 m_position = ComputeVector3Zero;
+			ComputeQuaternion m_rotation = ComputeQuaternionIdentity;
 
-			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(BODY)
+			EDGE_RTTI_VIRTUAL(BodyCreationParam, EntityCreationParam)
 		};
 
 		struct BodyMotionCreationParam final : public EntityMotionCreationParam
 		{
-			FloatVector3 m_inertia = FloatVector3One; //Inertial tensor diagonal
+			ComputeVector3 m_inertia = ComputeVector3One; //Inertial tensor diagonal
 
-			float m_linearDampingFactor = 0.05f;
-			float m_angularDamping = 0.05f;
+			ComputeValueType m_linearDampingFactor = 0.05_ecv;
+			ComputeValueType m_angularDamping = 0.05_ecv;
 
-			EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(BODY)
+			EDGE_RTTI_VIRTUAL(BodyMotionCreationParam, EntityMotionCreationParam)
 		};
 
 		PhysicsBodyFactory() = default;

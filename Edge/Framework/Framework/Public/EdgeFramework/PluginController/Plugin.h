@@ -11,7 +11,7 @@
 namespace Edge
 {
 	using PluginID = uint64_t;
-	constexpr PluginID InvalidPluginID = 0;
+	inline constexpr PluginID InvalidPluginID = 0;
 
 	using PluginType = HashedType::Type;
 

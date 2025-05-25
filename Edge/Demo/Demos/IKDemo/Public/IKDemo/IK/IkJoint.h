@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
 namespace EdgeDemo
 {
@@ -20,7 +20,7 @@ namespace EdgeDemo
 			: m_parentLink(parentLink), m_childLink(childLink) {}
 		virtual ~IkJoint() = default;
 
-		virtual Edge::FloatVector3 calcDerivative(const Edge::FloatVector3& effectorPosition) const = 0;
+		virtual Edge::ComputeVector3 calcDerivative(const Edge::ComputeVector3& effectorPosition) const = 0;
 		virtual void applyValue(float value) = 0;
 		virtual float getValue() const = 0;
 

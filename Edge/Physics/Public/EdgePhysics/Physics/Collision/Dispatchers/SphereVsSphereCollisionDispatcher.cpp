@@ -3,13 +3,17 @@
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
-uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results)
+uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(
+	const PhysicsEntityCollisionReference& collision1,
+	const PhysicsEntityCollisionReference& collision2,
+	PhysicsCollisionContactID contactID,
+	ContactManifoldDispatchingResultCollection& results
+)
 {
 	const PhysicsEntityCollisionShapeReference shape1 = collision1->getShape();
 	const PhysicsEntityCollisionShapeReference shape2 = collision2->getShape();
 
-	if (shape1->getType() != PhysicsSphereShape::PhysicsEntityCollisionShapeType
-		|| shape2->getType() != PhysicsSphereShape::PhysicsEntityCollisionShapeType)
+	if (!RTTI::IsObjectBasedOn<PhysicsSphereShape>(shape1.getObjectRef()) || !RTTI::IsObjectBasedOn<PhysicsSphereShape>(shape2.getObjectRef()))
 	{
 		return 0;
 	}
@@ -17,18 +21,18 @@ uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCo
 	const PhysicsSphereShape& sphere1 = shape1.getObjectCastRef<PhysicsSphereShape>();
 	const PhysicsSphereShape& sphere2 = shape2.getObjectCastRef<PhysicsSphereShape>();
 
-	const FloatVector3 position1 = collision1->getEntity()->getTransform()->getPosition();
-	const FloatVector3 position2 = collision2->getEntity()->getTransform()->getPosition();
+	const ComputeVector3 position1 = collision1->getEntity()->getTransform()->getPosition();
+	const ComputeVector3 position2 = collision2->getEntity()->getTransform()->getPosition();
 
-	const float radius1 = sphere1.getRadius();
-	const float radius2 = sphere2.getRadius();
+	const ComputeValueType radius1 = sphere1.getRadius();
+	const ComputeValueType radius2 = sphere2.getRadius();
 
-	ComputeVector delta = position2 - position1;
-	const float distance = delta.getLength3();
+	ComputeVector3 delta = position2 - position1;
+	const ComputeValueType distance = delta.getLength();
 
-	float depth = radius1 + radius2 - distance;
+	ComputeValueType depth = radius1 + radius2 - distance;
 
-	if (depth < 0.0f)
+	if (depth < 0.0_ecv)
 	{
 		return 0;
 	}
@@ -36,15 +40,14 @@ uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(const PhysicsEntityCo
 	if (distance < Math::Epsilon)
 	{
 		depth = std::max(radius1, radius2);
-		delta = FloatVector3UnitY * (radius1 + radius2);
+		delta = ComputeVector3UnitY * (radius1 + radius2);
 	}
 
-	const ComputeVector normal = NormalizeVector(delta);
 
 	PhysicsCollisionContactPoint contactPoint;
-	(position1 + normal * radius1).saveToFloatVector3(contactPoint.m_position1);
-	(position2 - normal * radius2).saveToFloatVector3(contactPoint.m_position2);
-	normal.saveToFloatVector3(contactPoint.m_normal);
+	contactPoint.m_normal = NormalizeComputeVector3(delta);
+	contactPoint.m_position1 = position1 + contactPoint.m_normal * radius1;
+	contactPoint.m_position2 = position2 - contactPoint.m_normal * radius2;
 	contactPoint.m_depth = depth;
 
 	PhysicsInstanceContactManifold manifold;

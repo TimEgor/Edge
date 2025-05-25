@@ -34,35 +34,35 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPreSolvingJobGra
 		createLambdaJob([dt = deltaTime, this]()
 			{
 				preSolve(dt);
-				warmUp();
 			}, "Pre solve constraints")
 	);
 
 	return m_graphBuilder.getGraph();
 }
 
-Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getVelocitySolvingJobGraph()
+Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getVelocitySolvingJobGraph(ComputeValueType deltaTime)
 {
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID velocitySolvingJobID = m_graphBuilder.addJob(
-		createLambdaJob([this]()
+		createLambdaJob([dt = deltaTime, this]()
 			{
-				solveVelocity();
+				warmUp();
+				solveVelocity(dt);
 			}, "Solve constraints velocities")
 	);
 
 	return m_graphBuilder.getGraph();
 }
 
-Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPositionSolvingJobGraph()
+Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPositionSolvingJobGraph(ComputeValueType deltaTime)
 {
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID positionSolvingJobID = m_graphBuilder.addJob(
-		createLambdaJob([this]()
+		createLambdaJob([dt = deltaTime, this]()
 			{
-				solvePosition();
+				solvePosition(dt);
 			}, "Solve constraints positions")
 	);
 
@@ -91,7 +91,7 @@ void Edge::PhysicsSceneConstraintManager::warmUp()
 	}
 }
 
-void Edge::PhysicsSceneConstraintManager::solveVelocity()
+void Edge::PhysicsSceneConstraintManager::solveVelocity(ComputeValueType deltaTime)
 {
 	const PhysicsSceneActiveConstraintCollection::ConstraintCollection& constraints = m_activeConstraintCollection->getConstraints();
 
@@ -100,12 +100,12 @@ void Edge::PhysicsSceneConstraintManager::solveVelocity()
 		for (const PhysicsSceneConstraintID constraintID : constraints)
 		{
 			PhysicsConstraintReference constraint = getConstraint(constraintID);
-			constraint->solveVelocity();
+			constraint->solveVelocity(deltaTime);
 		}
 	}
 }
 
-void Edge::PhysicsSceneConstraintManager::solvePosition()
+void Edge::PhysicsSceneConstraintManager::solvePosition(ComputeValueType deltaTime)
 {
 	const PhysicsSceneActiveConstraintCollection::ConstraintCollection& constraints = m_activeConstraintCollection->getConstraints();
 
@@ -114,7 +114,7 @@ void Edge::PhysicsSceneConstraintManager::solvePosition()
 		for (const PhysicsSceneConstraintID constraintID : constraints)
 		{
 			PhysicsConstraintReference constraint = getConstraint(constraintID);
-			constraint->solvePosition();
+			constraint->solvePosition(deltaTime);
 		}
 	}
 }

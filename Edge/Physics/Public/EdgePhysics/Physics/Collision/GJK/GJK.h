@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EdgeCommon/Math/ComputeVector.h"
+#include "EdgeCommon/Math/ComputeVector4.h"
 
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
 
@@ -14,11 +14,11 @@ namespace Edge
 
 	namespace MinkowskiSumBaseAlgorithmUtils
 	{
-		VoronoiSimplex::Point Support(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const FloatVector3& direction);
+		VoronoiSimplex::Point Support(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const ComputeVector3& direction);
 
-		bool HasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff);
+		bool HasSimplexPoint(const VoronoiSimplex& simplex, const ComputeVector3& minkowskiDiff);
 
-		bool CheckCodirection(const ComputeVector& direction, const ComputeVector& vector);
+		bool CheckCodirection(const ComputeVector3& direction, const ComputeVector3& vector);
 	};
 
 	class GJK final
@@ -45,10 +45,10 @@ namespace Edge
 		};
 
 	private:
-		bool checkAndIterateSimplex(VoronoiSimplex& simplex, FloatVector3& direction) const;
-		bool checkSimplex1D(VoronoiSimplex& simplex, FloatVector3& direction) const; //Line
-		bool checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction) const; //Triangle
-		bool checkSimplex3D(VoronoiSimplex& simplex, FloatVector3& direction) const; //Tetrahedron
+		bool checkAndIterateSimplex(VoronoiSimplex& simplex, ComputeVector3& direction) const;
+		bool checkSimplex1D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Line
+		bool checkSimplex2D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Triangle
+		bool checkSimplex3D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Tetrahedron
 
 	public:
 		GJK() = default;
@@ -64,7 +64,7 @@ namespace Edge
 		struct PolytopeFace final
 		{
 			VoronoiSimplex::Point m_points[3];
-			FloatVector3 m_normal;
+			ComputeVector3 m_normal;
 
 			PolytopeFace(const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2, const VoronoiSimplex::Point& point3);
 		};
@@ -80,7 +80,7 @@ namespace Edge
 
 		void fillPointContactPointData(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const GJK::Result& gjkResult, PhysicsCollisionContactPoint& contactPoint) const;
 		bool fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
-		bool getBarycentricFaceProjection(const PolytopeFace& face, Edge::FloatVector4& outProjection) const; //xyz - barycentricCoords, w - distance to face
+		bool getBarycentricFaceProjection(const PolytopeFace& face, ComputeVector4& outProjection) const; //xyz - barycentricCoords, w - distance to face
 
 		bool calcEPAContact(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
 			const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const;

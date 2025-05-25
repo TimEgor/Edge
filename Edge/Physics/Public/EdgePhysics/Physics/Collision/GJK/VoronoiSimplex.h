@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
 namespace Edge
 {
@@ -9,9 +9,9 @@ namespace Edge
 	public:
 		struct Point final
 		{
-			FloatVector3 m_minkowskiDiff = FloatVector3Zero;
-			FloatVector3 m_pointCollision1 = FloatVector3Zero;
-			FloatVector3 m_pointCollision2 = FloatVector3Zero;
+			ComputeVector3 m_minkowskiDiff = ComputeVector3Zero;
+			ComputeVector3 m_pointCollision1 = ComputeVector3Zero;
+			ComputeVector3 m_pointCollision2 = ComputeVector3Zero;
 		};
 
 	private:

@@ -11,11 +11,11 @@ void EdgeDemo::TestBounceCollisionDemo::drawDynamicSphere(const Edge::PhysicsBod
 {
 	const Edge::Transform& dynamicTransform = body->getTransform()->getWorldTransform();
 
-	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisX(), 0.2f, Edge::NormalizedColorRed);
-	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisY(), 0.2f, Edge::NormalizedColorGreen);
-	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin(), dynamicTransform.getAxisZ(), 0.2f, Edge::NormalizedColorBlue);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisX().getFloatVector3(), 0.2f, Edge::NormalizedColorRed);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisY().getFloatVector3(), 0.2f, Edge::NormalizedColorGreen);
+	m_debugVisualizationDataController->addArrow(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisZ().getFloatVector3(), 0.2f, Edge::NormalizedColorBlue);
 
-	m_debugVisualizationDataController->addWireframeSphere(dynamicTransform.getOrigin(), dynamicTransform.getAxisZ(), dynamicTransform.getAxisY(), 0.5f);
+	m_debugVisualizationDataController->addWireframeSphere(dynamicTransform.getOrigin().getFloatVector3(), dynamicTransform.getAxisZ().getFloatVector3(), dynamicTransform.getAxisY().getFloatVector3(), 0.5f);
 }
 
 bool EdgeDemo::TestBounceCollisionDemo::initDemo()
@@ -35,37 +35,37 @@ bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 	bodyCreationParam.m_collisionParam = &bodyCollisionCreationParam;
 
 	//
-	bodyCreationParam.m_position.m_x = -3.0f;
-	bodyCreationParam.m_position.m_y = 1.5f;
+	bodyCreationParam.m_position.setX(-3.0f);
+	bodyCreationParam.m_position.setY(1.5f);
 
 	m_dynamicBody1 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody1);
 
-	bodyCreationParam.m_position.m_x = 3.0f;
-	bodyCreationParam.m_position.m_y = 1.5f;
+	bodyCreationParam.m_position.setX(3.0f);
+	bodyCreationParam.m_position.setY(1.5f);
 
 	m_dynamicBody2 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody2);
 
-	bodyCreationParam.m_position.m_x = -3.0f;
-	bodyCreationParam.m_position.m_y = 3.5f;
+	bodyCreationParam.m_position.setX(-3.0f);
+	bodyCreationParam.m_position.setY(3.5f);
 
 	m_dynamicBody3 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody3);
 
-	bodyCreationParam.m_position.m_x = 3.0f;
-	bodyCreationParam.m_position.m_y = 3.5f;
+	bodyCreationParam.m_position.setX(3.0f);
+	bodyCreationParam.m_position.setY(3.5f);
 
 	m_dynamicBody4 = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 	m_physicsScene->addEntity(m_dynamicBody4);
 
 	//
-	bodyCreationParam.m_position.m_x = 0.0f;
-	bodyCreationParam.m_position.m_y = -5.0f;
+	bodyCreationParam.m_position.setX(0.0f);
+	bodyCreationParam.m_position.setY(5.0f);
 	bodyCreationParam.m_motionCreationParam = nullptr;
 
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(5.0f);
@@ -86,11 +86,11 @@ bool EdgeDemo::TestBounceCollisionDemo::initDemo()
 
 void EdgeDemo::TestBounceCollisionDemo::releaseDemo()
 {
-	m_physicsScene->removeEntity(m_dynamicBody1.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody2.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody3.getObject());
-	m_physicsScene->removeEntity(m_dynamicBody4.getObject());
-	m_physicsScene->removeEntity(m_staticBody.getObject());
+	m_physicsScene->removeEntity(m_dynamicBody1);
+	m_physicsScene->removeEntity(m_dynamicBody2);
+	m_physicsScene->removeEntity(m_dynamicBody3);
+	m_physicsScene->removeEntity(m_dynamicBody4);
+	m_physicsScene->removeEntity(m_staticBody);
 
 	m_dynamicBody1.reset();
 	m_dynamicBody2.reset();

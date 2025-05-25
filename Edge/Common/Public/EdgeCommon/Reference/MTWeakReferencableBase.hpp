@@ -7,7 +7,7 @@ void Edge::MTWeakReferenceHandle<T>::selfDestroy()
 }
 
 template <typename T>
-Edge::MTReference<T> Edge::MTWeakReferenceHandle<T>::getObject()
+Edge::Reference<T> Edge::MTWeakReferenceHandle<T>::getObject()
 {
 	LockGuard locker(m_lockState);
 	return m_object;

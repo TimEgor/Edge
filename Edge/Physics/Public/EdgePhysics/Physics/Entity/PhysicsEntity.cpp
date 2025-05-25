@@ -36,7 +36,7 @@ Edge::PhysicsEntity::PhysicsEntity(const PhysicsEntityTransformReference& transf
 
 Edge::PhysicsEntity::~PhysicsEntity()
 {
-	EDGE_ASSERT(m_sceneContext == nullptr);
+	EDGE_ASSERT(m_sceneContext.isNull());
 
 	m_transform->setEntityLink(nullptr);
 	updateMotion(nullptr);

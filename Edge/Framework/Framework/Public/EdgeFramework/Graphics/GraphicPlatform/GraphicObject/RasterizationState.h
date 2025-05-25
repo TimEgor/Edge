@@ -22,6 +22,7 @@ namespace Edge
 		RasterizationFillMode m_fillMode = RasterizationFillMode::Solid;
 		RasterizationCullMode m_cullMode = RasterizationCullMode::None;
 		bool m_frontCounterClockwise = false;
+		bool m_depthClip = true;
 	};
 
 	class RasterizationState : public GraphicObject

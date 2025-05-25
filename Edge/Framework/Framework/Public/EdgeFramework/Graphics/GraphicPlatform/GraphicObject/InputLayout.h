@@ -43,12 +43,12 @@ namespace Edge
 		{
 			InputLayoutElementHash result = 0;
 
-			hashCombine(result, m_semanticName);
-			hashCombine(result, m_index);
-			hashCombine(result, m_slot);
-			hashCombine(result, m_offset);
-			hashCombine(result, m_componentsCount);
-			hashCombine(result, m_type);
+			HashCombine(result, m_semanticName);
+			HashCombine(result, m_index);
+			HashCombine(result, m_slot);
+			HashCombine(result, m_offset);
+			HashCombine(result, m_componentsCount);
+			HashCombine(result, m_type);
 
 			return result;
 		}
@@ -73,9 +73,9 @@ namespace Edge
 		{
 			InputLayoutBindingHash result = 0;
 
-			hashCombine(result, m_slot);
-			hashCombine(result, m_stride);
-			hashCombine(result, m_type);
+			HashCombine(result, m_slot);
+			HashCombine(result, m_stride);
+			HashCombine(result, m_type);
 
 			return result;
 		}
@@ -97,12 +97,12 @@ namespace Edge
 
 			for (const auto& element : m_elements)
 			{
-				hashCombine(result, element.getHash());
+				HashCombine(result, element.getHash());
 			}
 
 			for (const auto& binding : m_bindings)
 			{
-				hashCombine(result, binding.getHash());
+				HashCombine(result, binding.getHash());
 			}
 
 			return result;

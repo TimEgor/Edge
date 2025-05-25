@@ -31,7 +31,7 @@ void Edge::PhysicsSceneActiveEntityCollection::addEntity(const PhysicsEntityRefe
 	}
 
 	PhysicsEntitySceneContextReference sceneContext = entity->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntitySceneContext::getPhysicsEntitySceneContextType())
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntitySceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Entity scene context has an invalid type.");
 		return;
@@ -59,7 +59,7 @@ void Edge::PhysicsSceneActiveEntityCollection::removeEntity(const PhysicsEntityR
 	}
 
 	PhysicsEntitySceneContextReference sceneContext = entity->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntitySceneContext::getPhysicsEntitySceneContextType())
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntitySceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Entity scene context has an invalid type.");
 		return;

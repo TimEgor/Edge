@@ -9,7 +9,7 @@
 namespace Edge
 {
 	using WindowSize = UInt16Vector2;
-	constexpr WindowSize DefaultWindowSize = UInt16Vector2Zero;
+	inline constexpr WindowSize DefaultWindowSize = UInt16Vector2Zero;
 
 	struct WindowArea final
 	{
@@ -48,7 +48,7 @@ namespace Edge
 	constexpr WindowArea DefaultWindowArea = WindowArea(0, 0, 0, 0);
 
 	using WindowID = uint32_t;
-	constexpr WindowID InvalidWindowID = 0;
+	inline constexpr WindowID InvalidWindowID = 0;
 
 	using WindowType = HashedType::Type;
 

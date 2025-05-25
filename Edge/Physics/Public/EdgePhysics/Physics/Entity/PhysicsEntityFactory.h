@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EdgeCommon/HashedType.h"
-
 #include "EdgePhysics/Physics/Collision/PhysicsEntityCollisionShape.h"
 
 #include "PhysicsEntityMotion.h"
@@ -12,28 +10,26 @@ namespace Edge
 	class PhysicsEntityFactory
 	{
 	public:
-		using EntityCreationParamType = HashedType::Type;
-
-		struct EntityMotionCreationParam : public HashedType
+		struct EntityMotionCreationParam
 		{
-			float m_mass = 1.0f;
-			float m_gravityFactor = 1.0f;
+			ComputeValueType m_mass = ComputeValueType(1.0);
+			ComputeValueType m_gravityFactor = ComputeValueType(1.0);
 
 			EntityMotionCreationParam() = default;
 			virtual ~EntityMotionCreationParam() = default;
 
-			virtual EntityCreationParamType getType() const = 0;
+			EDGE_RTTI_VIRTUAL_BASE(EntityMotionCreationParam)
 		};
 
 		struct EntityCollisionCreationParam final
 		{
 			PhysicsEntityCollisionShapeReference m_shape;
 
-			float m_friction = 1.0f;
-			float m_elasticity = 0.5f;
+			ComputeValueType m_friction = ComputeValueType(1.0);
+			ComputeValueType m_elasticity = ComputeValueType(0.5);
 		};
 
-		struct EntityCreationParam : public HashedType
+		struct EntityCreationParam
 		{
 			EntityMotionCreationParam* m_motionCreationParam = nullptr;
 			EntityCollisionCreationParam* m_collisionParam = nullptr;
@@ -41,7 +37,7 @@ namespace Edge
 			EntityCreationParam() = default;
 			virtual ~EntityCreationParam() = default;
 
-			virtual EntityCreationParamType getType() const = 0;
+			EDGE_RTTI_VIRTUAL_BASE(EntityCreationParam)
 		};
 
 		PhysicsEntityFactory() = default;
@@ -50,7 +46,4 @@ namespace Edge
 		virtual PhysicsEntityReference createEntity(const EntityCreationParam* param = nullptr) = 0;
 		virtual PhysicsEntityMotionReference createEntityMotion(const EntityMotionCreationParam* param = nullptr) = 0;
 	};
-
-#define EDGE_PHYSICS_ENTITY_CREATION_PARAM_TYPE(PHYSICS_ENTITY_CREATION_PARAM_TYPE) \
-	EDGE_HASH_TYPE(#PHYSICS_ENTITY_CREATION_PARAM_TYPE, Edge::PhysicsEntityFactory::EntityCreationParamType, EntityCreationParam)
 }

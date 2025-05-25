@@ -1,0 +1,15 @@
+#include "Text.shader"
+
+Texture2D glyphAtlasTexture : register(t0);
+SamplerState textureSampler : register(s0);
+
+float4 PS(PixelInput input) : SV_Target0
+{
+    const float alpha = glyphAtlasTexture.Sample(textureSampler, input.uv).r;
+	if (alpha == 0)
+	{
+		discard;
+	}
+
+	return float4(input.color.xyz, alpha);
+}

@@ -7,7 +7,7 @@
 namespace Edge
 {
 	using PluginModuleID = uint32_t;
-	constexpr PluginModuleID InvalidPluginModuleID = 0;
+	inline constexpr PluginModuleID InvalidPluginModuleID = 0;
 
 	struct PluginModuleData final
 	{

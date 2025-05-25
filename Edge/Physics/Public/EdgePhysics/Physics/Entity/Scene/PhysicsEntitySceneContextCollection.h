@@ -15,5 +15,5 @@ namespace Edge
 		virtual void destroyContext(PhysicsEntitySceneContext* context) = 0;
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntitySceneContextCollection);
+	EDGE_REFERENCE(PhysicsEntitySceneContextCollection);
 }

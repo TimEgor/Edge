@@ -26,7 +26,7 @@ namespace Edge
 			std::vector<PhysicsBroadPhase::PhysicsSceneCollisionPairCollection> m_collisionCollector;
 		};
 
-		EDGE_MT_REFERENCE(CollisionFindingContext)
+		EDGE_REFERENCE(CollisionFindingContext)
 
 		PhysicsSceneCollisionCollection* m_collisionCollection = nullptr;
 		PhysicsCollisionContactManager* m_contactManager = nullptr;
@@ -55,7 +55,7 @@ namespace Edge
 
 		void updateCollisionTransform(const PhysicsEntityCollisionReference& collision);
 
-		virtual void rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const override;
+		virtual void rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const override;
 
 		const PhysicsCollisionContactManager& getContactManager() const;
 		PhysicsCollisionConstraintManager& getCollisionConstraintManager() const;

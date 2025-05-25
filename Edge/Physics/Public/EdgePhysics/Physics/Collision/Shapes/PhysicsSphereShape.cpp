@@ -4,15 +4,15 @@
 
 Edge::AABB3 Edge::PhysicsSphereShape::getAABB() const
 {
-	return AABB3(FloatVector3(-m_radius), FloatVector3(m_radius));
+	return AABB3(ComputeVector3(-m_radius), ComputeVector3(m_radius));
 }
 
-Edge::FloatVector3 Edge::PhysicsSphereShape::getFurthestKeyPoint(const FloatVector3& direction) const
+Edge::ComputeVector3 Edge::PhysicsSphereShape::getFurthestKeyPoint(const ComputeVector3& direction) const
 {
-	return (direction * m_radius).getFloatVector3();
+	return direction * m_radius;
 }
 
-bool Edge::PhysicsSphereShape::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const
+bool Edge::PhysicsSphereShape::rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const
 {
-	return CastSphere::rayCast(FloatVector3Zero, m_radius, origin, end, result);
+	return CastSphere::rayCast(ComputeVector3Zero, m_radius, origin, end, result);
 }

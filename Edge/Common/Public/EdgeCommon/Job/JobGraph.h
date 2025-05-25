@@ -1,20 +1,21 @@
 #pragma once
 
-#include "EdgeCommon/Reference/MTReference.h"
-#include "EdgeCommon/Multithreading/Mutex.h"
+#include "EdgeCommon/Reference/Reference.h"
 
 #include "Job.h"
 
-#include <vector>
 #include <functional>
+#include <vector>
 
 
 namespace Edge
 {
+	//TODO: JobGraph realization is overcomplicated. Should be reworked
+
 	class JobController;
 
 	class JobGraph;
-	EDGE_MT_REFERENCE(JobGraph);
+	EDGE_REFERENCE(JobGraph);
 
 	class JobGraph final : public DefaultDestroyingMTCountableObjectBase
 	{
@@ -64,10 +65,10 @@ namespace Edge
 			bool isFinished() const;
 		};
 
-		EDGE_MT_REFERENCE(GraphJobData);
+		EDGE_REFERENCE(GraphJobData);
 
 		class DependencyJobBase;
-		EDGE_MT_NAMED_REFERENCE(DependencyJobBase, DependencyJob);
+		EDGE_NAMED_REFERENCE(DependencyJobBase, DependencyJob);
 
 		class DependencyJobBase : public Job
 		{
@@ -110,7 +111,7 @@ namespace Edge
 				: DependencyJobBase(graphData, "PostGraphJob") {}
 		};
 
-		EDGE_MT_REFERENCE(PostGraphDependencyJob);
+		EDGE_REFERENCE(PostGraphDependencyJob);
 
 		class PreGraphDependencyJob final : public DependencyJobBase
 		{

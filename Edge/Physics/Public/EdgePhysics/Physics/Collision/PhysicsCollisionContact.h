@@ -1,7 +1,6 @@
 #pragma once
 
-#include "EdgeCommon/Math/Const.h"
-#include "EdgeCommon/Math/Vector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
 #include "Scene/PhysicsCollisionSceneContextTypes.h"
 
@@ -58,10 +57,10 @@ namespace Edge
 
 	struct PhysicsCollisionContactPoint final
 	{
-		FloatVector3 m_position1 = FloatVector3Zero;
-		FloatVector3 m_position2 = FloatVector3Zero;
-		FloatVector3 m_normal = FloatVector3Zero;
-		float m_depth = -Math::FltMax;
+		ComputeVector3 m_position1 = ComputeVector3Zero;
+		ComputeVector3 m_position2 = ComputeVector3Zero;
+		ComputeVector3 m_normal = ComputeVector3Zero;
+		ComputeValueType m_depth = -Math::Max;
 	};
 
 	struct PhysicsInstancedCollisionContactPoint final

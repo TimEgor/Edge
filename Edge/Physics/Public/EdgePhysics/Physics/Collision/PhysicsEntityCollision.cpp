@@ -1,7 +1,5 @@
 #include "PhysicsEntityCollision.h"
 
-#include "EdgeCommon/Math/Const.h"
-
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
 #include "Scene/PhysicsSceneCollisionManager.h"
@@ -53,56 +51,53 @@ Edge::AABB3 Edge::PhysicsEntityCollision::getWorldShapeAABB() const
 
 	AABB3 bound = m_shape->getAABB();
 
-	const ComputeMatrix worldTransform = getTransform()->getWorldTransform().m_matrix;
+	const ComputeMatrix4x4 worldTransform = getTransform()->getWorldTransform().m_matrix;
 
-	FloatVector3 points[8] = {
+	ComputeVector3 points[8] = {
 		bound.m_minPosition,
-		FloatVector3(bound.m_maxPosition.m_x, bound.m_minPosition.m_y, bound.m_minPosition.m_z),
-		FloatVector3(bound.m_minPosition.m_x, bound.m_minPosition.m_y, bound.m_maxPosition.m_z),
-		FloatVector3(bound.m_maxPosition.m_x, bound.m_minPosition.m_y, bound.m_maxPosition.m_z),
-		FloatVector3(bound.m_minPosition.m_x, bound.m_maxPosition.m_y, bound.m_minPosition.m_z),
-		FloatVector3(bound.m_maxPosition.m_x, bound.m_maxPosition.m_y, bound.m_minPosition.m_z),
-		FloatVector3(bound.m_minPosition.m_x, bound.m_maxPosition.m_y, bound.m_maxPosition.m_z),
+		ComputeVector3(bound.m_maxPosition.getX(), bound.m_minPosition.getY(), bound.m_minPosition.getZ()),
+		ComputeVector3(bound.m_minPosition.getX(), bound.m_minPosition.getY(), bound.m_maxPosition.getZ()),
+		ComputeVector3(bound.m_maxPosition.getX(), bound.m_minPosition.getY(), bound.m_maxPosition.getZ()),
+		ComputeVector3(bound.m_minPosition.getX(), bound.m_maxPosition.getY(), bound.m_minPosition.getZ()),
+		ComputeVector3(bound.m_maxPosition.getX(), bound.m_maxPosition.getY(), bound.m_minPosition.getZ()),
+		ComputeVector3(bound.m_minPosition.getX(), bound.m_maxPosition.getY(), bound.m_maxPosition.getZ()),
 		bound.m_maxPosition
 	};
 
-	ComputeVector minBoundPoint = FloatVector3(Math::FltMax);
-	ComputeVector maxBoundPoint = FloatVector3(-Math::FltMax);
+	ComputeVector3 minBoundPoint(Math::Max);
+	ComputeVector3 maxBoundPoint(-Math::Max);
 
 	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
 	{
-		ComputeVector transformBoundPoint = worldTransform * ComputeVectorFromPoint(points[pointIndex]);
-		minBoundPoint = ComputeMath::vectorMin(transformBoundPoint.m_vector, minBoundPoint.m_vector);
-		maxBoundPoint = ComputeMath::vectorMax(transformBoundPoint.m_vector, maxBoundPoint.m_vector);
+		const ComputeVector3 transformBoundPoint = (worldTransform * ComputeVector4FromPoint(points[pointIndex])).getXYZ();
+		minBoundPoint = MinComputeVector3(transformBoundPoint, minBoundPoint);
+		maxBoundPoint = MinComputeVector3(transformBoundPoint, maxBoundPoint);
 	}
 
-	minBoundPoint.saveToFloatVector3(bound.m_minPosition);
-	maxBoundPoint.saveToFloatVector3(bound.m_maxPosition);
+	bound.m_minPosition = minBoundPoint;
+	bound.m_maxPosition = maxBoundPoint;
 
 	return bound;
 }
 
-Edge::FloatVector3 Edge::PhysicsEntityCollision::getFurthestKeyPoint(const FloatVector3& direction) const
+Edge::ComputeVector3 Edge::PhysicsEntityCollision::getFurthestKeyPoint(const ComputeVector3& direction) const
 {
 	if (!m_shape)
 	{
-		return FloatVector3Zero;
+		return ComputeVector3Zero;
 	}
 
 	const PhysicsEntityTransformReference transform = getTransform();
 
-	ComputeMatrix inverseTransform(transform->getWorldTransform().m_matrix);
-	inverseTransform.inverse();
+	const ComputeVector4 localDirection = InvertComputeMatrix4x4(transform->getWorldTransform().m_matrix) * ComputeVector4(direction);
 
-	const ComputeVector localDirection = inverseTransform * direction;
+	const ComputeVector3 localPoint = m_shape->getFurthestKeyPoint(localDirection.getXYZ());
+	const ComputeVector3 point = (transform->getWorldTransform().m_matrix * ComputeVector4FromPoint(localPoint)).getXYZ();
 
-	const FloatVector3 localPoint = m_shape->getFurthestKeyPoint(localDirection.getFloatVector3());
-	const ComputeVector point = transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(localPoint);
-
-	return point.getFloatVector3();
+	return point;
 }
 
-void Edge::PhysicsEntityCollision::getSupportingFace(const FloatVector3& direction,
+void Edge::PhysicsEntityCollision::getSupportingFace(const ComputeVector3& direction,
 	PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const
 {
 	vertices.clear();
@@ -114,20 +109,17 @@ void Edge::PhysicsEntityCollision::getSupportingFace(const FloatVector3& directi
 
 	const PhysicsEntityTransformReference transform = getTransform();
 
-	ComputeMatrix inverseTransform(transform->getWorldTransform().m_matrix);
-	inverseTransform.inverse();
+	const ComputeVector4 localDirection = InvertComputeMatrix4x4(transform->getWorldTransform().m_matrix) * ComputeVector4(direction);
 
-	const ComputeVector localDirection = inverseTransform * direction;
+	m_shape->getSupportingFace(localDirection.getXYZ(), vertices);
 
-	m_shape->getSupportingFace(localDirection.getFloatVector3(), vertices);
-
-	for (FloatVector3& vertex : vertices)
+	for (ComputeVector3& vertex : vertices)
 	{
-		(transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(vertex)).saveToFloatVector3(vertex);
+		vertex = (transform->getWorldTransform().m_matrix * ComputeVector4FromPoint(vertex)).getXYZ();
 	}
 }
 
-bool Edge::PhysicsEntityCollision::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResult& result) const
+bool Edge::PhysicsEntityCollision::rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const
 {
 	if (!m_shape)
 	{
@@ -136,16 +128,14 @@ bool Edge::PhysicsEntityCollision::rayCast(const FloatVector3& origin, const Flo
 
 	const PhysicsEntityTransformReference transform = getTransform();
 
-	ComputeMatrix inverseTransform(transform->getWorldTransform().m_matrix);
-	inverseTransform.inverse();
+	const ComputeMatrix4x4 inverseTransform = InvertComputeMatrix4x4(transform->getWorldTransform().m_matrix);
 
-	const ComputeVector localOriginPosition = inverseTransform * ComputeVectorFromPoint(origin);
-	const ComputeVector localEndPosition = inverseTransform * ComputeVectorFromPoint(end);
+	const ComputeVector3 localOriginPosition = (inverseTransform * ComputeVector4FromPoint(origin)).getXYZ();
+	const ComputeVector3 localEndPosition = (inverseTransform * ComputeVector4FromPoint(end)).getXYZ();
 
-	if (m_shape->rayCast(localOriginPosition.getFloatVector3(), localEndPosition.getFloatVector3(), result))
+	if (m_shape->rayCast(localOriginPosition, localEndPosition, result))
 	{
-		const ComputeVector hitPos = transform->getWorldTransform().m_matrix * ComputeVectorFromPoint(result.m_hitPosition);
-		hitPos.saveToFloatVector3(result.m_hitPosition);
+		result.m_hitPosition = (transform->getWorldTransform().m_matrix * ComputeVector4FromPoint(result.m_hitPosition)).getXYZ();
 
 		return true;
 	}
@@ -169,7 +159,7 @@ Edge::PhysicsSceneCollisionManagerReference Edge::PhysicsEntityCollision::getCol
 	return m_sceneContext ? m_sceneContext->getCollisionManager().getReference() : nullptr;
 }
 
-void Edge::PhysicsEntityCollision::setFriction(float friction)
+void Edge::PhysicsEntityCollision::setFriction(ComputeValueType friction)
 {
 	if (0.0f > friction || friction > 1.0f)
 	{
@@ -180,7 +170,7 @@ void Edge::PhysicsEntityCollision::setFriction(float friction)
 	m_friction = friction;
 }
 
-void Edge::PhysicsEntityCollision::setElasticity(float elasticity)
+void Edge::PhysicsEntityCollision::setElasticity(ComputeValueType elasticity)
 {
 	if (0.0f > elasticity || elasticity > 1.0f)
 	{

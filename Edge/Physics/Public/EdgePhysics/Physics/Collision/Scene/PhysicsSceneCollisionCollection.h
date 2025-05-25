@@ -30,7 +30,7 @@ namespace Edge
 		void destroyDefaultContext(DefaultPhysicsEntityCollisionSceneContext* context);
 	};
 
-	EDGE_MT_REFERENCE(DefaultPhysicsEntityCollisionSceneContextCollection);
+	EDGE_REFERENCE(DefaultPhysicsEntityCollisionSceneContextCollection);
 
 	class PhysicsSceneCollisionCollection final
 	{

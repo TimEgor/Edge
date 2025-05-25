@@ -1,7 +1,6 @@
 #include "Sphere.h"
 
-#include "EdgeCommon/Math/ComputeVector.h"
-#include "EdgeCommon/Math/Const.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 #include "EdgeCommon/Math/Matrix.h"
 
 EdgeDefRender::SphereShape EdgeDefRender::SphereShape::create(float radius, uint32_t stacks, uint32_t slices)
@@ -75,9 +74,9 @@ void EdgeDefRender::SphereShapeGenerator::generateVertices(float radius, uint32_
 			v.m_position.m_y = radius * cosf(phi);
 			v.m_position.m_z = radius * sinf(phi) * sinf(theta);
 
-			Edge::ComputeVector computeNormal(v.m_position);
+			Edge::FloatComputeVector3 computeNormal(v.m_position);
 			computeNormal.normalize();
-			computeNormal.saveToFloatVector3(v.m_normal);
+			computeNormal.getFloatVector3(v.m_normal);
 
 			m_vertices.push_back(v);
 		}

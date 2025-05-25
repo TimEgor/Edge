@@ -27,8 +27,12 @@ namespace EdgeD3D11
 
 	using D3D11RenderTargetViewComPtr = ComPtr<ID3D11RenderTargetView>;
 	using D3D11DepthStencilViewComPtr = ComPtr<ID3D11DepthStencilView>;
+	using D3D11ShaderResourceViewComPtr = ComPtr<ID3D11ShaderResourceView>;
 
 	using D3D11RasterizerStateComPtr = ComPtr<ID3D11RasterizerState>;
+	using D3D11SamplerStateComPtr = ComPtr<ID3D11SamplerState>;
+	using D3D11BlendStateComPtr = ComPtr<ID3D11BlendState>;
+	using D3D11DepthStencilStateComPtr = ComPtr<ID3D11DepthStencilState>;
 
 	using DXGIFactoryComPtr = ComPtr<IDXGIFactory2>;
 	using DXGISwapChainComPtr = ComPtr<IDXGISwapChain1>;

@@ -1,16 +1,15 @@
 #pragma once
 
-#include "EdgeCommon/HashedType.h"
+#include "EdgeCommon/Math/ComputeMath.h"
 #include "EdgeCommon/Patterns/NonCopyable.h"
 #include "EdgeCommon/Reference/MTCountableObjectBase.h"
+#include "EdgeCommon/RTTI/RTTI.h"
 
 #include "Scene/PhysicsSceneConstraintManagerReference.h"
 
 namespace Edge
 {
-	using PhysicsConstraintSceneContextType = HashedType::Type;
-
-	class PhysicsConstraintSceneContext : public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsConstraintSceneContext : public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		PhysicsConstraintSceneContext() = default;
@@ -18,16 +17,12 @@ namespace Edge
 		virtual PhysicsSceneConstraintManagerWeakReference getConstraintManager() const = 0;
 		virtual bool isActive() const = 0;
 
-		virtual PhysicsConstraintSceneContextType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsConstraintSceneContext)
 	};
 
-	EDGE_MT_REFERENCE(PhysicsConstraintSceneContext);
+	EDGE_REFERENCE(PhysicsConstraintSceneContext);
 
-#define EDGE_PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE(PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE) EDGE_HASH_TYPE(#PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE, Edge::PhysicsConstraintSceneContextType, PhysicsConstraintSceneContext)
-
-	using PhysicsConstraintType = HashedType::Type;
-
-	class PhysicsConstraint : public NonCopyable, public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsConstraint : public NonCopyable, public DefaultDestroyingMTCountableObjectBase
 	{
 	private:
 		PhysicsConstraintSceneContextReference m_sceneContext;
@@ -38,10 +33,10 @@ namespace Edge
 	public:
 		PhysicsConstraint() = default;
 
-		virtual void preSolve(float deltaTime) = 0;
+		virtual void preSolve(ComputeValueType deltaTime) = 0;
 		virtual void warmUp() = 0;
-		virtual void solveVelocity() = 0;
-		virtual void solvePosition() = 0;
+		virtual void solveVelocity(ComputeValueType deltaTime) = 0;
+		virtual void solvePosition(ComputeValueType deltaTime) = 0;
 
 		uint32_t getVelocitySolvingIterationCount() const { return m_velocitySolvingIterationCount; }
 		void setVelocitySolvingIterationCount(uint32_t iterationCount) { m_velocitySolvingIterationCount = iterationCount; }
@@ -53,10 +48,8 @@ namespace Edge
 
 		bool isActive() const;
 
-		virtual PhysicsConstraintType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsConstraint)
 	};
 
-#define EDGE_PHYSICS_CONSTRAINT_TYPE(PHYSICS_CONSTRAINT_TYPE) EDGE_HASH_TYPE(#PHYSICS_CONSTRAINT_TYPE, Edge::PhysicsConstraintType, PhysicsConstraint)
-
-	EDGE_MT_REFERENCE(PhysicsConstraint);
+	EDGE_REFERENCE(PhysicsConstraint);
 }

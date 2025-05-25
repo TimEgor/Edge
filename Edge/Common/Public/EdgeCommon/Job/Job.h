@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EdgeCommon/Multithreading/LockGuard.h"
-#include "EdgeCommon/Reference/MTReference.h"
+#include "EdgeCommon/Reference/Reference.h"
 
 #include <condition_variable>
 #include <functional>
@@ -78,7 +78,7 @@ namespace Edge
 #endif
 	};
 
-	EDGE_MT_REFERENCE(Job);
+	EDGE_REFERENCE(Job);
 
 	class LambdaJob final : public Job
 	{

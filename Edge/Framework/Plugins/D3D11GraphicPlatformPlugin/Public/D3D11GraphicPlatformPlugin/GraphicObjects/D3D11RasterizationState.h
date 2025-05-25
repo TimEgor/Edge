@@ -17,5 +17,7 @@ namespace EdgeD3D11
 
 		virtual void* getNativeHandle() const override { return m_state.Get(); }
 
+		virtual void setName(const char* name) override;
+
 	};
 }

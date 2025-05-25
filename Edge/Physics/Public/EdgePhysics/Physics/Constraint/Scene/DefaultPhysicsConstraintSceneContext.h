@@ -36,6 +36,8 @@ namespace Edge
 
 		virtual bool isActive() const override;
 
-		EDGE_PHYSICS_CONSTRAINT_SCENE_CONTEXT_TYPE(DEFAULT);
+		EDGE_RTTI_VIRTUAL(DefaultPhysicsConstraintSceneContext)
 	};
 }
+
+EDGE_RTTI(Edge::DefaultPhysicsConstraintSceneContext)

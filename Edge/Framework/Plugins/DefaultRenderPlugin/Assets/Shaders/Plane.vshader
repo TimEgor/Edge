@@ -1,4 +1,5 @@
 #include "Color.shader"
+#include "Camera.shader"
 #include "SolidPixelInput.shader"
 
 static float2 planeBaseVertexPositions[4] =
@@ -7,13 +8,6 @@ static float2 planeBaseVertexPositions[4] =
 	{ 0.5, 0.5 },
 	{ -0.5, -0.5 },
 	{ -0.5, 0.5 }
-};
-
-cbuffer CameraTransforms : register(b0)
-{
-	float4x4 viewTransform;
-	float4x4 projTransform;
-	uint2 screenSpaceSize;
 };
 
 struct VertexInput

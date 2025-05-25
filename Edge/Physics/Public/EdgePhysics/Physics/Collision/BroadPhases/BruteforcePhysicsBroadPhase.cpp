@@ -33,7 +33,7 @@ void Edge::BruteforcePhysicsBroadPhase::addCollision(const PhysicsEntityCollisio
 	}
 
 	const PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntityCollisionSceneContext::PhysicsEntityCollisionSceneContextType)
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntityCollisionSceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Collision scene context has an invalid type.");
 		return;
@@ -63,7 +63,7 @@ void Edge::BruteforcePhysicsBroadPhase::removeCollision(const PhysicsEntityColli
 	}
 
 	const PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntityCollisionSceneContext::PhysicsEntityCollisionSceneContextType)
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntityCollisionSceneContext>(sceneContext.getObjectRef()))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Collision scene context has an invalid type.");
 		return;
@@ -106,7 +106,7 @@ void Edge::BruteforcePhysicsBroadPhase::findCollidingPairs(const PhysicsEntityCo
 	}
 
 	const PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntityCollisionSceneContext::PhysicsEntityCollisionSceneContextType)
+	if (!RTTI::IsObjectBasedOn<DefaultPhysicsEntityCollisionSceneContext>(sceneContext.getObjectRef()))
 	{
 		return;
 	}
@@ -140,7 +140,7 @@ void Edge::BruteforcePhysicsBroadPhase::findCollidingPairs(const PhysicsEntityCo
 	}
 }
 
-void Edge::BruteforcePhysicsBroadPhase::rayCast(const FloatVector3& origin, const FloatVector3& end, PointCastingResultCollector& resultCollector) const
+void Edge::BruteforcePhysicsBroadPhase::rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const
 {
 	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
 

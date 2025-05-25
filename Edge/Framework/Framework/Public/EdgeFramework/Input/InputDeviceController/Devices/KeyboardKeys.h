@@ -113,7 +113,7 @@ namespace Edge
 		MAX_KEY = SystemLeft
 	};
 
-	constexpr KeyboardKey KeyboardKeyCount = static_cast<KeyboardKey>(KeyboardKeys::MAX_KEY);
+	constexpr KeyboardKey KeyboardKeyCount = static_cast<KeyboardKey>(KeyboardKeys::MAX_KEY) + 1;
 
 	inline KeyboardKey GetKeyboardKey(KeyboardKeys key) { return static_cast<KeyboardKey>(key); }
 }

@@ -49,7 +49,7 @@ Edge::DefaultPhysicsEntityCollisionSceneContextReference Edge::CollisionUtil::Tr
 	}
 
 	const PhysicsEntityCollisionSceneContextReference sceneContext = collision->getSceneContext();
-	if (sceneContext->getType() != DefaultPhysicsEntityCollisionSceneContext::getPhysicsEntityCollisionSceneContextType())
+	if (sceneContext->GetObjectTypeMetaInfoID() != RTTI::GetTypeMetaInfoID<DefaultPhysicsEntityCollisionSceneContext>())
 	{
 		return nullptr;
 	}

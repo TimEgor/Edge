@@ -1,9 +1,9 @@
 #pragma once
 
-#include <type_traits>
+#include <complex>
 #include <vector>
 
-#include "Const.h"
+#include "ComputeMath.h"
 
 namespace Edge
 {
@@ -160,52 +160,52 @@ namespace Edge
 	using Int32Vector3 = Vector3Base<int32_t>;
 	using Int32Vector4 = Vector4Base<int32_t>;
 
-	constexpr FloatVector2 FloatVector2Zero = FloatVector2(0.0f);
-	constexpr FloatVector3 FloatVector3Zero = FloatVector3(0.0f);
-	constexpr FloatVector4 FloatVector4Zero = FloatVector4(0.0f);
+	inline constexpr FloatVector2 FloatVector2Zero = FloatVector2(0.0f);
+	inline constexpr FloatVector3 FloatVector3Zero = FloatVector3(0.0f);
+	inline constexpr FloatVector4 FloatVector4Zero = FloatVector4(0.0f);
 
-	constexpr FloatVector2 FloatVector2One = FloatVector2(1.0f);
-	constexpr FloatVector3 FloatVector3One = FloatVector3(1.0f);
-	constexpr FloatVector4 FloatVector4One = FloatVector4(1.0f);
+	inline constexpr FloatVector2 FloatVector2One = FloatVector2(1.0f);
+	inline constexpr FloatVector3 FloatVector3One = FloatVector3(1.0f);
+	inline constexpr FloatVector4 FloatVector4One = FloatVector4(1.0f);
 
-	constexpr FloatVector2 FloatVector2Epsilon = FloatVector2(Math::Epsilon);
-	constexpr FloatVector3 FloatVector3Epsilon = FloatVector3(Math::Epsilon);
-	constexpr FloatVector4 FloatVector4Epsilon = FloatVector4(Math::Epsilon);
+	inline constexpr FloatVector2 FloatVector2Epsilon = FloatVector2(Math::TypedEpsilon<float>());
+	inline constexpr FloatVector3 FloatVector3Epsilon = FloatVector3(Math::TypedEpsilon<float>());
+	inline constexpr FloatVector4 FloatVector4Epsilon = FloatVector4(Math::TypedEpsilon<float>());
 
-	constexpr FloatVector2 FloatVector2NegativeOne = FloatVector2(-1.0f);
-	constexpr FloatVector3 FloatVector3NegativeOne = FloatVector3(-1.0f);
-	constexpr FloatVector4 FloatVector4NegativeOne = FloatVector4(-1.0f);
+	inline constexpr FloatVector2 FloatVector2NegativeOne = FloatVector2(-1.0f);
+	inline constexpr FloatVector3 FloatVector3NegativeOne = FloatVector3(-1.0f);
+	inline constexpr FloatVector4 FloatVector4NegativeOne = FloatVector4(-1.0f);
 
-	constexpr UInt8Vector2 UInt8Vector2Zero = UInt8Vector2(0);
-	constexpr UInt8Vector3 UInt8Vector3Zero = UInt8Vector3(0);
-	constexpr UInt8Vector4 UInt8Vector4Zero = UInt8Vector4(0);
+	inline constexpr UInt8Vector2 UInt8Vector2Zero = UInt8Vector2(0);
+	inline constexpr UInt8Vector3 UInt8Vector3Zero = UInt8Vector3(0);
+	inline constexpr UInt8Vector4 UInt8Vector4Zero = UInt8Vector4(0);
 
-	constexpr Int8Vector2 Int8Vector2Zero = Int8Vector2(0);
-	constexpr Int8Vector3 Int8Vector3Zero = Int8Vector3(0);
-	constexpr Int8Vector4 Int8Vector4Zero = Int8Vector4(0);
+	inline constexpr Int8Vector2 Int8Vector2Zero = Int8Vector2(0);
+	inline constexpr Int8Vector3 Int8Vector3Zero = Int8Vector3(0);
+	inline constexpr Int8Vector4 Int8Vector4Zero = Int8Vector4(0);
 
-	constexpr UInt16Vector2 UInt16Vector2Zero = UInt16Vector2(0);
-	constexpr UInt16Vector3 UInt16Vector3Zero = UInt16Vector3(0);
-	constexpr UInt16Vector4 UInt16Vector4Zero = UInt16Vector4(0);
+	inline constexpr UInt16Vector2 UInt16Vector2Zero = UInt16Vector2(0);
+	inline constexpr UInt16Vector3 UInt16Vector3Zero = UInt16Vector3(0);
+	inline constexpr UInt16Vector4 UInt16Vector4Zero = UInt16Vector4(0);
 
-	constexpr Int16Vector2 Int16Vector2Zero = Int16Vector2(0);
-	constexpr Int16Vector3 Int16Vector3Zero = Int16Vector3(0);
-	constexpr Int16Vector4 Int16Vector4Zero = Int16Vector4(0);
+	inline constexpr Int16Vector2 Int16Vector2Zero = Int16Vector2(0);
+	inline constexpr Int16Vector3 Int16Vector3Zero = Int16Vector3(0);
+	inline constexpr Int16Vector4 Int16Vector4Zero = Int16Vector4(0);
 
-	constexpr UInt32Vector2 UInt32Vector2Zero = UInt32Vector2(0);
-	constexpr UInt32Vector3 UInt32Vector3Zero = UInt32Vector3(0);
-	constexpr UInt32Vector4 UInt32Vector4Zero = UInt32Vector4(0);
+	inline constexpr UInt32Vector2 UInt32Vector2Zero = UInt32Vector2(0);
+	inline constexpr UInt32Vector3 UInt32Vector3Zero = UInt32Vector3(0);
+	inline constexpr UInt32Vector4 UInt32Vector4Zero = UInt32Vector4(0);
 
-	constexpr Int32Vector2 Int32Vector2Zero = Int32Vector2(0);
-	constexpr Int32Vector3 Int32Vector3Zero = Int32Vector3(0);
-	constexpr Int32Vector4 Int32Vector4Zero = Int32Vector4(0);
+	inline constexpr Int32Vector2 Int32Vector2Zero = Int32Vector2(0);
+	inline constexpr Int32Vector3 Int32Vector3Zero = Int32Vector3(0);
+	inline constexpr Int32Vector4 Int32Vector4Zero = Int32Vector4(0);
 
-	constexpr FloatVector3 FloatVector3UnitX = FloatVector3(1.0f, 0.0f, 0.0f);
-	constexpr FloatVector3 FloatVector3UnitY = FloatVector3(0.0f, 1.0f, 0.0f);
-	constexpr FloatVector3 FloatVector3UnitZ = FloatVector3(0.0f, 0.0f, 1.0f);
-	constexpr FloatVector3 FloatVector3NegativeUnitX = FloatVector3(-1.0f, 0.0f, 0.0f);
-	constexpr FloatVector3 FloatVector3NegativeUnitY = FloatVector3(0.0f, -1.0f, 0.0f);
-	constexpr FloatVector3 FloatVector3NegativeUnitZ = FloatVector3(0.0f, 0.0f, -1.0f);
+	inline constexpr FloatVector3 FloatVector3UnitX = FloatVector3(1.0f, 0.0f, 0.0f);
+	inline constexpr FloatVector3 FloatVector3UnitY = FloatVector3(0.0f, 1.0f, 0.0f);
+	inline constexpr FloatVector3 FloatVector3UnitZ = FloatVector3(0.0f, 0.0f, 1.0f);
+	inline constexpr FloatVector3 FloatVector3NegativeUnitX = FloatVector3(-1.0f, 0.0f, 0.0f);
+	inline constexpr FloatVector3 FloatVector3NegativeUnitY = FloatVector3(0.0f, -1.0f, 0.0f);
+	inline constexpr FloatVector3 FloatVector3NegativeUnitZ = FloatVector3(0.0f, 0.0f, -1.0f);
 }
 
 #include "Vector.hpp"

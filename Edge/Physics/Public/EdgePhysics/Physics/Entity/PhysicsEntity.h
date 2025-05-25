@@ -1,6 +1,5 @@
 #pragma once
 
-#include "EdgeCommon/HashedType.h"
 #include "EdgeCommon/Reference/MTCountableObjectBase.h"
 
 #include "EdgePhysics/Physics/Collision/PhysicsEntityCollision.h"
@@ -12,9 +11,7 @@
 
 namespace Edge
 {
-	using PhysicsEntitySceneContextType = HashedType::Type;
-
-	class PhysicsEntitySceneContext : public HashedType, public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntitySceneContext : public PhysicsEntityWeakLinkObject, public DefaultDestroyingMTCountableObjectBase
 	{
 	public:
 		PhysicsEntitySceneContext() = default;
@@ -22,14 +19,12 @@ namespace Edge
 		virtual PhysicsSceneEntityManagerWeakReference getManager() const = 0;
 		virtual bool isActive() const = 0;
 
-		virtual PhysicsEntitySceneContextType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsEntitySceneContext)
 	};
 
-	EDGE_MT_REFERENCE(PhysicsEntitySceneContext);
+	EDGE_REFERENCE(PhysicsEntitySceneContext);
 
-#define EDGE_PHYSICS_ENTITY_SCENE_CONTEXT_TYPE(PHYSICS_ENTITY_SCENE_CONTEXT_TYPE) EDGE_HASH_TYPE(#PHYSICS_ENTITY_SCENE_CONTEXT_TYPE, Edge::PhysicsEntitySceneContextType, PhysicsEntitySceneContext)
-
-	class PhysicsEntity : public NonCopyable, public HashedType, public DefaultDestroyingMTCountableObjectBase
+	class PhysicsEntity : public NonCopyable, public DefaultDestroyingMTCountableObjectBase
 	{
 	private:
 		PhysicsEntitySceneContextReference m_sceneContext;
@@ -65,8 +60,6 @@ namespace Edge
 		PhysicsSceneEntityManagerReference getManager() const;
 		bool isActive() const;
 
-		virtual PhysicsEntityType getType() const = 0;
+		EDGE_RTTI_VIRTUAL_BASE(PhysicsEntity)
 	};
-
-#define EDGE_PHYSICS_ENTITY_TYPE(PHYSICS_ENTITY_TYPE) EDGE_HASH_TYPE(#PHYSICS_ENTITY_TYPE, Edge::PhysicsEntityType, PhysicsEntity)
 }

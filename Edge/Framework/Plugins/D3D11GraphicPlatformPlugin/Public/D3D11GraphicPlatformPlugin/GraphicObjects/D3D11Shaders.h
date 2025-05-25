@@ -30,6 +30,8 @@ namespace EdgeD3D11
 		const D3D11VertexShaderComPtr& getShaderHandle() const { return m_shader; }
 
 		virtual void* getNativeHandle() const override { return m_shader.Get(); }
+
+		virtual void setName(const char* name) override;
 	};
 
 	class D3D11PixelShader final : public D3D11ShaderBase, public Edge::PixelShader
@@ -43,6 +45,8 @@ namespace EdgeD3D11
 		const D3D11PixelShaderComPtr& getShaderHandle() const { return m_shader; }
 
 		virtual void* getNativeHandle() const override { return m_shader.Get(); }
+
+		virtual void setName(const char* name) override;
 	};
 
 	class D3D11ComputeShader final : public D3D11ShaderBase, public Edge::ComputeShader
@@ -56,5 +60,7 @@ namespace EdgeD3D11
 		const D3D11ComputeShaderComPtr& getShaderHandle() const { return m_shader; }
 
 		virtual void* getNativeHandle() const override { return m_shader.Get(); }
+
+		virtual void setName(const char* name) override;
 	};
 }

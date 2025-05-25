@@ -4,8 +4,8 @@
 
 namespace Edge
 {
-	EDGE_MT_NAMED_REFERENCE(PhysicsPositionAndRotationBasedTransform, PhysicsBodyTransform);
-	EDGE_MT_NAMED_REFERENCE(PhysicsPositionAndRotationBasedMotion, PhysicsBodyMotion);
+	EDGE_NAMED_REFERENCE(PhysicsPositionAndRotationBasedTransform, PhysicsBodyTransform);
+	EDGE_NAMED_REFERENCE(PhysicsPositionAndRotationBasedMotion, PhysicsBodyMotion);
 
 	class PhysicsBody : public PhysicsEntity
 	{
@@ -21,8 +21,8 @@ namespace Edge
 
 		virtual void updateTransformWithMotion(float deltaTime) override;
 
-		EDGE_PHYSICS_ENTITY_TYPE(BODY);
+		EDGE_RTTI_VIRTUAL(PhysicsBody, PhysicsEntity)
 	};
 
-	EDGE_MT_REFERENCE(PhysicsBody);
+	EDGE_REFERENCE(PhysicsBody);
 }

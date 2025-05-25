@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GraphicObject/BlendState.h"
+
 namespace Edge
 {
 	class FileName;
@@ -12,7 +14,7 @@ namespace Edge
 	class SwapChain;
 
 	struct GPUBufferDesc;
-	struct InitialGPUBufferData;
+	struct InitialGraphicResourceData;
 	class GPUBuffer;
 
 	struct Texture2DDesc;
@@ -28,6 +30,11 @@ namespace Edge
 	struct RasterizationStateDesc;
 	class RasterizationState;
 
+	class SamplerState;
+
+	struct DepthStencilStateDesc;
+	class DepthStencilState;
+
 	class GraphicDevice
 	{
 	public:
@@ -40,9 +47,9 @@ namespace Edge
 
 		virtual SwapChain* createSwapChain(const SwapChainDesc& desc, const Window& window) = 0;
 
-		virtual GPUBuffer* createBuffer(const GPUBufferDesc& desc, const InitialGPUBufferData* initialData) = 0;
+		virtual GPUBuffer* createBuffer(const GPUBufferDesc& desc, const InitialGraphicResourceData* initialData = nullptr) = 0;
 
-		virtual Texture2D* createTexture2D(const Texture2DDesc& desc) = 0;
+		virtual Texture2D* createTexture2D(const Texture2DDesc& desc, const InitialGraphicResourceData* initialData = nullptr) = 0;
 
 		virtual VertexShader* createVertexShaderFromSources(const void* srcs, size_t size) = 0;
 		virtual PixelShader* createPixelShaderFromSources(const void* srcs, size_t size) = 0;
@@ -55,5 +62,8 @@ namespace Edge
 		virtual InputLayout* createInputLayout(const InputLayoutDesc& desc, const VertexShader& shader) = 0;
 
 		virtual RasterizationState* createRasterizationState(const RasterizationStateDesc& desc) = 0;
+		virtual SamplerState* createSamplerState() = 0;
+		virtual BlendState* createBlendState(BlendMode mode) = 0;
+		virtual DepthStencilState* createDepthStencilState(const DepthStencilStateDesc& desc) = 0;
 	};
 }

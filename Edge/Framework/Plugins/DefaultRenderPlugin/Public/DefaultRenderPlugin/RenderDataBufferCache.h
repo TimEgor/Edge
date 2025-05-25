@@ -47,8 +47,6 @@ namespace EdgeDefRender
 		Edge::GPUBuffer* createNewBuffer() const;
 
 		void addDelayTime(float deltaTime);
-		void updateBufferSpaces(uint32_t requiredElementCount);
-		void freeUnusedBuffers();
 
 	public:
 		RenderDataBufferCache() = default;
@@ -58,6 +56,10 @@ namespace EdgeDefRender
 		void release();
 
 		void updateBuffers(float deltaTime, uint32_t requiredElementCount);
+		void updateBuffers(float deltaTime);
+
+		void prepareSpace(uint32_t requiredElementCount);
+		void freeUnusedSpace();
 
 		uint32_t getElementCountPerBuffer() const { return m_perBufferElementCount; }
 		uint32_t getBufferCount() const;
@@ -78,12 +80,14 @@ namespace EdgeDefRender
 		uint32_t m_currentElementIndex = 0;
 
 	public:
-		RenderDataBufferCacheIterator(const RenderDataBufferCache& bufferCache, Edge::DeferredGraphicContext& graphicContext);
+		RenderDataBufferCacheIterator(const RenderDataBufferCache& bufferCache, Edge::DeferredGraphicContext& graphicContext, bool iterOnInit = true);
 		~RenderDataBufferCacheIterator();
 
 		void* getCurrentElement() const { return m_currentElement; }
 		template <typename T>
 		T* getCurrentTypedElement() const { return static_cast<T*>(m_currentElement); }
+
+		bool isInInitialState() const;
 
 		bool next();
 	};

@@ -21,17 +21,6 @@ namespace Edge
 		GraphicResourceAccessValueType m_access = GRAPHIC_RESOURCE_ACCESS_UNDEFINED;
 	};
 
-	struct InitialGPUBufferData final
-	{
-		const void* m_data = nullptr;
-		uint32_t m_dataSize = 0;
-
-		InitialGPUBufferData(const void* data, uint32_t dataSize)
-			: m_data(data), m_dataSize(dataSize) {}
-
-		bool isValid() const { return m_data && m_dataSize; }
-	};
-
 	class GPUBuffer : public GraphicResource
 	{
 	private:

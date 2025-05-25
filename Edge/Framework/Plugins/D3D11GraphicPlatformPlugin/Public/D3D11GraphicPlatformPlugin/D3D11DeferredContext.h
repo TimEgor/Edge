@@ -9,7 +9,7 @@ namespace EdgeD3D11
 	class D3D11DeferredGraphicContext final : public Edge::DeferredGraphicContext
 	{
 	private:
-		D3D11DeviceContextComPtr m_d3d11Context;
+		D3D11DeviceContextComPtr m_context;
 
 	public:
 		D3D11DeferredGraphicContext(const D3D11DeviceComPtr& device);
@@ -28,10 +28,16 @@ namespace EdgeD3D11
 		virtual void setPrimitiveTopology(Edge::PrimitiveTopology topology) override;
 		virtual void setRasterizationState(const Edge::RasterizationState& state) override;
 
+		virtual void setSamplerState(const Edge::SamplerState& state, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
+		virtual void setBlendState(const Edge::BlendState& state) override;
+		virtual void setDepthStencilState(const Edge::DepthStencilState& state) override;
+
 		virtual void setConstantBuffer(const Edge::GPUBuffer& buffer, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
 
 		virtual void setVertexBuffers(uint32_t bufferCount, Edge::GPUBuffer** buffers, const Edge::InputLayoutDesc& inputLayoutDesc) override;
 		virtual void setIndexBuffer(Edge::GPUBuffer& buffer) override;
+
+		virtual void setShaderResource(const Edge::Texture2D& texture, uint32_t slot, Edge::GraphicContextBindingShaderStage shaderStages) override;
 
 		virtual void mapBuffer(Edge::GPUBuffer& buffer, Edge::GraphicResourceMappingType type, Edge::GraphicResourceMappingFlag flag, void** data) override;
 		virtual void unmapBuffer(Edge::GPUBuffer& buffer) override;
@@ -43,8 +49,35 @@ namespace EdgeD3D11
 		virtual void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount) override;
 
 		virtual void prepareMatrixForShader(const Edge::FloatMatrix4x4& originalMatrix, Edge::FloatMatrix4x4& destinationMatrix) override;
-		virtual void prepareMatrixForShader(const Edge::ComputeMatrix& originalMatrix, Edge::FloatMatrix4x4& destinationMatrix) override;
+		virtual void prepareMatrixForShader(Edge::FloatMatrix4x4& matrix) override;
 
-		virtual void* getNativeHandle() const override { return m_d3d11Context.Get(); }
+		virtual void prepareViewTransform(
+			const Edge::FloatVector3& viewPosition,
+			const Edge::FloatVector3& viewDirection,
+			const Edge::FloatVector3& upDirection,
+			Edge::FloatMatrix4x4& destinationMatrix
+		) override;
+		virtual void preparePerspectiveProjTransform(
+			float angle,
+			float aspectRatio,
+			float nearPlaneZ,
+			float farPlaneZ,
+			Edge::FloatMatrix4x4& destinationMatrix
+		) override;
+		virtual void prepareOrthogonalProjTransform(
+			float viewWidth,
+			float viewHeight,
+			float nearPlaneZ,
+			float farPlaneZ,
+			Edge::FloatMatrix4x4& destinationMatrix
+		) override;
+
+
+		virtual void* getNativeHandle() const override
+		{
+			return m_context.Get();
+		}
+
+		virtual void setName(const char* name) override;
 	};
 }

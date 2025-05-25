@@ -1,6 +1,8 @@
 #pragma once
 
-#include "MTReference.h"
+#include "EdgeCommon/Multithreading/SpinLock.h"
+
+#include "Reference.h"
 
 namespace Edge
 {
@@ -19,7 +21,7 @@ namespace Edge
 
 		void reset();
 
-		MTReference<T> getObject();
+		Reference<T> getObject();
 		bool isNull();
 
 	};
@@ -29,10 +31,10 @@ namespace Edge
 	{
 	public:
 		using WeakReferenceHandle = MTWeakReferenceHandle<T>;
-		using WeakReferenceHandleReference = MTReference<WeakReferenceHandle>;
+		using WeakReferenceHandleReference = Reference<WeakReferenceHandle>;
 
-		using ObjectReference = MTReference<T>;
-		using ObjectConstReference = MTConstReference<T>;
+		using ObjectReference = Reference<T>;
+		using ObjectConstReference = ConstReference<T>;
 
 	private:
 		mutable SpinLock m_lockState;

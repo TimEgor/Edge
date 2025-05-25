@@ -5,9 +5,12 @@
 #include "EdgeFramework/Graphics/GraphicPlatform/GraphicObject/Texture.h"
 #include "EdgeFramework/Graphics/Render/Renderer.h"
 
+#include "Font/FontController.h"
+
 #include "RenderDatas.h"
 
-namespace Edge {
+namespace Edge
+{
 	class AssetsDirectoryController;
 
 	class GraphicDevice;
@@ -17,28 +20,30 @@ namespace Edge {
 	class GPUBuffer;
 
 	class RasterizationState;
+	class SamplerState;
+	class BlendState;
+	class DepthStencilState;
 }
 
 namespace EdgeDefRender
 {
 	class DefaultRenderer final : public Edge::Renderer
 	{
-		struct CameraShaderData final
+		struct CameraProjectionTransformData final
 		{
-			CameraTransforms m_transforms;
+			Edge::FloatMatrix4x4 m_projTransform = Edge::FloatMatrix4x4Identity;
+		};
+
+		struct CameraTransformData final
+		{
+			Edge::FloatMatrix4x4 m_viewTransform = Edge::FloatMatrix4x4Identity;
 			Edge::Texture2DSize m_screenSize;
 		};
 
 	private:
-		Edge::DeferredGraphicContext* m_graphicContext = nullptr;
-		
-		Edge::RasterizationState* m_baseRasterizationState = nullptr;
-
-		Edge::Texture2D* m_depthBuffer = nullptr;
-
-		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
-
-		CameraShaderData m_cameraShaderData;
+		CameraProjectionTransformData m_perspectiveShaderData;
+		CameraProjectionTransformData m_orthogonalShaderData;
+		CameraTransformData m_cameraShaderData;
 
 		PointRenderData m_pointRenderData;
 		LineRenderData m_lineRenderData;
@@ -49,6 +54,24 @@ namespace EdgeDefRender
 		BoxRenderData m_wireframeBoxRenderData;
 		SphereRenderData m_sphereRenderData;
 		SphereRenderData m_wireframeSphereRenderData;
+		TextRenderData m_orientedWorldTextRenderData;
+		TextRenderData m_worldTextRenderData;
+		TextRenderData m_screenTextRenderData;
+
+		Font m_defaultFont;
+
+		Edge::DeferredGraphicContext* m_graphicContext = nullptr;
+
+		Edge::RasterizationState* m_baseRasterizationState = nullptr;
+		Edge::RasterizationState* m_orthogonalRasterizationState = nullptr;
+		Edge::SamplerState* m_baseSamplerState = nullptr;
+		Edge::BlendState* m_alphaBlendState = nullptr;
+		Edge::DepthStencilState* m_depthTestEnableState = nullptr;
+		Edge::DepthStencilState* m_depthTestDisableState = nullptr;
+		Edge::Texture2D* m_depthBuffer = nullptr;
+		Edge::GPUBuffer* m_perspectiveTransformBuffer = nullptr;
+		Edge::GPUBuffer* m_orthogonalTransformBuffer = nullptr;
+		Edge::GPUBuffer* m_cameraTransformBuffer = nullptr;
 
 		//init
 		bool initPointRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
@@ -65,6 +88,16 @@ namespace EdgeDefRender
 		bool initSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 		bool initWireframeSphereRenderData(Edge::GraphicDevice& device, const Edge::AssetsDirectoryController& assetsDirectoryController);
 
+		bool initTextRenderData(
+			Edge::GraphicDevice& device,
+			const Edge::AssetsDirectoryController& assetsDirectoryController,
+			TextRenderData& textRenderData,
+			bool isOrthoProj
+		);
+
+		bool initCameraTransformBuffers(Edge::GraphicDevice& device);
+		bool initDefaultFont(Edge::GraphicDevice& device);
+
 		//releasing
 		void releasePointRenderData();
 		void releaseLineRenderData();
@@ -79,6 +112,11 @@ namespace EdgeDefRender
 
 		void releaseSphereRenderData();
 		void releaseWireframeSphereRenderData();
+
+		void releaseTextRenderData(TextRenderData& textRenderData);
+
+		void releaseCameraTransformBuffers();
+		void releaseDefaultFont();
 
 		//preparation
 		void preparePointRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
@@ -95,9 +133,26 @@ namespace EdgeDefRender
 		void prepareSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 		void prepareWireframeSphereRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
 
-		static Edge::FloatVector3 calculateArrowHeadPerpendicular(const Edge::FloatVector3& arrowDirection);
+		void buildStringVertexBuffer(
+			RenderDataBufferCacheIterator& cacheIterator,
+			const std::string& text,
+			const Edge::FloatComputeMatrix4x4& transform,
+			PackedColor color
+		);
+		void prepareOrientedWorldTextRenderData(float deltaTime, const Edge::DebugVisualizationDataController& visualizationData);
+		void prepareWorldTextRenderData(
+			float deltaTime,
+			const Edge::DebugVisualizationDataController& visualizationData,
+			const Edge::Transform& cameraTransform
+		);
+		void prepareScreenTextRenderData(
+			float deltaTime,
+			const Edge::DebugVisualizationDataController& visualizationData,
+			const Edge::Texture2DSize& textureSize
+		);
 
 		void prepareDepthBuffer(const Edge::Texture2DSize& bufferSize);
+		void prepareCameraData() const;
 
 		//drawing
 		void drawPoints();
@@ -114,13 +169,24 @@ namespace EdgeDefRender
 		void drawSpheres();
 		void drawWireframeSpheres();
 
+		void drawTexts(const TextRenderData& worldRenderData);
+
+		static constexpr char DefaultFontName[] = "Consolas";
+		static constexpr uint32_t DefaultFontHeight = 50;
+		static Edge::FloatComputeVector3 CalculateArrowHeadPerpendicular(const Edge::FloatComputeVector3& arrowDirection);
+
 	public:
 		DefaultRenderer() = default;
 
 		virtual bool init() override;
 		virtual void release() override;
 
-		virtual void prepareData(const CameraTransforms& cameraTransforms, const Edge::DebugVisualizationDataController& visualizationData) override;
+		virtual void prepareData(
+			const Edge::Texture2D& targetTexture,
+			const CameraParams& cameraParams,
+			const Edge::Transform& cameraTransform,
+			const Edge::DebugVisualizationDataController& visualizationData
+		) override;
 		virtual void render(Edge::Texture2D& targetTexture) override;
 	};
 }

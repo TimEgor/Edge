@@ -5,29 +5,25 @@
 #include "VoronoiSimplex.h"
 
 Edge::VoronoiSimplex::Point Edge::MinkowskiSumBaseAlgorithmUtils::Support(
-	const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const FloatVector3& direction)
+	const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, const ComputeVector3& direction)
 {
 	VoronoiSimplex::Point result;
 
-	const ComputeVector point1 = collision1.getFurthestKeyPoint(direction);
-	const ComputeVector point2 = collision2.getFurthestKeyPoint(NegateVector(direction).getFloatVector3());
+	result.m_pointCollision1 = collision1.getFurthestKeyPoint(direction);
+	result.m_pointCollision2 = collision2.getFurthestKeyPoint(-direction);
 
-	const ComputeVector delta = point1 - point2;
-
-	delta.saveToFloatVector3(result.m_minkowskiDiff);
-	point1.saveToFloatVector3(result.m_pointCollision1);
-	point2.saveToFloatVector3(result.m_pointCollision2);
+	result.m_minkowskiDiff = result.m_pointCollision1 - result.m_pointCollision2;
 
 	return result;
 }
 
-bool Edge::MinkowskiSumBaseAlgorithmUtils::HasSimplexPoint(const VoronoiSimplex& simplex, const FloatVector3& minkowskiDiff)
+bool Edge::MinkowskiSumBaseAlgorithmUtils::HasSimplexPoint(const VoronoiSimplex& simplex, const ComputeVector3& minkowskiDiff)
 {
 	const uint32_t pointCount = simplex.getPointCount();
 	for (uint32_t pointIndex = 0; pointIndex < pointCount; ++pointIndex)
 	{
-		const FloatVector3& pointMinkowskiDiff = simplex.getPoint(pointIndex).m_minkowskiDiff;
-		if (IsVectorEqual(minkowskiDiff, pointMinkowskiDiff))
+		const ComputeVector3& pointMinkowskiDiff = simplex.getPoint(pointIndex).m_minkowskiDiff;
+		if (minkowskiDiff == pointMinkowskiDiff)
 		{
 			return true;
 		}
@@ -36,13 +32,13 @@ bool Edge::MinkowskiSumBaseAlgorithmUtils::HasSimplexPoint(const VoronoiSimplex&
 	return false;
 }
 
-bool Edge::MinkowskiSumBaseAlgorithmUtils::CheckCodirection(const ComputeVector& direction, const ComputeVector& vector)
+bool Edge::MinkowskiSumBaseAlgorithmUtils::CheckCodirection(const ComputeVector3& direction, const ComputeVector3& vector)
 {
-	return DotVector3(direction, vector) > Math::Epsilon;
+	return DotComputeVector3(direction, vector) > Math::Epsilon;
 	//return DotVector3(direction, vector) > 0.0f;
 }
 
-bool Edge::GJK::checkAndIterateSimplex(VoronoiSimplex& simplex, FloatVector3& direction) const
+bool Edge::GJK::checkAndIterateSimplex(VoronoiSimplex& simplex, ComputeVector3& direction) const
 {
 	switch (simplex.getPointCount())
 	{
@@ -54,58 +50,58 @@ bool Edge::GJK::checkAndIterateSimplex(VoronoiSimplex& simplex, FloatVector3& di
 	return false;
 }
 
-bool Edge::GJK::checkSimplex1D(VoronoiSimplex& simplex, FloatVector3& direction) const
+bool Edge::GJK::checkSimplex1D(VoronoiSimplex& simplex, ComputeVector3& direction) const
 {
 	const VoronoiSimplex::Point a = simplex.getPoint(0);
 	const VoronoiSimplex::Point b = simplex.getPoint(1);
 
-	const ComputeVector ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ao = NegateVector(a.m_minkowskiDiff);
+	const ComputeVector3 ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
+	const ComputeVector3 ao = -a.m_minkowskiDiff;
 
 	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ab, ao))
 	{
-		CrossVector3(CrossVector3(ab, ao), ab).saveToFloatVector3(direction);
+		direction = CrossComputeVector3(CrossComputeVector3(ab, ao), ab);
 	}
 	else
 	{
 		simplex.setPoint(a);
-		ao.saveToFloatVector3(direction);
+		direction = ao;
 	}
 
 	return false;
 }
 
-bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction) const
+bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, ComputeVector3& direction) const
 {
 	const VoronoiSimplex::Point a = simplex.getPoint(0);
 	const VoronoiSimplex::Point b = simplex.getPoint(1);
 	const VoronoiSimplex::Point c = simplex.getPoint(2);
 
-	const ComputeVector ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ac = c.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ao = NegateVector(a.m_minkowskiDiff);
+	const ComputeVector3 ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
+	const ComputeVector3 ac = c.m_minkowskiDiff - a.m_minkowskiDiff;
+	const ComputeVector3 ao = -a.m_minkowskiDiff;
 
-	const ComputeVector abcNormal = CrossVector3(ab, ac);
-	const ComputeVector abNormal = CrossVector3(ab, abcNormal);
-	const ComputeVector acNormal = CrossVector3(abcNormal, ac);
+	const ComputeVector3 abcNormal = CrossComputeVector3(ab, ac);
+	const ComputeVector3 abNormal = CrossComputeVector3(ab, abcNormal);
+	const ComputeVector3 acNormal = CrossComputeVector3(abcNormal, ac);
 
 	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(acNormal, ao))
 	{
 		if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ac, ao))
 		{
-			CrossVector3(CrossVector3(ac, ao), ac).saveToFloatVector3(direction);
+			direction = CrossComputeVector3(CrossComputeVector3(ac, ao), ac);
 			simplex.setPoints(a, c);
 		}
 		else
 		{
 			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ab, ao))
 			{
-				CrossVector3(CrossVector3(ab, ao), ab).saveToFloatVector3(direction);
+				direction = CrossComputeVector3(CrossComputeVector3(ab, ao), ab);
 				simplex.setPoints(a, b);
 			}
 			else
 			{
-				ao.saveToFloatVector3(direction);
+				direction = ao;
 				simplex.setPoint(a);
 			}
 		}
@@ -116,12 +112,12 @@ bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction)
 		{
 			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(ab, ao))
 			{
-				CrossVector3(CrossVector3(ab, ao), ab).saveToFloatVector3(direction);
+				direction = CrossComputeVector3(CrossComputeVector3(ab, ao), ab);
 				simplex.setPoints(a, b);
 			}
 			else
 			{
-				ao.saveToFloatVector3(direction);
+				direction = ao;
 				simplex.setPoint(a);
 			}
 		}
@@ -129,11 +125,11 @@ bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction)
 		{
 			if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(abcNormal, ao))
 			{
-				abcNormal.saveToFloatVector3(direction);
+				direction = abcNormal;
 			}
 			else
 			{
-				NegateVector(abcNormal).saveToFloatVector3(direction);
+				direction = -abcNormal;
 				simplex.setPoints(a, c, b);
 			}
 		}
@@ -142,21 +138,21 @@ bool Edge::GJK::checkSimplex2D(VoronoiSimplex& simplex, FloatVector3& direction)
 	return false;
 }
 
-bool Edge::GJK::checkSimplex3D(VoronoiSimplex& simplex, FloatVector3& direction) const
+bool Edge::GJK::checkSimplex3D(VoronoiSimplex& simplex, ComputeVector3& direction) const
 {
 	const VoronoiSimplex::Point a = simplex.getPoint(0);
 	const VoronoiSimplex::Point b = simplex.getPoint(1);
 	const VoronoiSimplex::Point c = simplex.getPoint(2);
 	const VoronoiSimplex::Point d = simplex.getPoint(3);
 
-	const ComputeVector ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ac = c.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ad = d.m_minkowskiDiff - a.m_minkowskiDiff;
-	const ComputeVector ao = NegateVector(a.m_minkowskiDiff);
+	const ComputeVector3 ab = b.m_minkowskiDiff - a.m_minkowskiDiff;
+	const ComputeVector3 ac = c.m_minkowskiDiff - a.m_minkowskiDiff;
+	const ComputeVector3 ad = d.m_minkowskiDiff - a.m_minkowskiDiff;
+	const ComputeVector3 ao = -a.m_minkowskiDiff;
 
-	const ComputeVector abcNormal = CrossVector3(ab, ac);
-	const ComputeVector acdNormal = CrossVector3(ac, ad);
-	const ComputeVector adbNormal = CrossVector3(ad, ab);
+	const ComputeVector3 abcNormal = CrossComputeVector3(ab, ac);
+	const ComputeVector3 acdNormal = CrossComputeVector3(ac, ad);
+	const ComputeVector3 adbNormal = CrossComputeVector3(ad, ab);
 
 	if (MinkowskiSumBaseAlgorithmUtils::CheckCodirection(abcNormal, ao)) {
 		simplex.setPoints(a, b, c);
@@ -183,18 +179,17 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 {
 	VoronoiSimplex simplex;
 
-	FloatVector3 direction;
-	(collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition()).normalize().saveToFloatVector3(direction);
+	ComputeVector3 direction = (collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition()).normalize();
 
 	VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, direction);
 	simplex.addPoint(supportPoint);
 
-	if (Vector3LengthSqr(supportPoint.m_minkowskiDiff) <= Math::EpsilonSqr)
+	if (supportPoint.m_minkowskiDiff.getLengthSqr() <= Math::EpsilonSqr)
 	{
 		return Result(simplex, Result::TestResult::Contact);
 	}
 
-	direction = NegateVector(supportPoint.m_minkowskiDiff).getFloatVector3();
+	direction = -supportPoint.m_minkowskiDiff;
 
 	Result::TestResult testResult = Result::TestResult::NoIntersection;
 
@@ -208,9 +203,9 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 			break;
 		}
 
-		NormalizeVector(direction).saveToFloatVector3(direction);
+		direction.normalize();
 
-		if (Vector3LengthSqr(direction) <= Math::EpsilonSqr)
+		if (direction.getLengthSqr() <= Math::EpsilonSqr)
 		{
 			testResult = Result::TestResult::FailedTesting;
 			break;
@@ -218,7 +213,7 @@ Edge::GJK::Result Edge::GJK::test(const PhysicsEntityCollision& collision1, cons
 
 		supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, direction);
 
-		if (Vector3LengthSqr(supportPoint.m_minkowskiDiff) <= Math::EpsilonSqr)
+		if (supportPoint.m_minkowskiDiff.getLengthSqr() <= Math::EpsilonSqr)
 		{
 			testResult = Result::TestResult::Contact;
 			break;
@@ -253,10 +248,10 @@ Edge::EPA::PolytopeFace::PolytopeFace(const VoronoiSimplex::Point& point1, const
 	m_points[1] = point2;
 	m_points[2] = point3;
 
-	CrossVector3(
+	m_normal = CrossComputeVector3(
 		point2.m_minkowskiDiff - point1.m_minkowskiDiff,
 		point3.m_minkowskiDiff - point1.m_minkowskiDiff
-	).normalize().saveToFloatVector3(m_normal);
+	).normalize();
 }
 
 Edge::EPA::PolytopeEdge::PolytopeEdge(const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2)
@@ -269,8 +264,8 @@ void Edge::EPA::addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const Vor
 {
 	for (auto iterator = edgeCollection.begin(); iterator != edgeCollection.end(); ++iterator)
 	{
-		if (IsVectorEqual(iterator->m_points[0].m_minkowskiDiff, point2.m_minkowskiDiff)
-			&& IsVectorEqual(iterator->m_points[1].m_minkowskiDiff, point1.m_minkowskiDiff))
+		if ((iterator->m_points[0].m_minkowskiDiff == point2.m_minkowskiDiff)
+			&& (iterator->m_points[1].m_minkowskiDiff == point1.m_minkowskiDiff))
 		{
 			edgeCollection.erase(iterator);
 			return;
@@ -286,62 +281,63 @@ void Edge::EPA::fillPointContactPointData(const PhysicsEntityCollision& collisio
 	contactPoint.m_position1 = gjkResult.m_simplex.getPoint(gjkResult.m_simplex.getPointCount() - 1).m_pointCollision1;
 	contactPoint.m_position2 = gjkResult.m_simplex.getPoint(gjkResult.m_simplex.getPointCount() - 1).m_pointCollision2;
 
-	(collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition())
-		.normalize().saveToFloatVector3(contactPoint.m_normal);
-	contactPoint.m_depth = 0.0f;
+	contactPoint.m_normal = (collision2.getTransform()->getPosition() - collision1.getTransform()->getPosition()).normalize();
+	contactPoint.m_depth = ComputeValueType(0.0);
 }
 
 bool Edge::EPA::fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const
 {
-	FloatVector4 barycentricCoords;
+	ComputeVector4 barycentricCoords;
 	const bool isValid = getBarycentricFaceProjection(face, barycentricCoords);
 	if (!isValid)
 	{
 		return false;
 	}
 
-	((barycentricCoords.m_x * face.m_points[0].m_pointCollision1)
-		+ (barycentricCoords.m_y * face.m_points[1].m_pointCollision1)
-		+ (barycentricCoords.m_z * face.m_points[2].m_pointCollision1)
-		).saveToFloatVector3(contactPoint.m_position1);
+	contactPoint.m_position1 = (
+		(barycentricCoords.getX() * face.m_points[0].m_pointCollision1) +
+		(barycentricCoords.getY() * face.m_points[1].m_pointCollision1) +
+		(barycentricCoords.getZ() * face.m_points[2].m_pointCollision1)
+		);
 
-	((barycentricCoords.m_x * face.m_points[0].m_pointCollision2)
-		+ (barycentricCoords.m_y * face.m_points[1].m_pointCollision2)
-		+ (barycentricCoords.m_z * face.m_points[2].m_pointCollision2)
-		).saveToFloatVector3(contactPoint.m_position2);
+	contactPoint.m_position2 = (
+		(barycentricCoords.getX() * face.m_points[0].m_pointCollision2) +
+		(barycentricCoords.getY() * face.m_points[1].m_pointCollision2) +
+		(barycentricCoords.getZ() * face.m_points[2].m_pointCollision2)
+		);
 
 	contactPoint.m_normal = face.m_normal;
-	contactPoint.m_depth = barycentricCoords.m_w;
+	contactPoint.m_depth = barycentricCoords.getW();
 
 	return true;
 }
 
-bool Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& face, Edge::FloatVector4& outProjection) const
+bool Edge::EPA::getBarycentricFaceProjection(const PolytopeFace& face, ComputeVector4& outProjection) const
 {
-	const float distanceFromOrigin = DotVector3(face.m_normal, face.m_points[0].m_minkowskiDiff);
-	const ComputeVector point = face.m_normal * distanceFromOrigin;
+	const ComputeValueType distanceFromOrigin = DotComputeVector3(face.m_normal, face.m_points[0].m_minkowskiDiff);
+	const ComputeVector3 point = face.m_normal * distanceFromOrigin;
 
-	const ComputeVector v0 = face.m_points[1].m_minkowskiDiff - face.m_points[0].m_minkowskiDiff;
-	const ComputeVector v1 = face.m_points[2].m_minkowskiDiff - face.m_points[0].m_minkowskiDiff;
-	const ComputeVector v2 = point - face.m_points[0].m_minkowskiDiff;
+	const ComputeVector3 v0 = face.m_points[1].m_minkowskiDiff - face.m_points[0].m_minkowskiDiff;
+	const ComputeVector3 v1 = face.m_points[2].m_minkowskiDiff - face.m_points[0].m_minkowskiDiff;
+	const ComputeVector3 v2 = point - face.m_points[0].m_minkowskiDiff;
 
-	const float d00 = DotVector3(v0, v0);
-	const float d01 = DotVector3(v0, v1);
-	const float d11 = DotVector3(v1, v1);
-	const float d20 = DotVector3(v2, v0);
-	const float d21 = DotVector3(v2, v1);
+	const ComputeValueType d00 = DotComputeVector3(v0, v0);
+	const ComputeValueType d01 = DotComputeVector3(v0, v1);
+	const ComputeValueType d11 = DotComputeVector3(v1, v1);
+	const ComputeValueType d20 = DotComputeVector3(v2, v0);
+	const ComputeValueType d21 = DotComputeVector3(v2, v1);
 
-	const float denom = d00 * d11 - d01 * d01;
-	if (denom <= 0.0f)
+	const ComputeValueType denom = d00 * d11 - d01 * d01;
+	if (denom <= ComputeValueType(0.0))
 	{
 		return false;
 	}
 
-	const float v = (d11 * d20 - d01 * d21) / denom;
-	const float w = (d00 * d21 - d01 * d20) / denom;
-	const float u = 1.0f - v - w;
+	const ComputeValueType v = (d11 * d20 - d01 * d21) / denom;
+	const ComputeValueType w = (d00 * d21 - d01 * d20) / denom;
+	const ComputeValueType u = ComputeValueType(1.0) - v - w;
 
-	outProjection = FloatVector4(u, v, w, distanceFromOrigin);
+	outProjection = ComputeVector4(u, v, w, distanceFromOrigin);
 
 	return true;
 }
@@ -375,13 +371,13 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 			break;
 		}
 
-		float minDistance = Math::FltMax;
+		ComputeValueType minDistance = Math::Max;
 
 		std::list<PolytopeFace>::iterator closestFace = polytopeFaces.begin();
 
 		for (auto iterator = polytopeFaces.begin(); iterator != polytopeFaces.end(); ++iterator)
 		{
-			const float distance = DotVector3(iterator->m_normal, iterator->m_points[0].m_minkowskiDiff);
+			const ComputeValueType distance = DotComputeVector3(iterator->m_normal, iterator->m_points[0].m_minkowskiDiff);
 			if (distance < minDistance)
 			{
 				minDistance = distance;
@@ -391,7 +387,7 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 
 		const VoronoiSimplex::Point supportPoint = MinkowskiSumBaseAlgorithmUtils::Support(collision1, collision2, closestFace->m_normal);
 
-		if (DotVector3(closestFace->m_normal, supportPoint.m_minkowskiDiff) - minDistance < 0.0001f)
+		if (DotComputeVector3(closestFace->m_normal, supportPoint.m_minkowskiDiff) - minDistance < ComputeValueType(0.0001))
 		{
 			return fillFaceContactPointData(*closestFace, contactPointData);
 		}
@@ -424,7 +420,7 @@ bool Edge::EPA::calcEPAContact(const PhysicsEntityCollision& collision1, const P
 }
 
 bool Edge::EPA::getContactPoint(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
-                                const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const
+	const GJK::Result& gjkResult, uint32_t maxIterationCount, PhysicsCollisionContactPoint& contactPointData) const
 {
 	if (gjkResult.m_simplex.getPointCount() == 0)
 	{

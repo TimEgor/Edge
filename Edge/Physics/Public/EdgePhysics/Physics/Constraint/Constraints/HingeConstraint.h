@@ -1,34 +1,53 @@
 #pragma once
 
-#include "EdgeCommon/Math/Vector.h"
-
 #include "EdgePhysics/Physics/Constraint/TwoPhysicsEntityConstraint.h"
+#include "EdgePhysics/Physics/Constraint/Motors/AngularAxisConstraintMotor.h"
 #include "EdgePhysics/Physics/Constraint/Parts/AxisRotationConstraintPart.h"
 #include "EdgePhysics/Physics/Constraint/Parts/KeepPositionConstraintPart.h"
 
 namespace Edge
 {
-	class HingeConstraint final : public TwoPhysicsEntityConstraint
+	class HingeConstraint : public TwoPhysicsEntityConstraint
 	{
 	private:
-		KeepPositionConstraintPart m_positionPart;
-		AxisRotationConstraintPart m_axisRotationPart;
+		AngularAxisConstraintMotorReference m_motor;
 
-		FloatVector3 m_anchor1 = FloatVector3Zero;
-		FloatVector3 m_anchor2 = FloatVector3Zero;
-		FloatVector3 m_axis1 = FloatVector3Zero;
-		FloatVector3 m_axis2 = FloatVector3Zero;
+		KeepPositionConstraintPart m_positionPart;
+		AxisRotationConstraintPart m_rotationPart;
+
+	protected:
+		ComputeQuaternion m_initialRotationDelta = ComputeQuaternionIdentity;
+
+		ComputeVector3 m_anchor1 = ComputeVector3Zero;
+		ComputeVector3 m_anchor2 = ComputeVector3Zero;
+		ComputeVector3 m_axis1 = ComputeVector3Zero;
+		ComputeVector3 m_axis2 = ComputeVector3Zero;
 
 	public:
-		HingeConstraint(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-			const FloatVector3& anchor1, const FloatVector3& anchor2,
-			const FloatVector3& axis1, const FloatVector3& axis2);
+		HingeConstraint(
+			const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+			const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+			const ComputeVector3& axis1, const ComputeVector3& axis2
+		);
 
-		virtual void preSolve(float deltaTime) override;
+		virtual void preSolve(ComputeValueType deltaTime) override;
 		virtual void warmUp() override;
-		virtual void solveVelocity() override;
-		virtual void solvePosition() override;
+		virtual void solveVelocity(ComputeValueType deltaTime) override;
+		virtual void solvePosition(ComputeValueType deltaTime) override;
 
-		EDGE_PHYSICS_CONSTRAINT_TYPE(HINDGE)
+		void setMotor(const AngularAxisConstraintMotorReference& motor);
+		AngularAxisConstraintMotorReference getMotor() const;
+
+		ComputeValueType getCurrentAngle() const;
+
+		EDGE_RTTI_VIRTUAL(HingeConstraint, TwoPhysicsEntityConstraint)
 	};
+
+	EDGE_REFERENCE(HingeConstraint);
+
+	HingeConstraintReference CreateHingeConstraintInWorldSpace(
+		const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
+		const ComputeVector3& anchor1, const ComputeVector3& anchor2,
+		const ComputeVector3& axis1, const ComputeVector3& axis2
+	);
 }

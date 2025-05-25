@@ -11,7 +11,7 @@ void Edge::ManifoldContactGenerator::generate(const PhysicsEntityCollision& coll
                                               const PhysicsCollisionContactPoint& contactPoint, PhysicsContactManifold& manifold) const
 {
 	PhysicsEntityCollisionShape::SupportingFaceVertexCollection supportingFace1;
-	collision1.getSupportingFace(NegateVector(contactPoint.m_normal).getFloatVector3(), supportingFace1);
+	collision1.getSupportingFace(-contactPoint.m_normal, supportingFace1);
 
 	PhysicsEntityCollisionShape::SupportingFaceVertexCollection supportingFace2;
 	collision2.getSupportingFace(contactPoint.m_normal, supportingFace2);
@@ -29,29 +29,29 @@ void Edge::ManifoldContactGenerator::generate(const PhysicsEntityCollision& coll
 			ClippingPoly::ClipPolyVsEdge(supportingFace2, supportingFace1[0], supportingFace1[1], contactPoint.m_normal, clippedFace);
 		}
 
-		FloatVector3 faceOrigin = supportingFace1[0];
-		ComputeVector edge = supportingFace1[1] - faceOrigin;
+		const ComputeVector3 faceOrigin = supportingFace1[0];
+		const ComputeVector3 edge = supportingFace1[1] - faceOrigin;
 
-		ComputeVector faceNormal;
+		ComputeVector3 faceNormal;
 		if (supportingFace1.size() >= 3)
 		{
-			faceNormal = CrossVector3(edge, supportingFace1[2] - faceOrigin);
+			faceNormal = CrossComputeVector3(edge, supportingFace1[2] - faceOrigin);
 		}
 		else
 		{
-			faceNormal = CrossVector3(CrossVector3(edge, contactPoint.m_normal), edge);
+			faceNormal = CrossComputeVector3(CrossComputeVector3(edge, contactPoint.m_normal), edge);
 		}
 
-		const float faceNormalLength = faceNormal.getLengthSqr3();
-		if (faceNormalLength > 0.0f)
+		const ComputeValueType faceNormalLength = faceNormal.getLength();
+		if (faceNormalLength > ComputeValueType(0.0))
 		{
-			for (const FloatVector3& p2 : clippedFace)
+			for (const ComputeVector3& p2 : clippedFace)
 			{
-				const float distance = DotVector3(p2 - faceOrigin, faceNormal);
-				static constexpr float distanceTolerance = 0.001f;
-				if (distance <= 0.0f || sqrtf(distance) < distanceTolerance * faceNormalLength)
+				const ComputeValueType distance = DotComputeVector3(p2 - faceOrigin, faceNormal);
+				static constexpr ComputeValueType distanceTolerance = ComputeValueType(0.001);
+				if (distance <= ComputeValueType(0.0) || sqrt(distance) < distanceTolerance * faceNormalLength)
 				{
-					FloatVector3 p1 = (p2 - (distance / faceNormalLength) * faceNormal).getFloatVector3();
+					const ComputeVector3 p1 = p2 - (distance / faceNormalLength) * faceNormal;
 
 					manifold.m_positions1.push_back(p1);
 					manifold.m_positions2.push_back(p2);

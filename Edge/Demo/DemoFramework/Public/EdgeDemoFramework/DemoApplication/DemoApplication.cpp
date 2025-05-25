@@ -2,15 +2,11 @@
 
 #include "EdgeCommon/UtilsMacros.h"
 #include "EdgeCommon/FileName/FileName.h"
-#include "EdgeCommon/Math/ComputeMatrix.h"
-#include "EdgeCommon/Math/Const.h"
 #include "EdgeCommon/Profile/Profile.h"
 
 #include "EdgeFramework/Graphics/GraphicPresenter/WindowGraphicPresenter.h"
 #include "EdgeFramework/Graphics/Render/RenderController.h"
 #include "EdgeFramework/Input/InputDeviceController/InputDeviceController.h"
-#include "EdgeFramework/Input/InputDeviceController/Devices/Keyboard.h"
-#include "EdgeFramework/Input/InputDeviceController/Devices/Mouse.h"
 #include "EdgeFramework/PluginController/PluginController.h"
 
 #include "EdgeDemoFramework/Demo/Demo.h"
@@ -68,10 +64,11 @@ Edge::JobGraphReference EdgeDemo::DemoApplication::getMainLoopJobGraph()
 		Edge::createLambdaJob([this]()
 			{
 				const Edge::DebugVisualizationDataController& visualizationData = m_demo->getDebugVisualizationData();
-				Edge::Renderer::CameraTransforms cameraTransforms;
-				prepareCameraTransforms(cameraTransforms);
+				Edge::Renderer::CameraParams cameraParams;
+				Edge::Transform cameraTransform;
+				prepareCameraData(cameraParams, cameraTransform);
 
-				getRenderController().prepareData(cameraTransforms, visualizationData);
+				getRenderController().prepareData(*getWindowGraphicPresenter().getTargetTexture(), cameraParams, cameraTransform, visualizationData);
 			}, "Renderer prepare")
 	);
 
@@ -97,17 +94,14 @@ void EdgeDemo::DemoApplication::update(float deltaTime)
 	}
 }
 
-void EdgeDemo::DemoApplication::prepareCameraTransforms(Edge::Renderer::CameraTransforms& cameraTransforms) const
+void EdgeDemo::DemoApplication::prepareCameraData(Edge::Renderer::CameraParams& cameraParams, Edge::Transform& cameraTransform) const
 {
-	const Edge::Transform& demoCameraTransform = m_demo->getCameraTransform();
+	cameraTransform = m_demo->getCameraTransform();
 
-	Edge::ComputeMatrix cameraTransform = Edge::ComputeMatrix(Edge::ComputeMath::matrixLookToLH(
-		Edge::ComputeVector(demoCameraTransform.getOrigin()).m_vector,
-		Edge::ComputeVector(demoCameraTransform.getAxisZ()).m_vector, Edge::ComputeVector(demoCameraTransform.getAxisY()).m_vector));
-	cameraTransform.saveToMatrix4x4(cameraTransforms.m_viewTransform);
-
-	cameraTransform = Edge::ComputeMatrix(Edge::ComputeMath::matrixPerspectiveFovLH(90.0f * Edge::Math::DegToRad, 1.0f, 0.05f, 1000.0f));
-	cameraTransform.saveToMatrix4x4(cameraTransforms.m_projTransform);
+	cameraParams.m_FoV = Edge::Math::ConvertDegToRad(90.0f);
+	cameraParams.m_ratio = 1.0f;
+	cameraParams.m_nearPlaneDistance = 0.05f;
+	cameraParams.m_farPlaneDistance = 1000.0f;
 }
 
 bool EdgeDemo::DemoApplication::init()

@@ -1,10 +1,10 @@
 #include "FireworksController.h"
 
 #include "EdgeCommon/Random/Random.h"
-#include "EdgeCommon/Math/ComputeVector.h"
+#include "EdgeCommon/Math/ComputeVector3.h"
 
 EdgeDemo::FireworksParticleController::FireworksParticleController(const Edge::PhysicsSceneReference& physScene,
-	const Edge::FloatVector3& minSpawnAreaPos, const Edge::FloatVector3& maxSpawnAreaPos)
+	const Edge::ComputeVector3& minSpawnAreaPos, const Edge::ComputeVector3& maxSpawnAreaPos)
 	: m_physScene(physScene), m_minSpawnAreaPos(minSpawnAreaPos), m_maxSpawnAreaPos(maxSpawnAreaPos)
 {
 	m_fireworksParticles.init();
@@ -17,58 +17,58 @@ EdgeDemo::FireworksParticleController::~FireworksParticleController()
 
 void EdgeDemo::FireworksParticleController::spawn()
 {
-	const Edge::FloatVector3 color = generateColor();
-	const Edge::FloatVector3 position = generatePosition(m_minSpawnAreaPos, m_maxSpawnAreaPos);
+	const Edge::ComputeVector3 color = generateColor();
+	const Edge::ComputeVector3 position = generatePosition(m_minSpawnAreaPos, m_maxSpawnAreaPos);
 
-	const float baseLifetime = Edge::RandomFloat(minParticleLifetime, maxParticleLifetime);
+	const Edge::ComputeValueType baseLifetime = Edge::TypedRandom(minParticleLifetime, maxParticleLifetime);
 
-	const float baseExplositionForce = Edge::RandomFloat(minExplosionForce, maxExplosionForce);
+	const Edge::ComputeValueType baseExplositionForce = Edge::TypedRandom(minExplosionForce, maxExplosionForce);
 
-	const uint32_t particleCount = Edge::RandomUInt32(minParticleCount, maxParticleCount);
+	const uint32_t particleCount = Edge::TypedRandom(minParticleCount, maxParticleCount);
 	for (uint32_t particleIndex = 0; particleIndex < particleCount; ++particleIndex)
 	{
-		const float lifetime = baseLifetime + Edge::RandomFloat(particleLifetimeRange);
-		const float explosionForce = baseExplositionForce + Edge::RandomFloat(explosionForceRange);
+		const Edge::ComputeValueType lifetime = baseLifetime + Edge::TypedRandom(particleLifetimeRange);
+		const Edge::ComputeValueType explosionForce = baseExplositionForce + Edge::TypedRandom(explosionForceRange);
 
-		Edge::ComputeVector dir(generatePosition(Edge::FloatVector3NegativeOne, Edge::FloatVector3One));
+		Edge::ComputeVector3 dir(generatePosition(Edge::ComputeVector3NegativeOne, Edge::ComputeVector3One));
 		dir.normalize();
 
 		ParticleCollection::NewElementInfo newParticleInfo = m_fireworksParticles.addElementRaw();
 		FireworksParticle* newParticle = new (newParticleInfo.m_elementPtr) FireworksParticle(
-			newParticleInfo.m_elementHandle.getKey(), m_physScene, color, lifetime, position, dir.getFloatVector3(), explosionForce);
+			newParticleInfo.m_elementHandle.getKey(), m_physScene, color, lifetime, position, dir, explosionForce);
 
 		m_fireworksParticlePtrs.push_back(newParticle);
 	}
 }
 
-Edge::FloatVector3 EdgeDemo::FireworksParticleController::generateColor()
+Edge::ComputeVector3 EdgeDemo::FireworksParticleController::generateColor()
 {
-	Edge::FloatVector3 color = Edge::FloatVector3Zero;
+	Edge::ComputeVector3 color = Edge::ComputeVector3Zero;
 
 	uint32_t elements[3] = { 0, 1, 2 };
 
-	uint32_t colorElementIndex = Edge::RandomUInt32(2);
+	uint32_t colorElementIndex = Edge::TypedRandom(2);
 	uint32_t colorElelement = elements[colorElementIndex];
 	elements[colorElementIndex] = elements[2];
 	color[colorElelement] = 1.0f;
 
-	colorElementIndex = Edge::RandomUInt32(1);
+	colorElementIndex = Edge::TypedRandom(1);
 	colorElelement = elements[colorElementIndex];
 	elements[colorElementIndex] = elements[1];
 	color[colorElelement] = 0.0f;
 
 	colorElelement = elements[0];
-	color[colorElelement] = Edge::RandomFloat(1.0f);
+	color[colorElelement] = Edge::TypedRandom(1.0f);
 
 	return color;
 }
 
-Edge::FloatVector3 EdgeDemo::FireworksParticleController::generatePosition(const Edge::FloatVector3& minPos, const Edge::FloatVector3& maxPos)
+Edge::ComputeVector3 EdgeDemo::FireworksParticleController::generatePosition(const Edge::ComputeVector3& minPos, const Edge::ComputeVector3& maxPos)
 {
-	return Edge::FloatVector3(
-		Edge::RandomFloat(minPos.m_x, maxPos.m_x),
-		Edge::RandomFloat(minPos.m_y, maxPos.m_y),
-		Edge::RandomFloat(minPos.m_z, maxPos.m_z)
+	return Edge::ComputeVector3(
+		Edge::TypedRandom(minPos.getX(), maxPos.getX()),
+		Edge::TypedRandom(minPos.getY(), maxPos.getY()),
+		Edge::TypedRandom(minPos.getZ(), maxPos.getZ())
 	);
 }
 
@@ -97,7 +97,7 @@ void EdgeDemo::FireworksParticleController::update(float deltaTime)
 	{
 		spawn();
 
-		m_spawningTimeDelay = Edge::RandomFloat(minSpawningDelay, maxSpawningDelay);
+		m_spawningTimeDelay = Edge::TypedRandom(minSpawningDelay, maxSpawningDelay);
 	}
 }
 
@@ -106,6 +106,6 @@ void EdgeDemo::FireworksParticleController::fillRenderData(
 {
 	for (const FireworksParticle* particle : m_fireworksParticlePtrs)
 	{
-		debugVisualizationData.addPoint(particle->getPosition(), particle->getColor());
+		debugVisualizationData.addPoint(particle->getPosition().getFloatVector3(), particle->getColor().getFloatVector3());
 	}
 }

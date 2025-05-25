@@ -26,7 +26,7 @@ void Edge::PhysicsSceneEntityManager::release()
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_entityCollection);
 }
 
-Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getAccelerationApplyingJobGraph(float deltaTime, const FloatVector3& gravity)
+Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getAccelerationApplyingJobGraph(float deltaTime, const ComputeVector3& gravity)
 {
 	JobGraphBuilder m_graphBuilder;
 
@@ -54,7 +54,7 @@ Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getVelocityIntegrationJ
 	return m_graphBuilder.getGraph();
 }
 
-void Edge::PhysicsSceneEntityManager::applyAcceleration(float deltaTime, const FloatVector3& gravity)
+void Edge::PhysicsSceneEntityManager::applyAcceleration(float deltaTime, const ComputeVector3& gravity)
 {
 	const PhysicsSceneActiveEntityCollection::EntityCollection& activeEntityIDs = m_activeEntityCollection->getEntities();
 

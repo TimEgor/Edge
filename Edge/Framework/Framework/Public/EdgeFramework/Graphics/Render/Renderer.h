@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EdgeCommon/Math/Matrix.h"
+#include "EdgeCommon/Math/Transform.h"
 
 namespace Edge
 {
@@ -10,10 +11,12 @@ namespace Edge
 	class Renderer
 	{
 	public:
-		struct CameraTransforms final
+		struct CameraParams final
 		{
-			FloatMatrix4x4 m_viewTransform = FloatMatrix4x4Identity;
-			FloatMatrix4x4 m_projTransform = FloatMatrix4x4Identity;
+			float m_FoV = 90.0f;
+			float m_ratio = 1.0f;
+			float m_nearPlaneDistance = 0.05f;
+			float m_farPlaneDistance = 1000.0f;
 		};
 
 		Renderer() = default;
@@ -22,7 +25,12 @@ namespace Edge
 		virtual bool init() = 0;
 		virtual void release() = 0;
 
-		virtual void prepareData(const CameraTransforms& cameraTransforms, const DebugVisualizationDataController& visualizationData) = 0;
+		virtual void prepareData(
+			const Texture2D& targetTexture,
+			const CameraParams& cameraParams,
+			const Transform& cameraTransform,
+			const DebugVisualizationDataController& visualizationData
+		) = 0;
 		virtual void render(Texture2D& targetTexture) = 0;
 	};
 }

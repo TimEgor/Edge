@@ -1,60 +1,127 @@
 #pragma once
 
-#include "ComputeMatrix.h"
-#include "ComputeMath/ComputeQuaternion.h"
+#include "ComputeMatrix44.h"
+#include "ComputeVector4.h"
+#include "Quaternion.h"
 
 namespace Edge
 {
-	class ComputeQuaternion final
+	template <typename T>
+	class ComputeQuaternionBase final
 	{
 	public:
-		ComputeMath::Quaternion m_quaternion;
+		using ValueType = T;
+		static_assert(std::is_arithmetic_v<ValueType>);
 
-		ComputeQuaternion() = default;
-		ComputeQuaternion(const ComputeMath::Quaternion& quaternion);
-		ComputeQuaternion(const FloatQuaternion& quaternion);
-		ComputeQuaternion(const ComputeQuaternion& quaternion) = default;
+		using QuaternionType = QuaternionBase<ValueType>;
 
-		ComputeQuaternion& operator=(const ComputeQuaternion& quaternion) = default;
+	private:
+		union
+		{
+			QuaternionType m_quaternion;
 
-		ComputeQuaternion& operator*=(const ComputeQuaternion& quaternion);
+			ComputeVector4Base<ValueType> m_xyzw;
 
-		ComputeQuaternion& setupFromRotationAxis(const ComputeVector& axis, float angle);
-		ComputeQuaternion& setupFromRotationMatrix(const ComputeMatrix& rotation);
-		ComputeQuaternion& setupFromRollPitchYaw(const ComputeVector& angles);
-		ComputeQuaternion& setupFromRollPitchYaw(float pitch, float yaw, float roll);
+			ComputeVector3Base<ValueType> m_xyz;
+		};
 
-		ComputeQuaternion& normalize();
-		ComputeQuaternion& conjugate();
-		ComputeQuaternion& inverse();
 
-		ComputeVector getVector() const;
+	public:
+		constexpr ComputeQuaternionBase()
+			: m_quaternion() {}
+		constexpr ComputeQuaternionBase(ValueType x, ValueType y, ValueType z, ValueType w)
+			: m_quaternion(x, y, z, w) {}
+		constexpr ComputeQuaternionBase(const QuaternionType& quaternion)
+			: m_quaternion(quaternion) {}
+		constexpr ComputeQuaternionBase(const ComputeVector4Base<ValueType>& vector)
+			: m_xyzw(vector) {}
+		constexpr ComputeQuaternionBase(const ComputeQuaternionBase& quaternion)
+			: m_quaternion(quaternion.m_quaternion) {}
 
-		float length() const;
-		float lengthSqr() const;
+		explicit ComputeQuaternionBase(const ComputeMatrix3x3Base<ValueType>& matrix);
+		explicit ComputeQuaternionBase(const ComputeMatrix4x4Base<ValueType>& matrix);
+		explicit ComputeQuaternionBase(const ComputeVector3Base<ValueType>& axis, ValueType angle);
 
-		void loadFromFloatQuaternion(const FloatQuaternion& quaternion);
+		ComputeQuaternionBase& operator=(const ComputeQuaternionBase& quaternion);
 
-		void saveToFloatQuaternion(FloatQuaternion& quaternion) const;
+		bool operator==(const ComputeQuaternionBase& quaternion) const;
+		bool operator!=(const ComputeQuaternionBase& quaternion) const;
 
-		FloatQuaternion getFloatQuaternion() const;
+		ComputeQuaternionBase& operator*=(const ComputeQuaternionBase& quaternion);
+
+		ValueType operator[](uint32_t index) const { return getElement(index); }
+		ValueType& operator[](uint32_t index) { return getElement(index); }
+
+		ValueType getElement(uint32_t index) const { return m_quaternion.m_elements.getElement(index); }
+		ValueType& getElement(uint32_t index) { return m_quaternion.m_elements.getElement(index); }
+
+		ComputeQuaternionBase& setupFromRotationMatrix3x3(const ComputeMatrix3x3Base<ValueType>& matrix);
+		ComputeQuaternionBase& setupFromRotationMatrix4x4(const ComputeMatrix4x4Base<ValueType>& matrix);
+		ComputeQuaternionBase& setupFromAxisAngle(const ComputeVector3Base<ValueType>& axis, ValueType angle);
+		ComputeQuaternionBase& setupFromRollPitchYaw(const ComputeVector3Base<ValueType>& angles);
+		ComputeQuaternionBase& setupFromRollPitchYaw(ValueType pitch, ValueType yaw, ValueType roll);
+
+		ValueType getX() const { return m_quaternion.m_elements.m_x; }
+		ValueType getY() const { return m_quaternion.m_elements.m_y; }
+		ValueType getZ() const { return m_quaternion.m_elements.m_z; }
+		ValueType getW() const { return m_quaternion.m_elements.m_w; }
+		ValueType& getX() { return m_quaternion.m_elements.m_x; }
+		ValueType& getY() { return m_quaternion.m_elements.m_y; }
+		ValueType& getZ() { return m_quaternion.m_elements.m_z; }
+		ValueType& getW() { return m_quaternion.m_elements.m_w; }
+		void setX(ValueType value) { m_quaternion.m_elements.m_x = value; }
+		void setY(ValueType value) { m_quaternion.m_elements.m_y = value; }
+		void setZ(ValueType value) { m_quaternion.m_elements.m_z = value; }
+		void setW(ValueType value) { m_quaternion.m_elements.m_w = value; }
+
+		const ComputeVector4Base<ValueType>& getVector() const { return m_xyzw; }
+		ComputeVector4Base<ValueType>& getVector() { return m_xyzw; }
+		const ComputeVector3Base<ValueType>& getXYZ() const { return m_xyz; }
+		ComputeVector3Base<ValueType>& getXYZ() { return m_xyz; }
+
+		ValueType getLength() const;
+		ValueType getLengthSqr() const;
+
+		ValueType dot(const ComputeQuaternionBase& quaternion) const;
+
+		ComputeQuaternionBase& normalize();
+		ComputeQuaternionBase& conjugate();
+		ComputeQuaternionBase& invert();
+
+		ComputeVector3Base<ValueType> rotate(const ComputeVector3Base<ValueType>& vector) const;
+		void rotate(const ComputeVector3Base<ValueType>& vector, ComputeVector3Base<ValueType>& out) const;
+
+		bool isEqual(const ComputeQuaternionBase& quaternion, ValueType epsilon = Math::TypedEpsilon<ValueType>()) const;
+		bool isUnit() const;
+		bool isZero() const;
+
+		ComputeMatrix3x3Base<ValueType> getRotationMatrix3x3() const;
+		void getRotationMatrix3x3(ComputeMatrix3x3Base<ValueType>& matrix) const;
+		ComputeMatrix4x4Base<ValueType> getRotationMatrix4x4() const;
+		void getRotationMatrix4x4(ComputeMatrix4x4Base<ValueType>& matrix) const;
+
+		ValueType getAxisAngle(const ComputeVector3Base<ValueType>& axis) const;
+
+		ComputeVector3Base<ValueType> getEulerAngles() const;
+		void getEulerAngles(ComputeVector3Base<ValueType>& angles) const;
 	};
 
-	ComputeQuaternion ComputeQuaternionFromRotationAxis(const ComputeVector& axis, float angle);
-	ComputeQuaternion ComputeQuaternionFromRotationMatrix(const ComputeMatrix& rotation);
-	ComputeQuaternion ComputeQuaternionFromRollPitchYaw(const ComputeVector& angles);
-	ComputeQuaternion ComputeQuaternionFromRollPitchYaw(float pitch, float yaw, float roll);
+	template <typename T>
+	ComputeQuaternionBase<T> operator*(const ComputeQuaternionBase<T>& quaternion1, const ComputeQuaternionBase<T>& quaternion2);
 
-	ComputeQuaternion NormalizeQuaternion(const ComputeQuaternion& quaternion);
-	ComputeQuaternion ConjugateQuaternion(const ComputeQuaternion& quaternion);
-	ComputeQuaternion InverseQuaternion(const ComputeQuaternion& quaternion);
+	template <typename T>
+	ComputeQuaternionBase<T> ConjugateComputeQuaternion(const ComputeQuaternionBase<T>& quaternion);
 
-	ComputeVector RotateVector(const ComputeQuaternion& quaternion, const ComputeVector& vector);
+	template <typename T>
+	constexpr ComputeQuaternionBase<T> ComputeQuaternionZeroBase() { return ComputeQuaternionBase<T>(T(0.0), T(0.0), T(0.0), T(0.0)); }
+	template <typename T>
+	constexpr ComputeQuaternionBase<T> ComputeQuaternionIdentityBase() { return ComputeQuaternionBase<T>(T(0.0), T(0.0), T(0.0), T(1.0)); }
 
-	float QuaternionLength(const ComputeQuaternion& quaternion);
-	float QuaternionLengthSqr(const ComputeQuaternion& quaternion);
+	using ComputeQuaternion = ComputeQuaternionBase<ComputeValueType>;
+	using FloatComputeQuaternion = ComputeQuaternionBase<float>;
 
-	float DotQuaternion(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2);
-
-	ComputeQuaternion operator*(const ComputeQuaternion& quaternion1, const ComputeQuaternion& quaternion2);
+	inline constexpr ComputeQuaternion ComputeQuaternionZero = ComputeQuaternionZeroBase<ComputeValueType>();
+	inline constexpr ComputeQuaternion ComputeQuaternionIdentity = ComputeQuaternionIdentityBase<ComputeValueType>();
 }
+
+#include "ComputeQuaternion.hpp"

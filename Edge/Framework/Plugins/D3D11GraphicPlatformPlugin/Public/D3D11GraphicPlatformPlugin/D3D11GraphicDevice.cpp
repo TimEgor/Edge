@@ -4,15 +4,18 @@
 #include "EdgeCommon/String/Format.h"
 #include "EdgeCommon/String/StringConverter.h"
 
-#include "GraphicObjects/D3D11SwapChain.h"
+#include "GraphicObjects/D3D11BlendState.h"
+#include "GraphicObjects/D3D11GPUBuffer.h"
+#include "GraphicObjects/D3D11InputLayout.h"
+#include "GraphicObjects/D3D11RasterizationState.h"
+#include "GraphicObjects/D3D11SamplerState.h"
 #include "GraphicObjects/D3D11Shaders.h"
+#include "GraphicObjects/D3D11SwapChain.h"
 
 #include "D3D11DeferredContext.h"
 
 #include "d3dcompiler.h"
-#include "GraphicObjects/D3D11GPUBuffer.h"
-#include "GraphicObjects/D3D11InputLayout.h"
-#include "GraphicObjects/D3D11RasterizationState.h"
+#include "GraphicObjects/D3D11DepthStencilState.h"
 
 EdgeD3D11::D3D11GraphicDevice::D3D11GraphicDevice()
 	: GraphicDevice()
@@ -50,14 +53,14 @@ Edge::SwapChain* EdgeD3D11::D3D11GraphicDevice::createSwapChain(const Edge::Swap
 	return new D3D11SwapChain(desc, m_d3d11Device, m_dxgiFactory, window);
 }
 
-Edge::GPUBuffer* EdgeD3D11::D3D11GraphicDevice::createBuffer(const Edge::GPUBufferDesc& desc, const Edge::InitialGPUBufferData* initialData)
+Edge::GPUBuffer* EdgeD3D11::D3D11GraphicDevice::createBuffer(const Edge::GPUBufferDesc& desc, const Edge::InitialGraphicResourceData* initialData)
 {
 	return new D3D11GPUBuffer(desc, m_d3d11Device, initialData);
 }
 
-Edge::Texture2D* EdgeD3D11::D3D11GraphicDevice::createTexture2D(const Edge::Texture2DDesc& desc)
+Edge::Texture2D* EdgeD3D11::D3D11GraphicDevice::createTexture2D(const Edge::Texture2DDesc& desc, const Edge::InitialGraphicResourceData* initialData)
 {
-	return new D3D11Texture2D(desc, m_d3d11Device);
+	return new D3D11Texture2D(desc, m_d3d11Device, initialData);
 }
 
 EdgeD3D11::D3DBlobComPtr EdgeD3D11::D3D11GraphicDevice::compileShader(const void* srcs, size_t size,
@@ -224,6 +227,21 @@ Edge::InputLayout* EdgeD3D11::D3D11GraphicDevice::createInputLayout(const Edge::
 Edge::RasterizationState* EdgeD3D11::D3D11GraphicDevice::createRasterizationState(const Edge::RasterizationStateDesc& desc)
 {
 	return new D3D11RasterizationState(desc, m_d3d11Device);
+}
+
+Edge::SamplerState* EdgeD3D11::D3D11GraphicDevice::createSamplerState()
+{
+	return new D3D11SamplerState(m_d3d11Device);
+}
+
+Edge::BlendState* EdgeD3D11::D3D11GraphicDevice::createBlendState(Edge::BlendMode mode)
+{
+	return new D3D11BlendState(mode, m_d3d11Device);
+}
+
+Edge::DepthStencilState* EdgeD3D11::D3D11GraphicDevice::createDepthStencilState(const Edge::DepthStencilStateDesc& desc)
+{
+	return new D3D11DepthStencilState(desc, m_d3d11Device);
 }
 
 void EdgeD3D11::D3D11GraphicDevice::executeGraphicContext(const Edge::DeferredGraphicContext& context)

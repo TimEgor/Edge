@@ -13,13 +13,13 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
 	Edge::PhysicsEntityFactory::EntityCollisionCreationParam collisionParam;
-	collisionParam.m_shape = new Edge::PhysicsBoxShape(Edge::FloatVector3(10.0f, 1.0f, 10.0f));
+	collisionParam.m_shape = new Edge::PhysicsBoxShape(Edge::ComputeVector3(10.0, 1.0, 10.0));
 
 	bodyCreationParam.m_collisionParam = &collisionParam;
 
 	//bottom
 	{
-		bodyCreationParam.m_position = Edge::FloatVector3(0.0f, -5.5f, 0.0f);
+		bodyCreationParam.m_position = Edge::ComputeVector3(0.0, -5.5, 0.0);
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -30,8 +30,8 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 
 	//right
 	{
-		bodyCreationParam.m_position = Edge::FloatVector3(5.5f, 0.0f, 0.0f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(0.0f, 0.0f, 90.0f * Edge::Math::DegToRad).getFloatQuaternion();
+		bodyCreationParam.m_position = Edge::ComputeVector3(5.5, 0.0, 0.0);
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternion(Edge::RotationEulerComputeMatrix4x4(0.0_ecv, 0.0_ecv, Edge::Math::ConvertDegToRad(90.0_ecv)));
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -42,8 +42,8 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 
 	//left
 	{
-		bodyCreationParam.m_position = Edge::FloatVector3(-5.5f, 0.0f, 0.0f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(0.0f, 0.0f, 90.0f * Edge::Math::DegToRad).getFloatQuaternion();
+		bodyCreationParam.m_position = Edge::ComputeVector3(-5.5, 0.0, 0.0);
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternion(Edge::RotationEulerComputeMatrix4x4(0.0_ecv, 0.0_ecv, Edge::Math::ConvertDegToRad(90.0_ecv)));
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -55,7 +55,7 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	//forward
 	{
 		bodyCreationParam.m_position = Edge::FloatVector3(0.0f, 0.0f, 5.5f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(90.0f * Edge::Math::DegToRad, 0.0f, 0.0f).getFloatQuaternion();
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternion(Edge::RotationEulerComputeMatrix4x4(Edge::Math::ConvertDegToRad(90.0_ecv), 0.0_ecv, 0.0_ecv));
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -67,7 +67,7 @@ bool EdgeDemo::TestSpheresBoxCollisionDemo::initStaticBoxes()
 	//backward
 	{
 		bodyCreationParam.m_position = Edge::FloatVector3(0.0f, 0.0f, -5.5f);
-		bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(90.0f * Edge::Math::DegToRad, 0.0f, 0.0f).getFloatQuaternion();
+		bodyCreationParam.m_rotation = Edge::ComputeQuaternion(Edge::RotationEulerComputeMatrix4x4(Edge::Math::ConvertDegToRad(90.0_ecv), 0.0_ecv, 0.0_ecv));
 
 		const Edge::PhysicsBodyReference box = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -126,12 +126,12 @@ void EdgeDemo::TestSpheresBoxCollisionDemo::releaseDemo()
 {
 	for (const auto& sphere : m_spheres)
 	{
-		m_physicsScene->removeEntity(sphere.getObject());
+		m_physicsScene->removeEntity(sphere);
 	}
 
 	for (const auto& box : m_staticBoxes)
 	{
-		m_physicsScene->removeEntity(box.getObject());
+		m_physicsScene->removeEntity(box);
 	}
 }
 
@@ -152,9 +152,14 @@ void EdgeDemo::TestSpheresBoxCollisionDemo::updateDemoLogic(float deltaTime)
 	for (const auto& sphere : m_spheres)
 	{
 		const Edge::Transform sphereTransform = sphere->getTransform()->getWorldTransform();
-		m_debugVisualizationDataController->addSphere(sphereTransform,
-			sphere->getCollision()->getShape().getObjectCastRef<Edge::PhysicsSphereShape>().getRadius());
-		m_debugVisualizationDataController->addArrow(sphereTransform.getOrigin(), (sphereTransform.getAxisY() * 1.5f).getFloatVector3(),
-			0.5f, Edge::NormalizedColorBlue);
+		m_debugVisualizationDataController->addSphere(
+			sphereTransform,
+			sphere->getCollision()->getShape().getObjectCastRef<Edge::PhysicsSphereShape>().getRadius()
+		);
+		m_debugVisualizationDataController->addArrow(sphereTransform.getOrigin().getFloatVector3(), 
+			(sphereTransform.getAxisY() * Edge::ComputeValueType (1.5)).getFloatVector3(),
+			0.5f,
+			Edge::NormalizedColorBlue
+		);
 	}
 }

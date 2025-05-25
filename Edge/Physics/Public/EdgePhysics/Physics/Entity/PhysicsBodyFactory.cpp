@@ -8,7 +8,7 @@ Edge::PhysicsBodyReference Edge::PhysicsBodyFactory::createBodyEntity(const Body
 
 	if (param)
 	{
-		if (param->m_motionCreationParam && param->m_motionCreationParam->getType() == BodyMotionCreationParam::EntityCreationParamType)
+		if (param->m_motionCreationParam && RTTI::IsObjectBasedOn<BodyMotionCreationParam>(*param->m_motionCreationParam))
 		{
 			const BodyMotionCreationParam* bodyMotionCreationParam = static_cast<const BodyMotionCreationParam*>(param->m_motionCreationParam);
 			entityPtr->setBodyMotion(createBodyMotion(bodyMotionCreationParam));
@@ -51,7 +51,7 @@ Edge::PhysicsBodyMotionReference Edge::PhysicsBodyFactory::createBodyMotion(cons
 
 Edge::PhysicsEntityReference Edge::PhysicsBodyFactory::createEntity(const EntityCreationParam* param)
 {
-	if (param && (param->getType() != BodyCreationParam::EntityCreationParamType))
+	if (param && !RTTI::IsObjectBasedOn<BodyCreationParam>(*param))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Ñreation param type is invalid.");
 		return nullptr;
@@ -63,7 +63,7 @@ Edge::PhysicsEntityReference Edge::PhysicsBodyFactory::createEntity(const Entity
 
 Edge::PhysicsEntityMotionReference Edge::PhysicsBodyFactory::createEntityMotion(const EntityMotionCreationParam* param)
 {
-	if (param && param->getType() != BodyMotionCreationParam::EntityCreationParamType)
+	if (param && !RTTI::IsObjectBasedOn<BodyMotionCreationParam>(*param))
 	{
 		EDGE_ASSERT_FAIL_MESSAGE("Ñreation param type is invalid.");
 		return nullptr;

@@ -1,11 +1,5 @@
 #include "Color.shader"
-
-cbuffer CameraTransforms : register(b0)
-{
-	float4x4 viewTransform;
-	float4x4 projTransform;
-	uint2 screenSpaceSize;
-};
+#include "Camera.shader"
 
 struct VertexInput
 {

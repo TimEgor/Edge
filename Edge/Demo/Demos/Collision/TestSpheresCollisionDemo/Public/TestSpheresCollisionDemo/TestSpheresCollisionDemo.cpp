@@ -11,7 +11,7 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 {
 	Edge::PhysicsBodyFactory::BodyCreationParam bodyCreationParam;
 
-	const float radius1 = 0.2f;
+	const Edge::ComputeValueType radius1 = 0.2_ecv;
 
 	Edge::PhysicsBodyFactory::BodyMotionCreationParam bodyMotionCreationParam;
 	bodyMotionCreationParam.m_mass = 4.0f;
@@ -31,9 +31,9 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 		{
 			for (uint32_t k = 0; k < 7; ++k)
 			{
-				bodyCreationParam.m_position.m_x = i * 0.5f;
-				bodyCreationParam.m_position.m_y = k * 0.5f;
-				bodyCreationParam.m_position.m_z = j * 0.5f;
+				bodyCreationParam.m_position.setX(i * 0.5);
+				bodyCreationParam.m_position.setY(k * 0.5);
+				bodyCreationParam.m_position.setZ(j * 0.5);
 
 				const Edge::PhysicsBodyReference sphere = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -45,22 +45,22 @@ bool EdgeDemo::TestSpheresCollisionDemo::initDemo()
 	}
 
 	{
-		const float radius2 = Edge::RandomFloat(1.5f, 2.5f);
+		const Edge::ComputeValueType radius2 = Edge::Random(1.5, 2.5);
 
-		bodyMotionCreationParam.m_mass = Edge::RandomFloat(10.0f, 15.0f);
+		bodyMotionCreationParam.m_mass = Edge::Random(10.0, 15.0);
 		bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, radius2);
 
 		bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(radius2);
 
-		bodyCreationParam.m_position.m_x = -10.0f;
-		bodyCreationParam.m_position.m_y = 1.75f;
-		bodyCreationParam.m_position.m_z = 1.25f;
+		bodyCreationParam.m_position.setX(-10.0);
+		bodyCreationParam.m_position.setY(1.75);
+		bodyCreationParam.m_position.setZ(1.25);
 
 		const Edge::PhysicsBodyReference sphere = Edge::GetPhysics().createBody(&bodyCreationParam);
 
 		m_physicsScene->addEntity(sphere);
 
-		sphere->getMotion()->setLinearVelocity((Edge::FloatVector3UnitX * Edge::RandomFloat(3.0f, 10.0f)).getFloatVector3());
+		sphere->getMotion()->setLinearVelocity(Edge::ComputeVector3UnitX * Edge::Random(3.0, 10.0));
 
 		m_spheres.push_back(sphere);
 	}
@@ -72,7 +72,7 @@ void EdgeDemo::TestSpheresCollisionDemo::releaseDemo()
 {
 	for (const auto& sphere : m_spheres)
 	{
-		m_physicsScene->removeEntity(sphere.getObject());
+		m_physicsScene->removeEntity(sphere);
 	}
 }
 
