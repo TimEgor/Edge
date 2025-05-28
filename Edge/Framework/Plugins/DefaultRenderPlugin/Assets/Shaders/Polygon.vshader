@@ -7,6 +7,7 @@ struct VertexInput
 	float3 position : POSITION;
 	uint color : COLOR;
 	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
 };
 
 PixelInput VS(VertexInput input)
@@ -20,6 +21,7 @@ PixelInput VS(VertexInput input)
 	output.position = vertPosition;
 	output.color = unpackColor(input.color);
 	output.normal = float4(input.normal, 0.0);
+	output.uv = input.uv;
 
 	return output;
 }

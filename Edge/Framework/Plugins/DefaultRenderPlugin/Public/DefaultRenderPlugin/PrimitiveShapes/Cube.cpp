@@ -21,60 +21,60 @@ void EdgeDefRender::CubeShapeGenerator::buildFaceIndices()
 
 void EdgeDefRender::CubeShapeGenerator::buildUpFace()
 {
-	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitY });
-	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitY });
-	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitY });
-	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitY });
+	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitY, {0.0f, 0.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitY, {0.0f, 1.0f} });
+	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitY, {1.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitY, {1.0f, 1.0f} });
 
 	buildFaceIndices();
 }
 
 void EdgeDefRender::CubeShapeGenerator::buildDownFace()
 {
-	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitY });
-	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitY });
-	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitY });
-	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitY });
+	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitY, {0.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitY, {0.0f, 1.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitY, {1.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitY, {1.0f, 1.0f} });
 
 	buildFaceIndices();
 }
 
 void EdgeDefRender::CubeShapeGenerator::buildFrontFace()
 {
-	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ });
-	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ });
-	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ });
-	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ });
+	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ, {0.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ, {0.0f, 1.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ, {1.0f, 0.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitZ, {1.0f, 1.0f} });
 
 	buildFaceIndices();
 }
 
 void EdgeDefRender::CubeShapeGenerator::buildBackFace()
 {
-	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ });
-	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ });
-	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ });
-	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ });
+	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ, {0.0f, 0.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ, {0.0f, 1.0f} });
+	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ, {1.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitZ, {1.0f, 1.0f} });
 
 	buildFaceIndices();
 }
 
 void EdgeDefRender::CubeShapeGenerator::buildRightFace()
 {
-	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitX });
-	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitX });
-	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitX });
-	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitX });
+	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitX, {0.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3UnitX, {0.0f, 1.0f} });
+	m_vertices.push_back({ { m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitX, {1.0f, 0.0f} });
+	m_vertices.push_back({ { m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3UnitX, {1.0f, 1.0f} });
 
 	buildFaceIndices();
 }
 
 void EdgeDefRender::CubeShapeGenerator::buildLeftFace()
 {
-	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitX });
-	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitX });
-	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitX });
-	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitX });
+	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitX, {0.0f, 0.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, m_coords.m_z }, Edge::FloatVector3NegativeUnitX, {0.0f, 1.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitX, {1.0f, 0.0f} });
+	m_vertices.push_back({ { -m_coords.m_x, -m_coords.m_y, -m_coords.m_z }, Edge::FloatVector3NegativeUnitX, {1.0f, 1.0f} });
 
 	buildFaceIndices();
 }

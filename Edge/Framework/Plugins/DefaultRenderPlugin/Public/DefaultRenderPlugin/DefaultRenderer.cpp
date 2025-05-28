@@ -157,22 +157,32 @@ bool EdgeDefRender::DefaultRenderer::initPolygonRenderData(Edge::GraphicDevice& 
 	);
 	inputLayoutDesc.m_elements.push_back(
 		{
-			"COLOR",
-			0,
-			0,
-			offsetof(PolygonRenderData::VertexData, m_color),
-			1,
-			Edge::InputLayoutElementType::UInt32
-		}
-	);
-	inputLayoutDesc.m_elements.push_back(
-		{
 			"NORMAL",
 			0,
 			0,
 			offsetof(PolygonRenderData::VertexData, m_normal),
 			3,
 			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"TEXCOORD",
+			0,
+			0,
+			offsetof(PolygonRenderData::VertexData, m_uv),
+			2,
+			Edge::InputLayoutElementType::Float32
+		}
+	);
+	inputLayoutDesc.m_elements.push_back(
+		{
+			"COLOR",
+			0,
+			0,
+			offsetof(PolygonRenderData::VertexData, m_color),
+			1,
+			Edge::InputLayoutElementType::UInt32
 		}
 	);
 	inputLayoutDesc.m_bindings.push_back(
@@ -888,7 +898,7 @@ bool EdgeDefRender::DefaultRenderer::initTextRenderData(
 			"TEXCOORD",
 			0,
 			0,
-			offsetof(TextRenderData::VertexData, m_textureCoord),
+			offsetof(TextRenderData::VertexData, m_uv),
 			2,
 			Edge::InputLayoutElementType::Float32
 		}
@@ -1382,14 +1392,17 @@ void EdgeDefRender::DefaultRenderer::preparePolygonRenderData(float deltaTime, c
 			polygonData.m_point1.m_position = polygonDebugData.m_position1;
 			polygonData.m_point1.m_color = color;
 			polygonData.m_point1.m_normal = normal;
+			polygonData.m_point1.m_uv = Edge::FloatVector2(0.0f, 0.0f);
 
 			polygonData.m_point2.m_position = polygonDebugData.m_position2;
 			polygonData.m_point2.m_color = color;
 			polygonData.m_point2.m_normal = normal;
+			polygonData.m_point2.m_uv = Edge::FloatVector2(0.0f, 1.0f);
 
 			polygonData.m_point3.m_position = polygonDebugData.m_position3;
 			polygonData.m_point3.m_color = color;
 			polygonData.m_point3.m_normal = normal;
+			polygonData.m_point3.m_uv = Edge::FloatVector2(1.0f, 0.0f);
 
 			polygonDataIter.next();
 		}
@@ -1610,22 +1623,22 @@ void EdgeDefRender::DefaultRenderer::buildStringVertexBuffer(
 
 				TextRenderData::VertexData vertex1;
 				(transform * Edge::FloatComputeVector4(glyphLocalX, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex1.m_position);
-				vertex1.m_textureCoord = Edge::FloatVector2(uv1.m_x, uv2.m_y);
+				vertex1.m_uv = Edge::FloatVector2(uv1.m_x, uv2.m_y);
 				vertex1.m_color = color;
 
 				TextRenderData::VertexData vertex2;
 				(transform * Edge::FloatComputeVector4(glyphLocalX, offsetedPosition.m_y, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex2.m_position);
-				vertex2.m_textureCoord = uv1;
+				vertex2.m_uv = uv1;
 				vertex2.m_color = color;
 
 				TextRenderData::VertexData vertex3;
 				(transform * Edge::FloatComputeVector4(offsetedPosition.m_x, glyphLocalOffsetedY, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex3.m_position);
-				vertex3.m_textureCoord = uv2;
+				vertex3.m_uv = uv2;
 				vertex3.m_color = color;
 
 				TextRenderData::VertexData vertex4;
 				(transform * Edge::FloatComputeVector4(offsetedPosition, 0.0f, 1.0f)).getXYZ().getFloatVector3(vertex4.m_position);
-				vertex4.m_textureCoord = Edge::FloatVector2(uv2.m_x, uv1.m_y);
+				vertex4.m_uv = Edge::FloatVector2(uv2.m_x, uv1.m_y);
 				vertex4.m_color = color;
 
 				new(glyphData) TextRenderData::GlyphData(vertex1, vertex2, vertex3, vertex4);

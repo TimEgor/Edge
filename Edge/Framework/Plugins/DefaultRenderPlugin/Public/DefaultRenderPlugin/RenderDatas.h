@@ -26,7 +26,7 @@ namespace EdgeDefRender
 
 			PointData(const Edge::FloatVector3& position, const Edge::FloatVector4& color)
 				: m_position(position),
-				m_color(color) {}
+				  m_color(color) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;
@@ -51,7 +51,7 @@ namespace EdgeDefRender
 
 			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector4& color)
 				: m_position(position),
-				m_color(color) {}
+				  m_color(color) {}
 		};
 
 		struct LineData final
@@ -75,16 +75,23 @@ namespace EdgeDefRender
 		struct VertexData final
 		{
 			Edge::FloatVector3 m_position = Edge::FloatVector3Zero;
-			PackedColor m_color;
 			Edge::FloatVector3 m_normal = Edge::FloatVector3Zero;
+			Edge::FloatVector2 m_uv = Edge::FloatVector2Zero;
+			PackedColor m_color;
 
 
 			VertexData() = default;
 
-			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector4& color, const Edge::FloatVector3& normal)
+			VertexData(
+				const Edge::FloatVector3& position,
+				const Edge::FloatVector4& color,
+				const Edge::FloatVector3& normal,
+				const Edge::FloatVector2& uv
+			)
 				: m_position(position),
-				m_color(color),
-				m_normal(normal) {}
+				  m_normal(normal),
+				  m_color(color),
+				  m_uv(uv) {}
 		};
 
 		struct PolygonData final
@@ -125,11 +132,11 @@ namespace EdgeDefRender
 				const Edge::FloatVector4& color
 			)
 				: m_position(position),
-				m_sizeX(size.m_x),
-				m_normal(normal),
-				m_sizeY(size.m_y),
-				m_directionRight(directionRight),
-				m_color(color) {}
+				  m_sizeX(size.m_x),
+				  m_normal(normal),
+				  m_sizeY(size.m_y),
+				  m_directionRight(directionRight),
+				  m_color(color) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;
@@ -177,10 +184,10 @@ namespace EdgeDefRender
 				const Edge::FloatVector4& color
 			)
 				: m_position(position),
-				m_directionForward(directionForward),
-				m_directionUp(directionUp),
-				m_color(color),
-				m_radius(radius) {}
+				  m_directionForward(directionForward),
+				  m_directionUp(directionUp),
+				  m_color(color),
+				  m_radius(radius) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;
@@ -202,15 +209,15 @@ namespace EdgeDefRender
 		struct VertexData final
 		{
 			Edge::FloatVector3 m_position = Edge::FloatVector3Zero;
-			Edge::FloatVector2 m_textureCoord = Edge::FloatVector2Zero;
+			Edge::FloatVector2 m_uv = Edge::FloatVector2Zero;
 			PackedColor m_color;
 
 			VertexData() = default;
 
-			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector2& textureCoord, const Edge::FloatVector4& color)
+			VertexData(const Edge::FloatVector3& position, const Edge::FloatVector2& uv, const Edge::FloatVector4& color)
 				: m_position(position),
-				m_textureCoord(textureCoord),
-				m_color(color) {}
+				  m_uv(uv),
+				  m_color(color) {}
 		};
 
 		struct GlyphData final
@@ -224,18 +231,19 @@ namespace EdgeDefRender
 			VertexData m_vertex6;
 
 			GlyphData() = default;
+
 			GlyphData(
 				const VertexData& v1,
 				const VertexData& v2,
 				const VertexData& v3,
 				const VertexData& v4
-			) :
-				m_vertex1(v1),
-				m_vertex2(v2),
-				m_vertex3(v3),
-				m_vertex4(v3),
-				m_vertex5(v2),
-				m_vertex6(v4) {}
+			)
+				: m_vertex1(v1),
+				  m_vertex2(v2),
+				  m_vertex3(v3),
+				  m_vertex4(v3),
+				  m_vertex5(v2),
+				  m_vertex6(v4) {}
 		};
 
 		Edge::VertexShader* m_vertexShader = nullptr;

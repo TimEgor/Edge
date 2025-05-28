@@ -6,6 +6,7 @@ struct VertexInput
 {
 	float3 position : POSITION;
 	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
 	float3 instancePosition : INST_POSITION;
 	float3 instanceDirectionForward : INST_DIR0;
 	float3 instanceDirectionUp : INST_DIR1;
@@ -37,6 +38,7 @@ PixelInput VS(VertexInput input)
 	output.position = vertPosition;
 	output.normal = vertNormal;
 	output.color = unpackColor(input.instanceColor);
+	output.uv = input.uv; 
 
 	return output;
 }

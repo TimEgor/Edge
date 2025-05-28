@@ -6,6 +6,7 @@ struct PixelInput
 	float4 position : SV_Position;
 	float4 normal : NORMAL;
 	float4 color : COLOR;
+	float2 uv : TEXCOORD;
 };
 
 #endif //SOLID_PIXEL_INPUT_SHADER_INCLUDE

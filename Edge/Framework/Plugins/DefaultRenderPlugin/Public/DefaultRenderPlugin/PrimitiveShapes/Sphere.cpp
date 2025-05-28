@@ -50,19 +50,25 @@ void EdgeDefRender::SphereShapeGenerator::generateVertices(float radius, uint32_
 	SphereShape::Vertex topVertex;
 	topVertex.m_position.m_y = radius;
 	topVertex.m_normal = Edge::FloatVector3UnitY;
+	topVertex.m_uv = Edge::FloatVector2Zero;
 
 	SphereShape::Vertex bottomVertex;
 	bottomVertex.m_position.m_y = -radius;
 	bottomVertex.m_normal = Edge::FloatVector3NegativeUnitY;
+	bottomVertex.m_uv = Edge::FloatVector2One;
 
 	m_vertices.push_back(topVertex);
 
 	const float phiStep = Edge::Math::Pi / stacks;
 	const float thetaStep = 2.0f * Edge::Math::Pi / slices;
 
+	const float uStep = 0.5f / stacks;
+	const float vStep = 1.0f / slices;
+
 	for (uint32_t i = 1; i <= stacks - 1; ++i)
 	{
 		const float phi = i * phiStep;
+		const float texU = i * uStep;
 
 		for (uint32_t j = 0; j <= slices; ++j)
 		{
@@ -77,6 +83,9 @@ void EdgeDefRender::SphereShapeGenerator::generateVertices(float radius, uint32_
 			Edge::FloatComputeVector3 computeNormal(v.m_position);
 			computeNormal.normalize();
 			computeNormal.getFloatVector3(v.m_normal);
+
+			v.m_uv.m_x = texU;
+			v.m_uv.m_y = vStep * j;
 
 			m_vertices.push_back(v);
 		}

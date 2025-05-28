@@ -12,6 +12,8 @@ const Edge::InputLayoutDesc::ElementDescContainer EdgeDefRender::SolidVertex::el
 		{"POSITION",0, 0, offsetof(SolidVertex, m_position),
 			3, Edge::InputLayoutElementType::Float32 },
 		{"NORMAL",0, 0, offsetof(SolidVertex, m_normal),
-			3, Edge::InputLayoutElementType::Float32 }
+			3, Edge::InputLayoutElementType::Float32 },
+		{"TEXCOORD",0, 0, offsetof(SolidVertex, m_uv),
+			2, Edge::InputLayoutElementType::Float32}
 	}
 };

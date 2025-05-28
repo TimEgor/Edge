@@ -10,6 +10,14 @@ static float2 planeBaseVertexPositions[4] =
 	{ -0.5, 0.5 }
 };
 
+static float2 planeBaseVertexUVs[4] =
+{
+	{ 0.0, 0.0 },
+	{ 0.0, 1.0 },
+	{ 1.0, 0.0 },
+	{ 1.0, 1.0 }
+};
+
 struct VertexInput
 {
 	float3 instancePosition : INST_POSITION;
@@ -36,6 +44,7 @@ PixelInput VS(VertexInput input, uint vertexID : SV_VertexID)
 	output.position = vertPosition;
 	output.normal = float4(input.instanceNormal, 0.0);
 	output.color = unpackColor(input.instanceColor);
+	output.uv = planeBaseVertexUVs[vertexID];
 
 	return output;
 }
