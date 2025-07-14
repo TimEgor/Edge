@@ -4,7 +4,7 @@
 
 Edge::AABB3 Edge::PhysicsBoxShape::getAABB() const
 {
-	const ComputeVector3 halfSize = m_size * 0.5f;
+	const ComputeVector3 halfSize = m_size * 0.5_ecv;
 	return AABB3(ComputeVector3(halfSize).negate(), halfSize);
 }
 
@@ -13,29 +13,13 @@ Edge::ComputeVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const ComputeVec
 	ComputeValueType maxDistance = -Math::Max;
 	uint32_t maxDistancePointIndex = -1;
 
-	const ComputeVector3 halfSize = m_size * ComputeValueType(0.5);
-	const ComputeVector3 points[] = {
-		{-halfSize.getX(), -halfSize.getY(), -halfSize.getZ()},
-		{halfSize.getX(), -halfSize.getY(), -halfSize.getZ()},
-		{-halfSize.getX(), halfSize.getY(), -halfSize.getZ()},
-		{halfSize.getX(), halfSize.getY(), -halfSize.getZ()},
-		{-halfSize.getX(), -halfSize.getY(), halfSize.getZ()},
-		{halfSize.getX(), -halfSize.getY(), halfSize.getZ()},
-		{-halfSize.getX(), halfSize.getY(), halfSize.getZ()},
-		{halfSize.getX(), halfSize.getY(), halfSize.getZ()}
-	};
+	const ComputeVector3 halfSize = m_size * 0.5_ecv;
 
-	for (uint32_t pointIndex = 0; pointIndex < 8; ++pointIndex)
-	{
-		const float pointDistance = DotComputeVector3(direction, points[pointIndex]);
-		if (maxDistance < pointDistance)
-		{
-			maxDistance = pointDistance;
-			maxDistancePointIndex = pointIndex;
-		}
-	}
-
-	return points[maxDistancePointIndex];
+	return ComputeVector3(
+		direction[0] >= 0 ? halfSize[0] : -halfSize[0],
+		direction[1] >= 0 ? halfSize[1] : -halfSize[1],
+		direction[2] >= 0 ? halfSize[2] : -halfSize[2]
+	);
 }
 
 void Edge::PhysicsBoxShape::getSupportingFace(const ComputeVector3& direction, SupportingFaceVertexCollection& vertices) const

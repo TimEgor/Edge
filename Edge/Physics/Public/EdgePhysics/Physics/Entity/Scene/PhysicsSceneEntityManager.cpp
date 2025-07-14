@@ -31,9 +31,9 @@ Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getAccelerationApplying
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID accelerationApplyingJobID = m_graphBuilder.addJob(
-		createLambdaJob([dt = deltaTime, gravity = gravity, this]()
+		createLambdaJob([deltaTime, gravity, this]()
 			{
-				applyAcceleration(dt, gravity);
+				applyAcceleration(deltaTime, gravity);
 			}, "Apply acceleration")
 	);
 
@@ -45,9 +45,9 @@ Edge::JobGraphReference Edge::PhysicsSceneEntityManager::getVelocityIntegrationJ
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID velocityIntegrationJobID = m_graphBuilder.addJob(
-		createLambdaJob([dt = deltaTime, this]()
+		createLambdaJob([deltaTime, this]()
 			{
-				integrateVelocity(dt);
+				integrateVelocity(deltaTime);
 			}, "Integrate velocity")
 	);
 

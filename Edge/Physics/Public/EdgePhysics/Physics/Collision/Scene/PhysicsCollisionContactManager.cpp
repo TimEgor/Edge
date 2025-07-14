@@ -4,9 +4,7 @@
 #include "EdgeCommon/Profile/Profile.h"
 
 #include "EdgePhysics/Physics/Collision/Dispatchers/GJKCollisionDispatcher.h"
-#include "EdgePhysics/Physics/Collision/Dispatchers/PhysicsCollisionDispatcherCollection.h"
 #include "EdgePhysics/Physics/Collision/Dispatchers/SphereVsSphereCollisionDispatcher.h"
-#include "EdgePhysics/Physics/Collision/Manifold/PhysicsContactManifold.h"
 #include "EdgePhysics/Physics/Collision/Scene/DefaultPhysicsEntityCollisionSceneContext.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 
@@ -45,52 +43,38 @@ void Edge::PhysicsCollisionContactManager::DispatcherContext::release()
 	EDGE_SAFE_DESTROY(m_dispatcherCollection);
 }
 
-Edge::PhysicsCollisionDispatcher* Edge::PhysicsCollisionContactManager::DispatcherContext::getDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2) const
+Edge::PhysicsCollisionDispatcher* Edge::PhysicsCollisionContactManager::DispatcherContext::getDispatcher(
+	PhysicsEntityCollisionShapeType type1,
+	PhysicsEntityCollisionShapeType type2
+) const
 {
 	EDGE_ASSERT(m_dispatcherCollection);
 	return m_dispatcherCollection->getDispatcher(type1, type2);
 }
 
-void Edge::PhysicsCollisionContactManager::removeCollisionPartner(PhysicsSceneCollisionID baseCollision, PhysicsSceneCollisionID partnerCollision)
+uint32_t Edge::PhysicsCollisionContactManager::ContactCache::getNextContainerIndex() const
 {
-	auto& collisionPartnersCollection = m_contactPartners[baseCollision];
-	const size_t partnerCount = collisionPartnersCollection.size();
-
-	for (size_t partnerIndex = 0; partnerIndex < partnerCount; ++partnerIndex)
-	{
-		if (collisionPartnersCollection[partnerIndex] == partnerCollision)
-		{
-			collisionPartnersCollection[partnerIndex] = collisionPartnersCollection[partnerCount - 1];
-			collisionPartnersCollection.pop_back();
-
-			break;
-		}
-	}
+	return (m_writingContainerIndex + 1) % CacheContainerCount;
 }
 
-Edge::PhysicsCollisionContactManager::ContactCollection::iterator Edge::PhysicsCollisionContactManager::removeContactFromCollections(ContactCollection::iterator removedIter, PhysicsCollisionContactID contactID)
+void Edge::PhysicsCollisionContactManager::ContactCache::prepareCache(uint32_t manifoldCount)
 {
-	removeCollisionPartner(contactID.m_collisionID1, contactID.m_collisionID2);
-	removeCollisionPartner(contactID.m_collisionID2, contactID.m_collisionID1);
+	m_writingContainerIndex = getNextContainerIndex();
 
-	return m_contacts.erase(removedIter);
+	ContactCollection& collection = m_cacheCollection[m_writingContainerIndex];
+	collection.reserve(manifoldCount);
+	collection.clear();
 }
 
-Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContactInternal(PhysicsCollisionContactID contactID)
+Edge::PhysicsCollisionContactManager::ContactCache::ContactCollection& Edge::PhysicsCollisionContactManager::ContactCache::getWritingCollection()
 {
-	const auto findIter = m_contacts.find(contactID);
-	if (findIter != m_contacts.end())
-	{
-		return &findIter->second;
-	}
-
-	return nullptr;
+	return m_cacheCollection[m_writingContainerIndex];
 }
 
-void Edge::PhysicsCollisionContactManager::prepareContactPointCollection(uint32_t contactPointCount)
+const Edge::PhysicsCollisionContactManager::ContactCache::ContactCollection& Edge::PhysicsCollisionContactManager::ContactCache::getReadingCollection() const
 {
-	m_contactPoints.clear();
-	m_contactPoints.reserve(contactPointCount);
+	const uint32_t readingContainerIndex = getNextContainerIndex();
+	return m_cacheCollection[readingContainerIndex];
 }
 
 bool Edge::PhysicsCollisionContactManager::init(const PhysicsSceneCollisionManagerReference& collisionManager)
@@ -101,184 +85,121 @@ bool Edge::PhysicsCollisionContactManager::init(const PhysicsSceneCollisionManag
 	m_dispatcherContext = new DispatcherContext();
 	EDGE_CHECK_INITIALIZATION(m_dispatcherContext && m_dispatcherContext->init());
 
+	m_contactConstraintManager = new PhysicsCollisionConstraintManager();
+	EDGE_CHECK_INITIALIZATION(m_contactConstraintManager);
+
+	m_contactCache = new ContactCache();
+	EDGE_CHECK_INITIALIZATION(m_contactCache);
+
 	return true;
 }
 
 void Edge::PhysicsCollisionContactManager::release()
 {
+	EDGE_SAFE_DESTROY(m_contactCache);
+
+	EDGE_SAFE_DESTROY(m_contactConstraintManager);
 	EDGE_SAFE_DESTROY_WITH_RELEASING(m_dispatcherContext);
 
 	m_collisionManager.reset();
 }
 
-void Edge::PhysicsCollisionContactManager::addContact(PhysicsCollisionContactID contactID)
+Edge::JobGraphReference Edge::PhysicsCollisionContactManager::getPreSolvingJobGraph(ComputeValueType deltaTime)
 {
-	const auto findIter = m_contacts.find(contactID);
-	if (findIter == m_contacts.end())
-	{
-		m_contacts.insert(std::make_pair(contactID, PhysicsCollisionContact()));
-
-		m_contactPartners[contactID.m_collisionID1].push_back(contactID.m_collisionID2);
-		m_contactPartners[contactID.m_collisionID2].push_back(contactID.m_collisionID1);
-	}
-	else
-	{
-		findIter->second.resetDirtyState();
-	}
+	return m_contactConstraintManager->getPreSolvingJobGraph(deltaTime);
 }
 
-void Edge::PhysicsCollisionContactManager::removeContact(PhysicsCollisionContactID contactID)
+Edge::JobGraphReference Edge::PhysicsCollisionContactManager::getVelocitySolvingJobGraph(ComputeValueType deltaTime)
 {
-	const auto findIter = m_contacts.find(contactID);
-	if (findIter != m_contacts.end())
+	return m_contactConstraintManager->getVelocitySolvingJobGraph(deltaTime);
+}
+
+Edge::JobGraphReference Edge::PhysicsCollisionContactManager::getPositionSolvingJobGraph(ComputeValueType deltaTime)
+{
+	return m_contactConstraintManager->getPositionSolvingJobGraph(deltaTime);
+}
+
+void Edge::PhysicsCollisionContactManager::prepareContacts(uint32_t manifoldCount, uint32_t pointCount)
+{
+	m_contactCache->prepareCache(manifoldCount);
+	m_contactConstraintManager->prepareCollection(pointCount);
+}
+
+void Edge::PhysicsCollisionContactManager::addManifold(
+	PhysicsCollisionContactID contactID,
+	const PhysicsContactManifold& manifold,
+	const PhysicsEntityReference& entity1,
+	const PhysicsEntityReference& entity2
+)
+{
+	const ContactCache::ContactCollection& readingCache = m_contactCache->getReadingCollection();
+	ContactCache::ContactCollection& writingCache = m_contactCache->getWritingCollection();
+
+	const ContactCache::ContactPointCollection* prevContactCacheData = nullptr;
+	const auto prevContactCacheDataIter = readingCache.find(contactID);
+	if (prevContactCacheDataIter != readingCache.end())
 	{
-		removeContactFromCollections(findIter, contactID);
-	}
-}
-
-const Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContact(PhysicsCollisionContactID contactID) const
-{
-	return const_cast<PhysicsCollisionContactManager*>(this)->getContactInternal(contactID);
-}
-
-const Edge::PhysicsCollisionContact* Edge::PhysicsCollisionContactManager::getContact(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2) const
-{
-	const DefaultPhysicsEntityCollisionSceneContextReference defaultSceneContext1 = CollisionUtil::GetDefaultCollisionSceneContext(collision1);
-	const DefaultPhysicsEntityCollisionSceneContextReference defaultSceneContext2 = CollisionUtil::GetDefaultCollisionSceneContext(collision2);
-
-	const PhysicsCollisionContactID contactID(defaultSceneContext1->getCollisionContextID(), defaultSceneContext2->getCollisionContextID());
-
-	return getContact(contactID);
-}
-
-const Edge::PhysicsInstancedCollisionContactPoint* Edge::PhysicsCollisionContactManager::getContactPoint(PhysicsCollisionContactPointID contactPointID) const
-{
-	if (contactPointID < m_contactPoints.size())
-	{
-		return &m_contactPoints[contactPointID];
+		prevContactCacheData = &prevContactCacheDataIter->second;
 	}
 
-	return nullptr;
-}
+	const uint32_t contactPointCount = manifold.getContactPointCount();
 
-const Edge::PhysicsCollisionContactManager::ContactPointCollection& Edge::PhysicsCollisionContactManager::getContactPoints() const
-{
-	return m_contactPoints;
-}
+	ContactCache::ContactPointCollection& contactCacheData = writingCache[contactID];
+	contactCacheData.reserve(contactPointCount);
 
-void Edge::PhysicsCollisionContactManager::markContactsForChecking(const PhysicsEntityCollisionReference& collision)
-{
-	const DefaultPhysicsEntityCollisionSceneContextReference defaultSceneContext = CollisionUtil::GetDefaultCollisionSceneContext(collision);
-	const PhysicsSceneCollisionID collisionID = defaultSceneContext->getCollisionID();
-
-	markContactsForChecking(collisionID);
-}
-
-void Edge::PhysicsCollisionContactManager::markContactsForChecking(PhysicsSceneCollisionID changedCollision)
-{
-	const auto findIter = m_contactPartners.find(changedCollision);
-	if (findIter == m_contactPartners.end())
+	for (uint32_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
 	{
-		return;
-	}
+		const ComputeVector3& position1 = manifold.m_positions1[contactPointIndex];
+		const ComputeVector3& position2 = manifold.m_positions2[contactPointIndex];
 
-	const auto& collisionPartnersCollection = m_contactPartners[changedCollision];
-	const size_t partnerCount = collisionPartnersCollection.size();
+		PhysicsCollisionContactPoint& contactPoint = contactCacheData.emplace_back();
+		contactPoint.m_position1 = position1;
+		contactPoint.m_position2 = position2;
+		contactPoint.m_normal = manifold.m_normal;
+		contactPoint.m_depth = manifold.m_depth;
 
-	for (size_t partnerIndex = 0; partnerIndex < partnerCount; ++partnerIndex)
-	{
-		const PhysicsSceneCollisionID partnerCollisionID = collisionPartnersCollection[partnerIndex];
-
-		const PhysicsCollisionContactID contactID(changedCollision, partnerCollisionID);
-		m_contacts.at(contactID).markDirtyState();
-	}
-}
-
-void Edge::PhysicsCollisionContactManager::updateContacts()
-{
-	EDGE_ASSERT(m_dispatcherContext);
-
-	EDGE_PROFILE_BLOCK_EVENT("Update collision contacts");
-
-	const PhysicsSceneCollisionManagerReference collisionManager = m_collisionManager.getReference();
-
-	for (auto contactIter = m_contacts.begin(); contactIter != m_contacts.end();)
-	{
-		const PhysicsCollisionContactID contactID = contactIter->first;
-		PhysicsCollisionContact contact = contactIter->second;
-
-		if (contact.getDirtyState())
+		if (prevContactCacheData)
 		{
-			const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactID.m_collisionID1);
-			const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactID.m_collisionID2);
+			const uint32_t prevContactPointCount = prevContactCacheData->size();
 
-			if (collision1->getWorldShapeAABB().isOverlapped(collision2->getWorldShapeAABB()))
+			for (uint32_t prevContactPointIndex = 0; prevContactPointIndex < prevContactPointCount; ++prevContactPointIndex)
 			{
-				contact.resetDirtyState();
-			}
-			else
-			{
-				contactIter = removeContactFromCollections(contactIter, contactID);
-				continue;
+				const PhysicsCollisionContactPoint& prevContactPointData = (*prevContactCacheData)[prevContactPointIndex];
+
+				const ComputeVector3& prevPosition1 = prevContactPointData.m_position1;
+				const ComputeVector3& prevPosition2 = prevContactPointData.m_position2;
+
+				if (position1.isEqual(prevPosition1, 0.001) && position2.isEqual(prevPosition2, 0.001))
+				{
+					contactPoint.m_cachedData = prevContactPointData.m_cachedData;
+					break;
+				}
 			}
 		}
 
-		++contactIter;
+		m_contactConstraintManager->addContact(entity1, entity2, contactPoint);
 	}
+}
 
-	uint32_t contactPointCount = 0;
+void Edge::PhysicsCollisionContactManager::cacheConstraintDatas()
+{
+	m_contactConstraintManager->cacheApplyingData();
+}
 
-	std::vector<PhysicsInstanceContactManifold> manifolds;
+uint32_t Edge::PhysicsCollisionContactManager::dispatchCollision(
+	const PhysicsEntityCollisionReference& collision1,
+	const PhysicsEntityCollisionReference& collision2,
+	CollisionManifoldCollection& result
+) const
+{
+	const PhysicsEntityCollisionShapeType shapeType1 = collision1->getShape()->GetObjectTypeMetaInfoID();
+	const PhysicsEntityCollisionShapeType shapeType2 = collision2->getShape()->GetObjectTypeMetaInfoID();
 
-	for (auto contactIter = m_contacts.begin(); contactIter != m_contacts.end(); ++contactIter)
+	PhysicsCollisionDispatcher* dispatcher = m_dispatcherContext->getDispatcher(shapeType1, shapeType2);
+	if (!dispatcher)
 	{
-		const PhysicsCollisionContactID contactID = contactIter->first;
-
-		const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(contactID.m_collisionID1);
-		const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(contactID.m_collisionID2);
-
-		const PhysicsEntityCollisionShapeType shapeType1 = collision1->getShape()->GetObjectTypeMetaInfoID();
-		const PhysicsEntityCollisionShapeType shapeType2 = collision2->getShape()->GetObjectTypeMetaInfoID();
-
-		PhysicsCollisionDispatcher* dispatcher = m_dispatcherContext->getDispatcher(shapeType1, shapeType2);
-		if (dispatcher)
-		{
-			const uint32_t collisionContactPointCount = dispatcher->dispatch(collision1, collision2, contactID, manifolds);
-			contactPointCount += collisionContactPointCount;
-		}
+		return 0;
 	}
 
-	prepareContactPointCollection(contactPointCount);
-
-	PhysicsCollisionConstraintManager& constraintManager = m_collisionManager.getReference()->getCollisionConstraintManager();
-	constraintManager.prepareCollection(contactPointCount);
-
-	for (const PhysicsInstanceContactManifold& manifold : manifolds)
-	{
-		const size_t initialContactIndex = m_contactPoints.size();
-
-		EDGE_ASSERT(manifold.m_manifoldData.m_positions1.size() == manifold.m_manifoldData.m_positions2.size());
-
-		for (uint32_t contactIndex = 0; contactIndex < manifold.m_manifoldData.m_positions1.size(); ++contactIndex)
-		{
-			PhysicsInstancedCollisionContactPoint& point = m_contactPoints.emplace_back();
-
-			point.m_contactID = manifold.m_contactID;
-			point.m_pointData.m_position1 = manifold.m_manifoldData.m_positions1[contactIndex];
-			point.m_pointData.m_position2 = manifold.m_manifoldData.m_positions2[contactIndex];
-			point.m_pointData.m_normal = manifold.m_manifoldData.m_normal;
-			point.m_pointData.m_depth = manifold.m_manifoldData.m_depth;
-
-			const PhysicsEntityCollisionReference collision1 = collisionManager->getCollision(point.m_contactID.m_collisionID1);
-			const PhysicsEntityCollisionReference collision2 = collisionManager->getCollision(point.m_contactID.m_collisionID2);
-
-			constraintManager.addContact(collision1->getEntity(), collision2->getEntity(), point.m_pointData);
-		}
-
-		const size_t postDispatchingContactIndex = m_contactPoints.size();
-
-		PhysicsCollisionContact* contact = getContactInternal(manifold.m_contactID);
-		contact->setCollisionPointCount(postDispatchingContactIndex - initialContactIndex);
-		contact->setCollisionPointBaseIndex(initialContactIndex);
-	}
+	return dispatcher->dispatch(collision1, collision2, result);
 }

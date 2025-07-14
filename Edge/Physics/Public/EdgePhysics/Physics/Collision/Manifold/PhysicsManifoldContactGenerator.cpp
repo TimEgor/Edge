@@ -7,8 +7,12 @@
 #include "ClippingPoly.h"
 #include "PhysicsContactManifold.h"
 
-void Edge::ManifoldContactGenerator::generate(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2,
-                                              const PhysicsCollisionContactPoint& contactPoint, PhysicsContactManifold& manifold) const
+void Edge::ManifoldContactGenerator::generate(
+	const PhysicsEntityCollision& collision1,
+	const PhysicsEntityCollision& collision2,
+	const PhysicsCollisionContactPoint& contactPoint,
+	PhysicsContactManifold& manifold
+) const
 {
 	PhysicsEntityCollisionShape::SupportingFaceVertexCollection supportingFace1;
 	collision1.getSupportingFace(-contactPoint.m_normal, supportingFace1);
@@ -26,7 +30,13 @@ void Edge::ManifoldContactGenerator::generate(const PhysicsEntityCollision& coll
 		}
 		else if (supportingFace1.size() == 2)
 		{
-			ClippingPoly::ClipPolyVsEdge(supportingFace2, supportingFace1[0], supportingFace1[1], contactPoint.m_normal, clippedFace);
+			ClippingPoly::ClipPolyVsEdge(
+				supportingFace2,
+				supportingFace1[0],
+				supportingFace1[1],
+				contactPoint.m_normal,
+				clippedFace
+			);
 		}
 
 		const ComputeVector3 faceOrigin = supportingFace1[0];

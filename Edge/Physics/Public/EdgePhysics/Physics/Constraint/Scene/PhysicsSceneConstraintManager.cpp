@@ -31,9 +31,9 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPreSolvingJobGra
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID preSolvingJobID = m_graphBuilder.addJob(
-		createLambdaJob([dt = deltaTime, this]()
+		createLambdaJob([deltaTime, this]()
 			{
-				preSolve(dt);
+				preSolve(deltaTime);
 			}, "Pre solve constraints")
 	);
 
@@ -45,10 +45,10 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getVelocitySolvingJ
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID velocitySolvingJobID = m_graphBuilder.addJob(
-		createLambdaJob([dt = deltaTime, this]()
+		createLambdaJob([deltaTime, this]()
 			{
 				warmUp();
-				solveVelocity(dt);
+				solveVelocity(deltaTime);
 			}, "Solve constraints velocities")
 	);
 
@@ -60,9 +60,9 @@ Edge::JobGraphReference Edge::PhysicsSceneConstraintManager::getPositionSolvingJ
 	JobGraphBuilder m_graphBuilder;
 
 	const JobGraphBuilder::JobGraphJobID positionSolvingJobID = m_graphBuilder.addJob(
-		createLambdaJob([dt = deltaTime, this]()
+		createLambdaJob([deltaTime, this]()
 			{
-				solvePosition(dt);
+				solvePosition(deltaTime);
 			}, "Solve constraints positions")
 	);
 

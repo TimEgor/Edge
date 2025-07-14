@@ -19,6 +19,8 @@ namespace Edge
 #endif
 #endif
 
+	using ComputeValue = ComputeValueType;
+
 	namespace Literals
 	{
 		constexpr ComputeValueType operator ""_ecv(long double value) { return static_cast<ComputeValueType>(value); }

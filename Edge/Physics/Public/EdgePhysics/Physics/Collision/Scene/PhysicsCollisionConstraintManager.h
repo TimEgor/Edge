@@ -11,8 +11,8 @@ namespace Edge
 
 	class PhysicsCollisionConstraintManager final
 	{
-	private:
-		struct ContactConstraints final
+	public:
+		struct ContactConstraint final
 		{
 			PhysicsEntityReference m_entity1;
 			PhysicsEntityReference m_entity2;
@@ -25,12 +25,15 @@ namespace Edge
 			ComputeVector3 m_frictionTangent2 = ComputeVector3Zero;
 			ComputeVector3 m_contactPosition = ComputeVector3Zero;
 
-			const PhysicsCollisionContactPoint& m_contactPoint;
+			PhysicsCollisionContactPoint& m_contactPoint;
 
-			ContactConstraints(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-				const PhysicsCollisionContactPoint& contactPoint);
+			ContactConstraint(
+				const PhysicsEntityReference& entity1,
+				const PhysicsEntityReference& entity2,
+				PhysicsCollisionContactPoint& contactPoint
+			);
 
-			void preSolve(float deltaTime);
+			void preSolve(ComputeValueType deltaTime);
 			void warmUp();
 			void solvePenetrationPartVelocity();
 			void solveFrictionPartsVelocity();
@@ -38,13 +41,17 @@ namespace Edge
 
 			void preSolveFrictionParts();
 			void preSolvePenetrationPart();
+
+			void restoreApplyingData();
+			void storeApplyingData() const;
 		};
 
-		using ConstraintCollection = std::vector<ContactConstraints>;
+	private:
+		using ConstraintCollection = std::vector<ContactConstraint>;
 
 		ConstraintCollection m_constraintCollection;
 
-		void preSolve(float deltaTime);
+		void preSolve(ComputeValueType deltaTime);
 		void warmUp();
 		void solveVelocity();
 		void solvePosition();
@@ -52,13 +59,18 @@ namespace Edge
 	public:
 		PhysicsCollisionConstraintManager() = default;
 
-		JobGraphReference getPreSolvingJobGraph(float deltaTime);
-		JobGraphReference getVelocitySolvingJobGraph();
-		JobGraphReference getPositionSolvingJobGraph();
+		JobGraphReference getPreSolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getVelocitySolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getPositionSolvingJobGraph(ComputeValueType deltaTime);
 
 		void prepareCollection(uint32_t contactPointCount);
 
-		void addContact(const PhysicsEntityReference& entity1, const PhysicsEntityReference& entity2,
-			const PhysicsCollisionContactPoint& contactPoint);
+		void cacheApplyingData();
+
+		void addContact(
+			const PhysicsEntityReference& entity1,
+			const PhysicsEntityReference& entity2,
+			PhysicsCollisionContactPoint& contactPoint
+		);
 	};
 }

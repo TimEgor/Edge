@@ -36,7 +36,8 @@ namespace Edge
 		void solveVelocity(const ComputeVector3& normal);
 		void solvePosition(const ComputeVector3& normal, ComputeValueType depth);
 
-		ComputeValueType getTotalLambda() const { return m_totalLambda; }
+		ComputeValueType getTotalLambda() const;
+		void setTotalLambda(ComputeValueType lambda);
 
 		bool isActive() const;
 	};

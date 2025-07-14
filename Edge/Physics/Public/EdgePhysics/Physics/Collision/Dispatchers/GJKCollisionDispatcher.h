@@ -9,7 +9,10 @@ namespace Edge
 	public:
 		GJKCollisionDispatcher() = default;
 
-		virtual uint32_t dispatch(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2,
-			PhysicsCollisionContactID contactID, ContactManifoldDispatchingResultCollection& results) override;
+		virtual uint32_t dispatch(
+			const PhysicsEntityCollisionReference& collision1,
+			const PhysicsEntityCollisionReference& collision2,
+			ContactManifoldDispatchingResultCollection& results
+		) override;
 	};
 }

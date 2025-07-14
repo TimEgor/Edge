@@ -1,12 +1,12 @@
 #include "SphereVsSphereCollisionDispatcher.h"
 
+#include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
 #include "EdgePhysics/Physics/Collision/Shapes/PhysicsSphereShape.h"
 #include "EdgePhysics/Physics/Entity/PhysicsEntity.h"
 
 uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(
 	const PhysicsEntityCollisionReference& collision1,
 	const PhysicsEntityCollisionReference& collision2,
-	PhysicsCollisionContactID contactID,
 	ContactManifoldDispatchingResultCollection& results
 )
 {
@@ -50,13 +50,11 @@ uint32_t Edge::SphereVsSphereCollisionDispatcher::dispatch(
 	contactPoint.m_position2 = position2 - contactPoint.m_normal * radius2;
 	contactPoint.m_depth = depth;
 
-	PhysicsInstanceContactManifold manifold;
-	manifold.m_contactID = contactID;
-
-	manifold.m_manifoldData.m_positions1.push_back(contactPoint.m_position1);
-	manifold.m_manifoldData.m_positions2.push_back(contactPoint.m_position2);
-	manifold.m_manifoldData.m_normal = contactPoint.m_normal;
-	manifold.m_manifoldData.m_depth = contactPoint.m_depth;
+	PhysicsContactManifold manifold;
+	manifold.m_positions1.push_back(contactPoint.m_position1);
+	manifold.m_positions2.push_back(contactPoint.m_position2);
+	manifold.m_normal = contactPoint.m_normal;
+	manifold.m_depth = contactPoint.m_depth;
 
 	results.push_back(manifold);
 

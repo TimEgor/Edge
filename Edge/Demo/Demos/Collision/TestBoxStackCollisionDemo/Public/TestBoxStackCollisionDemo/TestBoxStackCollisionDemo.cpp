@@ -35,7 +35,7 @@ bool EdgeDemo::TestBoxStackCollisionDemo::initDemo()
 		constexpr Edge::ComputeValueType deltaY = 1.5;
 		Edge::ComputeValueType positionY = bodyCreationParam.m_position.getY() + deltaY;
 
-		for (uint32_t boxIndex = 0; boxIndex < 5; ++boxIndex)
+		for (uint32_t boxIndex = 0; boxIndex < 1; ++boxIndex)
 		{
 			bodyCreationParam.m_position = Edge::ComputeVector3(0.0, positionY, 0.0);
 

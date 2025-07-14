@@ -4,11 +4,7 @@ void Edge::VoronoiSimplex::addPoint(const Point& point)
 {
 	EDGE_ASSERT(m_pointCount < 4);
 
-	for (uint32_t pointIndex = m_pointCount; pointIndex > 0; pointIndex--) {
-		m_points[pointIndex] = m_points[pointIndex - 1];
-	}
-
-	m_points[0] = point;
+	m_points[m_pointCount] = point;
 
 	++m_pointCount;
 }
@@ -41,6 +37,14 @@ void Edge::VoronoiSimplex::setPoints(const Point& point1, const Point& point2, c
 	m_points[1] = point2;
 	m_points[2] = point3;
 	m_points[3] = point4;
+}
+
+void Edge::VoronoiSimplex::removeLastPoint()
+{
+	if (m_pointCount > 0)
+	{
+		--m_pointCount;
+	}
 }
 
 const Edge::VoronoiSimplex::Point& Edge::VoronoiSimplex::getPoint(uint32_t index) const

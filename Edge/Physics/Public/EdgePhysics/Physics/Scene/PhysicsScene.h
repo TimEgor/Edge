@@ -31,6 +31,7 @@ namespace Edge
 		JobGraphReference getConstraintPreparationJobGraph(ComputeValueType deltaTime);
 		JobGraphReference getConstraintVelocitySolvingJobGraph(ComputeValueType deltaTime);
 		JobGraphReference getConstraintPositionSolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getPostConstraintSolvingJobGraph();
 
 	public:
 		PhysicsScene(const PhysicsWorldReference& world);

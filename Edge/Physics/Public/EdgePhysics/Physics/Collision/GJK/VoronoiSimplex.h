@@ -12,6 +12,9 @@ namespace Edge
 			ComputeVector3 m_minkowskiDiff = ComputeVector3Zero;
 			ComputeVector3 m_pointCollision1 = ComputeVector3Zero;
 			ComputeVector3 m_pointCollision2 = ComputeVector3Zero;
+
+			ComputeValue getDistance() const { return m_minkowskiDiff.getLength(); }
+			ComputeValue getDistanceSqr() const { return m_minkowskiDiff.getLengthSqr(); }
 		};
 
 	private:
@@ -26,6 +29,8 @@ namespace Edge
 		void setPoints(const Point& point1, const Point& point2);
 		void setPoints(const Point& point1, const Point& point2, const Point& point3);
 		void setPoints(const Point& point1, const Point& point2, const Point& point3, const Point& point4);
+
+		void removeLastPoint();
 
 		uint32_t getPointCount() const { return m_pointCount; }
 

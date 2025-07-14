@@ -3,9 +3,11 @@
 #include "EdgePhysics/Physics/Collision/GJK/GJK.h"
 #include "EdgePhysics/Physics/Collision/Manifold/PhysicsManifoldContactGenerator.h"
 
-uint32_t Edge::GJKCollisionDispatcher::dispatch(const PhysicsEntityCollisionReference& collision1,
-	const PhysicsEntityCollisionReference& collision2, PhysicsCollisionContactID contactID,
-	ContactManifoldDispatchingResultCollection& results)
+uint32_t Edge::GJKCollisionDispatcher::dispatch(
+	const PhysicsEntityCollisionReference& collision1,
+	const PhysicsEntityCollisionReference& collision2,
+	ContactManifoldDispatchingResultCollection& results
+)
 {
 	GJK gjkTest;
 	const GJK::Result gjkTestResult = gjkTest(collision1.getObjectRef(), collision2.getObjectRef(), 100);
@@ -17,15 +19,14 @@ uint32_t Edge::GJKCollisionDispatcher::dispatch(const PhysicsEntityCollisionRefe
 
 	uint32_t contactPointCount = 0;
 
-	if (epaResult) {
-		PhysicsInstanceContactManifold manifold;
-
-		manifold.m_contactID = contactID;
+	if (epaResult)
+	{
+		PhysicsContactManifold manifold;
 
 		ManifoldContactGenerator manifoldContactGenerator;
-		manifoldContactGenerator.generate(collision1.getObjectRef(), collision2.getObjectRef(), contactPoint, manifold.m_manifoldData);
+		manifoldContactGenerator.generate(collision1.getObjectRef(), collision2.getObjectRef(), contactPoint, manifold);
 
-		contactPointCount = manifold.m_manifoldData.getContactPointCount();
+		contactPointCount = manifold.getContactPointCount();
 
 		results.push_back(manifold);
 	}

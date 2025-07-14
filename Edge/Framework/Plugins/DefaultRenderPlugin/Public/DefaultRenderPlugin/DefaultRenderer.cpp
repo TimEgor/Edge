@@ -1293,8 +1293,8 @@ void EdgeDefRender::DefaultRenderer::prepareLineRenderData(float deltaTime, cons
 			const Edge::FloatComputeVector3 endPoint = Edge::FloatComputeVector3(arrowDebugData.m_position) + Edge::FloatComputeVector3(
 				arrowDebugData.m_direction
 			);
-			const Edge::FloatComputeVector3 normalizeDir = Edge::NormalizeComputeVector3(Edge::FloatComputeVector3(arrowDebugData.m_direction)) * arrowDebugData
-				.m_size;
+			const Edge::FloatComputeVector3 normalizeDir = Edge::NormalizeComputeVector3(Edge::FloatComputeVector3(arrowDebugData.m_direction))
+				* arrowDebugData.m_size;
 			const Edge::FloatComputeVector3 headPerpendicular = CalculateArrowHeadPerpendicular(arrowDebugData.m_direction) * arrowDebugData.m_size;
 
 			LineRenderData::LineData& lineData = *lineDataIter.getCurrentTypedElement<LineRenderData::LineData>();
@@ -2002,7 +2002,7 @@ void EdgeDefRender::DefaultRenderer::drawBoxes()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_boxRenderData.m_transformData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = {m_boxRenderData.m_vertexBuffer, instanceDataBuffer};
+			Edge::GPUBuffer* vertexBuffers[2] = { m_boxRenderData.m_vertexBuffer, instanceDataBuffer };
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_boxRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(36, drawingBoxCount);
 		}
@@ -2032,7 +2032,7 @@ void EdgeDefRender::DefaultRenderer::drawWireframeBoxes()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_wireframeBoxRenderData.m_transformData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = {m_wireframeBoxRenderData.m_vertexBuffer, instanceDataBuffer};
+			Edge::GPUBuffer* vertexBuffers[2] = { m_wireframeBoxRenderData.m_vertexBuffer, instanceDataBuffer };
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_wireframeBoxRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(24, drawingBoxCount);
 		}
@@ -2062,7 +2062,7 @@ void EdgeDefRender::DefaultRenderer::drawSpheres()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_sphereRenderData.m_sphereData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = {m_sphereRenderData.m_vertexBuffer, instanceDataBuffer};
+			Edge::GPUBuffer* vertexBuffers[2] = { m_sphereRenderData.m_vertexBuffer, instanceDataBuffer };
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_sphereRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(m_sphereRenderData.m_indexCountPerSphere, drawingSphereCount);
 		}
@@ -2092,7 +2092,7 @@ void EdgeDefRender::DefaultRenderer::drawWireframeSpheres()
 
 			Edge::GPUBuffer* instanceDataBuffer = &m_wireframeSphereRenderData.m_sphereData.getBuffer(bufferIndex);
 
-			Edge::GPUBuffer* vertexBuffers[2] = {m_wireframeSphereRenderData.m_vertexBuffer, instanceDataBuffer};
+			Edge::GPUBuffer* vertexBuffers[2] = { m_wireframeSphereRenderData.m_vertexBuffer, instanceDataBuffer };
 			m_graphicContext->setVertexBuffers(2, vertexBuffers, m_wireframeSphereRenderData.m_inputLayout->getDesc());
 			m_graphicContext->drawIndexedInstanced(m_wireframeSphereRenderData.m_indexCountPerSphere, drawingSphereCount);
 		}

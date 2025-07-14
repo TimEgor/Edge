@@ -1,13 +1,12 @@
 #pragma once
 
 #include "EdgePhysics/Physics/Collision/PhysicsEntityCollisionShape.h"
+#include "EdgePhysics/Physics/Collision/Dispatchers/PhysicsCollisionDispatcher.h"
 
 #include <unordered_map>
 
 namespace Edge
 {
-	class PhysicsCollisionDispatcher;
-
 	class PhysicsCollisionDispatcherCollection final
 	{
 	private:

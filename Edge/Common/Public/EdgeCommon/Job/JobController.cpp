@@ -149,7 +149,7 @@ void Edge::JobController::waitAndExecute(const JobGraphReference& jobGraph)
 	{
 		if (!executeOnCurrentThread())
 		{
-			break;;
+			break;
 		}
 	}
 }

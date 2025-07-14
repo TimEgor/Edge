@@ -13,7 +13,7 @@ float4 PS(PixelInput input) : SV_Target0
 	const float3 lightColor = lightEnvironment.light.color * lightIntensity;
 
 	const uint2 polyGridSegemntIndex = uint2(input.uv / polyGridSegmentStep) % 2;
-	const float polyGridSegemntColorCoef = 1.0 - ((polyGridSegemntIndex.x != polyGridSegemntIndex.y) * 0.25);
+	const float polyGridSegemntColorCoef = 1.0 - ((polyGridSegemntIndex.x != polyGridSegemntIndex.y) * 0.5);
 
 	const float3 environmentColor = lightEnvironment.color * lightEnvironment.intensity * polyGridSegemntColorCoef;
 

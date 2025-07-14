@@ -19,7 +19,7 @@ bool EdgeDemo::TestFrictionDemo::initDemo()
 
 	//
 
-	bodyCreationParam.m_position = Edge::FloatVector3(0.0f, -0.5f, 0.0f);
+	bodyCreationParam.m_position = Edge::FloatVector3(0.0f, 0.0f, 0.0f);
 	bodyCollisionCreationParam.m_shape = new Edge::PhysicsBoxShape(Edge::FloatVector3(10.0f, 1.0f, 3.0f));
 
 	m_staticBox = Edge::GetPhysics().createBody(&bodyCreationParam);
@@ -28,10 +28,10 @@ bool EdgeDemo::TestFrictionDemo::initDemo()
 
 	//
 
-	bodyCreationParam.m_position = Edge::FloatVector3(-4.0f, 0.5f, 0.0f);
+	bodyCreationParam.m_position = Edge::FloatVector3(0.0f, 1.5f, 0.0f);
 	bodyCreationParam.m_motionCreationParam = &bodyMotionCreationParam;
-	bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, 0.5f);
-	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(0.5f);
+	bodyMotionCreationParam.m_inertia = Edge::MotionPropertyComputer::CalcSphereInertiaTensor(bodyMotionCreationParam.m_mass, 1.0f);
+	bodyCollisionCreationParam.m_shape = new Edge::PhysicsSphereShape(1.0f);
 
 	m_dynamicBody = Edge::GetPhysics().createBody(&bodyCreationParam);
 
@@ -39,7 +39,7 @@ bool EdgeDemo::TestFrictionDemo::initDemo()
 
 	//
 
-	m_dynamicBody->getMotion()->applyImpulse(Edge::FloatVector3UnitX);
+	//m_dynamicBody->getMotion()->applyImpulse(Edge::FloatVector3UnitX);
 
 	return true;
 }

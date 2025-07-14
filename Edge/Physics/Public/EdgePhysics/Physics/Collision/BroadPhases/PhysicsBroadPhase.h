@@ -10,8 +10,6 @@
 
 namespace Edge
 {
-	class DebugVisualizationDataController;
-
 	using PhysicsSceneBroadPhaseEntityIndex = uint32_t;
 	constexpr PhysicsSceneBroadPhaseEntityIndex InvalidPhysicsSceneBroadPhaseEntityIndex = -1;
 
@@ -40,7 +38,5 @@ namespace Edge
 		virtual void updateCollisionBoundChanged(const PhysicsEntityCollisionReference& collision) = 0;
 
 		virtual void findCollidingPairs(const PhysicsEntityCollisionReference& collision, PhysicsSceneCollisionPairCollection& result) = 0;
-
-		virtual void visualizeDebug(const DebugVisualizationDataController& data) const = 0;
 	};
 }

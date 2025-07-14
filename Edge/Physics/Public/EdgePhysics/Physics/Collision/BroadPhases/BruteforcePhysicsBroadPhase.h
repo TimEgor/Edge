@@ -28,7 +28,5 @@ namespace Edge
 		virtual void findCollidingPairs(const PhysicsEntityCollisionReference& collision, PhysicsSceneCollisionPairCollection& result) override;
 
 		virtual void rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResultCollector& resultCollector) const override;
-
-		virtual void visualizeDebug(const DebugVisualizationDataController& data) const override {}
 	};
 }

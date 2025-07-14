@@ -6,12 +6,11 @@
 
 namespace Edge
 {
-	using PhysicsCollisionContactPointID = uint32_t;
-
 	union PhysicsCollisionContactID final
 	{
 		using ContactIDValue = uint64_t;
-		static constexpr ContactIDValue InvalidContactIDValue = InvalidPhysicsSceneCollisionID << sizeof(PhysicsSceneCollisionID) | InvalidPhysicsSceneCollisionID;
+		static constexpr ContactIDValue InvalidContactIDValue
+			= InvalidPhysicsSceneCollisionID << sizeof(PhysicsSceneCollisionID) | InvalidPhysicsSceneCollisionID;
 
 		struct
 		{
@@ -30,37 +29,25 @@ namespace Edge
 
 		struct Hasher
 		{
-			size_t operator()(const PhysicsCollisionContactID& k) const;
+			size_t operator()(const PhysicsCollisionContactID& id) const;
 		};
-	};
-
-	class PhysicsCollisionContact final
-	{
-	private:
-		PhysicsCollisionContactPointID m_collisionPointCount = 0;
-		PhysicsCollisionContactPointID m_collisionPointBaseIndex = 0;
-
-		bool m_dirtyState = false;
-
-	public:
-		PhysicsCollisionContact() = default;
-
-		PhysicsCollisionContactPointID getCollisionPointCount() const { return m_collisionPointCount; }
-		void setCollisionPointCount(PhysicsCollisionContactPointID count) { m_collisionPointCount = count; }
-		PhysicsCollisionContactPointID getCollisionPointBaseIndex() const { return m_collisionPointBaseIndex; }
-		void setCollisionPointBaseIndex(PhysicsCollisionContactPointID index) { m_collisionPointBaseIndex = index; }
-
-		bool getDirtyState() const { return m_dirtyState; }
-		void markDirtyState() { m_dirtyState = true; }
-		void resetDirtyState() { m_dirtyState = false; }
 	};
 
 	struct PhysicsCollisionContactPoint final
 	{
+		struct CachedApplyingData final
+		{
+			ComputeValueType m_frictionLambda1 = 0.0;
+			ComputeValueType m_frictionLambda2 = 0.0;
+			ComputeValueType m_penetrationLambda = 0.0;
+		};
+
 		ComputeVector3 m_position1 = ComputeVector3Zero;
 		ComputeVector3 m_position2 = ComputeVector3Zero;
 		ComputeVector3 m_normal = ComputeVector3Zero;
 		ComputeValueType m_depth = -Math::Max;
+
+		CachedApplyingData m_cachedData;
 	};
 
 	struct PhysicsInstancedCollisionContactPoint final

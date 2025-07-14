@@ -33,6 +33,9 @@ namespace Edge
 		ComputeValueType solveVelocity(const ComputeVector3& normal);
 		void applyVelocity(const ComputeVector3& normal, ComputeValueType lambda);
 
+		ComputeValueType getTotalLambda() const;
+		void setTotalLambda(ComputeValueType lambda);
+
 		bool isActive() const;
 	};
 }

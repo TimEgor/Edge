@@ -58,8 +58,8 @@ namespace Edge
 		ComputeQuaternionBase& setupFromRotationMatrix3x3(const ComputeMatrix3x3Base<ValueType>& matrix);
 		ComputeQuaternionBase& setupFromRotationMatrix4x4(const ComputeMatrix4x4Base<ValueType>& matrix);
 		ComputeQuaternionBase& setupFromAxisAngle(const ComputeVector3Base<ValueType>& axis, ValueType angle);
-		ComputeQuaternionBase& setupFromRollPitchYaw(const ComputeVector3Base<ValueType>& angles);
-		ComputeQuaternionBase& setupFromRollPitchYaw(ValueType pitch, ValueType yaw, ValueType roll);
+		ComputeQuaternionBase& setupFromEulerAngles(const ComputeVector3Base<ValueType>& eulerAngles);
+		ComputeQuaternionBase& setupFromRollPitchYaw(ValueType roll, ValueType pitch, ValueType yaw);
 
 		ValueType getX() const { return m_quaternion.m_elements.m_x; }
 		ValueType getY() const { return m_quaternion.m_elements.m_y; }
@@ -116,6 +116,9 @@ namespace Edge
 	constexpr ComputeQuaternionBase<T> ComputeQuaternionZeroBase() { return ComputeQuaternionBase<T>(T(0.0), T(0.0), T(0.0), T(0.0)); }
 	template <typename T>
 	constexpr ComputeQuaternionBase<T> ComputeQuaternionIdentityBase() { return ComputeQuaternionBase<T>(T(0.0), T(0.0), T(0.0), T(1.0)); }
+
+	template <typename T>
+	ComputeVector3Base<T> EulerAnglesFromQuaternion(const ComputeQuaternionBase<T>& rotation) { return rotation.getEulerAngles(); }
 
 	using ComputeQuaternion = ComputeQuaternionBase<ComputeValueType>;
 	using FloatComputeQuaternion = ComputeQuaternionBase<float>;

@@ -1,24 +1,19 @@
 #pragma once
 
+#include "EdgeCommon/Job/JobGraph.h"
+
 #include "EdgePhysics/Physics/Collision/PhysicsCollisionContact.h"
 #include "EdgePhysics/Physics/Collision/PhysicsEntityCollision.h"
-
-#include <unordered_map>
-
+#include "EdgePhysics/Physics/Collision/Dispatchers/PhysicsCollisionDispatcherCollection.h"
 
 namespace Edge
 {
-}
-
-namespace Edge
-{
-	class PhysicsCollisionDispatcher;
-	class PhysicsCollisionDispatcherCollection;
+	class PhysicsCollisionConstraintManager;
 
 	class PhysicsCollisionContactManager final
 	{
 	public:
-		using ContactPointCollection = std::vector<PhysicsInstancedCollisionContactPoint>;
+		using CollisionManifoldCollection = PhysicsCollisionDispatcher::ContactManifoldDispatchingResultCollection;
 
 	private:
 		class DispatcherContext final
@@ -38,24 +33,35 @@ namespace Edge
 			PhysicsCollisionDispatcher* getDispatcher(PhysicsEntityCollisionShapeType type1, PhysicsEntityCollisionShapeType type2) const;
 		};
 
-		using ContactCollection = std::unordered_map<PhysicsCollisionContactID, PhysicsCollisionContact, PhysicsCollisionContactID::Hasher>;
-		using ContactPartnerCollection = std::unordered_map<PhysicsSceneCollisionID, std::vector<PhysicsSceneCollisionID>>;
+		class ContactCache final
+		{
+		public:
+			using ContactPointCollection = std::vector<PhysicsCollisionContactPoint>;
+			using ContactCollection = std::unordered_map<PhysicsCollisionContactID, ContactPointCollection, PhysicsCollisionContactID::Hasher>;
 
-		ContactCollection m_contacts;
-		ContactPartnerCollection m_contactPartners;
+		private:
+			static constexpr uint32_t CacheContainerCount = 2;
 
-		ContactPointCollection m_contactPoints;
+			ContactCollection m_cacheCollection[CacheContainerCount];
+			uint32_t m_writingContainerIndex = 0;
+
+			uint32_t getNextContainerIndex() const;
+
+		public:
+			ContactCache() = default;
+
+			void prepareCache(uint32_t manifoldCount);
+
+			ContactCollection& getWritingCollection();
+			const ContactCollection& getReadingCollection() const;
+		};
 
 		DispatcherContext* m_dispatcherContext = nullptr;
+		ContactCache* m_contactCache = nullptr;
+
+		PhysicsCollisionConstraintManager* m_contactConstraintManager = nullptr;
 
 		PhysicsSceneCollisionManagerWeakReference m_collisionManager;
-
-		void removeCollisionPartner(PhysicsSceneCollisionID baseCollision, PhysicsSceneCollisionID partnerCollision);
-		ContactCollection::iterator removeContactFromCollections(ContactCollection::iterator removedIter, PhysicsCollisionContactID contactID);
-
-		PhysicsCollisionContact* getContactInternal(PhysicsCollisionContactID contactID);
-
-		void prepareContactPointCollection(uint32_t contactPointCount);
 
 	public:
 		PhysicsCollisionContactManager() = default;
@@ -63,17 +69,24 @@ namespace Edge
 		bool init(const PhysicsSceneCollisionManagerReference& collisionManager);
 		void release();
 
-		void addContact(PhysicsCollisionContactID contactID);
-		void removeContact(PhysicsCollisionContactID contactID);
+		JobGraphReference getPreSolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getVelocitySolvingJobGraph(ComputeValueType deltaTime);
+		JobGraphReference getPositionSolvingJobGraph(ComputeValueType deltaTime);
 
-		const PhysicsCollisionContact* getContact(PhysicsCollisionContactID contactID) const;
-		const PhysicsCollisionContact* getContact(const PhysicsEntityCollisionReference& collision1, const PhysicsEntityCollisionReference& collision2) const;
-		const PhysicsInstancedCollisionContactPoint* getContactPoint(PhysicsCollisionContactPointID pointID) const;
-		const ContactPointCollection& getContactPoints() const;
+		void prepareContacts(uint32_t manifoldCount, uint32_t pointCount);
+		void addManifold(
+			PhysicsCollisionContactID contactID,
+			const PhysicsContactManifold& manifold,
+			const PhysicsEntityReference& entity1,
+			const PhysicsEntityReference& entity2
+		);
 
-		void markContactsForChecking(const PhysicsEntityCollisionReference& collision);
-		void markContactsForChecking(PhysicsSceneCollisionID changedCollision);
+		void cacheConstraintDatas();
 
-		void updateContacts();
+		uint32_t dispatchCollision(
+			const PhysicsEntityCollisionReference& collision1,
+			const PhysicsEntityCollisionReference& collision2,
+			CollisionManifoldCollection& result
+		) const; // return collision contact point count
 	};
 }

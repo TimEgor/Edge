@@ -72,59 +72,42 @@ namespace Edge
 	{
 		const T trace = matrix.getElement(0, 0) + matrix.getElement(1, 1) + matrix.getElement(2, 2);
 
-		if (trace < T(0.0))
-		{
-			uint32_t i = 0;
-			if (matrix.getElement(1, 1) > matrix.getElement(0, 0))
-			{
-				i = 1;
-			}
-			if (matrix.getElement(2, 2) > matrix.getElement(i, i))
-			{
-				i = 2;
-			}
+		if (trace > 0.0) {
+			T s = sqrt(trace + T(1.0)) * T(2.0);
 
-			if (i == 0)
-			{
-				const T r = sqrt(matrix.getElement(0, 0) - (matrix.getElement(1, 1) + matrix.getElement(2, 2)) + T(1));
-				const T s = T(0.5) / r;
-
-				m_quaternion.m_elements.m_x = T(0.5) * s;
-				m_quaternion.m_elements.m_y = (matrix.getElement(1, 0) + matrix.getElement(0, 1)) * s;
-				m_quaternion.m_elements.m_z = (matrix.getElement(0, 2) + matrix.getElement(2, 0)) * s;
-				m_quaternion.m_elements.m_w = (matrix.getElement(1, 2) - matrix.getElement(2, 1)) * s;
-			}
-			else if (i == 1)
-			{
-				const T r = sqrt(matrix.getElement(1, 1) - (matrix.getElement(2, 2) + matrix.getElement(0, 0)) + T(1));
-				const T s = T(0.5) / r;
-
-				m_quaternion.m_elements.m_x = (matrix.getElement(1, 0) + matrix.getElement(0, 1)) * s;
-				m_quaternion.m_elements.m_y = T(0.5) * s;
-				m_quaternion.m_elements.m_z = (matrix.getElement(2, 1) + matrix.getElement(1, 2)) * s;
-				m_quaternion.m_elements.m_w = (matrix.getElement(2, 0) - matrix.getElement(0, 2)) * s;
-			}
-			else
-			{
-				const T r = sqrt(matrix.getElement(2, 2) - (matrix.getElement(0, 0) + matrix.getElement(1, 1)) + T(1));
-				const T s = T(0.5) / r;
-
-				m_quaternion.m_elements.m_x = (matrix.getElement(0, 2) + matrix.getElement(2, 0)) * s;
-				m_quaternion.m_elements.m_y = (matrix.getElement(2, 1) + matrix.getElement(1, 2)) * s;
-				m_quaternion.m_elements.m_z = T(0.5) * s;
-				m_quaternion.m_elements.m_w = (matrix.getElement(0, 1) - matrix.getElement(1, 0)) * s;
-			}
+			m_quaternion.m_elements.m_w = T(0.25) * s;
+			m_quaternion.m_elements.m_x = (matrix.getElement(2, 1) - matrix.getElement(1, 2)) / s;
+			m_quaternion.m_elements.m_y = (matrix.getElement(0, 2) - matrix.getElement(2, 0)) / s;
+			m_quaternion.m_elements.m_z = (matrix.getElement(1, 0) - matrix.getElement(0, 1)) / s;
 		}
-		else
-		{
-			const T r = sqrt(trace + T(1.0));
-			const T s = T(0.5) / r;
+		else if (matrix.getElement(0, 0) > matrix.getElement(1, 1) && matrix.getElement(0, 0) > matrix.getElement(2, 2)) {
+			T s = sqrt(T(1.0) + matrix.getElement(0, 0) - matrix.getElement(1, 1) - matrix.getElement(2, 2)) * T(2.0);
 
-			m_quaternion.m_elements.m_x = (matrix.getElement(1, 2) - matrix.getElement(2, 1)) * s;
-			m_quaternion.m_elements.m_y = (matrix.getElement(2, 0) - matrix.getElement(0, 2)) * s;
-			m_quaternion.m_elements.m_z = (matrix.getElement(0, 1) - matrix.getElement(1, 0)) * s;
-			m_quaternion.m_elements.m_w = T(0.5) * r;
+			m_quaternion.m_elements.m_w = (matrix.getElement(2, 1) - matrix.getElement(1, 2)) / s;
+			m_quaternion.m_elements.m_x = T(0.25) * s;
+			m_quaternion.m_elements.m_y = (matrix.getElement(0, 1) + matrix.getElement(1, 0)) / s;
+			m_quaternion.m_elements.m_z = (matrix.getElement(0, 2) + matrix.getElement(2, 0)) / s;
 		}
+		else if (matrix.getElement(1, 1) > matrix.getElement(2, 2)) {
+			T s = sqrt(T(1.0) + matrix.getElement(1, 1) - matrix.getElement(0, 0) - matrix.getElement(2, 2)) * T(2.0);
+
+			m_quaternion.m_elements.m_w = (matrix.getElement(0, 2) - matrix.getElement(2, 0)) / s;
+			m_quaternion.m_elements.m_x = (matrix.getElement(0, 1) + matrix.getElement(1, 0)) / s;
+			m_quaternion.m_elements.m_y = T(0.25) * s;
+			m_quaternion.m_elements.m_z = (matrix.getElement(1, 2) + matrix.getElement(2, 1)) / s;
+		}
+		else {
+			T s = sqrt(T(1.0) + matrix.getElement(2, 2) - matrix.getElement(0, 0) - matrix.getElement(1, 1)) * T(2.0);
+
+			m_quaternion.m_elements.m_w = (matrix.getElement(1, 0) - matrix.getElement(0, 1)) / s;
+			m_quaternion.m_elements.m_x = (matrix.getElement(0, 2) + matrix.getElement(2, 0)) / s;
+			m_quaternion.m_elements.m_y = (matrix.getElement(1, 2) + matrix.getElement(2, 1)) / s;
+			m_quaternion.m_elements.m_z = T(0.25) * s;
+		}
+
+		m_quaternion.m_elements.m_x = -m_quaternion.m_elements.m_x;
+		m_quaternion.m_elements.m_y = -m_quaternion.m_elements.m_y;
+		m_quaternion.m_elements.m_z = -m_quaternion.m_elements.m_z;
 
 		return *this;
 	}
@@ -161,25 +144,25 @@ namespace Edge
 	}
 
 	template <typename T>
-	ComputeQuaternionBase<T>& ComputeQuaternionBase<T>::setupFromRollPitchYaw(const ComputeVector3Base<T>& angles)
+	ComputeQuaternionBase<T>& ComputeQuaternionBase<T>::setupFromEulerAngles(const ComputeVector3Base<T>& eulerAngles)
 	{
-		return setupFromRollPitchYaw(angles.getX(), angles.getY(), angles.getZ());
+		return setupFromRollPitchYaw(eulerAngles.getZ(), eulerAngles.getX(), eulerAngles.getY());
 	}
 
 	template <typename T>
-	ComputeQuaternionBase<T>& ComputeQuaternionBase<T>::setupFromRollPitchYaw(ValueType pitch, ValueType yaw, ValueType roll)
+	ComputeQuaternionBase<T>& ComputeQuaternionBase<T>::setupFromRollPitchYaw(ValueType roll, ValueType pitch, ValueType yaw)
 	{
-		const ValueType cx = std::cos(pitch * T(0.5));
-		const ValueType sx = std::sin(pitch * T(0.5));
+		const ValueType cr = std::cos(roll * T(0.5));
+		const ValueType sr = std::sin(roll * T(0.5));
+		const ValueType cp = std::cos(pitch * T(0.5));
+		const ValueType sp = std::sin(pitch * T(0.5));
 		const ValueType cy = std::cos(yaw * T(0.5));
 		const ValueType sy = std::sin(yaw * T(0.5));
-		const ValueType cz = std::cos(roll * T(0.5));
-		const ValueType sz = std::sin(roll * T(0.5));
 
-		m_quaternion.m_elements.m_x = cz * cy * cx + sz * sy * sx;
-		m_quaternion.m_elements.m_y = cz * cy * sx - sz * sy * cx;
-		m_quaternion.m_elements.m_z = cz * sy * cx + sz * cy * sx;
-		m_quaternion.m_elements.m_w = sz * cy * cx - cz * sy * sx;
+		m_quaternion.m_elements.m_x = sr * cp * cy - cr * sp * sy;
+		m_quaternion.m_elements.m_y = cr * sp * cy + sr * cp * sy;
+		m_quaternion.m_elements.m_z = cr * cp * sy - sr * sp * cy;
+		m_quaternion.m_elements.m_w = cr * cp * cy + sr * sp * sy;
 
 		return *this;
 	}
@@ -293,24 +276,34 @@ namespace Edge
 	template <typename T>
 	void ComputeQuaternionBase<T>::getRotationMatrix3x3(ComputeMatrix3x3Base<T>& matrix) const
 	{
-		const T tx = m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_x;
-		const T ty = m_quaternion.m_elements.m_y + m_quaternion.m_elements.m_y;
-		const T tz = m_quaternion.m_elements.m_z + m_quaternion.m_elements.m_z;
+		const T x = getX();
+		const T y = getY();
+		const T z = getZ();
+		const T w = getW();
 
-		const T xx = tx * m_quaternion.m_elements.m_x;
-		const T yy = ty * m_quaternion.m_elements.m_y;
-		const T zz = tz * m_quaternion.m_elements.m_z;
-		const T xy = tx * m_quaternion.m_elements.m_y;
-		const T xz = tx * m_quaternion.m_elements.m_z;
-		const T xw = tx * m_quaternion.m_elements.m_w;
-		const T yz = ty * m_quaternion.m_elements.m_z;
-		const T yw = ty * m_quaternion.m_elements.m_w;
-		const T zw = tz * m_quaternion.m_elements.m_w;
+		const T ww = w * w;
+		const T xx = x * x;
+		const T yy = y * y;
+		const T zz = z * z;
+		const T wx = w * x;
+		const T wy = w * y;
+		const T wz = w * z;
+		const T xy = x * y;
+		const T xz = x * z;
+		const T yz = y * z;
 
 		matrix = ComputeMatrix3x3Base<T>(
-			(T(1.0) - yy) - zz, xy + zw, xz - yw,
-			xy - zw, (T(1.0) - zz) - xx, yz + xw,
-			xz + yw, yz - xw, (T(1.0) - xx) - yy
+			T(1.0) - T(2.0) * (yy + zz),
+			T(2.0) * (xy - wz),
+			T(2.0) * (xz + wy),
+
+			T(2.0) * (xy + wz),
+			T(1.0) - T(2.0) * (xx + zz),
+			T(2.0) * (yz - wx),
+
+			T(2.0) * (xz - wy),
+			T(2.0) * (yz + wx),
+			T(1.0) - T(2.0) * (xx + yy)
 		);
 	}
 
@@ -343,7 +336,7 @@ namespace Edge
 	ComputeVector3Base<T> ComputeQuaternionBase<T>::getEulerAngles() const
 	{
 		ComputeVector3Base<T> angles;
-		getAngles(angles);
+		getEulerAngles(angles);
 
 		return angles;
 	}
@@ -351,11 +344,16 @@ namespace Edge
 	template <typename T>
 	void ComputeQuaternionBase<T>::getEulerAngles(ComputeVector3Base<T>& angles) const
 	{
-		const T sinr_cosp = T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_z);
-		const T cosr_cosp = T(1.0) - T(2.0) * (m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y);
-		const T sinp = T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_y - m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_x);
-		const T siny_cosp = T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_z + m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_y);
-		const T cosy_cosp = T(1.0) - T(2.0) * (m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y + m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_z);
+		const T sinr_cosp =
+			T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_z);
+		const T cosr_cosp =
+			T(1.0) - T(2.0) * (m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_x + m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y);
+		const T sinp =
+			T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_y - m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_x);
+		const T siny_cosp =
+			T(2.0) * (m_quaternion.m_elements.m_w * m_quaternion.m_elements.m_z + m_quaternion.m_elements.m_x * m_quaternion.m_elements.m_y);
+		const T cosy_cosp =
+			T(1.0) - T(2.0) * (m_quaternion.m_elements.m_y * m_quaternion.m_elements.m_y + m_quaternion.m_elements.m_z * m_quaternion.m_elements.m_z);
 
 		if (std::abs(sinp) >= T(1.0))
 		{
@@ -366,8 +364,8 @@ namespace Edge
 			angles.setY(std::asin(sinp));
 		}
 
-		angles.setX(std::atan2(sinr_cosp, cosr_cosp));
-		angles.setZ(std::atan2(siny_cosp, cosy_cosp));
+		angles.setZ(std::atan2(sinr_cosp, cosr_cosp));
+		angles.setX(std::atan2(siny_cosp, cosy_cosp));
 	}
 
 	template <typename T>

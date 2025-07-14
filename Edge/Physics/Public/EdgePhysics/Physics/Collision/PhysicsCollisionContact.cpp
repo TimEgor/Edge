@@ -18,7 +18,7 @@ bool Edge::PhysicsCollisionContactID::isValid() const
 	return m_id != InvalidContactIDValue;
 }
 
-size_t Edge::PhysicsCollisionContactID::Hasher::operator()(const PhysicsCollisionContactID& k) const
+size_t Edge::PhysicsCollisionContactID::Hasher::operator()(const PhysicsCollisionContactID& id) const
 {
-	return std::hash<ContactIDValue>()(k.m_id);
+	return std::hash<ContactIDValue>()(id.m_id);
 }

@@ -35,7 +35,7 @@ void EdgeDemo::TestGJKCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 
 	Edge::ComputeVector3 position = dynamicBoxTransform.getOrigin();
 
-	Edge::ComputeVector3 angles = Edge::EulerAnglesFromRotationComputeMatrix3x3(dynamicBoxTransform.getRotationMatrix());
+	Edge::ComputeVector3 angles = dynamicBoxTransform.getRotationQuaternion().getEulerAngles();
 
 	if (Edge::InputDeviceKeyUtils::IsInputDeviceKeyPressed(keyboardKeyData, GetKeyboardKey(Edge::KeyboardKeys::ArrowUp)))
 	{
@@ -64,7 +64,7 @@ void EdgeDemo::TestGJKCollisionDemo::updateDynamicBoxTransform(float deltaTime)
 	}
 
 	dynamicBoxTransform.setOrigin(position.getFloatVector3());
-	Edge::ComputeQuaternion rotation = Edge::ComputeQuaternion().setupFromRollPitchYaw(angles);
+	Edge::ComputeQuaternion rotation = Edge::ComputeQuaternion().setupFromEulerAngles(angles);
 	dynamicBoxTransform.setRotationQuaternion(rotation);
 
 	m_dynamicBox->getTransform()->setWorldTransform(dynamicBoxTransform);
@@ -83,8 +83,8 @@ bool EdgeDemo::TestGJKCollisionDemo::initDemo()
 
 	m_physicsScene->addEntity(m_staticBox);
 
-	bodyCreationParam.m_position = Edge::FloatVector3(1.0f, 0.0f, 0.0f);
-	//bodyCreationParam.m_rotation = Edge::ComputeQuaternionFromRollPitchYaw(45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD, 45.0f * EDGE_DEG_TO_RAD).getFloatQuaternion();
+	bodyCreationParam.m_position = Edge::FloatVector3(1.0f, 0.5f, 0.0f);
+	bodyCreationParam.m_rotation = Edge::ComputeQuaternion().setupFromAxisAngle(Edge::ComputeVector3UnitX, Edge::Math::ConvertDegToRad(45.0));
 
 
 	m_dynamicBox = Edge::GetPhysics().createBody(&bodyCreationParam);

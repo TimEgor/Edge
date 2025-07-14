@@ -41,6 +41,16 @@ void Edge::ContactFrictionAxleConstraintPart::applyVelocity(const ComputeVector3
 	}
 }
 
+Edge::ComputeValueType Edge::ContactFrictionAxleConstraintPart::getTotalLambda() const
+{
+	return m_totalLambda;
+}
+
+void Edge::ContactFrictionAxleConstraintPart::setTotalLambda(ComputeValueType lambda)
+{
+	m_totalLambda = lambda;
+}
+
 void Edge::ContactFrictionAxleConstraintPart::preSolve(const ComputeVector3& contactPosition, const ComputeVector3& normal)
 {
 	const PhysicsEntityTransformReference transform1 = m_entity1->getTransform();

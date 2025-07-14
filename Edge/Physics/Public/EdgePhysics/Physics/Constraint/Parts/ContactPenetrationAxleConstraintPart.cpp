@@ -175,7 +175,7 @@ void Edge::ContactPenetrationAxleConstraintPart::solveVelocity(const ComputeVect
 		JV += DotComputeVector3(m_radiusNorm1, angularVelocity1);
 		JV -= DotComputeVector3(m_radiusNorm2, angularVelocity2);
 
-		lambda = m_invEffectiveMass * (JV - m_restitution);
+		lambda = m_invEffectiveMass * (JV /*- m_restitution*/);
 
 		m_totalLambda += lambda;
 	}
@@ -189,6 +189,16 @@ void Edge::ContactPenetrationAxleConstraintPart::solvePosition(const ComputeVect
 	const ComputeValueType lambda = m_invEffectiveMass * depth * baumgarteCoeff;
 
 	applyPosition(normal, lambda);
+}
+
+Edge::ComputeValueType Edge::ContactPenetrationAxleConstraintPart::getTotalLambda() const
+{
+	return m_totalLambda;
+}
+
+void Edge::ContactPenetrationAxleConstraintPart::setTotalLambda(ComputeValueType lambda)
+{
+	m_totalLambda = lambda;
 }
 
 bool Edge::ContactPenetrationAxleConstraintPart::isActive() const
