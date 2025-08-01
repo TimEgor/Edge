@@ -44,6 +44,9 @@ namespace Edge
 
 		AABB3 getWorldShapeAABB() const;
 		ComputeVector3 getFurthestKeyPoint(const ComputeVector3& direction) const;
+
+		ComputeVector3 getSupportingPoint(const ComputeVector3& direction) const;
+		ComputeValue getSupportingRadius() const;
 		void getSupportingFace(const ComputeVector3& direction, PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const;
 
 		virtual bool rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const override;

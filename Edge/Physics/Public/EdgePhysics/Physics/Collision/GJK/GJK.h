@@ -23,6 +23,7 @@ namespace Edge
 			const ComputeVector3& point1,
 			const ComputeVector3& point2,
 			const ComputeVector3& point3,
+			const ComputeVector3& controlPoint,
 			const ComputeVector3& checkedPoint
 		);
 	};
@@ -30,45 +31,64 @@ namespace Edge
 	class GJK final
 	{
 	public:
-		struct Result final
+		enum class Result
 		{
-			enum class TestResult
-			{
-				Contact,
-				Intersection,
-				NoIntersection,
+			Intersection,
+			NoIntersection,
 
-				FailedTesting,
+			Undetermined,
 
-				OverIterationTesting
-			};
+			OverIteration
+		};
 
+		struct TestResult final
+		{
 			VoronoiSimplex m_simplex;
-			ComputeVector3 m_direction = ComputeVector3Zero;
-			TestResult m_testResult = TestResult::NoIntersection;
+			Result m_testResult = Result::NoIntersection;
+			ComputeVector3 m_delta = ComputeVector3Zero;
+			ComputeVector3 m_point1 = ComputeVector3Zero;
+			ComputeVector3 m_point2 = ComputeVector3Zero;
 
-			Result(const VoronoiSimplex& simplex, const ComputeVector3& direction, TestResult result)
+			TestResult(
+				const VoronoiSimplex& simplex,
+				Result result,
+				const ComputeVector3& delta,
+				const ComputeVector3& point1,
+				const ComputeVector3& point2
+			)
 				: m_simplex(simplex),
-				  m_direction(direction),
-				  m_testResult(result) {}
+				  m_testResult(result),
+				  m_delta(delta),
+				  m_point1(point1),
+				  m_point2(point2) {}
 		};
 
 	private:
-		bool checkAndIterateSimplex(VoronoiSimplex& simplex, ComputeVector3& direction) const;
-		bool checkSimplex0D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Point
-		bool checkSimplex1D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Line
-		bool checkSimplex2D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Triangle
-		bool checkSimplex3D(VoronoiSimplex& simplex, ComputeVector3& direction) const; //Tetrahedron
+		void getSimplexClosestPoint(VoronoiSimplex& simplex, ComputeVector3& delta) const;
+		void getSimplex0DClosestPoint(VoronoiSimplex& simplex, ComputeVector3& delta) const; //Point
+		void getSimplex1DClosestPoint(VoronoiSimplex& simplex, ComputeVector3& delta) const; //Line
+		void getSimplex2DClosestPoint(VoronoiSimplex& simplex, ComputeVector3& delta) const; //Triangle
+		void getSimplex3DClosestPoint(VoronoiSimplex& simplex, ComputeVector3& delta) const; //Tetrahedron
 
 	public:
 		GJK() = default;
 
-		Result operator()(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, uint32_t maxIterationCount) const
+		TestResult operator()(
+			const PhysicsEntityCollision& collision1,
+			const PhysicsEntityCollision& collision2,
+			uint32_t maxIterationCount,
+			ComputeValue contactTolerance
+		) const
 		{
-			return test(collision1, collision2, maxIterationCount);
+			return test(collision1, collision2, maxIterationCount, contactTolerance);
 		}
 
-		Result test(const PhysicsEntityCollision& collision1, const PhysicsEntityCollision& collision2, uint32_t maxIterationCount) const;
+		TestResult test(
+			const PhysicsEntityCollision& collision1,
+			const PhysicsEntityCollision& collision2,
+			uint32_t maxIterationCount,
+			ComputeValue contactTolerance
+		) const;
 	};
 
 	class EPA final
@@ -78,8 +98,11 @@ namespace Edge
 		{
 			VoronoiSimplex::Point m_points[3];
 			ComputeVector3 m_normal;
+			ComputeValue m_distance;
 
 			PolytopeFace(const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2, const VoronoiSimplex::Point& point3);
+
+			bool operator<(const PolytopeFace& face) const;
 		};
 
 		struct PolytopeEdge final
@@ -89,21 +112,18 @@ namespace Edge
 			PolytopeEdge(const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2);
 		};
 
-		void addUniqueEdge(std::list<PolytopeEdge>& edgeCollection, const VoronoiSimplex::Point& point1, const VoronoiSimplex::Point& point2) const;
-
-		void fillPointContactPointData(
+		void buildFullSimplex(
 			const PhysicsEntityCollision& collision1,
 			const PhysicsEntityCollision& collision2,
-			const GJK::Result& gjkResult,
-			PhysicsCollisionContactPoint& contactPoint
+			VoronoiSimplex& simplex
 		) const;
-		bool fillFaceContactPointData(const PolytopeFace& face, PhysicsCollisionContactPoint& contactPoint) const;
-		bool getBarycentricFaceProjection(const PolytopeFace& face, ComputeVector4& outProjection) const; //xyz - barycentricCoords, w - distance to face
+
+		void getBarycentricFaceProjection(const PolytopeFace& face, ComputeVector4& outProjection) const;
 
 		bool calcEPAContact(
 			const PhysicsEntityCollision& collision1,
 			const PhysicsEntityCollision& collision2,
-			const GJK::Result& gjkResult,
+			const GJK::TestResult& gjkResult,
 			uint32_t maxIterationCount,
 			PhysicsCollisionContactPoint& contactPointData
 		) const;
@@ -114,7 +134,7 @@ namespace Edge
 		bool operator()(
 			const PhysicsEntityCollision& collision1,
 			const PhysicsEntityCollision& collision2,
-			const GJK::Result& gjkResult,
+			const GJK::TestResult& gjkResult,
 			uint32_t maxIterationCount,
 			PhysicsCollisionContactPoint& contactPointData
 		) const
@@ -125,7 +145,7 @@ namespace Edge
 		bool getContactPoint(
 			const PhysicsEntityCollision& collision1,
 			const PhysicsEntityCollision& collision2,
-			const GJK::Result& gjkResult,
+			const GJK::TestResult& gjkResult,
 			uint32_t maxIterationCount,
 			PhysicsCollisionContactPoint& contactPointData
 		) const;

@@ -24,6 +24,8 @@ namespace Edge
 	public:
 		VoronoiSimplex() = default;
 
+		VoronoiSimplex(const VoronoiSimplex& simplex) = default;
+
 		void addPoint(const Point& point);
 		void setPoint(const Point& point);
 		void setPoints(const Point& point1, const Point& point2);

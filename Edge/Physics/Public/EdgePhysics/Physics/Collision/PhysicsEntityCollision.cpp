@@ -97,8 +97,35 @@ Edge::ComputeVector3 Edge::PhysicsEntityCollision::getFurthestKeyPoint(const Com
 	return point;
 }
 
+Edge::ComputeVector3 Edge::PhysicsEntityCollision::getSupportingPoint(const ComputeVector3& direction) const
+{
+	if (!m_shape)
+	{
+		return ComputeVector3Zero;
+	}
+
+	const PhysicsEntityTransformReference transform = getTransform();
+
+	const ComputeVector4 localDirection = InvertComputeMatrix4x4(transform->getWorldTransform().m_matrix) * ComputeVector4(direction);
+
+	const ComputeVector3 localPoint = m_shape->getSupportingPoint(localDirection.getXYZ());
+	const ComputeVector3 point = (transform->getWorldTransform().m_matrix * ComputeVector4FromPoint(localPoint)).getXYZ();
+
+	return point;
+}
+
+Edge::ComputeValue Edge::PhysicsEntityCollision::getSupportingRadius() const
+{
+	if (!m_shape)
+	{
+		return 0.0_ecv;
+	}
+
+	return m_shape->getSupportingRadius();
+}
+
 void Edge::PhysicsEntityCollision::getSupportingFace(const ComputeVector3& direction,
-	PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const
+                                                     PhysicsEntityCollisionShape::SupportingFaceVertexCollection& vertices) const
 {
 	vertices.clear();
 

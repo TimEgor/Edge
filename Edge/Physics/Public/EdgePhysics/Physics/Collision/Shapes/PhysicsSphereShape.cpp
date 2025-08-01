@@ -12,6 +12,16 @@ Edge::ComputeVector3 Edge::PhysicsSphereShape::getFurthestKeyPoint(const Compute
 	return direction * m_radius;
 }
 
+Edge::ComputeVector3 Edge::PhysicsSphereShape::getSupportingPoint(const ComputeVector3& direction) const
+{
+	return ComputeVector3Zero;
+}
+
+Edge::ComputeValue Edge::PhysicsSphereShape::getSupportingRadius() const
+{
+	return m_radius;
+}
+
 bool Edge::PhysicsSphereShape::rayCast(const ComputeVector3& origin, const ComputeVector3& end, PointCastingResult& result) const
 {
 	return CastSphere::rayCast(ComputeVector3Zero, m_radius, origin, end, result);

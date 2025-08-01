@@ -16,6 +16,16 @@ void Edge::DebugVisualizationDataController::addLine(const FloatVector3& positio
 
 void Edge::DebugVisualizationDataController::addArrow(const FloatVector3& position, const FloatVector3& direction, float size, const NormalizedColorRGB& color)
 {
+	if (LengthSqrComputeVector3(FloatComputeVector3(direction)) < Math::TypedEpsilonSqr<float>())
+	{
+		return;
+	}
+
+	if (size < Math::TypedEpsilon<float>())
+	{
+		return;
+	}
+
 	LockGuard locker(m_arrowMutex);
 	m_arrows.emplace_back(position, direction, size, color);
 }

@@ -83,8 +83,8 @@ bool EdgeDemo::TestGJKCollisionDemo::initDemo()
 
 	m_physicsScene->addEntity(m_staticBox);
 
-	bodyCreationParam.m_position = Edge::FloatVector3(1.0f, 0.5f, 0.0f);
-	bodyCreationParam.m_rotation = Edge::ComputeQuaternion().setupFromAxisAngle(Edge::ComputeVector3UnitX, Edge::Math::ConvertDegToRad(45.0));
+	bodyCreationParam.m_position = Edge::FloatVector3(-0.1f, -0.5f, 0.0f);
+	//bodyCreationParam.m_rotation = Edge::ComputeQuaternion().setupFromAxisAngle(Edge::ComputeVector3UnitX, Edge::Math::ConvertDegToRad(45.0));
 
 
 	m_dynamicBox = Edge::GetPhysics().createBody(&bodyCreationParam);
@@ -111,45 +111,63 @@ void EdgeDemo::TestGJKCollisionDemo::updateDemoLogic(float deltaTime)
 
 	Edge::GJK gjkTest;
 	Edge::NormalizedColorRGB color = Edge::NormalizedColorWhite;
-	const Edge::GJK::Result collisionTestResult = gjkTest(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), 100);
+	const Edge::GJK::TestResult gjkResult = gjkTest.test(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), 100, 0.0001_ecv);
 
-	Edge::EPA epa;
-	Edge::PhysicsCollisionContactPoint contactPoint;
-	const bool contactResult = epa.getContactPoint(
-		m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(),
-		collisionTestResult, 100, contactPoint);
-
-	if (contactResult)
-	{
-		color = Edge::NormalizedColorRed;
-
-		m_debugVisualizationDataController->addSphere(contactPoint.m_position1.getFloatVector3(),
-			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.07f, Edge::NormalizedColorOrange);
-		m_debugVisualizationDataController->addSphere(contactPoint.m_position2.getFloatVector3(),
-			Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.07f, Edge::NormalizedColorMagneta);
-
-		Edge::PhysicsContactManifold manifold;
-		Edge::ManifoldContactGenerator manifoldContactGenerator;
-		manifoldContactGenerator.generate(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), contactPoint, manifold);
-
-		const uint32_t contactPointCount = manifold.m_positions1.size();
-
-		for (uint32_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
-		{
-			const Edge::FloatVector3& position1 = manifold.m_positions1[contactPointIndex].getFloatVector3();
-			const Edge::FloatVector3& position2 = manifold.m_positions2[contactPointIndex].getFloatVector3();
-
-			m_debugVisualizationDataController->addSphere(position1,
-				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorViolet);
-			m_debugVisualizationDataController->addSphere(position2,
-				Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorForestGreen);
-
-			m_debugVisualizationDataController->addArrow(position1, manifold.m_normal.getFloatVector3(), 0.1f, Edge::NormalizedColorBlue);
-		}
-	}
-	else if (collisionTestResult.m_testResult == Edge::GJK::Result::TestResult::OverIterationTesting)
+	if (gjkResult.m_testResult == Edge::GJK::Result::OverIteration)
 	{
 		color = Edge::NormalizedColorBrown;
+	}
+	else
+	{
+		bool isCollided = false;
+
+		Edge::PhysicsCollisionContactPoint contactPoint;
+		if (gjkResult.m_testResult == Edge::GJK::Result::Intersection)
+		{
+			const Edge::ComputeVector3 contactDelta = gjkResult.m_point1 - gjkResult.m_point2;
+			const Edge::ComputeValue contactOffset = contactDelta.getLength();
+
+			contactPoint.m_position1 = gjkResult.m_point1;
+			contactPoint.m_position2 = gjkResult.m_point2;
+			contactPoint.m_normal = NormalizeComputeVector3(
+				gjkResult.m_delta.getLength() > 0.0_ecv
+				? gjkResult.m_delta
+				: m_dynamicBox->getTransform()->getPosition() - m_staticBox->getTransform()->getPosition()
+			);
+			contactPoint.m_depth = contactOffset;
+
+			isCollided = true;
+		}
+		else if (gjkResult.m_testResult == Edge::GJK::Result::Undetermined)
+		{
+			Edge::EPA epa;
+			isCollided = epa(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), gjkResult, 100, contactPoint);
+		}
+
+		uint32_t contactPointCount = 0;
+
+		if (isCollided)
+		{
+			Edge::PhysicsContactManifold manifold;
+
+			Edge::ManifoldContactGenerator manifoldContactGenerator;
+			manifoldContactGenerator.generate(m_staticBox->getCollision().getObjectRef(), m_dynamicBox->getCollision().getObjectRef(), contactPoint, manifold);
+
+			contactPointCount = manifold.getContactPointCount();
+
+			for (uint32_t contactPointIndex = 0; contactPointIndex < contactPointCount; ++contactPointIndex)
+			{
+				const Edge::FloatVector3& position1 = manifold.m_positions1[contactPointIndex].getFloatVector3();
+				const Edge::FloatVector3& position2 = manifold.m_positions2[contactPointIndex].getFloatVector3();
+
+				m_debugVisualizationDataController->addSphere(position1,
+					Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorViolet);
+				m_debugVisualizationDataController->addSphere(position2,
+					Edge::FloatVector3UnitZ, Edge::FloatVector3UnitY, 0.05f, Edge::NormalizedColorForestGreen);
+
+				m_debugVisualizationDataController->addArrow(position1, manifold.m_normal.getFloatVector3(), 0.1f, Edge::NormalizedColorBlue);
+			}
+		}
 	}
 
 	m_debugVisualizationDataController->addWireframeBox(m_staticBox->getTransform()->getWorldTransform(),

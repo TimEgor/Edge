@@ -10,9 +10,6 @@ Edge::AABB3 Edge::PhysicsBoxShape::getAABB() const
 
 Edge::ComputeVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const ComputeVector3& direction) const
 {
-	ComputeValueType maxDistance = -Math::Max;
-	uint32_t maxDistancePointIndex = -1;
-
 	const ComputeVector3 halfSize = m_size * 0.5_ecv;
 
 	return ComputeVector3(
@@ -20,6 +17,16 @@ Edge::ComputeVector3 Edge::PhysicsBoxShape::getFurthestKeyPoint(const ComputeVec
 		direction[1] >= 0 ? halfSize[1] : -halfSize[1],
 		direction[2] >= 0 ? halfSize[2] : -halfSize[2]
 	);
+}
+
+Edge::ComputeVector3 Edge::PhysicsBoxShape::getSupportingPoint(const ComputeVector3& direction) const
+{
+	return getFurthestKeyPoint(direction);
+}
+
+Edge::ComputeValue Edge::PhysicsBoxShape::getSupportingRadius() const
+{
+	return 0.0_ecv;
 }
 
 void Edge::PhysicsBoxShape::getSupportingFace(const ComputeVector3& direction, SupportingFaceVertexCollection& vertices) const

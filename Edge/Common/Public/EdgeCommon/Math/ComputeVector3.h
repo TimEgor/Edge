@@ -137,6 +137,11 @@ namespace Edge
 	ComputeVector3Base<T> NormalizeComputeVector3(const ComputeVector3Base<T>& vector);
 
 	template <typename T>
+	T LengthComputeVector3(const ComputeVector3Base<T>& vector);
+	template <typename T>
+	T LengthSqrComputeVector3(const ComputeVector3Base<T>& vector);
+
+	template <typename T>
 	ComputeVector3Base<T> MultiplyComputeVector3Elements(const ComputeVector3Base<T>& vector1, const ComputeVector3Base<T>& vector2);
 
 	template <typename T>

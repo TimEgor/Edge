@@ -408,6 +408,18 @@ namespace Edge
 	}
 
 	template <typename T>
+	T LengthComputeVector3(const ComputeVector3Base<T>& vector)
+	{
+		return vector.getLength();
+	}
+
+	template <typename T>
+	T LengthSqrComputeVector3(const ComputeVector3Base<T>& vector)
+	{
+		return vector.getLengthSqr();
+	}
+
+	template <typename T>
 	ComputeVector3Base<T> MultiplyComputeVector3Elements(const ComputeVector3Base<T>& vector1, const ComputeVector3Base<T>& vector2)
 	{
 		ComputeVector3Base<T> result(vector1);
